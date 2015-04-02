@@ -28,7 +28,7 @@ public class UserHasAtLeastOneGroupValidator implements ConstraintValidator<Asse
 		}
 		
 		for (UserGroup userGroup : user.getUserGroups()) {
-			if (userGroup != null && userGroup.getUserGroup().length() > 0) {
+			if (userGroup != null) {
 				result = true;
 				break;
 			}

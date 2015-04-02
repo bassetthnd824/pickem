@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 /**
  * The persistent class for the PCKM_USER_GROUP database table.
@@ -23,8 +22,8 @@ public class UserGroup extends AbstractBaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
-	private String userGroup;
 	private User user;
+	private Group group;
 	
 	public UserGroup() {
 	}
@@ -41,16 +40,6 @@ public class UserGroup extends AbstractBaseEntity implements Serializable {
 		this.id = id;
 	}
 	
-	@Column(name = "USER_GROUP", nullable = false, length = 20)
-	@NotNull(message = "user group cannot be blank")
-	public String getUserGroup() {
-		return this.userGroup;
-	}
-	
-	public void setUserGroup(String userGroup) {
-		this.userGroup = userGroup;
-	}
-	
 	// bi-directional many-to-one association to User
 	@ManyToOne
 	@JoinColumn(name = "USER_GUID", nullable = false)
@@ -62,6 +51,17 @@ public class UserGroup extends AbstractBaseEntity implements Serializable {
 		this.user = user;
 	}
 
+	// bi-directional many-to-one association to User
+	@ManyToOne
+	@JoinColumn(name = "GROUP_ID", nullable = false)
+	public Group getGroup() {
+		return this.group;
+	}
+	
+	public void setGroup(Group group) {
+		this.group = group;
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -77,7 +77,7 @@ public class UserGroup extends AbstractBaseEntity implements Serializable {
 			return false;
 		}
 		
-		if (userGroup != null ? !userGroup.equals(that.userGroup) : that.userGroup != null) {
+		if (group != null ? !group.equals(that.group) : that.group != null) {
 			return false;
 		}
 		
@@ -87,13 +87,13 @@ public class UserGroup extends AbstractBaseEntity implements Serializable {
 	@Override
 	public int hashCode() {
 		int result = user != null ? user.hashCode() : 0;
-		result = 31 * result + (userGroup != null ? userGroup.hashCode() : 0);
+		result = 31 * result + (group != null ? group.hashCode() : 0);
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return user.toString() + " " + userGroup;
+		return user.toString() + " " + group.toString();
 	}
 	
 }
