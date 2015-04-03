@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+	
+	<display-name>pickem</display-name>
+	
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	
+	<welcome-file-list>
+		<welcome-file>/index.jsp</welcome-file>
+	</welcome-file-list>
+	
+	<error-page>
+		<error-code>401</error-code>
+		<location>/accessRestricted.jsp</location>
+	</error-page>
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>game</web-resource-name>
+			<url-pattern>/game/*</url-pattern>
+		</web-resource-collection>
+		
+		<auth-constraint>
+			<role-name>player_role</role-name>
+		</auth-constraint>
+	</security-constraint>
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>manager</web-resource-name>
+			<url-pattern>/manager/*</url-pattern>
+		</web-resource-collection>
+		
+		<auth-constraint>
+			<role-name>manager_role</role-name>
+		</auth-constraint>
+	</security-constraint>
+	
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>pickemRealm</realm-name>
+		
+		<form-login-config>
+			<form-login-page>/login.jsp</form-login-page>
+			<form-error-page>/loginError.jsp</form-error-page>
+		</form-login-config>
+	</login-config>
+	
+	<security-role>
+		<role-name>manager_role</role-name>
+	</security-role>
+	
+	<security-role>
+		<role-name>player_role</role-name>
+	</security-role>
+</web-app>

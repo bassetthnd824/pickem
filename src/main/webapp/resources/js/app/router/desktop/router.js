@@ -6,11 +6,13 @@ define("router", [
 	'underscore',
 	'configuration',
 	'utilities',
+	'app/views/desktop/home',
 	'text!../templates/desktop/main.html'
 ],function ($,
 			_,
 			config,
 			utilities,
+			HomeView,
 			MainTemplate) {
 	
 	$(document).ready(new function() {
@@ -33,7 +35,7 @@ define("router", [
 			'' : 'home',
 		},
 		home:function () {
-			//utilities.viewManager.showView(new HomeView({ el : $('#content') }));
+			utilities.viewManager.showView(new HomeView({ el : $('#content') }));
 		}
 	});
 	

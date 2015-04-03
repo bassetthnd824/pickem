@@ -24,6 +24,7 @@ define('initializer', ['jquery'], function($) {
 	$.ajaxSetup({ cache : false });
 	$('head').append('<link rel="stylesheet" href="resources/css/bootstrap-min-3.3.4.css" type="text/css" media="all"/>' +
 			'<link rel="stylesheet" href="resources/css/bootstrap-theme-min-3.3.4.css" type="text/css" media="all"/>' +
+			'<link rel="stylesheet" href="resources/css/pickem.css" type="text/css" media="all"/>' +
 			'<link href="http://fonts.googleapis.com/css?family=Rokkitt" rel="stylesheet" type="text/css">');
 });
 
