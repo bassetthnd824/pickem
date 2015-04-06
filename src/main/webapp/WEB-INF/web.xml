@@ -32,8 +32,8 @@
 	
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>manager</web-resource-name>
-			<url-pattern>/manager/*</url-pattern>
+			<web-resource-name>admin</web-resource-name>
+			<url-pattern>/admin/*</url-pattern>
 		</web-resource-collection>
 		
 		<auth-constraint>

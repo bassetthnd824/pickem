@@ -49,7 +49,10 @@
             tested stacks. -->
         <version.jboss.bom>8.2.1.Final</version.jboss.bom>
 
-        <!-- other plugin versions -->
+        <!-- Other dependency versions -->
+		<version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
+		
+		<!-- other plugin versions -->
         <version.compiler.plugin>3.1</version.compiler.plugin>
         <version.surefire.plugin>2.16</version.surefire.plugin>
         <version.war.plugin>2.5</version.war.plugin>
@@ -105,6 +108,21 @@
 			<groupId>org.jboss.spec.javax.servlet</groupId>
 			<artifactId>jboss-servlet-api_3.1_spec</artifactId>
 			<scope>provided</scope>
+		</dependency>
+
+		<!-- Import the JSP API, we use provided scope as the API is included in JBoss AS 7. -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.servlet.jsp</groupId>
+			<artifactId>jboss-jsp-api_2.3_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Import the JSP API, we use provided scope as the API is included in JBoss AS 7. -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${version.javax.servlet.jstl}</version>
+			<scope>runtime</scope>
 		</dependency>
 
         <!-- Import the Common Annotations API (JSR-250), we use provided scope 
