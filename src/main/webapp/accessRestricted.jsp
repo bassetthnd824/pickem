@@ -4,7 +4,7 @@
 
 <html>
 
-<jsp:include page="resources/jsp/commonhead.jsp">
+<jsp:include page="resources/jsp/commonhead.jsp"/>
 
 <body>
 	<div class="container">

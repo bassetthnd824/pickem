@@ -26,7 +26,7 @@
 		</web-resource-collection>
 		
 		<auth-constraint>
-			<role-name>player_role</role-name>
+			<role-name>player</role-name>
 		</auth-constraint>
 	</security-constraint>
 	
@@ -37,13 +37,13 @@
 		</web-resource-collection>
 		
 		<auth-constraint>
-			<role-name>manager_role</role-name>
+			<role-name>manager</role-name>
 		</auth-constraint>
 	</security-constraint>
 	
 	<login-config>
 		<auth-method>FORM</auth-method>
-		<realm-name>pickemRealm</realm-name>
+		<realm-name>pickemDomain</realm-name>
 		
 		<form-login-config>
 			<form-login-page>/login.jsp</form-login-page>
@@ -52,10 +52,10 @@
 	</login-config>
 	
 	<security-role>
-		<role-name>manager_role</role-name>
+		<role-name>manager</role-name>
 	</security-role>
 	
 	<security-role>
-		<role-name>player_role</role-name>
+		<role-name>player</role-name>
 	</security-role>
 </web-app>

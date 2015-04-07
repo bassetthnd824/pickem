@@ -86,7 +86,7 @@ public class User extends AbstractBaseEntity implements Serializable {
 		this.lastName = lastName;
 	}
 	
-	@Column(name = "USER_ID", nullable = false, unique = true, length = 20)
+	@Column(name = "USER_ID", nullable = false, unique = true, length = 200)
 	@NotNull(message = "user id cannot be blank")
 	public String getUserId() {
 		return this.userId;
