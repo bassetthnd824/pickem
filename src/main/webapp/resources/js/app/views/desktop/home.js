@@ -1,7 +1,6 @@
 define([
-        
 	'utilities',
-	'text!../../../../templates/desktop/home.html'
+	'text!' + relativePath + 'templates/desktop/home.html'
 	
 ], function(utilities, HomeTemplate) {
 	var HomeView = Backbone.View.extend({

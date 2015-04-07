@@ -6,13 +6,15 @@ define("router", [
 	'underscore',
 	'configuration',
 	'utilities',
-	'app/views/desktop/home',
-	'text!../templates/desktop/main.html'
+	'js/app/models/userRegistration',
+	'js/app/views/desktop/userRegistration',
+	'text!' + relativePath + 'resources/templates/desktop/main.html'
 ],function ($,
 			_,
 			config,
 			utilities,
-			HomeView,
+			UserRegistration,
+			UserRegistrationView,
 			MainTemplate) {
 	
 	$(document).ready(new function() {
@@ -27,15 +29,17 @@ define("router", [
 	 */
 	
 	var Router = Backbone.Router.extend({
-		initialize: function() {
+		initialize       : function() {
 			//Begin dispatching routes
 			Backbone.history.start();
 		},
-		routes:{
-			'' : 'home',
+		
+		routes           : {
+			'register' : 'userRegistration'
 		},
-		home:function () {
-			utilities.viewManager.showView(new HomeView({ el : $('#content') }));
+		
+		userRegistration : function() {
+			utilities.viewManager.showView(new UserRegistrationView({ el : $("#content") }));
 		}
 	});
 	

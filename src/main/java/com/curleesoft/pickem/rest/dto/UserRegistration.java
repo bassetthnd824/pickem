@@ -1,4 +1,4 @@
-package com.curleesoft.pickem.service;
+package com.curleesoft.pickem.rest.dto;
 
 public class UserRegistration {
 

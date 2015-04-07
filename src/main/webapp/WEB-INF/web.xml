@@ -12,6 +12,9 @@
 	
 	<welcome-file-list>
 		<welcome-file>/index.jsp</welcome-file>
+		<welcome-file>/register/index.html</welcome-file>
+		<welcome-file>/admin/index.html</welcome-file>
+		<welcome-file>/game/index.html</welcome-file>
 	</welcome-file-list>
 	
 	<error-page>

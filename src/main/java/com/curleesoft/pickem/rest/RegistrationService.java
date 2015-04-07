@@ -12,7 +12,7 @@ import javax.ws.rs.core.UriBuilder;
 import com.curleesoft.pickem.model.Group;
 import com.curleesoft.pickem.model.User;
 import com.curleesoft.pickem.model.UserGroup;
-import com.curleesoft.pickem.service.UserRegistration;
+import com.curleesoft.pickem.rest.dto.UserRegistration;
 
 @Stateless
 @Path("/registration")
