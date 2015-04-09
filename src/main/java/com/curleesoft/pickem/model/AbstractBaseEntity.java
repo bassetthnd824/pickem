@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
@@ -18,7 +20,7 @@ public abstract class AbstractBaseEntity {
 	private Long sysModCount;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "LAST_UPDATE_DATE", insertable = false, updatable = false, nullable = false)
+	@Column(name = "LAST_UPDATE_DATE", nullable = false)
 	public Date getLastUpdateDate() {
 		return this.lastUpdateDate;
 	}
@@ -27,7 +29,7 @@ public abstract class AbstractBaseEntity {
 		this.lastUpdateDate = lastUpdateDate;
 	}
 	
-	@Column(name = "LAST_UPDATE_USER", nullable = false, length = 20)
+	@Column(name = "LAST_UPDATE_USER", nullable = false, length = 200)
 	public String getLastUpdateUser() {
 		return this.lastUpdateUser;
 	}
@@ -37,7 +39,7 @@ public abstract class AbstractBaseEntity {
 	}
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATE_DATE", insertable = false, updatable = false, nullable = false)
+	@Column(name = "CREATE_DATE", nullable = false)
 	public Date getCreateDate() {
 		return this.createDate;
 	}
@@ -46,7 +48,7 @@ public abstract class AbstractBaseEntity {
 		this.createDate = createDate;
 	}
 	
-	@Column(name = "CREATE_USER", nullable = false, length = 20)
+	@Column(name = "CREATE_USER", nullable = false, length = 200)
 	public String getCreateUser() {
 		return this.createUser;
 	}
@@ -56,7 +58,7 @@ public abstract class AbstractBaseEntity {
 	}
 	
 	@Version
-	@Column(name = "SYS_MOD_COUNT", insertable = false, updatable = false, nullable = false)
+	@Column(name = "SYS_MOD_COUNT", updatable = false, nullable = false)
 	public Long getSysModCount() {
 		return this.sysModCount;
 	}
@@ -65,4 +67,14 @@ public abstract class AbstractBaseEntity {
 		this.sysModCount = sysModCount;
 	}
 	
+	@PrePersist
+	public void preInsert() {
+		this.createDate = this.lastUpdateDate = new Date();
+		this.sysModCount = 0L;
+	}
+	
+	@PreUpdate
+	public void preUpdate() {
+		this.lastUpdateDate = new Date();
+	}
 }

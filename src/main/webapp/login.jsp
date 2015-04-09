@@ -45,7 +45,7 @@
 					</form>
 					
 					<div class="margin-before text-center">
-						Not Registered?  Click <a href="../register/index.html">here</a>.
+						Not Registered?  Click <a href="../register/index.html#register">here</a>.
 					</div>
 				</div>
 				

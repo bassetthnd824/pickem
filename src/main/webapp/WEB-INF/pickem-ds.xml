@@ -26,11 +26,11 @@
     <datasource jndi-name="java:jboss/datasources/pickemDS"
         pool-name="pickem" enabled="true"
         use-java-context="true">
-        <connection-url>jdbc:h2:mem:pickem;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1</connection-url>
-        <driver>h2</driver>
+        <connection-url>jdbc:derby://localhost:1527/c:/DATA/derby/databases/pickem</connection-url>
+        <driver>derbyclient.jar</driver>
         <security>
-            <user-name>sa</user-name>
-            <password>sa</password>
+            <user-name>pickem</user-name>
+            <password>pickempass</password>
         </security>
     </datasource>
 </datasources>

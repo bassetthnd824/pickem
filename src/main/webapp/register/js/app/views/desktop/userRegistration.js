@@ -11,13 +11,19 @@ define([
 		},
 		
 		render             : function() {
-			$('nav.nav-bar').hide();
+			$('nav.navbar').hide();
 			utilities.applyTemplate($(this.el), RegistrationTemplate, {});
 			return this;
 		},
 		
 		submitRegistration : function(event) {
-			
+			this.model.save({
+				emailAddress : $('#emailAddress').val(),
+				userPass     : $('#userPass').val(),
+				confirmPass  : $('#confirmPass').val(),
+				firstName    : $('#firstName').val(),
+				lastName     : $('#lastName').val()
+			});
 		},
 		
 		resetForm          : function(event) {

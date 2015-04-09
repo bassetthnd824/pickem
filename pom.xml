@@ -220,6 +220,13 @@
             <scope>provided</scope>
         </dependency>
 		
+        <dependency>
+            <groupId>org.picketbox</groupId>
+            <artifactId>picketbox</artifactId>
+            <version>4.0.19.SP8-redhat-1</version>
+            <scope>provided</scope>
+        </dependency>
+		
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>

@@ -39,7 +39,12 @@ define("router", [
 		},
 		
 		userRegistration : function() {
-			utilities.viewManager.showView(new UserRegistrationView({ el : $("#content") }));
+			var userRegistrationView = new UserRegistrationView({
+				model : new UserRegistration(),
+				el    : $('#content')
+			});
+			
+			utilities.viewManager.showView(userRegistrationView);
 		}
 	});
 	
