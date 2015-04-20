@@ -1,7 +1,7 @@
 define([
 	'jquery',
 	'utilities',
-	'text!templates/desktop/registration.html'
+	'text!../../../../templates/desktop/registration.html'
 	
 ], function($, utilities, RegistrationTemplate) {
 	var UserRegistrationView = Backbone.View.extend({

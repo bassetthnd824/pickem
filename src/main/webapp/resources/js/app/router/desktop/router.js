@@ -6,14 +6,18 @@ define("router", [
 	'underscore',
 	'configuration',
 	'utilities',
-	'js/app/models/userRegistration',
-	'js/app/views/desktop/userRegistration',
-	'text!' + relativePath + 'resources/templates/desktop/main.html'
+	'app/models/login',
+	'app/models/userRegistration',
+	'app/views/desktop/login',
+	'app/views/desktop/userRegistration',
+	'text!../templates/desktop/main.html'
 ],function ($,
 			_,
 			config,
 			utilities,
+			Login,
 			UserRegistration,
+			LoginView,
 			UserRegistrationView,
 			MainTemplate) {
 	
@@ -35,7 +39,17 @@ define("router", [
 		},
 		
 		routes           : {
+			''         : 'login',
 			'register' : 'userRegistration'
+		},
+		
+		login             : function() {
+			var loginView = new LoginView({
+				model : new Login(),
+				el    : $('#content')
+			});
+			
+			utilities.viewManager.showView(loginView);
 		},
 		
 		userRegistration : function() {

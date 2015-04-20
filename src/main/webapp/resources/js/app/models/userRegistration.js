@@ -4,7 +4,7 @@ define([
 ], function(config, Backbone) {
 	
 	var UserRegistration = Backbone.Model.extend({
-		urlRoot : config.baseUrl + relativePath + 'rest/registration'
+		urlRoot : config.baseUrl + 'rest/registration'
 	});
 	
 	return UserRegistration;

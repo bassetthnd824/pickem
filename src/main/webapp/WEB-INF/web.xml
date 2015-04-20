@@ -11,47 +11,18 @@
 	</session-config>
 	
 	<welcome-file-list>
-		<welcome-file>/index.jsp</welcome-file>
-		<welcome-file>/register/index.html</welcome-file>
-		<welcome-file>/admin/index.html</welcome-file>
-		<welcome-file>/game/index.html</welcome-file>
+		<welcome-file>/index.html</welcome-file>
 	</welcome-file-list>
 	
-	<error-page>
-		<error-code>401</error-code>
-		<location>/accessRestricted.jsp</location>
-	</error-page>
-	
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>game</web-resource-name>
-			<url-pattern>/game/*</url-pattern>
+			<web-resource-name>everything</web-resource-name>
+			<url-pattern>/*</url-pattern>
 		</web-resource-collection>
-		
-		<auth-constraint>
-			<role-name>player</role-name>
-		</auth-constraint>
-	</security-constraint>
-	
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>admin</web-resource-name>
-			<url-pattern>/admin/*</url-pattern>
-		</web-resource-collection>
-		
-		<auth-constraint>
-			<role-name>manager</role-name>
-		</auth-constraint>
 	</security-constraint>
 	
 	<login-config>
-		<auth-method>FORM</auth-method>
 		<realm-name>pickemDomain</realm-name>
-		
-		<form-login-config>
-			<form-login-page>/login.jsp</form-login-page>
-			<form-error-page>/loginError.jsp</form-error-page>
-		</form-login-config>
 	</login-config>
 	
 	<security-role>
