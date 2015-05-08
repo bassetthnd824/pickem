@@ -6,7 +6,7 @@ define([
 ], function(User, config, Backbone) {
 	
 	var Users = Backbone.Collection.extend({
-		url        : config.baseUrl + 'rest/users',
+		url        : config.baseUrl + 'rest/user',
 		model      : User,
 		id         : 'id',
 		comparator : function(model) {

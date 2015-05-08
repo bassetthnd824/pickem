@@ -8,8 +8,11 @@ define("router", [
 	'utilities',
 	'app/models/login',
 	'app/models/userRegistration',
+	'app/models/user',
+	'app/collections/users',
 	'app/views/desktop/login',
 	'app/views/desktop/userRegistration',
+	'app/views/desktop/users',
 	'text!../templates/desktop/main.html'
 ],function ($,
 			_,
@@ -17,8 +20,11 @@ define("router", [
 			utilities,
 			Login,
 			UserRegistration,
+			User,
+			Users,
 			LoginView,
 			UserRegistrationView,
+			UsersView,
 			MainTemplate) {
 	
 	$(document).ready(new function() {
@@ -40,7 +46,8 @@ define("router", [
 		
 		routes           : {
 			''         : 'login',
-			'register' : 'userRegistration'
+			'register' : 'userRegistration',
+			'game'     : 'main'
 		},
 		
 		login             : function() {
@@ -59,6 +66,24 @@ define("router", [
 			});
 			
 			utilities.viewManager.showView(userRegistrationView);
+		},
+		
+		main             : function() {
+			var users = new Users();
+			var usersView = new UsersView({
+				model : users,
+				el    : $('#content')
+			});
+			
+			users.on('reset', function() {
+				utilities.viewManager.showView(usersView);
+				
+			}).fetch({
+				reset : true,
+				error : function() {
+					utilities.displayAlert('Failed to retrieve users from the Pickem server.');
+				}
+			});
 		}
 	});
 	

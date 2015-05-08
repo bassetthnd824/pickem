@@ -7,22 +7,25 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 import com.curleesoft.pickem.model.User;
 import com.curleesoft.pickem.rest.dto.Login;
 
 @Stateless
-@Path("/login")
+@Path("/")
 public class LoginService {
 	
 	@Inject
 	private EntityManager entityManager;
 	
 	@POST
+	@Path("login")
 	@Consumes({ "application/json" })
 	public Response create(final Login login, @Context HttpServletRequest request) {
 		try {
@@ -35,6 +38,15 @@ public class LoginService {
 		HttpSession session = request.getSession();
 		session.setAttribute("com.curleesoft.pickem.ActiveUser", user);
 		
-		return Response.status(200).build();
+		return Response.created(UriBuilder.fromResource(UserService.class).path(String.valueOf(user.getId())).build()).build();
+	}
+	
+	@DELETE
+	@Path("logout")
+	public Response delete(final Login login, @Context HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		session.removeAttribute("com.curleesoft.pickem.ActiveUser");
+		session.invalidate();
+		return Response.noContent().build();
 	}
 }

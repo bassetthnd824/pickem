@@ -55,7 +55,7 @@ public class RegistrationService {
 			return Response.status(403).build();
 		}
 		
-		return Response.created(UriBuilder.fromResource(User.class).path(String.valueOf(user.getId())).build()).build();
+		return Response.created(UriBuilder.fromResource(UserService.class).path(String.valueOf(user.getId())).build()).build();
 	}
 	
 	private String generateHash(final String stringToHash) {

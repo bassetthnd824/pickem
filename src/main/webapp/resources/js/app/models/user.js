@@ -4,7 +4,7 @@ define([
 ], function(config, Backbone) {
 	
 	var User = Backbone.Model.extend({
-		urlRoot : config.baseUrl + 'rest/users'
+		urlRoot : config.baseUrl + 'rest/user'
 	});
 	
 	return User;

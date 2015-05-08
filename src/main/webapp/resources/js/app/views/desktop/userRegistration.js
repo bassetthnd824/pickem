@@ -17,13 +17,16 @@ define([
 		},
 		
 		submitRegistration : function(event) {
-			this.model.save({
+			this.model.set({
 				emailAddress : $('#emailAddress').val(),
 				userPass     : $('#userPass').val(),
 				confirmPass  : $('#confirmPass').val(),
 				firstName    : $('#firstName').val(),
 				lastName     : $('#lastName').val()
-			});
+			}).save();
+			
+			$('nav.navbar').show();
+			window.location.hash = '#game';
 		},
 		
 		resetForm          : function(event) {
