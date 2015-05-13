@@ -3,7 +3,7 @@ package com.curleesoft.pickem.rest.dto;
 import com.curleesoft.pickem.model.User;
 
 
-public class NestedUserDTO {
+public class NestedUserDTO extends AbstractBaseDTO {
 	
 	private Long id;
 	private String emailAddr;
@@ -15,6 +15,8 @@ public class NestedUserDTO {
 	public NestedUserDTO() {}
 	
 	public NestedUserDTO(final User entity) {
+		super(entity);
+		
 		if (entity != null) {
 			this.id = entity.getId();
 			this.emailAddr = entity.getEmailAddr();

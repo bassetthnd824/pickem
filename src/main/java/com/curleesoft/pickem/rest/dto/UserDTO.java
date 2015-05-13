@@ -6,7 +6,7 @@ import java.util.Set;
 import com.curleesoft.pickem.model.User;
 import com.curleesoft.pickem.model.UserGroup;
 
-public class UserDTO {
+public class UserDTO extends AbstractBaseDTO {
 	
 	private Long id;
 	private String emailAddr;
@@ -20,6 +20,8 @@ public class UserDTO {
 	public UserDTO() {}
 	
 	public UserDTO(final User entity) {
+		super(entity);
+		
 		if (entity != null) {
 			this.id = entity.getId();
 			this.emailAddr = entity.getEmailAddr();

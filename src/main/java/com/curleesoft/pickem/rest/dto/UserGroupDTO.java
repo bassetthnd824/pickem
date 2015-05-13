@@ -2,7 +2,7 @@ package com.curleesoft.pickem.rest.dto;
 
 import com.curleesoft.pickem.model.UserGroup;
 
-public class UserGroupDTO {
+public class UserGroupDTO extends AbstractBaseDTO {
 	
 	private Long id;
 	private NestedUserDTO user;
@@ -11,6 +11,8 @@ public class UserGroupDTO {
 	public UserGroupDTO() {}
 	
 	public UserGroupDTO(final UserGroup entity) {
+		super(entity);
+		
 		if (entity != null) {
 			this.id = entity.getId();
 			this.user = new NestedUserDTO(entity.getUser());

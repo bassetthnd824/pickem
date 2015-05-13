@@ -11,10 +11,10 @@ define([
 		},
 		
 		render    : function() {
-			var activeUser = JSON.parse(sessionStorage.getItem('com.curleesoft.pickem.ActiveUser'));
+			var activeUser = JSON.parse(sessionStorage.getItem(config.activeUser));
 			
 			if (activeUser) {
-				sessionStorage.removeItem('com.curleesoft.pickem.ActiveUser');
+				sessionStorage.removeItem(config.activeUser);
 				$.ajax({
 					dataType : 'json',
 					url      : 'rest/logout',
@@ -38,9 +38,23 @@ define([
 			}).save(null, {
 				dataType : 'text',
 				success  : function(model, response, options) {
-					$.getJSON(config.baseUrl + 'rest/user/active', {}, function(data, textStatus, jqXHR) {
-						sessionStorage.setItem('com.curleesoft.pickem.ActiveUser', JSON.stringify(data));
+					$.getJSON(config.baseUrl + 'rest/user/active', {}, function(user, textStatus, jqXHR) {
+						var isManager = false;
+						
+						for (var i = 0; i < user.userGroups.length; i++) {
+							if (user.userGroups[i].group.groupName === 'manager') {
+								isManager = true;
+								break;
+							}
+						}
+						
+						if (!isManager) {
+							$('nav.navbar li.dropdown').hide();
+						}
+						
 						$('nav.navbar').show();
+						sessionStorage.setItem(config.activeUser, JSON.stringify(user));
+						sessionStorage.setItem(config.isManager, isManager);
 						window.location.hash = '#game';
 					});
 				}

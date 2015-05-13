@@ -7,7 +7,9 @@
 				<th>First Name</th>
 				<th>Last Name</th>
 				<th>Email</th>
-				<th>User Groups</th>
+				<th>Last Updated</th>
+				<th>Created</th>
+				<th>Actions</th>
 			</tr>
 			
 			<% _.each(model.models, function(model) { %>
@@ -15,13 +17,18 @@
 					<td><%=model.get('firstName')%></td>
 					<td><%=model.get('lastName')%></td>
 					<td><%=model.get('emailAddr')%></td>
+					<td><%=new Date(model.get('lastUpdateDate')).toPrettyStringWithoutTime()%></td>
+					<td><%=new Date(model.get('createDate')).toPrettyStringWithoutTime()%></td>
 					<td>
-						<% _.each(model.get('userGroups'), function(userGroup) { %>
-							<%=userGroup.group.groupName%><br/>
-						<% }); %>
+						<button type="button" class="btn btn-small btn-default"><span class="glyphicon glyphicon-pencil"></span></button>
+						<button type="button" class="btn btn-small btn-danger"><span class="glyphicon glyphicon-minus"></span></button>
 					</td>
 				</tr>
 			<% }); %>
 		</table>
+		
+		<div>
+			<button type="button" class="btn btn-small btn-primary"><span class="glyphicon glyphicon-plus"></span></button>
+		</div>
 	</div>
 </div>

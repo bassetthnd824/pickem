@@ -2,7 +2,7 @@ package com.curleesoft.pickem.rest.dto;
 
 import com.curleesoft.pickem.model.Group;
 
-public class NestedGroupDTO {
+public class NestedGroupDTO extends AbstractBaseDTO {
 	
 	private Long id;
 	private String groupName;
@@ -10,6 +10,8 @@ public class NestedGroupDTO {
 	public NestedGroupDTO() {}
 	
 	public NestedGroupDTO(final Group entity) {
+		super(entity);
+		
 		if (entity != null) {
 			this.id = entity.getId();
 			this.groupName = entity.getGroupName();

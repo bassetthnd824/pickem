@@ -1,7 +1,7 @@
 define([ 'underscore', 'backbone' ], function(_, Backbone) {
 
 	var dayNames = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ];
-	var monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+	var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 
 	Date.prototype.toPrettyString = function() {
 		return dayNames[this.getDay()] + " " + this.getDate() + " " + monthNames[this.getMonth()] + " " + this.getFullYear() + " at " + this.getHours().toZeroPaddedString(2) + ":"
@@ -9,7 +9,7 @@ define([ 'underscore', 'backbone' ], function(_, Backbone) {
 	};
 
 	Date.prototype.toPrettyStringWithoutTime = function() {
-		return dayNames[this.getDay()] + " " + this.getDate() + " " + monthNames[this.getMonth()] + " " + this.getFullYear();
+		return this.getDate() + " " + monthNames[this.getMonth()] + " " + this.getFullYear();
 	};
 
 	Date.prototype.toYMD = function() {

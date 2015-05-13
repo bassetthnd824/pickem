@@ -1,7 +1,7 @@
 /**
  * A module for the router of the desktop application
  */
-define("router", [
+define('router', [
 	'jquery',
 	'underscore',
 	'configuration',
@@ -28,7 +28,7 @@ define("router", [
 			MainTemplate) {
 	
 	$(document).ready(new function() {
-		utilities.applyTemplate($('body'), MainTemplate)
+		utilities.applyTemplate($('body'), MainTemplate);
 	})
 	
 	/**
@@ -44,10 +44,30 @@ define("router", [
 			Backbone.history.start();
 		},
 		
+		execute          : function(callback, args) {
+			var managerOpts = ['#users', '#themes', '#teams', '#venues', '#rivalries', '#seasons', '#seasonWeeks', '#matchups'];
+			var activeUser = JSON.parse(sessionStorage.getItem(config.activeUser));
+			var isManager = sessionStorage.getItem(config.isManager);
+			var isManagerOption = managerOpts.indexOf(window.location.hash) > -1;
+			
+			if (activeUser) {
+				if (!isManagerOption || (isManagerOption && isManager)) {
+					if (callback) {
+						callback.apply(this, args);
+					}
+				} else {
+					this.main.apply(this, args);
+				}
+			} else {
+				this.login.apply(this, args);
+			}
+		},
+		
 		routes           : {
 			''         : 'login',
 			'register' : 'userRegistration',
-			'game'     : 'main'
+			'game'     : 'main',
+			'users'    : 'users'
 		},
 		
 		login             : function() {
@@ -69,6 +89,10 @@ define("router", [
 		},
 		
 		main             : function() {
+			$('#content').empty().append('This is the main screen');
+		},
+		
+		users            : function() {
 			var users = new Users();
 			var usersView = new UsersView({
 				model : users,

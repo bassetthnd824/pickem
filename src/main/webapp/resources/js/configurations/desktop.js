@@ -33,5 +33,7 @@ require(['initializer', 'router'], function() {
 });
 
 define('configuration', {
-	baseUrl : ''
+	baseUrl    : '',
+	activeUser : 'com.curleesoft.pickem.ActiveUser',
+	isManager  : 'com.curleesoft.pickem.IsManager'
 });
