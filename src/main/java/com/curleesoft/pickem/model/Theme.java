@@ -21,7 +21,7 @@ import com.curleesoft.pickem.model.constraints.AssertThemePathDoesNotBeginWithSl
  */
 @Entity
 @Table(name = "PCKM_THEME")
-public class Theme extends AbstractBaseEntity implements Serializable {
+public class Theme extends AbstractBaseEntity implements Serializable, PickemEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;

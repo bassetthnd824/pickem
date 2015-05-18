@@ -2,7 +2,10 @@ package com.curleesoft.pickem.rest.dto;
 
 import java.util.Date;
 
+import javax.persistence.EntityManager;
+
 import com.curleesoft.pickem.model.AbstractBaseEntity;
+import com.curleesoft.pickem.model.PickemEntity;
 
 public abstract class AbstractBaseDTO {
 	
@@ -23,7 +26,17 @@ public abstract class AbstractBaseDTO {
 			this.sysModCount = entity.getSysModCount();
 		}
 	}
-
+	
+	public <E extends PickemEntity> E fromDTO(E entity, EntityManager entityManager) {
+		entity.setLastUpdateDate(this.lastUpdateDate);
+		entity.setLastUpdateUser(this.lastUpdateUser);
+		entity.setCreateDate(this.createDate);
+		entity.setCreateUser(this.createUser);
+		entity.setSysModCount(this.sysModCount);
+		
+		return entity;
+	}
+	
 	public Date getLastUpdateDate() {
 		return lastUpdateDate;
 	}

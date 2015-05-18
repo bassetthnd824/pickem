@@ -23,10 +23,30 @@ define([
 				confirmPass  : $('#confirmPass').val(),
 				firstName    : $('#firstName').val(),
 				lastName     : $('#lastName').val()
-			}).save();
-			
-			$('nav.navbar').show();
-			window.location.hash = '#game';
+			}).save(null, {
+				dataType : 'text',
+				success  : function(model, response, options) {
+					$.getJSON(config.baseUrl + 'rest/user/active', {}, function(user, textStatus, jqXHR) {
+						var isManager = false;
+						
+						for (var i = 0; i < user.userGroups.length; i++) {
+							if (user.userGroups[i].group.groupName === 'manager') {
+								isManager = true;
+								break;
+							}
+						}
+						
+						if (!isManager) {
+							$('nav.navbar li.dropdown').hide();
+						}
+						
+						$('nav.navbar').show();
+						sessionStorage.setItem(config.activeUser, JSON.stringify(user));
+						sessionStorage.setItem(config.isManager, isManager);
+						window.location.hash = '#game';
+					});
+				}
+			});
 		},
 		
 		resetForm          : function(event) {

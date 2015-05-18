@@ -28,7 +28,7 @@ import com.curleesoft.pickem.model.constraints.ValidMatchupDate;
 @Table(name = "PCKM_MATCHUP")
 @ValidMatchupDate
 @AssertMatchupTeamsNotEqual
-public class Matchup extends AbstractBaseEntity implements Serializable {
+public class Matchup extends AbstractBaseEntity implements Serializable, PickemEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;

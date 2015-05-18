@@ -18,7 +18,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "PCKM_USER_GROUP")
-public class UserGroup extends AbstractBaseEntity implements Serializable {
+public class UserGroup extends AbstractBaseEntity implements Serializable, PickemEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;

@@ -1,7 +1,10 @@
 package com.curleesoft.pickem.rest.dto;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+
+import javax.persistence.EntityManager;
 
 import com.curleesoft.pickem.model.User;
 import com.curleesoft.pickem.model.UserGroup;
@@ -36,6 +39,76 @@ public class UserDTO extends AbstractBaseDTO {
 		}
 	}
 	
+	public User fromDTO(User entity, EntityManager entityManager) {
+		if (entity == null) {
+			entity = new User();
+		}
+		
+		entity = super.fromDTO(entity, entityManager);
+		
+		Iterator<UserGroup> it = entity.getUserGroups().iterator();
+		
+		while (it.hasNext()) {
+			boolean found = false;
+			UserGroup userGroup = it.next();
+			Iterator<UserGroupDTO> itDto = this.getUserGroups().iterator();
+			
+			while (itDto.hasNext()) {
+				UserGroupDTO userGroupDTO = itDto.next();
+				
+				if (userGroupDTO.getId().equals(userGroup.getId())) {
+					found = true;
+					break;
+				}
+			}
+			
+			if (found == false) {
+				it.remove();
+			}
+		}
+		
+		Iterator<UserGroupDTO> itDto = this.getUserGroups().iterator();
+		
+		while (itDto.hasNext()) {
+			boolean found = false;
+			UserGroupDTO userGroupDTO = itDto.next();
+			it = entity.getUserGroups().iterator();
+			
+			while (it.hasNext()) {
+				UserGroup userGroup = it.next();
+				
+				if (userGroupDTO.getId().equals(userGroup.getId())) {
+					found = true;
+					break;
+				}
+			}
+			
+			if (found == false) {
+				Iterator<UserGroup> resultIter = entityManager.createQuery("SELECT DISTINCT u FROM UserGroup u", UserGroup.class).getResultList().iterator();
+				
+				while (resultIter.hasNext()) {
+					UserGroup result = resultIter.next();
+					
+					if (result.getId().equals(userGroupDTO.getId())) {
+						entity.getUserGroups().add(result);
+						break;
+					}
+				}
+			}
+		}
+		
+		entity.setEmailAddr(this.emailAddr);
+		entity.setFirstName(this.firstName);
+		entity.setLastName(this.lastName);
+		
+//		if (this.theme != null) {
+//			entity.setTheme(this.theme.fromDTO(entity.getTheme(), entityManager));
+//		}
+		
+		entity = entityManager.merge(entity);
+		return entity;
+	}
+
 	public Long getId() {
 		return id;
 	}

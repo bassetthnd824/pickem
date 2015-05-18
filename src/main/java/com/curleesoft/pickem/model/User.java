@@ -28,7 +28,7 @@ import com.curleesoft.pickem.model.constraints.AssertUserPassProperlyFormed;
 @Entity
 @Table(name = "PCKM_USER")
 @AssertUserHasAtLeastOneGroup
-public class User extends AbstractBaseEntity implements Serializable {
+public class User extends AbstractBaseEntity implements Serializable, PickemEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;

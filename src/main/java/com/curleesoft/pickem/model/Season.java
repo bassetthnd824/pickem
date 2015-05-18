@@ -29,7 +29,7 @@ import com.curleesoft.pickem.model.constraints.ValidSeasonEndDate;
 @NamedNativeQuery(name = "getCurrentSeason", query = "select * from pckm_season where sysdate between add_months(begin_date, -5) and add_months(end_date, 1)", resultClass = Season.class)
 @ValidSeasonBeginDate
 @ValidSeasonEndDate
-public class Season extends AbstractBaseEntity implements Serializable {
+public class Season extends AbstractBaseEntity implements Serializable, PickemEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;

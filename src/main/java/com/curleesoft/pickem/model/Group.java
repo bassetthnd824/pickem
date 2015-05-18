@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "PCKM_GROUP")
-public class Group extends AbstractBaseEntity implements Serializable {
+public class Group extends AbstractBaseEntity implements Serializable, PickemEntity {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;
