@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 
 import com.curleesoft.pickem.model.User;
 import com.curleesoft.pickem.model.UserGroup;
+import com.curleesoft.pickem.model.UserPick;
 
 public class UserDTO extends AbstractBaseDTO implements DataTransferObject {
 	
@@ -16,7 +17,7 @@ public class UserDTO extends AbstractBaseDTO implements DataTransferObject {
 	private String userId;
 	private ThemeDTO theme;
 	private Set<UserGroupDTO> userGroups;
-	//private Set<UserPickDTO> userPicks;
+	private Set<UserPickDTO> userPicks;
 	
 	public UserDTO() {}
 	
@@ -30,9 +31,14 @@ public class UserDTO extends AbstractBaseDTO implements DataTransferObject {
 			this.userId = entity.getUserId();
 			this.theme = new ThemeDTO(entity.getTheme());
 			this.userGroups = new HashSet<UserGroupDTO>();
+			this.userPicks = new HashSet<UserPickDTO>();
 			
 			for (UserGroup userGroup : entity.getUserGroups()) {
 				this.userGroups.add(new UserGroupDTO(userGroup));
+			}
+			
+			for (UserPick userPick : entity.getUserPicks()) {
+				this.userPicks.add(new UserPickDTO(userPick));
 			}
 		}
 	}
@@ -93,6 +99,7 @@ public class UserDTO extends AbstractBaseDTO implements DataTransferObject {
 		entity = super.fromDTO(entity, entityManager);
 		
 		populateEntityCollection(entity, UserGroup.class, "userGroups", entityManager);
+		populateEntityCollection(entity, UserPick.class, "userPicks", entityManager);
 		
 		entity.setEmailAddr(this.emailAddr);
 		entity.setFirstName(this.firstName);
