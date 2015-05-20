@@ -1,11 +1,11 @@
 package com.curleesoft.pickem.rest.dto;
 
+import javax.persistence.EntityManager;
+
 import com.curleesoft.pickem.model.User;
 
-
-public class NestedUserDTO extends AbstractBaseDTO {
+public class NestedUserDTO extends AbstractBaseDTO implements DataTransferObject {
 	
-	private Long id;
 	private String emailAddr;
 	private String firstName;
 	private String lastName;
@@ -18,20 +18,11 @@ public class NestedUserDTO extends AbstractBaseDTO {
 		super(entity);
 		
 		if (entity != null) {
-			this.id = entity.getId();
 			this.emailAddr = entity.getEmailAddr();
 			this.firstName = entity.getFirstName();
 			this.lastName = entity.getLastName();
 			this.userId = entity.getUserId();
 		}
-	}
-	
-	public Long getId() {
-		return id;
-	}
-	
-	public void setId(Long id) {
-		this.id = id;
 	}
 	
 	public String getEmailAddr() {
@@ -66,4 +57,23 @@ public class NestedUserDTO extends AbstractBaseDTO {
 		this.userId = userId;
 	}
 	
+	public User fromDTO(User entity, EntityManager entityManager) {
+		if (entity == null) {
+			entity = new User();
+		}
+		
+		entity = super.fromDTO(entity, entityManager);
+		
+		entity.setEmailAddr(this.emailAddr);
+		entity.setFirstName(this.firstName);
+		entity.setLastName(this.lastName);
+		entity.setUserId(this.userId);
+		
+//		if (this.theme != null) {
+//			entity.setTheme(this.theme.fromDTO(entity.getTheme(), entityManager));
+//		}
+		
+		entity = entityManager.merge(entity);
+		return entity;
+	}
 }

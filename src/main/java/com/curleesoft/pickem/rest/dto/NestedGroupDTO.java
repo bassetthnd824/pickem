@@ -1,10 +1,11 @@
 package com.curleesoft.pickem.rest.dto;
 
+import javax.persistence.EntityManager;
+
 import com.curleesoft.pickem.model.Group;
 
-public class NestedGroupDTO extends AbstractBaseDTO {
+public class NestedGroupDTO extends AbstractBaseDTO implements DataTransferObject {
 	
-	private Long id;
 	private String groupName;
 	
 	public NestedGroupDTO() {}
@@ -13,17 +14,8 @@ public class NestedGroupDTO extends AbstractBaseDTO {
 		super(entity);
 		
 		if (entity != null) {
-			this.id = entity.getId();
 			this.groupName = entity.getGroupName();
 		}
-	}
-	
-	public Long getId() {
-		return id;
-	}
-	
-	public void setId(Long id) {
-		this.id = id;
 	}
 	
 	public String getGroupName() {
@@ -33,5 +25,17 @@ public class NestedGroupDTO extends AbstractBaseDTO {
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
 	}
-
+	
+	public Group fromDTO(Group entity, EntityManager entityManager) {
+		if (entity == null) {
+			entity = new Group();
+		}
+		
+		entity = super.fromDTO(entity, entityManager);
+		
+		entity.setGroupName(this.groupName);
+		
+		entity = entityManager.merge(entity);
+		return entity;
+	}
 }

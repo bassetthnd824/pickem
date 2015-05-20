@@ -31,9 +31,9 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.curleesoft.pickem.model.PickemEntity;
-import com.curleesoft.pickem.rest.dto.AbstractBaseDTO;
+import com.curleesoft.pickem.rest.dto.DataTransferObject;
 
-public abstract class BaseEntityService<D extends AbstractBaseDTO, E extends PickemEntity> {
+public abstract class BaseEntityService<D extends DataTransferObject, E extends PickemEntity> {
 	
 	@Inject
 	private EntityManager entityManager;
