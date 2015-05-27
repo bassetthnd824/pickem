@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 import com.curleesoft.pickem.model.Matchup;
 import com.curleesoft.pickem.model.UserPick;
 
-public class MatchupDTO extends AbstractBaseDTO implements DataTransferObject {
+public class MatchupDTO extends AbstractBaseDTO<Matchup> implements DataTransferObject<Matchup> {
 	
 	private Long awayTeamScore;
 	private Long homeTeamScore;

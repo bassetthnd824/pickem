@@ -9,7 +9,7 @@ import com.curleesoft.pickem.model.User;
 import com.curleesoft.pickem.model.UserGroup;
 import com.curleesoft.pickem.model.UserPick;
 
-public class UserDTO extends AbstractBaseDTO implements DataTransferObject {
+public class UserDTO extends AbstractBaseDTO<User> implements DataTransferObject<User> {
 	
 	private String emailAddr;
 	private String firstName;

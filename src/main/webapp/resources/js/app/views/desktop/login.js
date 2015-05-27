@@ -15,6 +15,7 @@ define([
 			
 			if (activeUser) {
 				sessionStorage.removeItem(config.activeUser);
+				sessionStorage.removeItem(config.isManager);
 				$.ajax({
 					dataType : 'json',
 					url      : 'rest/logout',
@@ -37,6 +38,7 @@ define([
 				password : $('#password').val(),
 			}).save(null, {
 				dataType : 'text',
+				
 				success  : function(model, response, options) {
 					$.getJSON(config.baseUrl + 'rest/user/active', {}, function(user, textStatus, jqXHR) {
 						var isManager = false;
@@ -55,8 +57,12 @@ define([
 						$('nav.navbar').show();
 						sessionStorage.setItem(config.activeUser, JSON.stringify(user));
 						sessionStorage.setItem(config.isManager, isManager);
-						window.location.hash = '#game';
+						require('router').navigate('game', true);
 					});
+				},
+				
+				error    : function(model, response, options) {
+					alert('login failed');
 				}
 			});
 		},

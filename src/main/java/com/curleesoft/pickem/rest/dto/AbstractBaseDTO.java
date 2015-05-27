@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.curleesoft.pickem.model.PickemEntity;
 
-public abstract class AbstractBaseDTO implements DataTransferObject {
+public abstract class AbstractBaseDTO<E extends PickemEntity> implements DataTransferObject<E> {
 	
 	private Long id;
 	private Date lastUpdateDate;
@@ -38,7 +38,7 @@ public abstract class AbstractBaseDTO implements DataTransferObject {
 		}
 	}
 	
-	public <E extends PickemEntity> E fromDTO(E entity, EntityManager entityManager) {
+	public E fromDTO(E entity, EntityManager entityManager) {
 		entity.setId(this.id);
 		entity.setLastUpdateDate(this.lastUpdateDate);
 		entity.setLastUpdateUser(this.lastUpdateUser);
@@ -98,65 +98,74 @@ public abstract class AbstractBaseDTO implements DataTransferObject {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <E1 extends PickemEntity, E2 extends PickemEntity, D extends AbstractBaseDTO> void populateEntityCollection(E1 entity, Class<E2> collectionClass, String collectionName, EntityManager entityManager) {
+	protected <E2 extends PickemEntity, D extends AbstractBaseDTO<E>> void populateEntityCollection(E entity, Class<E2> collectionClass, String collectionName, EntityManager entityManager) {
 		try {
 			String methodName = "get" + StringUtils.capitalize(collectionName);
 			Method m1 = entity.getClass().getMethod(methodName);
 			Method m2 = this.getClass().getMethod(methodName);
+			Collection<E2> col1 = (Collection<E2>) m1.invoke(entity);
+			Iterator<E2> it1 = null;
 			
-			Iterator<E2> it1 = ((Collection<E2>) m1.invoke(entity)).iterator();
-			
-			while (it1.hasNext()) {
-				boolean found = false;
-				E2 setEntity = it1.next();
-				Iterator<D> it2 = ((Collection<D>) m2.invoke(this)).iterator();
+			if (col1 != null) {
+				it1 = col1.iterator();
 				
-				while (it2.hasNext()) {
-					D dto = it2.next();
+				while (it1.hasNext()) {
+					boolean found = false;
+					E2 setEntity = it1.next();
+					Iterator<D> it2 = ((Collection<D>) m2.invoke(this)).iterator();
 					
-					if (dto.getId().equals(setEntity.getId())) {
-						found = true;
-						break;
+					while (it2.hasNext()) {
+						D dto = it2.next();
+						
+						if (dto.getId().equals(setEntity.getId())) {
+							found = true;
+							break;
+						}
 					}
-				}
-				
-				if (found == false) {
-					it1.remove();
+					
+					if (found == false) {
+						it1.remove();
+					}
 				}
 			}
 			
-			Iterator<D> it2 = ((Collection<D>) m2.invoke(this)).iterator();
+			Collection<D> col2 = (Collection<D>) m2.invoke(this);
+			Iterator<D> it2 = null;
 			
-			while (it2.hasNext()) {
-				boolean found = false;
-				D dto = it2.next();
-				it1 = ((Collection<E2>) m1.invoke(entity)).iterator();
+			if (col2 != null) {
+				it2 = col2.iterator();
 				
-				while (it1.hasNext()) {
-					E2 setEntity = it1.next();
+				while (it2.hasNext()) {
+					boolean found = false;
+					D dto = it2.next();
+					it1 = ((Collection<E2>) m1.invoke(entity)).iterator();
 					
-					if (dto.getId().equals(setEntity.getId())) {
-						found = true;
-						break;
-					}
-				}
-				
-				if (found == false) {
-					final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-					final CriteriaQuery<E2> criteriaQuery = criteriaBuilder.createQuery(collectionClass);
-					Root<E2> root = criteriaQuery.from(collectionClass);
-					criteriaQuery.select(criteriaQuery.getSelection()).distinct(true);
-					criteriaQuery.orderBy(criteriaBuilder.asc(root.get("id")));
-					TypedQuery<E2> query = entityManager.createQuery(criteriaQuery);
-					
-					Iterator<E2> resultIter = query.getResultList().iterator();
-					
-					while (resultIter.hasNext()) {
-						E2 result = resultIter.next();
+					while (it1.hasNext()) {
+						E2 setEntity = it1.next();
 						
-						if (result.getId().equals(dto.getId())) {
-							((Collection<E2>) m1.invoke(entity)).add(result);
+						if (dto.getId().equals(setEntity.getId())) {
+							found = true;
 							break;
+						}
+					}
+					
+					if (found == false) {
+						final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+						final CriteriaQuery<E2> criteriaQuery = criteriaBuilder.createQuery(collectionClass);
+						Root<E2> root = criteriaQuery.from(collectionClass);
+						criteriaQuery.select(criteriaQuery.getSelection()).distinct(true);
+						criteriaQuery.orderBy(criteriaBuilder.asc(root.get("id")));
+						TypedQuery<E2> query = entityManager.createQuery(criteriaQuery);
+						
+						Iterator<E2> resultIter = query.getResultList().iterator();
+						
+						while (resultIter.hasNext()) {
+							E2 result = resultIter.next();
+							
+							if (result.getId().equals(dto.getId())) {
+								((Collection<E2>) m1.invoke(entity)).add(result);
+								break;
+							}
 						}
 					}
 				}

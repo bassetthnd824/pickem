@@ -4,7 +4,7 @@ import javax.persistence.EntityManager;
 
 import com.curleesoft.pickem.model.Team;
 
-public class NestedTeamDTO extends AbstractBaseDTO implements DataTransferObject {
+public class NestedTeamDTO extends AbstractBaseDTO<Team> implements DataTransferObject<Team> {
 	
 	private boolean conferenceMember;
 	private String squadName;

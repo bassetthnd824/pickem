@@ -4,7 +4,7 @@ import javax.persistence.EntityManager;
 
 import com.curleesoft.pickem.model.Rivalry;
 
-public class RivalryDTO extends AbstractBaseDTO implements DataTransferObject {
+public class RivalryDTO extends AbstractBaseDTO<Rivalry> implements DataTransferObject<Rivalry> {
 	
 	private String rivalryName;
 	private NestedTeamDTO team1;

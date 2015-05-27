@@ -4,7 +4,7 @@ import javax.persistence.EntityManager;
 
 import com.curleesoft.pickem.model.User;
 
-public class NestedUserDTO extends AbstractBaseDTO implements DataTransferObject {
+public class NestedUserDTO extends AbstractBaseDTO<User> implements DataTransferObject<User> {
 	
 	private String emailAddr;
 	private String firstName;

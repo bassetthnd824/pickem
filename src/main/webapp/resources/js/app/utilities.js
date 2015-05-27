@@ -9,7 +9,7 @@ define([ 'underscore', 'backbone' ], function(_, Backbone) {
 	};
 
 	Date.prototype.toPrettyStringWithoutTime = function() {
-		return this.getDate() + " " + monthNames[this.getMonth()] + " " + this.getFullYear();
+		return this.getFullYear() + '-' + (this.getMonth() + 1).toZeroPaddedString(2) + '-' + this.getDate().toZeroPaddedString(2);
 	};
 
 	Date.prototype.toYMD = function() {

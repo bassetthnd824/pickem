@@ -17,3 +17,10 @@
 .table > thead > tr > th {
   vertical-align: middle;
 }
+h2.pull-left + div.pull-right {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+.form-header {
+  margin-bottom: 20px;
+}

@@ -1,12 +1,12 @@
 <div class="row">
 	<div class="col-sm-8 col-sm-offset-2">
-		<h2>Users</h2>
+		<h2>Themes</h2>
 		
 		<table class="table table-hover">
 			<tr>
-				<th>First Name</th>
-				<th>Last Name</th>
-				<th>Email</th>
+				<th>Theme Name</th>
+				<th>Theme Path</th>
+				<th>Active</th>
 				<th>Last Updated</th>
 				<th>Created</th>
 				<th>Actions</th>
@@ -14,9 +14,9 @@
 			
 			<% _.each(model.models, function(model) { %>
 				<tr>
-					<td><%=model.get('firstName')%></td>
-					<td><%=model.get('lastName')%></td>
-					<td><%=model.get('emailAddr')%></td>
+					<td><%=model.get('themeName')%></td>
+					<td><%=model.get('themePath')%></td>
+					<td><%=(model.get('active')) ? 'Yes' : 'No'%></td>
 					<td><%=new Date(model.get('lastUpdateDate')).toPrettyStringWithoutTime()%></td>
 					<td><%=new Date(model.get('createDate')).toPrettyStringWithoutTime()%></td>
 					<td>

@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 import com.curleesoft.pickem.model.Matchup;
 import com.curleesoft.pickem.model.SeasonWeek;
 
-public class NestedSeasonWeekDTO extends AbstractBaseDTO implements DataTransferObject {
+public class NestedSeasonWeekDTO extends AbstractBaseDTO<SeasonWeek> implements DataTransferObject<SeasonWeek> {
 	
 	private Date beginDate;
 	private Date endDate;

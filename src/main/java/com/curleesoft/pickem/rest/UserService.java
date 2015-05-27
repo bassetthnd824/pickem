@@ -23,8 +23,8 @@ public class UserService extends BaseEntityService<UserDTO, User> {
 	@Path("active")
 	@Produces(MediaType.APPLICATION_JSON)
 	public UserDTO getActiveUser(@Context HttpServletRequest request) {
-		User user = (User) request.getSession().getAttribute("com.curleesoft.pickem.ActiveUser");
-		return new UserDTO(user);
+		UserDTO user = (UserDTO) request.getSession().getAttribute("com.curleesoft.pickem.ActiveUser");
+		return user;
 	}
 	
 

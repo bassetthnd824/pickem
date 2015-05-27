@@ -9,7 +9,7 @@ import com.curleesoft.pickem.model.Matchup;
 import com.curleesoft.pickem.model.Rivalry;
 import com.curleesoft.pickem.model.Team;
 
-public class TeamDTO extends AbstractBaseDTO implements DataTransferObject {
+public class TeamDTO extends AbstractBaseDTO<Team> implements DataTransferObject<Team> {
 	
 	private boolean conferenceMember;
 	private String squadName;

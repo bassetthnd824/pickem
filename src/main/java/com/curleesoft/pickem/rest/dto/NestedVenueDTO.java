@@ -4,7 +4,7 @@ import javax.persistence.EntityManager;
 
 import com.curleesoft.pickem.model.Venue;
 
-public class NestedVenueDTO extends AbstractBaseDTO implements DataTransferObject {
+public class NestedVenueDTO extends AbstractBaseDTO<Venue> implements DataTransferObject<Venue> {
 	
 	private String cityState;
 	private String venueName;

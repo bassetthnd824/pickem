@@ -7,7 +7,7 @@ import javax.persistence.EntityManager;
 import com.curleesoft.pickem.model.Group;
 import com.curleesoft.pickem.model.UserGroup;
 
-public class GroupDTO extends AbstractBaseDTO implements DataTransferObject {
+public class GroupDTO extends AbstractBaseDTO<Group> implements DataTransferObject<Group> {
 	
 	private String groupName;
 	private Set<UserGroupDTO> userGroups;

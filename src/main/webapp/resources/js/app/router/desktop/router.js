@@ -7,10 +7,17 @@ define('router', [
 	'configuration',
 	'utilities',
 	'app/models/login',
+	'app/models/season',
+	'app/models/theme',
 	'app/models/userRegistration',
 	'app/models/user',
+	'app/collections/seasons',
+	'app/collections/themes',
 	'app/collections/users',
 	'app/views/desktop/login',
+	'app/views/desktop/season',
+	'app/views/desktop/seasons',
+	'app/views/desktop/themes',
 	'app/views/desktop/userRegistration',
 	'app/views/desktop/users',
 	'text!../templates/desktop/main.html'
@@ -19,10 +26,17 @@ define('router', [
 			config,
 			utilities,
 			Login,
+			Season,
+			Theme,
 			UserRegistration,
 			User,
+			Seasons,
+			Themes,
 			Users,
 			LoginView,
+			SeasonView,
+			SeasonsView,
+			ThemesView,
 			UserRegistrationView,
 			UsersView,
 			MainTemplate) {
@@ -59,15 +73,22 @@ define('router', [
 					this.main.apply(this, args);
 				}
 			} else {
-				this.login.apply(this, args);
+				if ('#register' !== window.location.hash) {
+					this.login.apply(this, args);
+				} else {
+					callback.apply(this, args);
+				}
 			}
 		},
 		
 		routes           : {
-			''         : 'login',
-			'register' : 'userRegistration',
-			'game'     : 'main',
-			'users'    : 'users'
+			''           : 'login',
+			'game'       : 'main',
+			'register'   : 'userRegistration',
+			'season/:id' : 'season',
+			'seasons'    : 'seasons',
+			'themes'     : 'themes',
+			'users'      : 'users'
 		},
 		
 		login             : function() {
@@ -79,6 +100,10 @@ define('router', [
 			utilities.viewManager.showView(loginView);
 		},
 		
+		main             : function() {
+			$('#content').empty().append('This is the main screen');
+		},
+		
 		userRegistration : function() {
 			var userRegistrationView = new UserRegistrationView({
 				model : new UserRegistration(),
@@ -88,8 +113,71 @@ define('router', [
 			utilities.viewManager.showView(userRegistrationView);
 		},
 		
-		main             : function() {
-			$('#content').empty().append('This is the main screen');
+		season            : function(id) {
+			var model = null;
+			
+			if (id === 'new') {
+				model = new Season();
+			} else {
+				model = new Season({
+					id : id
+				});
+			}
+			
+			var seasonView = new SeasonView({
+				model : model,
+				el    : $("#content")
+			});
+			
+			model.on("change", function() {
+				utilities.viewManager.showView(seasonView);
+			});
+			
+			if (model.isNew()) {
+				seasonView.render();
+			} else {
+				model.fetch({
+					error : function() {
+						utilities.displayAlert("Failed to retrieve the season from the Pickem server.");
+					}
+				});
+			}
+		},
+		
+		seasons           : function() {
+			var seasons = new Seasons();
+			var seasonsView = new SeasonsView({
+				model : seasons,
+				el    : $('#content')
+			});
+			
+			seasons.on('reset', function() {
+				utilities.viewManager.showView(seasonsView);
+				
+			}).fetch({
+				reset : true,
+				error : function() {
+					utilities.displayAlert('Failed to retrieve seasons from the Pickem server.');
+				}
+			});
+		},
+		
+		themes           : function() {
+			var themes = new Themes();
+			var themesView = new ThemesView({
+				model : themes,
+				el    : $('#content')
+			});
+			
+			themes.on('reset', function() {
+				utilities.viewManager.showView(themesView);
+				
+			}).fetch({
+				reset : true,
+				error : function() {
+					utilities.displayAlert('Failed to retrieve themes from the Pickem server.');
+				}
+			});
 		},
 		
 		users            : function() {

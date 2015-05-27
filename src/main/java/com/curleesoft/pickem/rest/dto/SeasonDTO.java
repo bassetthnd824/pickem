@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 import com.curleesoft.pickem.model.Season;
 import com.curleesoft.pickem.model.SeasonWeek;
 
-public class SeasonDTO extends AbstractBaseDTO implements DataTransferObject {
+public class SeasonDTO extends AbstractBaseDTO<Season> implements DataTransferObject<Season> {
 	
 	private Date beginDate;
 	private Date endDate;
@@ -78,8 +78,6 @@ public class SeasonDTO extends AbstractBaseDTO implements DataTransferObject {
 		entity.setEndDate(this.endDate);
 		entity.setSeason(this.season);
 		
-		entity = entityManager.merge(entity);
 		return entity;
-
 	}
 }

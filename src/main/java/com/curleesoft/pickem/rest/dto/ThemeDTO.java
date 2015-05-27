@@ -4,7 +4,7 @@ import javax.persistence.EntityManager;
 
 import com.curleesoft.pickem.model.Theme;
 
-public class ThemeDTO extends AbstractBaseDTO implements DataTransferObject {
+public class ThemeDTO extends AbstractBaseDTO<Theme> implements DataTransferObject<Theme> {
 	
 	private boolean active;
 	private String themeName;

@@ -16,6 +16,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import com.curleesoft.pickem.model.User;
 import com.curleesoft.pickem.rest.dto.Login;
+import com.curleesoft.pickem.rest.dto.UserDTO;
 import com.curleesoft.pickem.util.Globals;
 
 @Stateless
@@ -37,7 +38,7 @@ public class LoginService {
 		
 		User user = entityManager.createQuery("Select u from User u where u.userId = :userId", User.class).setParameter("userId", login.getUsername()).getSingleResult();
 		HttpSession session = request.getSession();
-		session.setAttribute(Globals.ACTIVE_USER, user);
+		session.setAttribute(Globals.ACTIVE_USER, new UserDTO(user));
 		
 		return Response.created(UriBuilder.fromResource(UserService.class).path(String.valueOf(user.getId())).build()).build();
 	}

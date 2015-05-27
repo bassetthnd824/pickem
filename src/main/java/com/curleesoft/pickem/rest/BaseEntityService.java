@@ -14,6 +14,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -31,9 +32,11 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.curleesoft.pickem.model.PickemEntity;
-import com.curleesoft.pickem.rest.dto.DataTransferObject;
+import com.curleesoft.pickem.rest.dto.AbstractBaseDTO;
+import com.curleesoft.pickem.rest.dto.UserDTO;
+import com.curleesoft.pickem.util.Globals;
 
-public abstract class BaseEntityService<D extends DataTransferObject, E extends PickemEntity> {
+public abstract class BaseEntityService<D extends AbstractBaseDTO<E>, E extends PickemEntity> {
 	
 	@Inject
 	private EntityManager entityManager;
@@ -50,8 +53,11 @@ public abstract class BaseEntityService<D extends DataTransferObject, E extends 
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response create(D dto) {
+	public Response create(@Context HttpServletRequest request, D dto) {
 		E entity = dto.fromDTO(null, entityManager);
+		UserDTO activeUser = (UserDTO) request.getSession().getAttribute(Globals.ACTIVE_USER);
+		entity.setCreateUser(activeUser.getUserId());
+		entity.setLastUpdateUser(activeUser.getUserId());
 		entityManager.persist(entity);
 		return Response.created(UriBuilder.fromResource(this.getClass()).path(String.valueOf(entity.getId())).build()).build();
 	}
@@ -72,10 +78,12 @@ public abstract class BaseEntityService<D extends DataTransferObject, E extends 
 	@PUT
 	@Path("/{id:[0-9][0-9]*}")
 	@Consumes("application/json")
-	public Response update(@PathParam("id") Long id, D dto) {
+	public Response update(@Context HttpServletRequest request, @PathParam("id") Long id, D dto) {
 		E entity = entityManager.find(entityClass, id);
 		
 		entity = dto.fromDTO(entity, entityManager);
+		UserDTO activeUser = (UserDTO) request.getSession().getAttribute(Globals.ACTIVE_USER);
+		entity.setLastUpdateUser(activeUser.getUserId());
 		
 		try {
 			entity = entityManager.merge(entity);
@@ -83,7 +91,7 @@ public abstract class BaseEntityService<D extends DataTransferObject, E extends 
 			return Response.status(Response.Status.CONFLICT).entity(e.getEntity()).build();
 		}
 		
-		return Response.noContent().build();
+		return Response.ok(entity).build();
 	}
 
 	@GET

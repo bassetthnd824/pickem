@@ -4,7 +4,7 @@ import javax.persistence.EntityManager;
 
 import com.curleesoft.pickem.model.Group;
 
-public class NestedGroupDTO extends AbstractBaseDTO implements DataTransferObject {
+public class NestedGroupDTO extends AbstractBaseDTO<Group> implements DataTransferObject<Group> {
 	
 	private String groupName;
 	

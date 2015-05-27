@@ -6,7 +6,7 @@ import javax.persistence.EntityManager;
 
 import com.curleesoft.pickem.model.PickemEntity;
 
-public interface DataTransferObject {
+public interface DataTransferObject<E extends PickemEntity> {
 	
 	public Long getId();
 	public void setId(Long id);
@@ -26,5 +26,5 @@ public interface DataTransferObject {
 	public Long getSysModCount();
 	public void setSysModCount(Long sysModCount);
 	
-	public <E extends PickemEntity> E fromDTO(E entity, EntityManager entityManager);
+	public E fromDTO(E entity, EntityManager entityManager);
 }

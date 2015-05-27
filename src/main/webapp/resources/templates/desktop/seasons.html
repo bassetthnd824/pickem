@@ -1,0 +1,33 @@
+<div class="row">
+	<div class="col-sm-8 col-sm-offset-2">
+		<h2>Seasons</h2>
+		
+		<table class="table table-hover">
+			<tr>
+				<th>Season</th>
+				<th>Begin Date</th>
+				<th>End Date</th>
+				<th>Last Updated</th>
+				<th>Created</th>
+				<th>Actions</th>
+			</tr>
+			
+			<% _.each(model.models, function(model) { %>
+				<tr>
+					<td><%=model.get('season')%></td>
+					<td><%=model.get('beginDate')%></td>
+					<td><%=model.get('endDate')%></td>
+					<td><%=new Date(model.get('lastUpdateDate')).toPrettyStringWithoutTime()%></td>
+					<td><%=new Date(model.get('createDate')).toPrettyStringWithoutTime()%></td>
+					<td>
+						<button type="button" class="btn btn-small btn-default edit" data-id="<%=model.get('id')%>"><span class="glyphicon glyphicon-pencil"></span></button>
+					</td>
+				</tr>
+			<% }); %>
+		</table>
+		
+		<div>
+			<button type="button" class="btn btn-small btn-primary add"><span class="glyphicon glyphicon-plus"></span></button>
+		</div>
+	</div>
+</div>

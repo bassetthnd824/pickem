@@ -4,7 +4,7 @@ import javax.persistence.EntityManager;
 
 import com.curleesoft.pickem.model.UserPick;
 
-public class UserPickDTO extends AbstractBaseDTO implements DataTransferObject {
+public class UserPickDTO extends AbstractBaseDTO<UserPick> implements DataTransferObject<UserPick> {
 	
 	private Long rank;
 	private NestedTeamDTO pickedTeam;

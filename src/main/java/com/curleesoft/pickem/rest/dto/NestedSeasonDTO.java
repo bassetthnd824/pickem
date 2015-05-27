@@ -6,7 +6,7 @@ import javax.persistence.EntityManager;
 
 import com.curleesoft.pickem.model.Season;
 
-public class NestedSeasonDTO extends AbstractBaseDTO implements DataTransferObject {
+public class NestedSeasonDTO extends AbstractBaseDTO<Season> implements DataTransferObject<Season> {
 	
 	private Date beginDate;
 	private Date endDate;

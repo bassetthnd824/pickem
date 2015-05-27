@@ -43,7 +43,7 @@ define([
 						$('nav.navbar').show();
 						sessionStorage.setItem(config.activeUser, JSON.stringify(user));
 						sessionStorage.setItem(config.isManager, isManager);
-						window.location.hash = '#game';
+						require('router').navigate('game', true);
 					});
 				}
 			});
