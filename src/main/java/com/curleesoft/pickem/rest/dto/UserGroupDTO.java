@@ -46,7 +46,6 @@ public class UserGroupDTO extends AbstractBaseDTO<UserGroup> implements DataTran
 		entity.setUser(this.user.fromDTO(entity.getUser(), entityManager));
 		entity.setGroup(this.group.fromDTO(entity.getGroup(), entityManager));
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

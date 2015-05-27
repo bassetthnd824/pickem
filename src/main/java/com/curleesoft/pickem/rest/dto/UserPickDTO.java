@@ -49,7 +49,6 @@ public class UserPickDTO extends AbstractBaseDTO<UserPick> implements DataTransf
 			entity.setPickedTeam(this.pickedTeam.fromDTO(entity.getPickedTeam(), entityManager));
 		}
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

@@ -78,7 +78,6 @@ public class NestedSeasonWeekDTO extends AbstractBaseDTO<SeasonWeek> implements 
 		entity.setEndDate(this.endDate);
 		entity.setWeekNumber(this.weekNumber);
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

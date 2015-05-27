@@ -50,7 +50,6 @@ public class GroupDTO extends AbstractBaseDTO<Group> implements DataTransferObje
 		
 		entity.setGroupName(this.groupName);
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

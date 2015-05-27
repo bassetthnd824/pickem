@@ -44,7 +44,7 @@ public class Theme extends AbstractBaseEntity implements Serializable, PickemEnt
 		this.id = id;
 	}
 	
-	@Column(nullable = false, length = 1)
+	@Column(name = "ACTIVE", nullable = false, length = 1)
 	@NotNull
 	@Type(type = "yes_no")
 	public boolean getActive() {

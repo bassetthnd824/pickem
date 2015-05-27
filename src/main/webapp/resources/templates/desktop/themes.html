@@ -7,8 +7,8 @@
 				<th>Theme Name</th>
 				<th>Theme Path</th>
 				<th>Active</th>
-				<th>Last Updated</th>
-				<th>Created</th>
+				<th>Last Updated On</th>
+				<th>Last Updated By</th>
 				<th>Actions</th>
 			</tr>
 			
@@ -18,17 +18,16 @@
 					<td><%=model.get('themePath')%></td>
 					<td><%=(model.get('active')) ? 'Yes' : 'No'%></td>
 					<td><%=new Date(model.get('lastUpdateDate')).toPrettyStringWithoutTime()%></td>
-					<td><%=new Date(model.get('createDate')).toPrettyStringWithoutTime()%></td>
+					<td><%=model.get('lastUpdateUser')%></td>
 					<td>
-						<button type="button" class="btn btn-small btn-default"><span class="glyphicon glyphicon-pencil"></span></button>
-						<button type="button" class="btn btn-small btn-danger"><span class="glyphicon glyphicon-minus"></span></button>
+						<button type="button" class="btn btn-small btn-default edit" data-id="<%=model.get('id')%>"><span class="glyphicon glyphicon-pencil"></span></button>
 					</td>
 				</tr>
 			<% }); %>
 		</table>
 		
 		<div>
-			<button type="button" class="btn btn-small btn-primary"><span class="glyphicon glyphicon-plus"></span></button>
+			<button type="button" class="btn btn-small btn-primary add"><span class="glyphicon glyphicon-plus"></span></button>
 		</div>
 	</div>
 </div>

@@ -35,7 +35,6 @@ public class NestedRivalryDTO extends AbstractBaseDTO<Rivalry> implements DataTr
 		
 		entity.setRivalryName(this.rivalryName);
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

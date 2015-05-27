@@ -17,6 +17,7 @@ define('router', [
 	'app/views/desktop/login',
 	'app/views/desktop/season',
 	'app/views/desktop/seasons',
+	'app/views/desktop/theme',
 	'app/views/desktop/themes',
 	'app/views/desktop/userRegistration',
 	'app/views/desktop/users',
@@ -36,6 +37,7 @@ define('router', [
 			LoginView,
 			SeasonView,
 			SeasonsView,
+			ThemeView,
 			ThemesView,
 			UserRegistrationView,
 			UsersView,
@@ -87,6 +89,7 @@ define('router', [
 			'register'   : 'userRegistration',
 			'season/:id' : 'season',
 			'seasons'    : 'seasons',
+			'theme/:id'  : 'theme',
 			'themes'     : 'themes',
 			'users'      : 'users'
 		},
@@ -160,6 +163,37 @@ define('router', [
 					utilities.displayAlert('Failed to retrieve seasons from the Pickem server.');
 				}
 			});
+		},
+		
+		theme            : function(id) {
+			var model = null;
+			
+			if (id === 'new') {
+				model = new Theme();
+			} else {
+				model = new Theme({
+					id : id
+				});
+			}
+			
+			var themeView = new ThemeView({
+				model : model,
+				el    : $("#content")
+			});
+			
+			model.on("change", function() {
+				utilities.viewManager.showView(themeView);
+			});
+			
+			if (model.isNew()) {
+				themeView.render();
+			} else {
+				model.fetch({
+					error : function() {
+						utilities.displayAlert("Failed to retrieve the theme from the Pickem server.");
+					}
+				});
+			}
 		},
 		
 		themes           : function() {

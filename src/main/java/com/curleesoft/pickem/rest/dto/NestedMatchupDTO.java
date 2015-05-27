@@ -120,7 +120,6 @@ public class NestedMatchupDTO extends AbstractBaseDTO<Matchup> implements DataTr
 			entity.setVenue(this.venue.fromDTO(entity.getVenue(), entityManager));
 		}
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

@@ -107,7 +107,6 @@ public class TeamDTO extends AbstractBaseDTO<Team> implements DataTransferObject
 			entity.setHomeVenue(this.homeVenue.fromDTO(entity.getHomeVenue(), entityManager));
 		}
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

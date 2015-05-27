@@ -110,7 +110,6 @@ public class UserDTO extends AbstractBaseDTO<User> implements DataTransferObject
 			entity.setTheme(this.theme.fromDTO(entity.getTheme(), entityManager));
 		}
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

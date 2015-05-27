@@ -69,11 +69,6 @@ public class NestedUserDTO extends AbstractBaseDTO<User> implements DataTransfer
 		entity.setLastName(this.lastName);
 		entity.setUserId(this.userId);
 		
-//		if (this.theme != null) {
-//			entity.setTheme(this.theme.fromDTO(entity.getTheme(), entityManager));
-//		}
-		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

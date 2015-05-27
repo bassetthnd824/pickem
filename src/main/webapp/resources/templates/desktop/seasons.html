@@ -7,8 +7,8 @@
 				<th>Season</th>
 				<th>Begin Date</th>
 				<th>End Date</th>
-				<th>Last Updated</th>
-				<th>Created</th>
+				<th>Last Updated On</th>
+				<th>Last Updated By</th>
 				<th>Actions</th>
 			</tr>
 			
@@ -18,7 +18,7 @@
 					<td><%=model.get('beginDate')%></td>
 					<td><%=model.get('endDate')%></td>
 					<td><%=new Date(model.get('lastUpdateDate')).toPrettyStringWithoutTime()%></td>
-					<td><%=new Date(model.get('createDate')).toPrettyStringWithoutTime()%></td>
+					<td><%=model.get('lastUpdateUser')%></td>
 					<td>
 						<button type="button" class="btn btn-small btn-default edit" data-id="<%=model.get('id')%>"><span class="glyphicon glyphicon-pencil"></span></button>
 					</td>

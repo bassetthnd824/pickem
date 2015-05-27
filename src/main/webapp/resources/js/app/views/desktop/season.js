@@ -1,8 +1,7 @@
 define([
 	'require',
 	'utilities',
-	'text!../../../../templates/desktop/season.html',
-	'app/collections/seasons'
+	'text!../../../../templates/desktop/season.html'
 
 ], function(require, utilities, seasonTemplate) {
 	var SeasonView = Backbone.View.extend({

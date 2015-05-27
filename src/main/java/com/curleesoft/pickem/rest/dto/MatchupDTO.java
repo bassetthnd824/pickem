@@ -121,7 +121,6 @@ public class MatchupDTO extends AbstractBaseDTO<Matchup> implements DataTransfer
 			entity.setVenue(this.venue.fromDTO(entity.getVenue(), entityManager));
 		}
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

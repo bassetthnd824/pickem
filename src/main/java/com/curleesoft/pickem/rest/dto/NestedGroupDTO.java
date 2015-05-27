@@ -35,7 +35,6 @@ public class NestedGroupDTO extends AbstractBaseDTO<Group> implements DataTransf
 		
 		entity.setGroupName(this.groupName);
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

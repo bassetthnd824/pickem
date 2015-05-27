@@ -63,7 +63,6 @@ public class RivalryDTO extends AbstractBaseDTO<Rivalry> implements DataTransfer
 			entity.setTeam2(this.team2.fromDTO(entity.getTeam2(), entityManager));
 		}
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

@@ -7,8 +7,8 @@
 				<th>First Name</th>
 				<th>Last Name</th>
 				<th>Email</th>
-				<th>Last Updated</th>
-				<th>Created</th>
+				<th>Last Updated On</th>
+				<th>Last Updated By</th>
 				<th>Actions</th>
 			</tr>
 			
@@ -18,10 +18,9 @@
 					<td><%=model.get('lastName')%></td>
 					<td><%=model.get('emailAddr')%></td>
 					<td><%=new Date(model.get('lastUpdateDate')).toPrettyStringWithoutTime()%></td>
-					<td><%=new Date(model.get('createDate')).toPrettyStringWithoutTime()%></td>
+					<td><%=model.get('lastUpdateUser')%></td>
 					<td>
-						<button type="button" class="btn btn-small btn-default"><span class="glyphicon glyphicon-pencil"></span></button>
-						<button type="button" class="btn btn-small btn-danger"><span class="glyphicon glyphicon-minus"></span></button>
+						<button type="button" class="btn btn-small btn-default" data-id="<%=model.get('id')%>"><span class="glyphicon glyphicon-pencil"></span></button>
 					</td>
 				</tr>
 			<% }); %>

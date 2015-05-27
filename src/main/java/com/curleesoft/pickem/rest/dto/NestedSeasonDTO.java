@@ -59,7 +59,6 @@ public class NestedSeasonDTO extends AbstractBaseDTO<Season> implements DataTran
 		entity.setEndDate(this.endDate);
 		entity.setSeason(this.season);
 		
-		entity = entityManager.merge(entity);
 		return entity;
 
 	}

@@ -57,7 +57,6 @@ public class ThemeDTO extends AbstractBaseDTO<Theme> implements DataTransferObje
 		entity.setThemeName(this.themeName);;
 		entity.setThemePath(this.themePath);
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 	

@@ -73,7 +73,6 @@ public class SeasonWeekDTO extends AbstractBaseDTO<SeasonWeek> implements DataTr
 			entity.setSeason(this.season.fromDTO(entity.getSeason(), entityManager));
 		}
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

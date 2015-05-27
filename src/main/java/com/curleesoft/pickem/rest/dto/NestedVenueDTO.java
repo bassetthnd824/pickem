@@ -46,7 +46,6 @@ public class NestedVenueDTO extends AbstractBaseDTO<Venue> implements DataTransf
 		entity.setCityState(this.cityState);
 		entity.setVenueName(this.venueName);
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }

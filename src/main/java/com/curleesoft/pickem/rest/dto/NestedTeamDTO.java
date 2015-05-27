@@ -71,7 +71,6 @@ public class NestedTeamDTO extends AbstractBaseDTO<Team> implements DataTransfer
 			entity.setHomeVenue(this.homeVenue.fromDTO(entity.getHomeVenue(), entityManager));
 		}
 		
-		entity = entityManager.merge(entity);
 		return entity;
 	}
 }
