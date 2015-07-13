@@ -2,10 +2,10 @@ define([
 	'require',
 	'utilities',
 	'app/collections/collectionscache',
-	'text!../../../../templates/desktop/season.html'
+	'text!../../../../templates/desktop/seasonweek.html'
 
-], function(require, utilities, collectionscache, seasonTemplate) {
-	var SeasonView = Backbone.View.extend({
+], function(require, utilities, collectionscache, seasonWeekTemplate) {
+	var SeasonWeekView = Backbone.View.extend({
 		events     : {
 			'click #saveButton'   : 'save',
 			'click #cancelButton' : 'cancel',
@@ -17,11 +17,14 @@ define([
 		},
 		
 		render     : function() {
-			utilities.applyTemplate($(this.el), seasonTemplate, {
-				model : this.model
+			var thisView = this;
+			
+			utilities.applyTemplate($(thisView.el), seasonWeekTemplate, {
+				model   : thisView.model,
+				seasons : collectionscache.seasons
 			});
 			
-			if (this.model.isNew()) {
+			if (thisView.model.isNew()) {
 				$('#deleteButton').hide();
 			} else {
 				$('#deleteButton').show();
@@ -45,28 +48,28 @@ define([
 		
 		save       : function() {
 			this.model.set({
-				season    : $('#season').val(),
-				beginDate : $('#beginDate').val() + 'T00:00:00.000-0600',
-				endDate   : $('#endDate').val() + 'T00:00:00.000-0600'
-			});
+				season     : {
+					id : $('#season').val()
+				},
+				weekNumber : $('#weekNumber').val(),
+				beginDate  : $('#beginDate').val() + 'T00:00:00.000-0600',
+				endDate    : $('#endDate').val() + 'T00:00:00.000-0600'
 			
-			var isAdd = this.model.isNew();
-				
-			this.model.save(null, {
+			}).save(null, {
 				dataType : 'text',
 				success  : function(model, response, options) {
-					collectionscache.seasons.add(model);
-					require('router').navigate('seasons', true);
+					require('router').navigate('seasonweeks', true);
 				},
 				
 				error    : function(model, response, options) {
-					alert('Season could not be updated on the server');
+					alert('SeasonWeek could not be updated on the server');
 				}
 			});
+			
 		},
 		
 		cancel     : function() {
-			require('router').navigate('seasons', true);
+			require('router').navigate('seasonweeks', true);
 		},
 		
 		deleteRow  : function() {
@@ -74,16 +77,15 @@ define([
 				wait    : true,
 				
 				success : function(model, response) {
-					collectionscache.seasons.remove(model);
-					require('router').navigate('seasons', true);
+					require('router').navigate('seasonweeks', true);
 				},
 				
 				error   : function(model, response) {
-					alert('Season could not be deleted from the server');
+					alert('SeasonWeek could not be deleted from the server');
 				}
 			});
 		}
 	});
 
-	return SeasonView;
+	return SeasonWeekView;
 });

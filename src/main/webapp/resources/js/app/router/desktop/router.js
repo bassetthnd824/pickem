@@ -8,15 +8,16 @@ define('router', [
 	'utilities',
 	'app/models/login',
 	'app/models/season',
+	'app/models/seasonweek',
 	'app/models/theme',
 	'app/models/userRegistration',
 	'app/models/user',
-	'app/collections/seasons',
-	'app/collections/themes',
-	'app/collections/users',
+	'app/collections/collectionscache',
 	'app/views/desktop/login',
 	'app/views/desktop/season',
 	'app/views/desktop/seasons',
+	'app/views/desktop/seasonweek',
+	'app/views/desktop/seasonweeks',
 	'app/views/desktop/theme',
 	'app/views/desktop/themes',
 	'app/views/desktop/userRegistration',
@@ -28,15 +29,16 @@ define('router', [
 			utilities,
 			Login,
 			Season,
+			SeasonWeek,
 			Theme,
 			UserRegistration,
 			User,
-			Seasons,
-			Themes,
-			Users,
+			collectionscache,
 			LoginView,
 			SeasonView,
 			SeasonsView,
+			SeasonWeekView,
+			SeasonWeeksView,
 			ThemeView,
 			ThemesView,
 			UserRegistrationView,
@@ -61,7 +63,7 @@ define('router', [
 		},
 		
 		execute          : function(callback, args) {
-			var managerOpts = ['#users', '#themes', '#teams', '#venues', '#rivalries', '#seasons', '#seasonWeeks', '#matchups'];
+			var managerOpts = ['#users', '#themes', '#teams', '#venues', '#rivalries', '#seasons', '#seasonweeks', '#matchups'];
 			var activeUser = JSON.parse(sessionStorage.getItem(config.activeUser));
 			var isManager = sessionStorage.getItem(config.isManager);
 			var isManagerOption = managerOpts.indexOf(window.location.hash) > -1;
@@ -84,14 +86,16 @@ define('router', [
 		},
 		
 		routes           : {
-			''           : 'login',
-			'game'       : 'main',
-			'register'   : 'userRegistration',
-			'season/:id' : 'season',
-			'seasons'    : 'seasons',
-			'theme/:id'  : 'theme',
-			'themes'     : 'themes',
-			'users'      : 'users'
+			''               : 'login',
+			'game'           : 'main',
+			'register'       : 'userRegistration',
+			'season/:id'     : 'season',
+			'seasons'        : 'seasons',
+			'seasonweek/:id' : 'seasonweek',
+			'seasonweeks'    : 'seasonweeks',
+			'theme/:id'      : 'theme',
+			'themes'         : 'themes',
+			'users'          : 'users'
 		},
 		
 		login             : function() {
@@ -148,7 +152,7 @@ define('router', [
 		},
 		
 		seasons           : function() {
-			var seasons = new Seasons();
+			var seasons = collectionscache.seasons;
 			var seasonsView = new SeasonsView({
 				model : seasons,
 				el    : $('#content')
@@ -156,12 +160,51 @@ define('router', [
 			
 			seasons.on('reset', function() {
 				utilities.viewManager.showView(seasonsView);
-				
-			}).fetch({
-				reset : true,
-				error : function() {
-					utilities.displayAlert('Failed to retrieve seasons from the Pickem server.');
-				}
+			});
+			
+			seasons.trigger('reset');
+		},
+		
+		seasonweek        : function(id) {
+			var model = null;
+			
+			if (id === 'new') {
+				model = new SeasonWeek();
+			} else {
+				model = new SeasonWeek({
+					id : id
+				});
+			}
+			
+			var seasonWeekView = new SeasonWeekView({
+				model   : model,
+				el      : $("#content")
+			});
+			
+			model.on("change", function() {
+				utilities.viewManager.showView(seasonWeekView);
+			});
+			
+			if (model.isNew()) {
+				seasonWeekView.render();
+			} else {
+				model.fetch({
+					error : function() {
+						utilities.displayAlert("Failed to retrieve the seasonweek from the Pickem server.");
+					}
+				});
+			}
+		},
+		
+		seasonweeks       : function() {
+			var seasonWeeks = new SeasonWeeks();
+			var seasonWeeksView = new SeasonWeeksView({
+				model : seasonWeeks,
+				el    : $('#content')
+			});
+			
+			seasonWeeks.on('reset', function() {
+				utilities.viewManager.showView(seasonWeeksView);
 			});
 		},
 		
@@ -205,12 +248,6 @@ define('router', [
 			
 			themes.on('reset', function() {
 				utilities.viewManager.showView(themesView);
-				
-			}).fetch({
-				reset : true,
-				error : function() {
-					utilities.displayAlert('Failed to retrieve themes from the Pickem server.');
-				}
 			});
 		},
 		
@@ -223,12 +260,6 @@ define('router', [
 			
 			users.on('reset', function() {
 				utilities.viewManager.showView(usersView);
-				
-			}).fetch({
-				reset : true,
-				error : function() {
-					utilities.displayAlert('Failed to retrieve users from the Pickem server.');
-				}
 			});
 		}
 	});

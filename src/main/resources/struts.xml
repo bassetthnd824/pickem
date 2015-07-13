@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN" "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<constant name="struts.devMode" value="true"/>
+	<constant name="struts.ui.theme" value="bootstrap"/>
+	
+	<package name="pickem-default" extends="tiles-default" namespace="/">
+		<result-types>
+			<result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" default="true"/>
+		</result-types>
+		
+		<action name="register_*" method="{1}" class="com.curleesoft.pickem.action.Register">
+			<result name="init">register</result>
+			<result name="error">register</result>
+			<result name="loginError">loginError</result>
+			<result name="success" type="redirectAction">
+				<param name="namespace">/game</param>
+				<param name="actionName">main</param>
+			</result>
+		</action>
+		
+		<action name="logout" class="com.curleesoft.pickem.action.Logout">
+			<result name="success" type="redirectAction">
+				<param name="namespace">/game</param>
+				<param name="actionName">main</param>
+			</result>
+		</action>
+	</package>
+	
+	<package name="game" extends="pickem-default" namespace="/game">
+		<action name="main" class="com.curleesoft.pickem.action.Main">
+			<result name="error">main</result>
+			<result name="success">main</result>
+		</action>
+	</package>
+	
+	<package name="manager" extends="pickem-default" namespace="/manager">
+		<action name="seasons_*" method="{1}" class="com.curleesoft.pickem.action.Season">
+			<result name="init">seasons.search</result>
+			<result name="list">seasons.list</result>
+			<result name="add">seasons.add</result>
+			<result name="edit">seasons.edit</result>
+		</action>
+	</package>
+</struts>

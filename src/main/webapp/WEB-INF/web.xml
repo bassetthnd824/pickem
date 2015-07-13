@@ -6,23 +6,91 @@
 	
 	<display-name>pickem</display-name>
 	
+	<listener>
+		<listener-class>org.apache.tiles.extras.complete.CompleteAutoloadTilesListener</listener-class>
+	</listener>
+	
+	<filter>
+		<filter-name>loginFilter</filter-name>
+		<filter-class>com.curleesoft.pickem.filter.LoginFilter</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>loginFilter</filter-name>
+		<url-pattern>/game/*</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>loginFilter</filter-name>
+		<url-pattern>/manager/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<servlet>
+		<servlet-name>Tiles Dispatch Servlet</servlet-name>
+		<servlet-class>org.apache.tiles.web.util.TilesDispatchServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>Tiles Dispatch Servlet</servlet-name>
+		<url-pattern>*.tiles</url-pattern>
+	</servlet-mapping>
+	
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>
 	
 	<welcome-file-list>
-		<welcome-file>/index.html</welcome-file>
+		<welcome-file>/index.jsp</welcome-file>
 	</welcome-file-list>
 	
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>everything</web-resource-name>
-			<url-pattern>/*</url-pattern>
+			<web-resource-name>game</web-resource-name>
+			<url-pattern>/game/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>POST</http-method>
+			<http-method>DELETE</http-method>
 		</web-resource-collection>
+		<auth-constraint>
+			<role-name>player</role-name>
+		</auth-constraint>
 	</security-constraint>
 	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>manager</web-resource-name>
+			<url-pattern>/manager/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>POST</http-method>
+			<http-method>DELETE</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>manager</role-name>
+		</auth-constraint>
+	</security-constraint>
+	
+	<error-page>
+		<error-code>401</error-code>
+		<location>/accessRestricted.tiles</location>
+	</error-page>
+	
 	<login-config>
+		<auth-method>FORM</auth-method>
 		<realm-name>pickemDomain</realm-name>
+		<form-login-config>
+			<form-login-page>/login.tiles</form-login-page>
+			<form-error-page>/loginError.tiles</form-error-page>
+		</form-login-config>
 	</login-config>
 	
 	<security-role>

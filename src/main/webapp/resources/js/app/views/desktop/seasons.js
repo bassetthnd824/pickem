@@ -4,12 +4,16 @@ define([
 
 ], function(utilities, seasonsTemplate) {
 	var SeasonsView = Backbone.View.extend({
-		events    : {
+		events     : {
 			'click button.add'    : 'showAdd',
 			'click button.edit'   : 'showEdit',
 		},
 		
-		render    : function() {
+		initialize : function() {
+			this.model.on('update', this.render, this);
+		},
+		
+		render     : function() {
 			utilities.applyTemplate($(this.el), seasonsTemplate, {
 				model : this.model
 			});
@@ -17,11 +21,11 @@ define([
 			return this;
 		},
 		
-		showAdd   : function() {
+		showAdd    : function() {
 			require('router').navigate('season/new', true);
 		},
 		
-		showEdit  : function(event) {
+		showEdit   : function(event) {
 			require('router').navigate('season/' + $(event.target).data('id'), true);
 		}
 	});

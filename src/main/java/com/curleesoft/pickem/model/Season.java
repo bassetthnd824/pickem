@@ -26,7 +26,7 @@ import com.curleesoft.pickem.model.constraints.ValidSeasonEndDate;
  */
 @Entity
 @Table(name = "PCKM_SEASON")
-@NamedNativeQuery(name = "getCurrentSeason", query = "select * from pckm_season where sysdate between add_months(begin_date, -5) and add_months(end_date, 1)", resultClass = Season.class)
+@NamedNativeQuery(name = "getCurrentSeason", query = "select * from pckm_season where current date between cast({fn TIMESTAMPADD(SQL_TSI_MONTH, -5, cast(begin_date as timestamp))} as date) and cast({fn TIMESTAMPADD(SQL_TSI_MONTH, 1, cast(end_date as timestamp))} as date)", resultClass = Season.class)
 @ValidSeasonBeginDate
 @ValidSeasonEndDate
 public class Season extends AbstractBaseEntity implements Serializable, PickemEntity {
