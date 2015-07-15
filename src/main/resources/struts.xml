@@ -5,13 +5,15 @@
 <struts>
 	<constant name="struts.devMode" value="true"/>
 	<constant name="struts.ui.theme" value="bootstrap"/>
+	<constant name="struts.custom.i18n.resources" value="MessageResources"/>
+	<constant name="struts.mapper.action.prefix.enabled" value="true"/>
 	
 	<package name="pickem-default" extends="tiles-default" namespace="/">
 		<result-types>
 			<result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" default="true"/>
 		</result-types>
 		
-		<action name="register_*" method="{1}" class="com.curleesoft.pickem.action.Register">
+		<action name="register_*" method="{1}" class="com.curleesoft.pickem.action.RegisterAction">
 			<result name="init">register</result>
 			<result name="error">register</result>
 			<result name="loginError">loginError</result>
@@ -21,7 +23,7 @@
 			</result>
 		</action>
 		
-		<action name="logout" class="com.curleesoft.pickem.action.Logout">
+		<action name="logout" class="com.curleesoft.pickem.action.LogoutAction">
 			<result name="success" type="redirectAction">
 				<param name="namespace">/game</param>
 				<param name="actionName">main</param>
@@ -30,18 +32,18 @@
 	</package>
 	
 	<package name="game" extends="pickem-default" namespace="/game">
-		<action name="main" class="com.curleesoft.pickem.action.Main">
+		<action name="main" class="com.curleesoft.pickem.action.MainAction">
 			<result name="error">main</result>
 			<result name="success">main</result>
 		</action>
 	</package>
 	
 	<package name="manager" extends="pickem-default" namespace="/manager">
-		<action name="seasons_*" method="{1}" class="com.curleesoft.pickem.action.Season">
+		<action name="seasons_*" method="{1}" class="com.curleesoft.pickem.action.SeasonAction">
 			<result name="init">seasons.search</result>
 			<result name="list">seasons.list</result>
-			<result name="add">seasons.add</result>
-			<result name="edit">seasons.edit</result>
+			<result name="add">seasons.detail</result>
+			<result name="edit">seasons.detail</result>
 		</action>
 	</package>
 </struts>

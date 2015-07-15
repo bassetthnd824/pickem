@@ -1,17 +1,12 @@
 package com.curleesoft.pickem.model;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -27,7 +22,6 @@ public class Group extends AbstractBaseEntity implements Serializable, PickemEnt
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String groupName;
-	private Set<UserGroup> userGroups;
 
 	@Id
 	@SequenceGenerator(name = "PCKM_GROUP_ID_GENERATOR", sequenceName = "PCKM_GROUP_SEQ", allocationSize = 1)
@@ -51,20 +45,6 @@ public class Group extends AbstractBaseEntity implements Serializable, PickemEnt
 		this.groupName = groupName;
 	}
 	
-	// bi-directional many-to-one association to UserGroup
-	@OneToMany(mappedBy = "group", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
-	public Set<UserGroup> getUserGroups() {
-		if (this.userGroups == null) {
-			this.userGroups = new HashSet<UserGroup>();
-		}
-		
-		return this.userGroups;
-	}
-	
-	public void setUserGroups(Set<UserGroup> userGroups) {
-		this.userGroups = userGroups;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {

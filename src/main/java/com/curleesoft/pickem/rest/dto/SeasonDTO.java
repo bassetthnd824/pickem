@@ -1,20 +1,16 @@
 package com.curleesoft.pickem.rest.dto;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 
 import com.curleesoft.pickem.model.Season;
-import com.curleesoft.pickem.model.SeasonWeek;
 
 public class SeasonDTO extends AbstractBaseDTO<Season> implements DataTransferObject<Season> {
 	
 	private Date beginDate;
 	private Date endDate;
 	private String season;
-	private Set<NestedSeasonWeekDTO> seasonWeeks;
 	
 	public SeasonDTO() {}
 	
@@ -25,11 +21,6 @@ public class SeasonDTO extends AbstractBaseDTO<Season> implements DataTransferOb
 			this.beginDate = entity.getBeginDate();
 			this.endDate = entity.getEndDate();
 			this.season = entity.getSeason();
-			this.seasonWeeks = new HashSet<NestedSeasonWeekDTO>();
-			
-			for (SeasonWeek seasonWeek : entity.getSeasonWeeks()) {
-				this.seasonWeeks.add(new NestedSeasonWeekDTO(seasonWeek));
-			}
 		}
 	}
 
@@ -57,22 +48,12 @@ public class SeasonDTO extends AbstractBaseDTO<Season> implements DataTransferOb
 		this.season = season;
 	}
 
-	public Set<NestedSeasonWeekDTO> getSeasonWeeks() {
-		return seasonWeeks;
-	}
-
-	public void setSeasonWeeks(Set<NestedSeasonWeekDTO> seasonWeeks) {
-		this.seasonWeeks = seasonWeeks;
-	}
-	
 	public Season fromDTO(Season entity, EntityManager entityManager) {
 		if (entity == null) {
 			entity = new Season();
 		}
 		
 		entity = super.fromDTO(entity, entityManager);
-		
-		populateEntityCollection(entity, SeasonWeek.class, "seasonWeeks", entityManager);
 		
 		entity.setBeginDate(this.beginDate);
 		entity.setEndDate(this.endDate);

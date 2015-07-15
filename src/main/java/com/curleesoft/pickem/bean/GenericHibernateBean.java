@@ -7,10 +7,9 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -24,11 +23,11 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 
-import com.curleesoft.pickem.model.PickemEntity;
+import com.curleesoft.pickem.model.AbstractBaseEntity;
 
-public abstract class GenericHibernateBean<E extends PickemEntity, ID extends Serializable> {
+public abstract class GenericHibernateBean<E extends AbstractBaseEntity, ID extends Serializable> {
 	
-	@PersistenceContext(type = PersistenceContextType.EXTENDED)
+	@Inject
 	private EntityManager entityManager;
 	
 	@Resource
@@ -65,7 +64,7 @@ public abstract class GenericHibernateBean<E extends PickemEntity, ID extends Se
 		
 		Predicate[] predicates = extractPredicates(queryParameters, criteriaBuilder, root);
 		criteriaQuery.select(criteriaQuery.getSelection()).where(predicates);
-		criteriaQuery.orderBy(criteriaBuilder.asc(root.get("id")));
+		criteriaQuery.orderBy(getDefaultOrder(criteriaBuilder, root));
 		TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
 		
 		if (queryParameters.containsKey("first")) {
@@ -93,16 +92,22 @@ public abstract class GenericHibernateBean<E extends PickemEntity, ID extends Se
 		}
 		
 		criteria.add(example);
+		
+		for (org.hibernate.criterion.Order order : getDefaultHibernateOrder()) {
+			criteria.addOrder(order);
+		}
+		
 		return criteria.list();
 	}
 	
 	public E makePersistent(E entity) {
-		entityManager.merge(entity);
+		entity = entityManager.merge(entity);
 		return entity;
 	}
 	
 	public void makeTransient(E entity) {
-		entityManager.remove(entity);
+		entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
+		//entityManager.remove(entity);
 	}
 	
 	public void flush() {
@@ -150,5 +155,9 @@ public abstract class GenericHibernateBean<E extends PickemEntity, ID extends Se
 	protected SessionContext getSessionContext() {
 		return sessionContext;
 	}
+	
+	protected abstract Order[] getDefaultOrder(CriteriaBuilder criteriaBuilder, Root<E> root);
+	
+	protected abstract org.hibernate.criterion.Order[] getDefaultHibernateOrder();
 	
 }

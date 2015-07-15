@@ -17,7 +17,7 @@ import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.ModelDriven;
 
-public class Register extends ActionSupport implements Action, ServletRequestAware, ModelDriven<Registration> {
+public class RegisterAction extends ActionSupport implements Action, ServletRequestAware, ModelDriven<Registration> {
 	
 	private static final long serialVersionUID = 1L;
 	

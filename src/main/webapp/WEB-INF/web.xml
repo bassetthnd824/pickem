@@ -100,4 +100,9 @@
 	<security-role>
 		<role-name>player</role-name>
 	</security-role>
+
+	<context-param>
+		<param-name>org.jboss.weld.context.conversation.lazy</param-name>
+		<param-value>false</param-value>
+	</context-param>
 </web-app>

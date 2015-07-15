@@ -1,14 +1,12 @@
 package com.curleesoft.pickem.model;
 
 import java.io.Serializable;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -25,8 +23,6 @@ public class Venue extends AbstractBaseEntity implements Serializable, PickemEnt
 	private Long id;
 	private String cityState;
 	private String venueName;
-	private Set<Matchup> matchups;
-	private Set<Team> teams;
 
 	public Venue() {
 	}
@@ -61,26 +57,6 @@ public class Venue extends AbstractBaseEntity implements Serializable, PickemEnt
 
 	public void setVenueName(String venueName) {
 		this.venueName = venueName;
-	}
-
-	// bi-directional many-to-one association to Matchup
-	@OneToMany(mappedBy = "venue")
-	public Set<Matchup> getMatchups() {
-		return this.matchups;
-	}
-
-	public void setMatchups(Set<Matchup> matchups) {
-		this.matchups = matchups;
-	}
-
-	// bi-directional many-to-one association to Team
-	@OneToMany(mappedBy = "homeVenue")
-	public Set<Team> getTeams() {
-		return this.teams;
-	}
-
-	public void setTeams(Set<Team> teams) {
-		this.teams = teams;
 	}
 
 	@Override

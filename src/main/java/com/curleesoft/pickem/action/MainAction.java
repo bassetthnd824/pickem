@@ -9,7 +9,7 @@ import com.curleesoft.pickem.util.Globals;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
 
-public class Main extends ActionSupport implements Action, ServletRequestAware {
+public class MainAction extends ActionSupport implements Action, ServletRequestAware {
 
 	private static final long serialVersionUID = 1L;
 	

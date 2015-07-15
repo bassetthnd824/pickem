@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,7 +40,6 @@ public class Team extends AbstractBaseEntity implements Serializable, PickemEnti
 	private String squadName;
 	private String teamName;
 	private Venue homeVenue;
-	private Set<Matchup> matchups;
 	private Set<Rivalry> rivalries;
 	
 	public Team() {
@@ -98,23 +98,8 @@ public class Team extends AbstractBaseEntity implements Serializable, PickemEnti
 		this.homeVenue = homeVenue;
 	}
 
-	// bi-directional many-to-one association to Matchup
-	@OneToMany
-	@JoinColumns({
-		@JoinColumn(name = "HOME_TEAM_ID", referencedColumnName = "TEAM_ID"),
-		@JoinColumn(name = "AWAY_TEAM_ID", referencedColumnName = "TEAM_ID")
-	})
-	@Loader(namedQuery = "matchups")
-	public Set<Matchup> getMatchups() {
-		return this.matchups;
-	}
-	
-	public void setMatchups(Set<Matchup> matchups) {
-		this.matchups = matchups;
-	}
-	
 	// bi-directional many-to-one association to Rivalry
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumns({
 		@JoinColumn(name = "TEAM_ID1", referencedColumnName = "TEAM_ID"),
 		@JoinColumn(name = "TEAM_ID2", referencedColumnName = "TEAM_ID")

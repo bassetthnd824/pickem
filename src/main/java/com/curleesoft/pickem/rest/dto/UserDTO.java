@@ -1,13 +1,8 @@
 package com.curleesoft.pickem.rest.dto;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.EntityManager;
 
 import com.curleesoft.pickem.model.User;
-import com.curleesoft.pickem.model.UserGroup;
-import com.curleesoft.pickem.model.UserPick;
 
 public class UserDTO extends AbstractBaseDTO<User> implements DataTransferObject<User> {
 	
@@ -16,8 +11,6 @@ public class UserDTO extends AbstractBaseDTO<User> implements DataTransferObject
 	private String lastName;
 	private String userId;
 	private ThemeDTO theme;
-	private Set<UserGroupDTO> userGroups;
-	private Set<UserPickDTO> userPicks;
 	
 	public UserDTO() {}
 	
@@ -30,16 +23,6 @@ public class UserDTO extends AbstractBaseDTO<User> implements DataTransferObject
 			this.lastName = entity.getLastName();
 			this.userId = entity.getUserId();
 			this.theme = new ThemeDTO(entity.getTheme());
-			this.userGroups = new HashSet<UserGroupDTO>();
-			this.userPicks = new HashSet<UserPickDTO>();
-			
-			for (UserGroup userGroup : entity.getUserGroups()) {
-				this.userGroups.add(new UserGroupDTO(userGroup));
-			}
-			
-			for (UserPick userPick : entity.getUserPicks()) {
-				this.userPicks.add(new UserPickDTO(userPick));
-			}
 		}
 	}
 	
@@ -83,23 +66,12 @@ public class UserDTO extends AbstractBaseDTO<User> implements DataTransferObject
 		this.theme = theme;
 	}
 
-	public Set<UserGroupDTO> getUserGroups() {
-		return userGroups;
-	}
-	
-	public void setUserGroups(Set<UserGroupDTO> userGroups) {
-		this.userGroups = userGroups;
-	}
-	
 	public User fromDTO(User entity, EntityManager entityManager) {
 		if (entity == null) {
 			entity = new User();
 		}
 		
 		entity = super.fromDTO(entity, entityManager);
-		
-		populateEntityCollection(entity, UserGroup.class, "userGroups", entityManager);
-		populateEntityCollection(entity, UserPick.class, "userPicks", entityManager);
 		
 		entity.setEmailAddr(this.emailAddr);
 		entity.setFirstName(this.firstName);

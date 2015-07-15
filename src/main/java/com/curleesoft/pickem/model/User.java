@@ -39,7 +39,6 @@ public class User extends AbstractBaseEntity implements Serializable, PickemEnti
 	private String userPass;
 	private Theme theme;
 	private Set<UserGroup> userGroups;
-	private Set<UserPick> userPicks;
 	
 	public User() {
 	}
@@ -130,16 +129,6 @@ public class User extends AbstractBaseEntity implements Serializable, PickemEnti
 	
 	public void setUserGroups(Set<UserGroup> userGroups) {
 		this.userGroups = userGroups;
-	}
-	
-	// bi-directional many-to-one association to UserPick
-	@OneToMany(mappedBy = "user")
-	public Set<UserPick> getUserPicks() {
-		return this.userPicks;
-	}
-	
-	public void setUserPicks(Set<UserPick> userPicks) {
-		this.userPicks = userPicks;
 	}
 	
 	@Override

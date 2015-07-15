@@ -2,7 +2,6 @@ package com.curleesoft.pickem.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedNativeQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -36,7 +34,6 @@ public class Season extends AbstractBaseEntity implements Serializable, PickemEn
 	private Date beginDate;
 	private Date endDate;
 	private String season;
-	private Set<SeasonWeek> seasonWeeks;
 	
 	public Season() {
 	}
@@ -81,16 +78,6 @@ public class Season extends AbstractBaseEntity implements Serializable, PickemEn
 	
 	public void setSeason(String season) {
 		this.season = season;
-	}
-	
-	// bi-directional many-to-one association to SeasonWeek
-	@OneToMany(mappedBy = "season")
-	public Set<SeasonWeek> getSeasonWeeks() {
-		return this.seasonWeeks;
-	}
-	
-	public void setSeasonWeeks(Set<SeasonWeek> seasonWeeks) {
-		this.seasonWeeks = seasonWeeks;
 	}
 	
 	@Override

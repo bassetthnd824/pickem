@@ -4,6 +4,7 @@ import javax.ejb.Stateful;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Root;
 
 import com.curleesoft.pickem.model.Group;
@@ -27,4 +28,19 @@ public class GroupBean extends GenericHibernateBean<Group, Long> {
 		TypedQuery<Group> query = getEntityManager().createQuery(criteriaQuery);
 		return query.getResultList().get(0);
 	}
+
+	@Override
+	protected Order[] getDefaultOrder(CriteriaBuilder criteriaBuilder, Root<Group> root) {
+		return new Order[] {
+				criteriaBuilder.asc(root.get(Group_.groupName))
+		};
+	}
+
+	@Override
+	protected org.hibernate.criterion.Order[] getDefaultHibernateOrder() {
+		return new org.hibernate.criterion.Order[] {
+				org.hibernate.criterion.Order.asc("groupName")
+		};
+	}
+
 }
