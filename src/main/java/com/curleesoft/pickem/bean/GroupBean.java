@@ -1,16 +1,22 @@
 package com.curleesoft.pickem.bean;
 
-import javax.ejb.Stateful;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.curleesoft.pickem.model.Group;
 import com.curleesoft.pickem.model.Group_;
 
-@Stateful
+@Stateless
 public class GroupBean extends GenericHibernateBean<Group, Long> {
 
 	public GroupBean() {
@@ -37,10 +43,14 @@ public class GroupBean extends GenericHibernateBean<Group, Long> {
 	}
 
 	@Override
-	protected org.hibernate.criterion.Order[] getDefaultHibernateOrder() {
-		return new org.hibernate.criterion.Order[] {
-				org.hibernate.criterion.Order.asc("groupName")
-		};
+	public Predicate[] extractPredicates(Group exampleInstance, CriteriaBuilder criteriaBuilder, Root<Group> root) {
+		List<Predicate> predicates = new ArrayList<Predicate>();
+		
+		if (StringUtils.isNotBlank(exampleInstance.getGroupName())) {
+			predicates.add(criteriaBuilder.equal(root.get(Group_.groupName), exampleInstance.getGroupName()));
+		}
+		
+		return predicates.toArray(new Predicate[predicates.size()]);
 	}
 
 }

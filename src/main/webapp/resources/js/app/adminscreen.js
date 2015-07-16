@@ -7,16 +7,22 @@ $(document).ready(function() {
 		format : 'YYYY-MM-DD'
 	});
 	
-	$('#beginDate').on('dp.change', function(e) {
-		if (e.date && $(this).val()) {
-			$('#endDate').data('DateTimePicker').minDate(e.date);
-			$('#endDate').data('DateTimePicker').defaultDate(moment(e.date).add(7, $('#endDate').data('duration')));
+	$('#beginDate').blur(function(event) {
+		var $this = $(this);
+		var beginMoment = moment($this.val());
+		
+		if ($this.val()) {
+			$('#endDate').data('DateTimePicker').minDate(beginMoment);
+			$('#endDate').data('DateTimePicker').defaultDate(beginMoment.add(6, $('#endDate').data('duration')));
 		}
 	});
 	
-	$('#endDate').on('dp.change', function(e) {
-		if (e.date && $(this).val()) {
-			$('#beginDate').data('DateTimePicker').maxDate(e.date);
+	$('#endDate').blur(function(event) {
+		var $this = $(this);
+		var endMoment = moment($this.val());
+		
+		if ($(this).val()) {
+			$('#beginDate').data('DateTimePicker').maxDate(endMoment);
 		}
 	});
 });

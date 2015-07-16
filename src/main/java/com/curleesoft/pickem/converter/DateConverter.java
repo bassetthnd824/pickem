@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.util.StrutsTypeConverter;
 
 import com.opensymphony.xwork2.conversion.TypeConversionException;
@@ -30,7 +30,7 @@ public class DateConverter extends StrutsTypeConverter {
 		}
 		
 		try {
-			newDate = new SimpleDateFormat(formatString).parse(inputString);
+			newDate = (StringUtils.isNotBlank(inputString)) ? new SimpleDateFormat(formatString).parse(inputString) : null;
 		} catch (ParseException e) {
 			throw new TypeConversionException(e);
 		}

@@ -1,16 +1,22 @@
 package com.curleesoft.pickem.bean;
 
-import javax.ejb.Stateful;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.curleesoft.pickem.model.User;
 import com.curleesoft.pickem.model.User_;
 
-@Stateful
+@Stateless
 public class UserBean extends GenericHibernateBean<User, Long> {
 
 	public UserBean() {
@@ -37,10 +43,22 @@ public class UserBean extends GenericHibernateBean<User, Long> {
 	}
 
 	@Override
-	protected org.hibernate.criterion.Order[] getDefaultHibernateOrder() {
-		return new org.hibernate.criterion.Order[] {
-				org.hibernate.criterion.Order.asc("userId")
-		};
+	public Predicate[] extractPredicates(User exampleInstance, CriteriaBuilder criteriaBuilder, Root<User> root) {
+		List<Predicate> predicates = new ArrayList<Predicate>();
+		
+		if (StringUtils.isNotBlank(exampleInstance.getEmailAddr())) {
+			predicates.add(criteriaBuilder.equal(root.get(User_.emailAddr), exampleInstance.getEmailAddr()));
+		}
+		
+		if (StringUtils.isNotBlank(exampleInstance.getFirstName())) {
+			predicates.add(criteriaBuilder.equal(root.get(User_.firstName), exampleInstance.getFirstName()));
+		}
+		
+		if (StringUtils.isNotBlank(exampleInstance.getLastName())) {
+			predicates.add(criteriaBuilder.equal(root.get(User_.lastName), exampleInstance.getLastName()));
+		}
+		
+		return predicates.toArray(new Predicate[predicates.size()]);
 	}
-	
+
 }

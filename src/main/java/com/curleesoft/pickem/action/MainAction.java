@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.interceptor.ServletRequestAware;
 
+import com.curleesoft.pickem.model.Season;
 import com.curleesoft.pickem.model.User;
 import com.curleesoft.pickem.util.Globals;
 import com.opensymphony.xwork2.Action;
@@ -16,7 +17,8 @@ public class MainAction extends ActionSupport implements Action, ServletRequestA
 	private HttpServletRequest request;
 
 	public String getWelcomeMessage() {
-		return "Welcome " + ((User) request.getSession().getAttribute(Globals.ACTIVE_USER)).getFirstName();
+		return "Welcome " + ((User) request.getSession(false).getAttribute(Globals.ACTIVE_USER)).getFirstName() + 
+				" Season " + ((Season) request.getSession(false).getAttribute(Globals.CURRENT_SEASON)).getSeason();
 	}
 	
 	@Override

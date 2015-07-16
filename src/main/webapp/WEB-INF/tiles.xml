@@ -41,18 +41,6 @@
 		<put-attribute name="scripts" value="/tiles/scripts/main.jsp" />
 	</definition>
 	
-	<definition name="seasons.search" extends="common">
-		<put-attribute name="title" value="Kenney's Pickem - Seasons" />
-		<put-attribute name="body">
-			<definition template="/templates/searchTemplate.jsp">
-				<put-attribute name="screenHeader" value="Seasons"/>
-				<put-attribute name="searchForm" value="/tiles/season.jsp"/>
-				<put-attribute name="searchResults" value="/tiles/seasons.jsp"/>
-			</definition>
-		</put-attribute>
-		<put-attribute name="scripts" value="/tiles/scripts/seasons.jsp" />
-	</definition>
-	
 	<definition name="seasons.list" extends="common">
 		<put-attribute name="title" value="Kenney's Pickem - Seasons" />
 		<put-attribute name="body">
@@ -62,12 +50,48 @@
 				<put-attribute name="searchResults" value="/tiles/seasons.jsp"/>
 			</definition>
 		</put-attribute>
-		<put-attribute name="scripts" value="/tiles/scripts/seasons.jsp" />
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
 	</definition>
 	
 	<definition name="seasons.detail" extends="common">
 		<put-attribute name="title" value="Kenney's Pickem - Seasons" />
 		<put-attribute name="body" value="/tiles/season.jsp"/>
-		<put-attribute name="scripts" value="/tiles/scripts/seasons.jsp" />
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
+	</definition>
+	
+	<definition name="seasonWeeks.list" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Season Weeks" />
+		<put-attribute name="body">
+			<definition template="/templates/searchTemplate.jsp">
+				<put-attribute name="screenHeader" value="Season Weeks"/>
+				<put-attribute name="searchForm" value="/tiles/seasonWeek.jsp"/>
+				<put-attribute name="searchResults" value="/tiles/seasonWeeks.jsp"/>
+			</definition>
+		</put-attribute>
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
+	</definition>
+	
+	<definition name="seasonWeeks.detail" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Season Weeks" />
+		<put-attribute name="body" value="/tiles/seasonWeek.jsp"/>
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
+	</definition>
+	
+	<definition name="users.list" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Users" />
+		<put-attribute name="body">
+			<definition template="/templates/searchTemplate.jsp">
+				<put-attribute name="screenHeader" value="Users"/>
+				<put-attribute name="searchForm" value="/tiles/user.jsp"/>
+				<put-attribute name="searchResults" value="/tiles/users.jsp"/>
+			</definition>
+		</put-attribute>
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
+	</definition>
+	
+	<definition name="users.detail" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Users" />
+		<put-attribute name="body" value="/tiles/user.jsp"/>
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
 	</definition>
 </tiles-definitions>

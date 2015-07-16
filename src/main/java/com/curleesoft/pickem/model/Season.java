@@ -15,6 +15,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.curleesoft.pickem.model.constraints.ValidSeasonBeginDate;
 import com.curleesoft.pickem.model.constraints.ValidSeasonEndDate;
 
@@ -101,7 +103,7 @@ public class Season extends AbstractBaseEntity implements Serializable, PickemEn
 
 	@Override
 	public int hashCode() {
-		return season.hashCode();
+		return StringUtils.defaultString(season).hashCode();
 	}
 
 	@Override

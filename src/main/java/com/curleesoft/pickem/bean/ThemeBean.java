@@ -1,14 +1,20 @@
 package com.curleesoft.pickem.bean;
 
-import javax.ejb.Stateful;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.Stateless;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.curleesoft.pickem.model.Theme;
 import com.curleesoft.pickem.model.Theme_;
 
-@Stateful
+@Stateless
 public class ThemeBean extends GenericHibernateBean<Theme, Long> {
 	
 	public ThemeBean() {
@@ -23,9 +29,18 @@ public class ThemeBean extends GenericHibernateBean<Theme, Long> {
 	}
 
 	@Override
-	protected org.hibernate.criterion.Order[] getDefaultHibernateOrder() {
-		return new org.hibernate.criterion.Order[] {
-				org.hibernate.criterion.Order.asc("themeName")
-		};
+	public Predicate[] extractPredicates(Theme exampleInstance, CriteriaBuilder criteriaBuilder, Root<Theme> root) {
+		List<Predicate> predicates = new ArrayList<Predicate>();
+		
+		if (StringUtils.isNotBlank(exampleInstance.getThemeName())) {
+			predicates.add(criteriaBuilder.equal(root.get(Theme_.themeName), exampleInstance.getThemeName()));
+		}
+		
+		if (StringUtils.isNotBlank(exampleInstance.getThemePath())) {
+			predicates.add(criteriaBuilder.equal(root.get(Theme_.themePath), exampleInstance.getThemePath()));
+		}
+		
+		return predicates.toArray(new Predicate[predicates.size()]);
 	}
+
 }

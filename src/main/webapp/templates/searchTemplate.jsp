@@ -8,18 +8,18 @@
 	<div class="panel panel-default">
 		<div class="panel-heading" role="tab" id="searchFormHeading">
 			<h4 class="panel-title">
-				<a role="button" data-toggle="collapse" data-parent="#accordion" href="#searchFormPanel" aria-expanded="<s:if test='modelList.size == 0'>true</s:if><s:else>false</s:else>" aria-controls="searchFormPanel">Search Criteria</a>
+				<a role="button" data-toggle="collapse" data-parent="#accordion" href="#searchFormPanel" aria-expanded="<s:if test="formMode == 'init'">true</s:if><s:else>false</s:else>" aria-controls="searchFormPanel">Search Criteria</a>
 			</h4>
 		</div>
 		
-		<div id="searchFormPanel" class="panel-collapse collapse <s:if test="modelList.size == 0">in</s:if>" role="tabpanel" aria-labelledby="searchFormHeading">
+		<div id="searchFormPanel" class="panel-collapse collapse<s:if test="formMode == 'init'"> in</s:if>" role="tabpanel" aria-labelledby="searchFormHeading">
 			<div class="panel-body">
 				<tiles:insertAttribute name="searchForm"/>
 			</div>
 		</div>
 	</div>
 	
-	<s:if test="modelList.size > 0">
+	<s:if test="formMode != 'init'">
 		<div class="panel panel-default">
 			<div class="panel-heading" role="tab" id="searchResultsHeading">
 				<h4 class="panel-title">
@@ -29,7 +29,12 @@
 			
 			<div id="searchResultsPanel" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="searchResultsHeading">
 				<div class="panel-body">
-					<tiles:insertAttribute name="searchResults"/>
+					<s:if test="modelList.size > 0">
+						<tiles:insertAttribute name="searchResults"/>
+					</s:if>
+					<s:else>
+						<p>No results found</p>
+					</s:else>
 				</div>
 			</div>
 		</div>

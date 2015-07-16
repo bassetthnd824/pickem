@@ -122,7 +122,7 @@ public class SeasonWeek extends AbstractBaseEntity implements Serializable, Pick
 
 	@Override
 	public String toString() {
-		return season.toString() + " Week " + weekNumber.toString();
+		return ((season != null) ? season.toString() : "") + ((weekNumber != null) ? " Week " + weekNumber.toString() : "");
 	}
 	
 }

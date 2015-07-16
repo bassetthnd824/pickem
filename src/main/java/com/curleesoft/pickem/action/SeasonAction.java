@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.curleesoft.pickem.bean.SeasonBean;
 import com.curleesoft.pickem.model.Season;
 import com.opensymphony.xwork2.ModelDriven;
@@ -67,27 +65,13 @@ public class SeasonAction extends BaseAction<Season, Long, SeasonBean> implement
 		this.seasons = modelList;
 	}
 	
-	protected String[] getExcludedProperties() {
-		List<String> excludedProperties = new ArrayList<String>();
-		
-		if (StringUtils.isBlank(season.getSeason())) {
-			excludedProperties.add("season");
-		}
-		
-		if (season.getBeginDate() == null) {
-			excludedProperties.add("beginDate");
-		}
-		
-		if (season.getEndDate() == null) {
-			excludedProperties.add("endDate");
-		}
-		
-		return excludedProperties.toArray(new String[excludedProperties.size()]);
-	}
-	
+	@Override
 	protected void setExistingModelFields(Season existingModel, Season model) {
 		existingModel.setSeason(model.getSeason());
 		existingModel.setBeginDate(model.getBeginDate());
 		existingModel.setEndDate(model.getEndDate());
 	}
+	
+	@Override
+	protected void setParentEntities(Season model) {}
 }

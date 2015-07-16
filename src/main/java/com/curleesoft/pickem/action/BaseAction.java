@@ -25,23 +25,31 @@ public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serial
 	private String formMode;
 	private ID modelId;
 	private HttpServletRequest request;
+	private Boolean reuseCriteria;
 	
 	public String init() {
-		formMode = "search";
+		formMode = "init";
 		return INIT;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String search() {
 		formMode = "search";
-		request.getSession(false).setAttribute("searchCriteria", getModel());
-		setModelList(getBean().findByExample(getModel(), getExcludedProperties()));
+		
+		if (reuseCriteria != null && reuseCriteria.booleanValue()) {
+			setModel((E) request.getSession(false).getAttribute("searchCriteria"));
+		} else {
+			request.getSession(false).setAttribute("searchCriteria", getModel());
+		}
+		
+		setModelList(getBean().findByExample(getModel()));
 		return LIST;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public String cancel() {
 		setModel((E) request.getSession(false).getAttribute("searchCriteria"));
-		return search();
+		return SUCCESS;
 	}
 	
 	public String add() {
@@ -62,7 +70,7 @@ public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serial
 		getBean().makeTransient(model);
 		
 		setModel((E) request.getSession(false).getAttribute("searchCriteria"));
-		return search();
+		return SUCCESS;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -81,6 +89,7 @@ public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serial
 			getBean().makePersistent(existingModel);
 			
 		} else {
+			setParentEntities(model);
 			model.setLastUpdateDate(now);
 			model.setLastUpdateUser(request.getUserPrincipal().getName());
 			model.setCreateDate(now);
@@ -91,7 +100,7 @@ public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serial
 		
 		
 		setModel((E) request.getSession(false).getAttribute("searchCriteria"));
-		return search();
+		return SUCCESS;
 	}
 	
 	public String getFormMode() {
@@ -110,6 +119,14 @@ public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serial
 		this.modelId = modelId;
 	}
 	
+	public Boolean getReuseCriteria() {
+		return reuseCriteria;
+	}
+	
+	public void setReuseCriteria(Boolean reuseCriteria) {
+		this.reuseCriteria = reuseCriteria;
+	}
+	
 	public void setServletRequest(HttpServletRequest request) {
 		this.request = request;
 	}
@@ -124,7 +141,7 @@ public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serial
 	
 	protected abstract B getBean();
 	
-	protected abstract String[] getExcludedProperties();
-	
 	protected abstract void setExistingModelFields(E existingModel, E model);
+	
+	protected abstract void setParentEntities(E model);
 }

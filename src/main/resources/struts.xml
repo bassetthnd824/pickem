@@ -40,10 +40,27 @@
 	
 	<package name="manager" extends="pickem-default" namespace="/manager">
 		<action name="seasons_*" method="{1}" class="com.curleesoft.pickem.action.SeasonAction">
-			<result name="init">seasons.search</result>
+			<result name="init">seasons.list</result>
 			<result name="list">seasons.list</result>
 			<result name="add">seasons.detail</result>
 			<result name="edit">seasons.detail</result>
+			<result name="success" type="redirectAction">
+				<param name="namespace">/manager</param>
+				<param name="actionName">seasons_search</param>
+				<param name="reuseCriteria">true</param>
+			</result>
+		</action>
+		
+		<action name="seasonWeeks_*" method="{1}" class="com.curleesoft.pickem.action.SeasonWeekAction">
+			<result name="init">seasonWeeks.list</result>
+			<result name="list">seasonWeeks.list</result>
+			<result name="add">seasonWeeks.detail</result>
+			<result name="edit">seasonWeeks.detail</result>
+			<result name="success" type="redirectAction">
+				<param name="namespace">/manager</param>
+				<param name="actionName">seasonWeeks_search</param>
+				<param name="reuseCriteria">true</param>
+			</result>
 		</action>
 	</package>
 </struts>

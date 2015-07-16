@@ -26,7 +26,7 @@
 						<li><a href="<c:url value="/manager/venues_init.action"/>">Venues</a></li>
 						<li><a href="<c:url value="/manager/rivalries_init.action"/>">Rivalries</a></li>
 						<li><a href="<c:url value="/manager/seasons_init.action"/>">Seasons</a></li>
-						<li><a href="<c:url value="/manager/seasonweeks_init.action"/>">Season Weeks</a></li>
+						<li><a href="<c:url value="/manager/seasonWeeks_init.action"/>">Season Weeks</a></li>
 						<li><a href="<c:url value="/manager/matchups_init.action"/>">Matchups</a></li>
 					</ul>
 				</li>
