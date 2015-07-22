@@ -86,5 +86,17 @@
 				<param name="reuseCriteria">true</param>
 			</result>
 		</action>
+		
+		<action name="venues_*" method="{1}" class="com.curleesoft.pickem.action.VenueAction">
+			<result name="init">venues.list</result>
+			<result name="list">venues.list</result>
+			<result name="add">venues.detail</result>
+			<result name="edit">venues.detail</result>
+			<result name="success" type="redirectAction">
+				<param name="namespace">/manager</param>
+				<param name="actionName">venues_search</param>
+				<param name="reuseCriteria">true</param>
+			</result>
+		</action>
 	</package>
 </struts>
