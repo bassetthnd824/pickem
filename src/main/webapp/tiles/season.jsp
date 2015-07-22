@@ -16,30 +16,13 @@
 				</div>
 			</s:if>
 			
-			<input type="hidden" id="formMode" name="formMode" value="${formMode}"/>
-			<input type="hidden" id="modelId" name="modelId" value="${model.id}"/>
+			<s:hidden key="formMode" id="formMode"/>
+			<s:hidden name="modelId" value="%{model.id}"/>
 			
-			<div class="form-group">
-				<label class="col-sm-3 control-label">Season</label>
-				<div class="col-sm-9">
-					<input type="text" id="season" name="season" class="form-control" value="${model.season }"/>
-				</div>
-			</div>
-			
-			<div class="form-group">
-				<label class="col-sm-3 control-label">Begin Date</label>
-				<div class="col-sm-9">
-					<input type="text" id="beginDate" name="beginDate" class="form-control" value="${model.beginDate }"/>
-				</div>
-			</div>
-			
-			<div class="form-group">
-				<label class="col-sm-3 control-label">End Date</label>
-				<div class="col-sm-9">
-					<input type="text" id="endDate" name="endDate" class="form-control" value="${model.endDate }" data-duration="months"/>
-				</div>
-			</div>
-			
+			<s:textfield label="Season" name="model.season"/>
+			<s:textfield label="Begin Date" name="model.beginDate" cssClass="begin-date" />
+			<s:textfield label="End Date" name="model.endDate" cssClass="end-date" data-duration="months"/>
+			 
 			<s:if test="formMode == 'edit'">
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Last Updated On</label>
@@ -56,7 +39,7 @@
 				</div>
 			</s:if>
 			
-			<s:if test="formMode != 'search'">
+			<s:if test="formMode != 'search' && formMode != 'init'">
 				<div class="pull-right">
 					<s:submit type="button" action="seasons_cancel" cssClass="btn btn-default">Cancel</s:submit>
 					<s:submit type="button" action="seasons_save" cssClass="btn btn-default btn-primary">Save</s:submit>

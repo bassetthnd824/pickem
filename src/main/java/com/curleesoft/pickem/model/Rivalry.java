@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.curleesoft.pickem.model.constraints.AssertRivalryTeamsNotEqual;
 
 /**
@@ -107,7 +109,7 @@ public class Rivalry extends AbstractBaseEntity implements Serializable, PickemE
 
 	@Override
 	public String toString() {
-		return team1.toString() + " vs. " + team2.toString() + " " + rivalryName;
+		return team1.toString() + " vs. " + team2.toString() + " " + StringUtils.defaultString(rivalryName);
 	}
 	
 }

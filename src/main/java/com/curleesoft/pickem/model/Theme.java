@@ -11,6 +11,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 
 import com.curleesoft.pickem.model.constraints.AssertThemePathDoesNotBeginWithSlash;
@@ -95,12 +96,12 @@ public class Theme extends AbstractBaseEntity implements Serializable, PickemEnt
 
 	@Override
 	public int hashCode() {
-		return themeName.hashCode();
+		return StringUtils.defaultString(themeName).hashCode();
 	}
 
 	@Override
 	public String toString() {
-		return themeName;
+		return StringUtils.defaultString(themeName);
 	}
 	
 }

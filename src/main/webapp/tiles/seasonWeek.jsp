@@ -17,44 +17,13 @@
 				</div>
 			</s:if>
 			
-			<input type="hidden" id="formMode" name="formMode" value="${formMode}"/>
-			<input type="hidden" id="modelId" name="modelId" value="${model.id}"/>
+			<s:hidden key="formMode" id="formMode"/>
+			<s:hidden name="modelId" value="%{model.id}"/>
 			
-			<div class="form-group">
-				<label class="col-sm-3 control-label">Season</label>
-				<div class="col-sm-9">
-					<select id="season.id" name="season.id" class="form-control">
-						<s:if test="formMode != 'edit'">
-							<option value="">Please select a Season</option>
-						</s:if>
-						
-						<c:forEach items="${seasons}" var="season">
-							<option value="${season.id}"${(season.id == model.season.id) ? ' selected="selected"' : '' }>${season.season}</option>
-						</c:forEach>
-					</select>
-				</div>
-			</div>
-			
-			<div class="form-group">
-				<label class="col-sm-3 control-label">Week Number</label>
-				<div class="col-sm-9">
-					<input type="text" id="weekNumber" name="weekNumber" class="form-control" value="${model.weekNumber }"/>
-				</div>
-			</div>
-			
-			<div class="form-group">
-				<label class="col-sm-3 control-label">Begin Date</label>
-				<div class="col-sm-9">
-					<input type="text" id="beginDate" name="beginDate" class="form-control" value="${model.beginDate }"/>
-				</div>
-			</div>
-			
-			<div class="form-group">
-				<label class="col-sm-3 control-label">End Date</label>
-				<div class="col-sm-9">
-					<input type="text" id="endDate" name="endDate" class="form-control" value="${model.endDate }" data-duration="days"/>
-				</div>
-			</div>
+			<s:select label="Season" name="model.season.id" list="seasons" listKey="id" listValue="season" headerKey="" headerValue="Please select a Season"/>
+			<s:textfield label="Week Number" name="model.weekNumber"/>
+			<s:textfield label="Begin Date" name="model.beginDate" cssClass="begin-date"/>
+			<s:textfield label="End Date" name="model.endDate" cssClass="end-date" data-duration="days"/>
 			
 			<s:if test="formMode == 'edit'">
 				<div class="form-group">

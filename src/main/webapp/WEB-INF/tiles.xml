@@ -2,7 +2,7 @@
 <!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 
 <tiles-definitions>
-	<definition name="common" template="/templates/template.jsp">
+	<definition name="common" template="/tiles/templates/template.jsp">
 		<put-attribute name="header" value="/tiles/header.jsp" />
 		<put-attribute name="navbar" value="/tiles/navbar.jsp" />
 		<put-attribute name="footer" value="/tiles/footer.jsp" />
@@ -44,7 +44,7 @@
 	<definition name="seasons.list" extends="common">
 		<put-attribute name="title" value="Kenney's Pickem - Seasons" />
 		<put-attribute name="body">
-			<definition template="/templates/searchTemplate.jsp">
+			<definition template="/tiles/templates/searchTemplate.jsp">
 				<put-attribute name="screenHeader" value="Seasons"/>
 				<put-attribute name="searchForm" value="/tiles/season.jsp"/>
 				<put-attribute name="searchResults" value="/tiles/seasons.jsp"/>
@@ -62,7 +62,7 @@
 	<definition name="seasonWeeks.list" extends="common">
 		<put-attribute name="title" value="Kenney's Pickem - Season Weeks" />
 		<put-attribute name="body">
-			<definition template="/templates/searchTemplate.jsp">
+			<definition template="/tiles/templates/searchTemplate.jsp">
 				<put-attribute name="screenHeader" value="Season Weeks"/>
 				<put-attribute name="searchForm" value="/tiles/seasonWeek.jsp"/>
 				<put-attribute name="searchResults" value="/tiles/seasonWeeks.jsp"/>
@@ -80,7 +80,7 @@
 	<definition name="users.list" extends="common">
 		<put-attribute name="title" value="Kenney's Pickem - Users" />
 		<put-attribute name="body">
-			<definition template="/templates/searchTemplate.jsp">
+			<definition template="/tiles/templates/searchTemplate.jsp">
 				<put-attribute name="screenHeader" value="Users"/>
 				<put-attribute name="searchForm" value="/tiles/user.jsp"/>
 				<put-attribute name="searchResults" value="/tiles/users.jsp"/>
@@ -92,6 +92,24 @@
 	<definition name="users.detail" extends="common">
 		<put-attribute name="title" value="Kenney's Pickem - Users" />
 		<put-attribute name="body" value="/tiles/user.jsp"/>
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
+	</definition>
+	
+	<definition name="themes.list" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Themes" />
+		<put-attribute name="body">
+			<definition template="/tiles/templates/searchTemplate.jsp">
+				<put-attribute name="screenHeader" value="Themes"/>
+				<put-attribute name="searchForm" value="/tiles/theme.jsp"/>
+				<put-attribute name="searchResults" value="/tiles/themes.jsp"/>
+			</definition>
+		</put-attribute>
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
+	</definition>
+	
+	<definition name="themes.detail" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Themes" />
+		<put-attribute name="body" value="/tiles/theme.jsp"/>
 		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
 	</definition>
 </tiles-definitions>

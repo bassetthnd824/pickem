@@ -19,6 +19,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Loader;
 import org.hibernate.annotations.Type;
 
@@ -133,12 +134,12 @@ public class Team extends AbstractBaseEntity implements Serializable, PickemEnti
 
 	@Override
 	public int hashCode() {
-		return teamName.hashCode();
+		return StringUtils.defaultString(teamName).hashCode();
 	}
 
 	@Override
 	public String toString() {
-		return teamName + " " + squadName;
+		return StringUtils.defaultString(teamName) + " " + StringUtils.defaultString(squadName);
 	}
 	
 }

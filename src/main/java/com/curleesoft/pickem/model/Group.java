@@ -11,6 +11,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Entity implementation class for Entity: Group
  *
@@ -65,12 +67,12 @@ public class Group extends AbstractBaseEntity implements Serializable, PickemEnt
 
 	@Override
 	public int hashCode() {
-		return groupName.hashCode();
+		return StringUtils.defaultString(groupName).hashCode();
 	}
 
 	@Override
 	public String toString() {
-		return groupName;
+		return StringUtils.defaultString(groupName);
 	}
 	
 }

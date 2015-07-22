@@ -80,7 +80,7 @@ public class SeasonWeekAction extends BaseAction<SeasonWeek, Long, SeasonWeekBea
 	
 	@Override
 	protected void setExistingModelFields(SeasonWeek existingModel, SeasonWeek model) {
-		existingModel.setSeason(model.getSeason());
+		existingModel.setSeason(seasonBean.findById(model.getSeason().getId(), false));
 		existingModel.setWeekNumber(model.getWeekNumber());
 		existingModel.setBeginDate(model.getBeginDate());
 		existingModel.setEndDate(model.getEndDate());

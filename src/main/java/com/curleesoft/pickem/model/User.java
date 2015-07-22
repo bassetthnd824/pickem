@@ -18,6 +18,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.curleesoft.pickem.model.constraints.AssertUserHasAtLeastOneGroup;
 import com.curleesoft.pickem.model.constraints.AssertUserPassProperlyFormed;
 
@@ -107,7 +109,7 @@ public class User extends AbstractBaseEntity implements Serializable, PickemEnti
 	}
 	
 	// uni-directional many-to-one association to Theme
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "THEME_ID")
 	public Theme getTheme() {
 		return this.theme;
@@ -156,6 +158,6 @@ public class User extends AbstractBaseEntity implements Serializable, PickemEnti
 	
 	@Override
 	public int hashCode() {
-		return userId.hashCode();
+		return StringUtils.defaultString(userId).hashCode();
 	}
 }

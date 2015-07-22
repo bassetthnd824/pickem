@@ -11,6 +11,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * The persistent class for the PCKM_VENUE database table.
  * 
@@ -79,12 +81,12 @@ public class Venue extends AbstractBaseEntity implements Serializable, PickemEnt
 
 	@Override
 	public int hashCode() {
-		return venueName.hashCode();
+		return StringUtils.defaultString(venueName).hashCode();
 	}
 
 	@Override
 	public String toString() {
-		return venueName;
+		return StringUtils.defaultString(venueName);
 	}
 	
 }

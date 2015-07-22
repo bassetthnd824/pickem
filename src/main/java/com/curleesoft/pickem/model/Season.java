@@ -108,7 +108,7 @@ public class Season extends AbstractBaseEntity implements Serializable, PickemEn
 
 	@Override
 	public String toString() {
-		return season;
+		return StringUtils.defaultString(season);
 	}
 
 }

@@ -62,5 +62,29 @@
 				<param name="reuseCriteria">true</param>
 			</result>
 		</action>
+		
+		<action name="users_*" method="{1}" class="com.curleesoft.pickem.action.UserAction">
+			<result name="init">users.list</result>
+			<result name="list">users.list</result>
+			<result name="add">users.detail</result>
+			<result name="edit">users.detail</result>
+			<result name="success" type="redirectAction">
+				<param name="namespace">/manager</param>
+				<param name="actionName">users_search</param>
+				<param name="reuseCriteria">true</param>
+			</result>
+		</action>
+		
+		<action name="themes_*" method="{1}" class="com.curleesoft.pickem.action.ThemeAction">
+			<result name="init">themes.list</result>
+			<result name="list">themes.list</result>
+			<result name="add">themes.detail</result>
+			<result name="edit">themes.detail</result>
+			<result name="success" type="redirectAction">
+				<param name="namespace">/manager</param>
+				<param name="actionName">themes_search</param>
+				<param name="reuseCriteria">true</param>
+			</result>
+		</action>
 	</package>
 </struts>
