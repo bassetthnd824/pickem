@@ -47,7 +47,7 @@ public class GroupBean extends GenericHibernateBean<Group, Long> {
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		
 		if (StringUtils.isNotBlank(exampleInstance.getGroupName())) {
-			predicates.add(criteriaBuilder.equal(root.get(Group_.groupName), exampleInstance.getGroupName()));
+			predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get(Group_.groupName)), StringUtils.lowerCase("%" + exampleInstance.getGroupName() + "%")));
 		}
 		
 		return predicates.toArray(new Predicate[predicates.size()]);

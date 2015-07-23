@@ -5,7 +5,6 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -100,7 +99,7 @@ public class Team extends AbstractBaseEntity implements Serializable, PickemEnti
 	}
 
 	// bi-directional many-to-one association to Rivalry
-	@OneToMany(fetch = FetchType.EAGER)
+	@OneToMany
 	@JoinColumns({
 		@JoinColumn(name = "TEAM_ID1", referencedColumnName = "TEAM_ID"),
 		@JoinColumn(name = "TEAM_ID2", referencedColumnName = "TEAM_ID")

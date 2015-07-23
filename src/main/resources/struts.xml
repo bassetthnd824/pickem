@@ -98,5 +98,29 @@
 				<param name="reuseCriteria">true</param>
 			</result>
 		</action>
+		
+		<action name="teams_*" method="{1}" class="com.curleesoft.pickem.action.TeamAction">
+			<result name="init">teams.list</result>
+			<result name="list">teams.list</result>
+			<result name="add">teams.detail</result>
+			<result name="edit">teams.detail</result>
+			<result name="success" type="redirectAction">
+				<param name="namespace">/manager</param>
+				<param name="actionName">teams_search</param>
+				<param name="reuseCriteria">true</param>
+			</result>
+		</action>
+		
+		<action name="rivalries_*" method="{1}" class="com.curleesoft.pickem.action.RivalryAction">
+			<result name="init">rivalries.list</result>
+			<result name="list">rivalries.list</result>
+			<result name="add">rivalries.detail</result>
+			<result name="edit">rivalries.detail</result>
+			<result name="success" type="redirectAction">
+				<param name="namespace">/manager</param>
+				<param name="actionName">rivalries_search</param>
+				<param name="reuseCriteria">true</param>
+			</result>
+		</action>
 	</package>
 </struts>

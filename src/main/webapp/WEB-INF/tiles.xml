@@ -130,4 +130,40 @@
 		<put-attribute name="body" value="/tiles/venue.jsp"/>
 		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
 	</definition>
+	
+	<definition name="teams.list" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Teams" />
+		<put-attribute name="body">
+			<definition template="/tiles/templates/searchTemplate.jsp">
+				<put-attribute name="screenHeader" value="Teams"/>
+				<put-attribute name="searchForm" value="/tiles/team.jsp"/>
+				<put-attribute name="searchResults" value="/tiles/teams.jsp"/>
+			</definition>
+		</put-attribute>
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
+	</definition>
+	
+	<definition name="teams.detail" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Teams" />
+		<put-attribute name="body" value="/tiles/team.jsp"/>
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
+	</definition>
+	
+	<definition name="rivalries.list" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Rivalries" />
+		<put-attribute name="body">
+			<definition template="/tiles/templates/searchTemplate.jsp">
+				<put-attribute name="screenHeader" value="Rivalries"/>
+				<put-attribute name="searchForm" value="/tiles/rivalry.jsp"/>
+				<put-attribute name="searchResults" value="/tiles/rivalries.jsp"/>
+			</definition>
+		</put-attribute>
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
+	</definition>
+	
+	<definition name="rivalries.detail" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Rivalries" />
+		<put-attribute name="body" value="/tiles/rivalry.jsp"/>
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
+	</definition>
 </tiles-definitions>

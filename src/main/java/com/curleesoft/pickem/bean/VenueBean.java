@@ -33,11 +33,11 @@ public class VenueBean extends GenericHibernateBean<Venue, Long> {
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		
 		if (StringUtils.isNotBlank(exampleInstance.getVenueName())) {
-			predicates.add(criteriaBuilder.equal(root.get(Venue_.venueName), exampleInstance.getVenueName()));
+			predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get(Venue_.venueName)), StringUtils.lowerCase("%" + exampleInstance.getVenueName() + "%")));
 		}
 		
 		if (StringUtils.isNotBlank(exampleInstance.getCityState())) {
-			predicates.add(criteriaBuilder.equal(root.get(Venue_.cityState), exampleInstance.getCityState()));
+			predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get(Venue_.cityState)), StringUtils.lowerCase("%" + exampleInstance.getCityState() + "%")));
 		}
 		
 		return predicates.toArray(new Predicate[predicates.size()]);

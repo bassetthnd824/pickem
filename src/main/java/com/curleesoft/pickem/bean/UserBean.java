@@ -47,15 +47,15 @@ public class UserBean extends GenericHibernateBean<User, Long> {
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		
 		if (StringUtils.isNotBlank(exampleInstance.getEmailAddr())) {
-			predicates.add(criteriaBuilder.equal(root.get(User_.emailAddr), exampleInstance.getEmailAddr()));
+			predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get(User_.emailAddr)), StringUtils.lowerCase("%" + exampleInstance.getEmailAddr() + "%")));
 		}
 		
 		if (StringUtils.isNotBlank(exampleInstance.getFirstName())) {
-			predicates.add(criteriaBuilder.equal(root.get(User_.firstName), exampleInstance.getFirstName()));
+			predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get(User_.firstName)), StringUtils.lowerCase("%" + exampleInstance.getFirstName() + "%")));
 		}
 		
 		if (StringUtils.isNotBlank(exampleInstance.getLastName())) {
-			predicates.add(criteriaBuilder.equal(root.get(User_.lastName), exampleInstance.getLastName()));
+			predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get(User_.lastName)), StringUtils.lowerCase("%" + exampleInstance.getLastName() + "%")));
 		}
 		
 		return predicates.toArray(new Predicate[predicates.size()]);

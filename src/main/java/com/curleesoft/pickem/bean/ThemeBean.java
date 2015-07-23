@@ -33,11 +33,11 @@ public class ThemeBean extends GenericHibernateBean<Theme, Long> {
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		
 		if (StringUtils.isNotBlank(exampleInstance.getThemeName())) {
-			predicates.add(criteriaBuilder.equal(root.get(Theme_.themeName), exampleInstance.getThemeName()));
+			predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get(Theme_.themeName)), StringUtils.lowerCase("%" + exampleInstance.getThemeName() + "%")));
 		}
 		
 		if (StringUtils.isNotBlank(exampleInstance.getThemePath())) {
-			predicates.add(criteriaBuilder.equal(root.get(Theme_.themePath), exampleInstance.getThemePath()));
+			predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get(Theme_.themePath)), StringUtils.lowerCase("%" + exampleInstance.getThemePath() + "%")));
 		}
 		
 		return predicates.toArray(new Predicate[predicates.size()]);

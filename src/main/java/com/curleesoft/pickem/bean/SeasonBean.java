@@ -44,7 +44,7 @@ public class SeasonBean extends GenericHibernateBean<Season, Long> {
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		
 		if (StringUtils.isNotBlank(exampleInstance.getSeason())) {
-			predicates.add(criteriaBuilder.equal(root.get(Season_.season), exampleInstance.getSeason()));
+			predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get(Season_.season)), StringUtils.lowerCase("%" + exampleInstance.getSeason() + "%")));
 		}
 		
 		if (exampleInstance.getBeginDate() != null) {
