@@ -11,6 +11,7 @@
 	<package name="pickem-default" extends="tiles-default" namespace="/">
 		<result-types>
 			<result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" default="true"/>
+			<result-type name="json" class="com.curleesoft.pickem.result.JSONResult"/>
 		</result-types>
 		
 		<action name="register_*" method="{1}" class="com.curleesoft.pickem.action.RegisterAction">
@@ -56,6 +57,7 @@
 			<result name="list">seasonWeeks.list</result>
 			<result name="add">seasonWeeks.detail</result>
 			<result name="edit">seasonWeeks.detail</result>
+			<result name="jsonlist" type="json">modelList</result>
 			<result name="success" type="redirectAction">
 				<param name="namespace">/manager</param>
 				<param name="actionName">seasonWeeks_search</param>
@@ -119,6 +121,18 @@
 			<result name="success" type="redirectAction">
 				<param name="namespace">/manager</param>
 				<param name="actionName">rivalries_search</param>
+				<param name="reuseCriteria">true</param>
+			</result>
+		</action>
+		
+		<action name="matchups_*" method="{1}" class="com.curleesoft.pickem.action.MatchupAction">
+			<result name="init">matchups.list</result>
+			<result name="list">matchups.list</result>
+			<result name="add">matchups.detail</result>
+			<result name="edit">matchups.detail</result>
+			<result name="success" type="redirectAction">
+				<param name="namespace">/manager</param>
+				<param name="actionName">matchups_search</param>
 				<param name="reuseCriteria">true</param>
 			</result>
 		</action>

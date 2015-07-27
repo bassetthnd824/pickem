@@ -20,8 +20,8 @@
 			<s:hidden name="modelId" value="%{model.id}"/>
 			
 			<s:textfield label="Season" name="model.season"/>
-			<s:textfield label="Begin Date" name="model.beginDate" cssClass="begin-date" />
-			<s:textfield label="End Date" name="model.endDate" cssClass="end-date" data-duration="months"/>
+			<s:textfield label="Begin Date" name="model.beginDate" cssClass="date begin-date" />
+			<s:textfield label="End Date" name="model.endDate" cssClass="date end-date" data-duration="months"/>
 			 
 			<s:if test="formMode == 'edit'">
 				<div class="form-group">

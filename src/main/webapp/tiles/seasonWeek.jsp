@@ -22,8 +22,8 @@
 			
 			<s:select label="Season" name="model.season.id" list="seasons" listKey="id" listValue="season" headerKey="" headerValue="Please select a Season"/>
 			<s:textfield label="Week Number" name="model.weekNumber"/>
-			<s:textfield label="Begin Date" name="model.beginDate" cssClass="begin-date"/>
-			<s:textfield label="End Date" name="model.endDate" cssClass="end-date" data-duration="days"/>
+			<s:textfield label="Begin Date" name="model.beginDate" cssClass="date begin-date"/>
+			<s:textfield label="End Date" name="model.endDate" cssClass="date end-date" data-duration="days"/>
 			
 			<s:if test="formMode == 'edit'">
 				<div class="form-group">

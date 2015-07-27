@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
@@ -21,7 +23,20 @@ public class SeasonWeekBean extends GenericHibernateBean<SeasonWeek, Long> {
 	public SeasonWeekBean() {
 		super(SeasonWeek.class);
 	}
-
+	
+	public List<SeasonWeek> getSeasonWeeksBySeason(Long seasonId) {
+		final CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
+		final CriteriaQuery<SeasonWeek> criteriaQuery = criteriaBuilder.createQuery(SeasonWeek.class);
+		Root<SeasonWeek> root = criteriaQuery.from(SeasonWeek.class);
+		Join<SeasonWeek, Season> seasonRoot = root.join(SeasonWeek_.season);
+		
+		criteriaQuery.select(criteriaQuery.getSelection()).where(criteriaBuilder.equal(seasonRoot.get(Season_.id), seasonId));
+		criteriaQuery.orderBy(getDefaultOrder(criteriaBuilder, root));
+		TypedQuery<SeasonWeek> query = getEntityManager().createQuery(criteriaQuery);
+		
+		return query.getResultList();
+	}
+	
 	@Override
 	protected Order[] getDefaultOrder(CriteriaBuilder criteriaBuilder, Root<SeasonWeek> root) {
 		return new Order[] {

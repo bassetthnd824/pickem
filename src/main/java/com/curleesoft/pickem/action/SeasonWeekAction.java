@@ -49,6 +49,11 @@ public class SeasonWeekAction extends BaseAction<SeasonWeek, Long, SeasonWeekBea
 		seasonWeek = new SeasonWeek();
 	}
 	
+	public void prepareGetSeasonWeeksBySeason() throws Exception {
+		seasonWeek = new SeasonWeek();
+		seasonWeek.setSeason(new Season());
+	}
+	
 	@Override
 	protected SeasonWeekBean getBean() {
 		return seasonWeekBean;
@@ -76,6 +81,11 @@ public class SeasonWeekAction extends BaseAction<SeasonWeek, Long, SeasonWeekBea
 	
 	public List<Season> getSeasons() {
 		return seasons;
+	}
+	
+	public String getSeasonWeeksBySeason() {
+		setModelList(seasonWeekBean.getSeasonWeeksBySeason(seasonWeek.getSeason().getId()));
+		return JSONLIST;
 	}
 	
 	@Override

@@ -166,4 +166,22 @@
 		<put-attribute name="body" value="/tiles/rivalry.jsp"/>
 		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
 	</definition>
+	
+	<definition name="matchups.list" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Matchups" />
+		<put-attribute name="body">
+			<definition template="/tiles/templates/searchTemplate.jsp">
+				<put-attribute name="screenHeader" value="Matchups"/>
+				<put-attribute name="searchForm" value="/tiles/matchup.jsp"/>
+				<put-attribute name="searchResults" value="/tiles/matchups.jsp"/>
+			</definition>
+		</put-attribute>
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
+	</definition>
+	
+	<definition name="matchups.detail" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Matchups" />
+		<put-attribute name="body" value="/tiles/matchup.jsp"/>
+		<put-attribute name="scripts" value="/tiles/scripts/adminscreen.jsp" />
+	</definition>
 </tiles-definitions>

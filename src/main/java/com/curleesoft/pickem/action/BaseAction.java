@@ -21,6 +21,7 @@ public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serial
 	public static final String LIST = "list";
 	public static final String ADD = "add";
 	public static final String EDIT = "edit";
+	public static final String JSONLIST = "jsonlist";
 	
 	private String formMode;
 	private ID modelId;
