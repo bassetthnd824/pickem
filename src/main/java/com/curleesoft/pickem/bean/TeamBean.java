@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
@@ -23,7 +24,15 @@ public class TeamBean extends GenericHibernateBean<Team, Long> {
 	public TeamBean() {
 		super(Team.class);
 	}
-
+	
+	public Long getNumberOfConferenceTeams() {
+		CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Team> root = criteriaQuery.from(Team.class);
+		criteriaQuery.select(criteriaBuilder.count(root)).where(criteriaBuilder.equal(root.get(Team_.conferenceMember), Boolean.TRUE));
+		return getEntityManager().createQuery(criteriaQuery).getSingleResult();
+	}
+	
 	@Override
 	protected Order[] getDefaultOrder(CriteriaBuilder criteriaBuilder, Root<Team> root) {
 		return new Order[] {

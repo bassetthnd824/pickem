@@ -38,10 +38,11 @@ $(document).ready(function() {
 				var options = [];
 				var valueProp = $slave.data('valueProp');
 				var textProp = $slave.data('textProp');
+				var hiddenValue = $('#' + $slave.data('hiddenValueHolder')).val();
 				
 				for (var i = 0; i < data.length; i++) {
 					var item = data[i];
-					var option = '<option value="' + item[valueProp] + '">' + item[textProp] + '</option>';
+					var option = '<option value="' + item[valueProp] + '"' + ((parseFloat(hiddenValue) === parseFloat(item[valueProp])) ? ' selected="selected"' : '') + '>' + item[textProp] + '</option>';
 					options.push(option);
 				}
 				
@@ -49,4 +50,8 @@ $(document).ready(function() {
 			}
 		});
 	});
+	
+	if ($('select.double-select-master').val()) {
+		$('select.double-select-master').trigger('change');
+	}
 });

@@ -19,6 +19,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Loader;
 import org.hibernate.annotations.Type;
 
@@ -88,6 +90,7 @@ public class Team extends AbstractBaseEntity implements Serializable, PickemEnti
 	}
 	
 	@ManyToOne
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "HOME_VENUE_ID", nullable = false)
 	@NotNull(message = "home venue cannot be blank")
 	public Venue getHomeVenue() {

@@ -12,6 +12,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 /**
  * The persistent class for the PCKM_USER_PICK database table.
  * 
@@ -54,6 +57,7 @@ public class UserPick extends AbstractBaseEntity implements Serializable, Pickem
 	// bi-directional many-to-one association to Matchup
 	@ManyToOne
 	@JoinColumn(name = "MATCHUP_ID", nullable = false)
+	@Fetch(FetchMode.JOIN)
 	public Matchup getMatchup() {
 		return this.matchup;
 	}
@@ -65,6 +69,7 @@ public class UserPick extends AbstractBaseEntity implements Serializable, Pickem
 	// uni-directional many-to-one association to Team
 	@ManyToOne
 	@JoinColumn(name = "PICKED_TEAM_ID", nullable = false)
+	@Fetch(FetchMode.JOIN)
 	public Team getPickedTeam() {
 		return this.pickedTeam;
 	}
@@ -76,6 +81,7 @@ public class UserPick extends AbstractBaseEntity implements Serializable, Pickem
 	// bi-directional many-to-one association to User
 	@ManyToOne
 	@JoinColumn(name = "USER_GUID", nullable = false)
+	@Fetch(FetchMode.JOIN)
 	public User getUser() {
 		return this.user;
 	}
@@ -116,7 +122,7 @@ public class UserPick extends AbstractBaseEntity implements Serializable, Pickem
 
 	@Override
 	public String toString() {
-		return matchup.toString() + " user: " + user.toString();
+		return ((matchup != null) ? matchup.toString() : "") + " user: " + ((user != null) ? user.toString() : "");
 	}
 	
 }

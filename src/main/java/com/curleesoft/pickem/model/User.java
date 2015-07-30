@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +18,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import com.curleesoft.pickem.model.constraints.AssertUserHasAtLeastOneGroup;
 import com.curleesoft.pickem.model.constraints.AssertUserPassProperlyFormed;
@@ -109,7 +110,7 @@ public class User extends AbstractBaseEntity implements Serializable, PickemEnti
 	}
 	
 	// uni-directional many-to-one association to Theme
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "THEME_ID")
 	public Theme getTheme() {
 		return this.theme;
@@ -120,7 +121,8 @@ public class User extends AbstractBaseEntity implements Serializable, PickemEnti
 	}
 	
 	// bi-directional many-to-one association to UserGroup
-	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@Fetch(FetchMode.JOIN)
 	public Set<UserGroup> getUserGroups() {
 		if (this.userGroups == null) {
 			this.userGroups = new HashSet<UserGroup>();

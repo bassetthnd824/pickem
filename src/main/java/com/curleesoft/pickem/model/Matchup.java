@@ -16,6 +16,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import com.curleesoft.pickem.model.constraints.AssertMatchupTeamsNotEqual;
 import com.curleesoft.pickem.model.constraints.ValidMatchupDate;
@@ -86,6 +90,7 @@ public class Matchup extends AbstractBaseEntity implements Serializable, PickemE
 	
 	// bi-directional many-to-one association to SeasonWeek
 	@ManyToOne
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "SEASON_WEEK_ID", nullable = false)
 	public SeasonWeek getSeasonWeek() {
 		return this.seasonWeek;
@@ -97,6 +102,7 @@ public class Matchup extends AbstractBaseEntity implements Serializable, PickemE
 	
 	// bi-directional many-to-one association to Team
 	@ManyToOne
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "HOME_TEAM_ID", nullable = false)
 	public Team getHomeTeam() {
 		return this.homeTeam;
@@ -108,6 +114,7 @@ public class Matchup extends AbstractBaseEntity implements Serializable, PickemE
 	
 	// bi-directional many-to-one association to Team
 	@ManyToOne
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "AWAY_TEAM_ID", nullable = false)
 	public Team getAwayTeam() {
 		return this.awayTeam;
@@ -119,6 +126,7 @@ public class Matchup extends AbstractBaseEntity implements Serializable, PickemE
 	
 	// bi-directional many-to-one association to Venue
 	@ManyToOne
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "VENUE_ID", nullable = false)
 	public Venue getVenue() {
 		return this.venue;
@@ -175,7 +183,15 @@ public class Matchup extends AbstractBaseEntity implements Serializable, PickemE
 
 	@Override
 	public String toString() {
-		return seasonWeek.toString() + " " + awayTeam.toString() + " at " + homeTeam.toString();
+		return ((seasonWeek != null) ? seasonWeek.toString() : "") + " " + ((awayTeam != null) ? awayTeam.toString() : "") + " at " + ((homeTeam != null) ? homeTeam.toString() : "");
 	}
-
+	
+	@Transient
+	public Team getWinningTeam() {
+		if (homeTeamScore.compareTo(awayTeamScore) > 0) {
+			return homeTeam;
+		} else {
+			return awayTeam;
+		}
+	}
 }

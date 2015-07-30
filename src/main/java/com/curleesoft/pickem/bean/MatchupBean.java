@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import com.curleesoft.pickem.model.Matchup;
+import com.curleesoft.pickem.model.MatchupUserPick;
 import com.curleesoft.pickem.model.Matchup_;
 import com.curleesoft.pickem.model.Season;
 import com.curleesoft.pickem.model.SeasonWeek;
@@ -20,6 +24,7 @@ import com.curleesoft.pickem.model.Team;
 import com.curleesoft.pickem.model.Team_;
 import com.curleesoft.pickem.model.Venue;
 import com.curleesoft.pickem.model.Venue_;
+import com.curleesoft.pickem.util.NativeQueryResultsMapper;
 
 @Stateless
 public class MatchupBean extends GenericHibernateBean<Matchup, Long> {
@@ -27,13 +32,91 @@ public class MatchupBean extends GenericHibernateBean<Matchup, Long> {
 	public MatchupBean() {
 		super(Matchup.class);
 	}
-
+	
+	public List<Matchup> getMatchupsBySeason(Long seasonId) {
+		final CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
+		final CriteriaQuery<Matchup> criteriaQuery = criteriaBuilder.createQuery(Matchup.class);
+		Root<Matchup> root = criteriaQuery.from(Matchup.class);
+		Join<Matchup, SeasonWeek> seasonWeekRoot = root.join(Matchup_.seasonWeek);
+		Join<SeasonWeek, Season> seasonRoot = seasonWeekRoot.join(SeasonWeek_.season);
+		
+		criteriaQuery.select(criteriaQuery.getSelection()).where(criteriaBuilder.equal(seasonRoot.get(Season_.id), seasonId));
+		criteriaQuery.orderBy(getDefaultOrder(criteriaBuilder, root));
+		TypedQuery<Matchup> query = getEntityManager().createQuery(criteriaQuery);
+		
+		return query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MatchupUserPick> getMatchupUserPicksByUserSeason(Long userId, Long seasonId) {
+		String sql = 
+				"   SELECT M.MATCHUP_ID " +
+				"        , S.SEASON_ID " +
+				"        , S.SEASON " +
+				"        , SW.SEASON_WEEK_ID " +
+				"        , SW.WEEK_NUMBER " +
+				"        , SW.BEGIN_DATE AS WEEK_BEGIN_DATE " +
+				"        , SW.END_DATE AS WEEK_END_DATE " +
+				"        , M.MATCHUP_DATE " +
+				"        , M.AWAY_TEAM_ID " +
+				"        , T2.TEAM_NAME AS AWAY_TEAM_NAME " +
+				"        , T2.SQUAD_NAME AS AWAY_SQUAD_NAME " +
+				"        , M.AWAY_TEAM_SCORE " +
+				"        , M.HOME_TEAM_ID " +
+				"        , T1.TEAM_NAME AS HOME_TEAM_NAME " +
+				"        , T1.SQUAD_NAME AS HOME_SQUAD_NAME " +
+				"        , M.HOME_TEAM_SCORE " +
+				"        , V.VENUE_NAME " +
+				"        , V.CITY_STATE " +
+				"        , R.RIVALRY_NAME " +
+				"        , UP.USER_PICK_ID " +
+				"        , U.USER_GUID " +
+				"        , U.USER_ID " +
+				"        , UP.PICKED_TEAM_ID " +
+				"        , UP.RANK " +
+				"     FROM PCKM_MATCHUP       M " +
+				"     JOIN PCKM_SEASON_WEEK   SW " +
+				"       ON M.SEASON_WEEK_ID = SW.SEASON_WEEK_ID " +
+				"     JOIN PCKM_SEASON        S " +
+				"       ON SW.SEASON_ID     = S.SEASON_ID " +
+				"     JOIN PCKM_TEAM          T1 " +
+				"       ON M.HOME_TEAM_ID   = T1.TEAM_ID " +
+				"     JOIN PCKM_TEAM          T2 " +
+				"       ON M.AWAY_TEAM_ID   = T2.TEAM_ID " +
+				"     JOIN PCKM_VENUE         V " +
+				"       ON M.VENUE_ID       = V.VENUE_ID " +
+				"LEFT JOIN PCKM_RIVALRY       R " +
+				"       ON(M.HOME_TEAM_ID   = R.TEAM_ID1 " +
+				"      AND M.AWAY_TEAM_ID   = R.TEAM_ID2) " +
+				"       OR(M.HOME_TEAM_ID   = R.TEAM_ID2 " +
+				"      AND M.AWAY_TEAM_ID   = R.TEAM_ID1) " +
+				"LEFT JOIN PCKM_USER_PICK     UP " +
+				"       ON M.MATCHUP_ID     = UP.MATCHUP_ID " +
+				"LEFT JOIN PCKM_USER          U " +
+				"       ON UP.USER_GUID     = U.USER_GUID " +
+				"    WHERE S.SEASON_ID      = ?  " +
+				"      AND(U.USER_GUID      = ? " +
+				"       OR U.USER_GUID     IS NULL) " +
+				" ORDER BY S.SEASON " +
+				"        , SW.WEEK_NUMBER " +
+				"        , UP.RANK        DESC " +
+				"        , M.MATCHUP_DATE  " +
+				"        , T1.TEAM_NAME";
+		
+		Query query = getEntityManager().createNativeQuery(sql);
+		int pos = 1;
+		
+		return NativeQueryResultsMapper.map(MatchupUserPick.class, query.setParameter(pos++, seasonId).setParameter(pos++, userId).getResultList());
+	}
+	
 	@Override
 	protected Order[] getDefaultOrder(CriteriaBuilder criteriaBuilder, Root<Matchup> root) {
 		Join<Matchup, SeasonWeek> seasonWeekRoot = root.join(Matchup_.seasonWeek);
+		Join<SeasonWeek, Season> seasonRoot = seasonWeekRoot.join(SeasonWeek_.season);
 		Join<Matchup, Team> homeTeamRoot = root.join(Matchup_.homeTeam);
 		
 		return new Order[] {
+				criteriaBuilder.asc(seasonRoot.get(Season_.season)),
 				criteriaBuilder.asc(seasonWeekRoot.get(SeasonWeek_.weekNumber)),
 				criteriaBuilder.asc(root.get(Matchup_.matchupDate)),
 				criteriaBuilder.asc(homeTeamRoot.get(Team_.teamName))

@@ -19,9 +19,10 @@
 			
 			<s:hidden key="formMode" id="formMode"/>
 			<s:hidden name="modelId" value="%{model.id}"/>
+			<s:hidden name="hiddenSeasonWeekId" id="hiddenSeasonWeekId" value="%{model.seasonWeek.id}" /> 
 			
 			<s:select label="Season" name="model.seasonWeek.season.id" list="seasons" listKey="id" listValue="season" headerKey="" headerValue="Please select a Season" cssClass="double-select double-select-master" data-action-name="seasonWeeks_getSeasonWeeksBySeason.action" data-parameter-name="model.season.id" data-slave-id="seasonWeek"/>
-			<s:select label="Week Number" name="model.seasonWeek.id" id="seasonWeek" list="seasonWeeks" listKey="id" listValue="weekNumber" headerKey="" headerValue="Please select a Week Number" cssClass="double-select double-select-slave" data-value-prop="id" data-text-prop="weekNumber"/>
+			<s:select label="Week Number" name="model.seasonWeek.id" id="seasonWeek" list="seasonWeeks" listKey="id" listValue="weekNumber" headerKey="" headerValue="Please select a Week Number" cssClass="double-select double-select-slave" data-value-prop="id" data-text-prop="weekNumber" data-hidden-value-holder="hiddenSeasonWeekId"/>
 			<s:textfield label="Date" name="model.matchupDate" cssClass="date"/>
 			
 			<s:if test="formMode == 'edit' || formMode == 'add'">

@@ -15,6 +15,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import com.curleesoft.pickem.model.constraints.ValidSeasonWeekBeginDate;
 import com.curleesoft.pickem.model.constraints.ValidSeasonWeekEndDate;
 
@@ -82,6 +85,7 @@ public class SeasonWeek extends AbstractBaseEntity implements Serializable, Pick
 	// bi-directional many-to-one association to Season
 	@ManyToOne
 	@JoinColumn(name = "SEASON_ID", nullable = false)
+	@Fetch(FetchMode.JOIN)
 	public Season getSeason() {
 		return this.season;
 	}

@@ -13,6 +13,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import com.curleesoft.pickem.model.constraints.AssertRivalryTeamsNotEqual;
 
@@ -58,6 +60,7 @@ public class Rivalry extends AbstractBaseEntity implements Serializable, PickemE
 	// bi-directional many-to-one association to Team
 	@ManyToOne
 	@JoinColumn(name = "TEAM_ID1", nullable = false)
+	@Fetch(FetchMode.JOIN)
 	public Team getTeam1() {
 		return this.team1;
 	}
@@ -69,6 +72,7 @@ public class Rivalry extends AbstractBaseEntity implements Serializable, PickemE
 	// bi-directional many-to-one association to Team
 	@ManyToOne
 	@JoinColumn(name = "TEAM_ID2", nullable = false)
+	@Fetch(FetchMode.JOIN)
 	public Team getTeam2() {
 		return this.team2;
 	}

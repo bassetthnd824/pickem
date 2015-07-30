@@ -6,7 +6,7 @@ import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2015-07-09T09:57:25.599-0500")
+@Generated(value="Dali", date="2015-07-29T10:42:58.030-0500")
 @StaticMetamodel(Matchup.class)
 public class Matchup_ extends AbstractBaseEntity_ {
 	public static volatile SingularAttribute<Matchup, Long> id;
