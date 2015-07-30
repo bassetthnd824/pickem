@@ -238,6 +238,16 @@ public class MatchupUserPick implements Serializable {
 		this.weekNumber = weekNumber;
 	}
 	
+	public Long getScore() {
+		if (homeTeamScore != null && awayTeamScore != null) {
+			if (pickedTeamId.equals(getWinningTeamId())) {
+				return rank;
+			}
+		}
+		
+		return 0L;
+	}
+	
 	public Long getWinningTeamId() {
 		return (homeTeamScore == null || awayTeamScore == null) ? -1 : ((homeTeamScore.compareTo(awayTeamScore) > 0) ? homeTeamId : awayTeamId);
 	}

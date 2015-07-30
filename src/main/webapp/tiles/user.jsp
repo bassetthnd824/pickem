@@ -23,6 +23,7 @@
 			<s:textfield label="Email Address" name="model.emailAddr"/>
 			<s:textfield label="First Name" name="model.firstName"/>
 			<s:textfield label="Last Name" name="model.lastName"/>
+			<s:textfield label="Nickname" name="model.nickName"/>
 			<s:select label="Theme" name="model.theme.id" list="themes" listKey="id" listValue="themeName" headerKey="" headerValue="Please select a Theme"/>
 			
 			<s:if test="formMode == 'edit'">

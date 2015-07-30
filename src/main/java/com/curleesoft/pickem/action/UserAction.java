@@ -94,12 +94,19 @@ public class UserAction extends BaseAction<User, Long, UserBean> implements Mode
 		existingModel.setEmailAddr(model.getEmailAddr());
 		existingModel.setFirstName(model.getFirstName());
 		existingModel.setLastName(model.getLastName());
-		existingModel.setTheme(themeBean.findById(model.getTheme().getId(), false));
+		existingModel.setNickName(model.getNickName());
+		
+		if (model.getTheme() != null && model.getTheme().getId() != null) {
+			existingModel.setTheme(themeBean.findById(model.getTheme().getId(), false));
+		}
+		
 		existingModel.setUserId(model.getEmailAddr());
 	}
 	
 	@Override
 	protected void setParentEntities(User model) {
-		model.setTheme(themeBean.findById(model.getTheme().getId(), false));
+		if (model.getTheme() != null && model.getTheme().getId() != null) {
+			model.setTheme(themeBean.findById(model.getTheme().getId(), false));
+		}
 	}
 }

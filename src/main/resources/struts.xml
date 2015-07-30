@@ -45,6 +45,11 @@
 				<param name="actionName">main</param>
 			</result>
 		</action>
+		
+		<action name="leaderBoard" class="com.curleesoft.pickem.action.LeaderBoardAction">
+			<result name="error">leaderBoard</result>
+			<result name="success">leaderBoard</result>
+		</action>
 	</package>
 	
 	<package name="manager" extends="pickem-default" namespace="/manager">

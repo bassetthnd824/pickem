@@ -1,9 +1,11 @@
 package com.curleesoft.pickem.bean;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -13,6 +15,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import com.curleesoft.pickem.form.UserScore;
 import com.curleesoft.pickem.model.Matchup;
 import com.curleesoft.pickem.model.MatchupUserPick;
 import com.curleesoft.pickem.model.Matchup_;
@@ -22,12 +25,16 @@ import com.curleesoft.pickem.model.SeasonWeek_;
 import com.curleesoft.pickem.model.Season_;
 import com.curleesoft.pickem.model.Team;
 import com.curleesoft.pickem.model.Team_;
+import com.curleesoft.pickem.model.User;
 import com.curleesoft.pickem.model.Venue;
 import com.curleesoft.pickem.model.Venue_;
 import com.curleesoft.pickem.util.NativeQueryResultsMapper;
 
 @Stateless
 public class MatchupBean extends GenericHibernateBean<Matchup, Long> {
+	
+	@Inject
+	private UserBean userBean;
 	
 	public MatchupBean() {
 		super(Matchup.class);
@@ -107,6 +114,26 @@ public class MatchupBean extends GenericHibernateBean<Matchup, Long> {
 		int pos = 1;
 		
 		return NativeQueryResultsMapper.map(MatchupUserPick.class, query.setParameter(pos++, seasonId).setParameter(pos++, userId).getResultList());
+	}
+	
+	public List<UserScore> getLeaderBoardForSeason(Long seasonId) {
+		List<UserScore> userScores = new ArrayList<UserScore>();
+		List<User> users = userBean.findAll();
+		
+		for (User user : users) {
+			Long score = 0L;
+			List<MatchupUserPick> userPicks = getMatchupUserPicksByUserSeason(user.getId(), seasonId);
+			
+			for (MatchupUserPick userPick : userPicks) {
+				score += userPick.getScore();
+			}
+			
+			userScores.add(new UserScore(user, score));
+		}
+		
+		Collections.sort(userScores);
+		
+		return userScores;
 	}
 	
 	@Override

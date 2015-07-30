@@ -31,7 +31,7 @@ import com.curleesoft.pickem.model.constraints.AssertUserPassProperlyFormed;
 @Entity
 @Table(name = "PCKM_USER")
 @AssertUserHasAtLeastOneGroup
-public class User extends AbstractBaseEntity implements Serializable, PickemEntity {
+public class User extends AbstractBaseEntity implements Comparable<User>, Serializable, PickemEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -40,6 +40,7 @@ public class User extends AbstractBaseEntity implements Serializable, PickemEnti
 	private String lastName;
 	private String userId;
 	private String userPass;
+	private String nickName;
 	private Theme theme;
 	private Set<UserGroup> userGroups;
 	
@@ -109,6 +110,15 @@ public class User extends AbstractBaseEntity implements Serializable, PickemEnti
 		this.userPass = userPass;
 	}
 	
+	@Column(name = "NICK_NAME", length = 40)
+	public String getNickName() {
+		return this.nickName;
+	}
+	
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+	
 	// uni-directional many-to-one association to Theme
 	@ManyToOne
 	@JoinColumn(name = "THEME_ID")
@@ -161,5 +171,14 @@ public class User extends AbstractBaseEntity implements Serializable, PickemEnti
 	@Override
 	public int hashCode() {
 		return StringUtils.defaultString(userId).hashCode();
+	}
+
+	@Override
+	public int compareTo(User o) {
+		if (this == o) {
+			return 0;
+		}
+		
+		return this.userId.compareTo(o.userId);
 	}
 }

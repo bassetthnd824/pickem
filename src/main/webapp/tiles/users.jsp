@@ -9,6 +9,7 @@
 				<th>Email Address</th>
 				<th>First Name</th>
 				<th>Last Name</th>
+				<th>Nickname</th>
 				<th>Theme</th>
 				<th>Last Updated On</th>
 				<th>Last Updated By</th>
@@ -23,6 +24,7 @@
 					<td><s:property value="emailAddr"/></td>
 					<td><s:property value="firstName"/></td>
 					<td><s:property value="lastName"/></td>
+					<td><s:property value="nickName"/></td>
 					<td><s:property value="theme.themeName"/></td>
 					<td><s:date name="lastUpdateDate" format="yyyy-MM-dd hh:mm:ss a"/></td>
 					<td><s:property value="lastUpdateUser"/></td>

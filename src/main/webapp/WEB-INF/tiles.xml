@@ -41,6 +41,12 @@
 		<put-attribute name="scripts" value="/tiles/scripts/main.jsp" />
 	</definition>
 	
+	<definition name="leaderBoard" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Leader Board" />
+		<put-attribute name="body" value="/tiles/leaderBoard.jsp" />
+		<put-attribute name="scripts" value="" />
+	</definition>
+	
 	<definition name="seasons.list" extends="common">
 		<put-attribute name="title" value="Kenney's Pickem - Seasons" />
 		<put-attribute name="body">
