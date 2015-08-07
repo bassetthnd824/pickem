@@ -47,6 +47,12 @@
 		<put-attribute name="scripts" value="" />
 	</definition>
 	
+	<definition name="teamSchedule" extends="common">
+		<put-attribute name="title" value="Kenney's Pickem - Team Schedule" />
+		<put-attribute name="body" value="/tiles/teamSchedule.jsp" />
+		<put-attribute name="scripts" value="/tiles/scripts/teamSchedule.jsp" />
+	</definition>
+	
 	<definition name="seasons.list" extends="common">
 		<put-attribute name="title" value="Kenney's Pickem - Seasons" />
 		<put-attribute name="body">

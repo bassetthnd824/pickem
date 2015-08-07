@@ -1,10 +1,13 @@
 package com.curleesoft.pickem.result;
 
 import java.io.PrintWriter;
+import java.util.Date;
 
 import org.apache.struts2.ServletActionContext;
 
+import com.curleesoft.pickem.converter.DateSerializerDeserializer;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.Result;
 import com.opensymphony.xwork2.util.ValueStack;
@@ -33,7 +36,10 @@ public class JSONResult implements Result {
 		ValueStack valueStack = invocation.getStack();
 		Object jsonModel = valueStack.findValue(resultModelName);
 		
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder()
+				.registerTypeAdapter(Date.class, new DateSerializerDeserializer())
+				.serializeNulls()
+				.create();
 		String result = gson.toJson(jsonModel);
 		
 		responseStream.println(result);

@@ -5,7 +5,7 @@ import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2015-07-30T13:26:11.681-0500")
+@Generated(value="Dali", date="2015-08-06T15:28:22.265-0500")
 @StaticMetamodel(User.class)
 public class User_ extends AbstractBaseEntity_ {
 	public static volatile SingularAttribute<User, Long> id;
@@ -14,7 +14,7 @@ public class User_ extends AbstractBaseEntity_ {
 	public static volatile SingularAttribute<User, String> lastName;
 	public static volatile SingularAttribute<User, String> userId;
 	public static volatile SingularAttribute<User, String> userPass;
+	public static volatile SingularAttribute<User, String> nickName;
 	public static volatile SingularAttribute<User, Theme> theme;
 	public static volatile SetAttribute<User, UserGroup> userGroups;
-	public static volatile SingularAttribute<User, String> nickName;
 }

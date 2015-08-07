@@ -50,6 +50,16 @@
 			<result name="error">leaderBoard</result>
 			<result name="success">leaderBoard</result>
 		</action>
+		
+		<action name="teamSchedule" class="com.curleesoft.pickem.action.TeamScheduleAction">
+			<result name="error">teamSchedule</result>
+			<result name="success">teamSchedule</result>
+		</action>
+		
+		<action name="teamSchedule_get" method="getSchedule" class="com.curleesoft.pickem.action.TeamScheduleAction">
+			<result name="error">teamSchedule</result>
+			<result name="success" type="json">matchups</result>
+		</action>
 	</package>
 	
 	<package name="manager" extends="pickem-default" namespace="/manager">

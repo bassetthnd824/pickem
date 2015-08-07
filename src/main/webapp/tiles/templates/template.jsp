@@ -41,6 +41,8 @@
 	<script type="text/javascript" src="<c:url value="/resources/js/libs/moment-min-2.10.3.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/resources/js/libs/bootstrap-min-3.3.4.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/resources/js/libs/bootstrap-datetimepicker-min-4.0.0.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/resources/js/libs/underscore-min-1.8.3.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/resources/js/app/underscore-setup.js"/>"></script>
 	<tiles:insertAttribute name="scripts"/>
 </body>
 </html>

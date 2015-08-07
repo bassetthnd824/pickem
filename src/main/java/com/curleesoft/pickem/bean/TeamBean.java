@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -23,6 +24,16 @@ public class TeamBean extends GenericHibernateBean<Team, Long> {
 	
 	public TeamBean() {
 		super(Team.class);
+	}
+	
+	public List<Team> getConferenceTeams() {
+		CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
+		CriteriaQuery<Team> criteriaQuery = criteriaBuilder.createQuery(Team.class);
+		Root<Team> root = criteriaQuery.from(Team.class);
+		criteriaQuery.select(criteriaQuery.getSelection()).where(criteriaBuilder.equal(root.get(Team_.conferenceMember), Boolean.TRUE));
+		criteriaQuery.orderBy(criteriaBuilder.asc(root.get(Team_.teamName)));
+		TypedQuery<Team> query = getEntityManager().createQuery(criteriaQuery);
+		return query.getResultList();
 	}
 	
 	public Long getNumberOfConferenceTeams() {

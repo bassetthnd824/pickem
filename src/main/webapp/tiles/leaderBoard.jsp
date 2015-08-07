@@ -10,15 +10,15 @@
 <table class="table table-hover">
 	<tr>
 		<th>Rank</th>
-		<th>User</th>
+		<th class="user-screenname">User</th>
 		<th>Score</th>
 	</tr>
 	
 	<s:iterator value="userScores">
 		<tr>
-			<td>${userRank}</td>
-			<td><s:property value="user.nickName"/></td>
-			<td><s:property value="score"/></td>
+			<td class="text-right">${userRank}</td>
+			<td class="user-screenname"><s:property value="user.nickName"/></td>
+			<td class="text-right"><s:property value="score"/></td>
 		</tr>
 		
 		<c:set var="userRank" value="${userRank + 1}"/>

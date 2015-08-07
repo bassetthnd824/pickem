@@ -15,6 +15,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import com.curleesoft.pickem.form.TeamSchedule;
 import com.curleesoft.pickem.form.UserScore;
 import com.curleesoft.pickem.model.Matchup;
 import com.curleesoft.pickem.model.MatchupUserPick;
@@ -52,6 +53,64 @@ public class MatchupBean extends GenericHibernateBean<Matchup, Long> {
 		TypedQuery<Matchup> query = getEntityManager().createQuery(criteriaQuery);
 		
 		return query.getResultList();
+	}
+	
+	public List<TeamSchedule> getMatchupsBySeasonTeam(Long seasonId, Long teamId) {
+		final CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
+		final CriteriaQuery<Matchup> criteriaQuery = criteriaBuilder.createQuery(Matchup.class);
+		Root<Matchup> root = criteriaQuery.from(Matchup.class);
+		Join<Matchup, SeasonWeek> seasonWeekRoot = root.join(Matchup_.seasonWeek);
+		Join<SeasonWeek, Season> seasonRoot = seasonWeekRoot.join(SeasonWeek_.season);
+		Join<Matchup, Team> homeTeamRoot = root.join(Matchup_.homeTeam);
+		Join<Matchup, Team> awayTeamRoot = root.join(Matchup_.awayTeam);
+		
+		criteriaQuery.select(
+				criteriaQuery.getSelection()
+		).where(
+				criteriaBuilder.and(
+						criteriaBuilder.equal(seasonRoot.get(Season_.id), seasonId),
+						criteriaBuilder.or(
+								criteriaBuilder.equal(homeTeamRoot.get(Team_.id), teamId),
+								criteriaBuilder.equal(awayTeamRoot.get(Team_.id), teamId)
+						)
+				)
+		);
+		
+		criteriaQuery.orderBy(getDefaultOrder(criteriaBuilder, root));
+		TypedQuery<Matchup> query = getEntityManager().createQuery(criteriaQuery);
+		
+		List<Matchup> matchups = query.getResultList();
+		List<TeamSchedule> results = new ArrayList<TeamSchedule>();
+		
+		for (Matchup matchup : matchups) {
+			TeamSchedule teamSchedule = new TeamSchedule();
+			boolean isHomeTeam = teamId.equals(matchup.getHomeTeam().getId());
+			
+			teamSchedule.setMatchupDate(matchup.getMatchupDate());
+			teamSchedule.setOpponentName((isHomeTeam) ? matchup.getAwayTeam().getTeamName() : "at " + matchup.getHomeTeam().getTeamName());
+			
+			if (matchup.getHomeTeamScore() != null && matchup.getAwayTeamScore() != null) {
+				teamSchedule.setScoreResult(matchup.getHomeTeamScore() + " - " + matchup.getAwayTeamScore());
+				
+				if (isHomeTeam) {
+					if (matchup.getHomeTeamScore().compareTo(matchup.getAwayTeamScore()) > 0) {
+						teamSchedule.setWinLoss("W");
+					} else {
+						teamSchedule.setWinLoss("L");
+					}
+				} else {
+					if (matchup.getHomeTeamScore().compareTo(matchup.getAwayTeamScore()) > 0) {
+						teamSchedule.setWinLoss("L");
+					} else {
+						teamSchedule.setWinLoss("W");
+					}
+				}
+			}
+			
+			results.add(teamSchedule);
+		}
+		
+		return results;
 	}
 	
 	@SuppressWarnings("unchecked")
