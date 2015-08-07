@@ -45,6 +45,7 @@ public class RegisterAction extends ActionSupport implements Action, ServletRequ
 		user.setUserPass(Globals.generateHash(userRegistration.getUserPass()));
 		user.setFirstName(userRegistration.getFirstName());
 		user.setLastName(userRegistration.getLastName());
+		user.setNickName(userRegistration.getNickName());
 		user.setCreateUser(userRegistration.getEmailAddress());
 		user.setLastUpdateUser(userRegistration.getEmailAddress());
 		userGroup.setUser(user);

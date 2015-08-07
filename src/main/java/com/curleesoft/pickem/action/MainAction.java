@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -93,16 +94,22 @@ public class MainAction extends ActionSupport implements Action, ModelDriven<Lis
 		Date now = new Date();
 		User currentUser = (User) request.getSession(false).getAttribute(Globals.ACTIVE_USER);
 		
-		for (UserPick userPick : userPicks) {
-			userPick.setUser(userBean.findById(currentUser.getId(), false));
-			userPick.setMatchup(matchupBean.findById(userPick.getMatchup().getId(), false));
-			userPick.setPickedTeam(teamBean.findById(userPick.getPickedTeam().getId(), false));
-			userPick.setLastUpdateDate(now);
-			userPick.setLastUpdateUser(request.getUserPrincipal().getName());
-
-			if (userPick.getId() == null) {
-				userPick.setCreateDate(now);
-				userPick.setCreateUser(request.getUserPrincipal().getName());
+		for (Iterator<UserPick> it = userPicks.iterator(); it.hasNext();) {
+			UserPick userPick = it.next();
+			
+			if (userPick.getPickedTeam() != null && userPick.getPickedTeam().getId() != null) {
+				userPick.setUser(userBean.findById(currentUser.getId(), false));
+				userPick.setMatchup(matchupBean.findById(userPick.getMatchup().getId(), false));
+				userPick.setPickedTeam(teamBean.findById(userPick.getPickedTeam().getId(), false));
+				userPick.setLastUpdateDate(now);
+				userPick.setLastUpdateUser(request.getUserPrincipal().getName());
+	
+				if (userPick.getId() == null) {
+					userPick.setCreateDate(now);
+					userPick.setCreateUser(request.getUserPrincipal().getName());
+				}
+			} else {
+				it.remove();
 			}
 		}
 		

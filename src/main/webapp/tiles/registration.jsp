@@ -13,6 +13,7 @@
 			<s:password label="Confirm Password" name="confirmPass"/>
 			<s:textfield label="First Name" name="firstName"/>
 			<s:textfield label="Last Name" name="lastName"/>
+			<s:textfield label="Screen Name" name="nickName"/>
 			
 			<div class="pull-right">
 				<button type="button" id="resetButton" class="btn btn-default">Reset</button>

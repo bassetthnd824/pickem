@@ -7,6 +7,7 @@ public class Registration {
 	private String confirmPass;
 	private String firstName;
 	private String lastName;
+	private String nickName;
 	
 	public String getEmailAddress() {
 		return emailAddress;
@@ -46,6 +47,14 @@ public class Registration {
 	
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
 	}
 	
 }

@@ -158,21 +158,20 @@ public class MatchupBean extends GenericHibernateBean<Matchup, Long> {
 				"      AND M.AWAY_TEAM_ID   = R.TEAM_ID1) " +
 				"LEFT JOIN PCKM_USER_PICK     UP " +
 				"       ON M.MATCHUP_ID     = UP.MATCHUP_ID " +
+				"      AND UP.USER_GUID     = :userId " +
 				"LEFT JOIN PCKM_USER          U " +
 				"       ON UP.USER_GUID     = U.USER_GUID " +
-				"    WHERE S.SEASON_ID      = ?  " +
-				"      AND(U.USER_GUID      = ? " +
-				"       OR U.USER_GUID     IS NULL) " +
+				"    WHERE S.SEASON_ID      = :seasonId  " +
 				" ORDER BY S.SEASON " +
 				"        , SW.WEEK_NUMBER " +
-				"        , UP.RANK        DESC " +
+				"        , UP.RANK        DESC NULLS LAST" +
 				"        , M.MATCHUP_DATE  " +
 				"        , T1.TEAM_NAME";
 		
 		Query query = getEntityManager().createNativeQuery(sql);
-		int pos = 1;
+		//int pos = 1;
 		
-		return NativeQueryResultsMapper.map(MatchupUserPick.class, query.setParameter(pos++, seasonId).setParameter(pos++, userId).getResultList());
+		return NativeQueryResultsMapper.map(MatchupUserPick.class, query.setParameter("seasonId", seasonId).setParameter("userId", userId).getResultList());
 	}
 	
 	public List<UserScore> getLeaderBoardForSeason(Long seasonId) {
