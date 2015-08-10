@@ -7,19 +7,20 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import com.curleesoft.pickem.model.constraints.AssertUserHasAtLeastOneGroup;
 import com.curleesoft.pickem.model.constraints.AssertUserPassProperlyFormed;
@@ -42,7 +43,7 @@ public class User extends AbstractBaseEntity implements Comparable<User>, Serial
 	private String userPass;
 	private String nickName;
 	private Theme theme;
-	private Set<UserGroup> userGroups;
+	private Set<Group> groups;
 	
 	public User() {
 	}
@@ -130,19 +131,20 @@ public class User extends AbstractBaseEntity implements Comparable<User>, Serial
 		this.theme = theme;
 	}
 	
-	// bi-directional many-to-one association to UserGroup
-	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@Fetch(FetchMode.JOIN)
-	public Set<UserGroup> getUserGroups() {
-		if (this.userGroups == null) {
-			this.userGroups = new HashSet<UserGroup>();
+	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@JoinTable(name = "PCKM_USER_GROUP", 
+			joinColumns = { @JoinColumn(name = "USER_GUID") },
+			inverseJoinColumns = { @JoinColumn(name = "GROUP_ID") })
+	public Set<Group> getGroups() {
+		if (this.groups == null) {
+			this.groups = new HashSet<Group>();
 		}
 		
-		return this.userGroups;
+		return this.groups;
 	}
 	
-	public void setUserGroups(Set<UserGroup> userGroups) {
-		this.userGroups = userGroups;
+	public void setGroups(Set<Group> groups) {
+		this.groups = groups;
 	}
 	
 	@Override
@@ -180,5 +182,19 @@ public class User extends AbstractBaseEntity implements Comparable<User>, Serial
 		}
 		
 		return this.userId.compareTo(o.userId);
+	}
+	
+	@Transient
+	public boolean isInGroup(Long groupId) {
+		boolean result = false;
+		
+		for (Group group : groups) {
+			if (group.getId().equals(groupId)) {
+				result = true;
+				break;
+			}
+		}
+		
+		return result;
 	}
 }

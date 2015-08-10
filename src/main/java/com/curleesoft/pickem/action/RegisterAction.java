@@ -11,7 +11,6 @@ import com.curleesoft.pickem.bean.UserBean;
 import com.curleesoft.pickem.form.Registration;
 import com.curleesoft.pickem.model.Group;
 import com.curleesoft.pickem.model.User;
-import com.curleesoft.pickem.model.UserGroup;
 import com.curleesoft.pickem.util.Globals;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
@@ -38,7 +37,6 @@ public class RegisterAction extends ActionSupport implements Action, ServletRequ
 		Registration userRegistration = getModel();
 		Group playerGroup = groupBean.getGroupByName("player");
 		User user = new User();
-		UserGroup userGroup = new UserGroup();
 		
 		user.setUserId(userRegistration.getEmailAddr());
 		user.setEmailAddr(userRegistration.getEmailAddr());
@@ -48,11 +46,7 @@ public class RegisterAction extends ActionSupport implements Action, ServletRequ
 		user.setNickName(userRegistration.getNickName());
 		user.setCreateUser(userRegistration.getEmailAddr());
 		user.setLastUpdateUser(userRegistration.getEmailAddr());
-		userGroup.setUser(user);
-		userGroup.setGroup(playerGroup);
-		userGroup.setCreateUser(userRegistration.getEmailAddr());
-		userGroup.setLastUpdateUser(userRegistration.getEmailAddr());
-		user.getUserGroups().add(userGroup);
+		user.getGroups().add(playerGroup);
 		
 		userBean.makePersistent(user);
 		

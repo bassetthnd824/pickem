@@ -132,6 +132,10 @@ public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serial
 		this.request = request;
 	}
 	
+	protected HttpServletRequest getRequest() {
+		return request;
+	}
+	
 	public abstract E getModel();
 	
 	public abstract void setModel(E model);

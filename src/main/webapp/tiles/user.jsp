@@ -27,6 +27,26 @@
 			<s:select label="Theme" name="model.theme.id" list="themes" listKey="id" listValue="themeName" headerKey="" headerValue="Please select a Theme"/>
 			
 			<s:if test="formMode == 'edit'">
+				<c:set var="i" value="0"/>
+				<jsp:useBean id="model" scope="request" class="com.curleesoft.pickem.model.User"/>
+				
+				<c:forEach items="${grps}" var="group">
+					<jsp:useBean id="group" class="com.curleesoft.pickem.model.Group"/>
+					
+					<div class="form-group">
+						<div class="col-sm-offset-3 col-sm-9">
+							<div class="checkbox">
+								<label for="groups[${i}]">
+									<input type="checkbox" id="groups[${i}]" name="grps[${i}].id" value="${group.id}" <%=(model.isInGroup(group.getId())) ? "checked=\"checked\"" : "" %>/>
+									${group.groupName}
+								</label>
+							</div>
+						</div>
+					</div>
+					
+					<c:set var="i" value="${i + 1}"/>
+				</c:forEach>
+				
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Last Updated On</label>
 					<div class="col-sm-9">

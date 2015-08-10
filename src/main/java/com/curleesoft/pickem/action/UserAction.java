@@ -1,6 +1,7 @@
 package com.curleesoft.pickem.action;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,7 +35,6 @@ public class UserAction extends BaseAction<User, Long, UserBean> implements Mode
 	
 	@Override
 	public void prepare() throws Exception {
-		groups = groupBean.findAll();
 		themes = themeBean.findAll();
 	}
 	
@@ -50,10 +50,16 @@ public class UserAction extends BaseAction<User, Long, UserBean> implements Mode
 	
 	public void prepareAdd() throws Exception {
 		user = new User();
+		groups = groupBean.findAll();
+	}
+	
+	public void prepareEdit() throws Exception {
+		groups = groupBean.findAll();
 	}
 	
 	public void prepareSave() throws Exception {
 		user = new User();
+		groups = new ArrayList<Group>();
 	}
 	
 	@Override
@@ -81,7 +87,7 @@ public class UserAction extends BaseAction<User, Long, UserBean> implements Mode
 		this.users = modelList;
 	}
 	
-	public List<Group> getGroups() {
+	public List<Group> getGrps() {
 		return groups;
 	}
 	
@@ -98,6 +104,39 @@ public class UserAction extends BaseAction<User, Long, UserBean> implements Mode
 		
 		if (model.getTheme() != null && model.getTheme().getId() != null) {
 			existingModel.setTheme(themeBean.findById(model.getTheme().getId(), false));
+		}
+		
+		for (Group group : groups) {
+			if (group != null && group.getId() != null) {
+				boolean found = false;
+				
+				for (Group group2 : existingModel.getGroups()) {
+					if (group2.getId().equals(group.getId())) {
+						found = true;
+						break;
+					}
+				}
+				
+				if (!found) {
+					existingModel.getGroups().add(groupBean.findById(group.getId(), false));
+				}
+			}
+		}
+		
+		for (Iterator<Group> it = existingModel.getGroups().iterator(); it.hasNext();) {
+			Group group = it.next();
+			boolean found = false;
+			
+			for (Group group2 : groups) {
+				if (group2 != null && group.getId().equals(group2.getId())) {
+					found = true;
+					break;
+				}
+			}
+			
+			if (!found) {
+				it.remove();
+			}
 		}
 		
 		existingModel.setUserId(model.getEmailAddr());

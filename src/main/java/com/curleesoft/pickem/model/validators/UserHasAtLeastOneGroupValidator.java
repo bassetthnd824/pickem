@@ -3,8 +3,8 @@ package com.curleesoft.pickem.model.validators;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import com.curleesoft.pickem.model.Group;
 import com.curleesoft.pickem.model.User;
-import com.curleesoft.pickem.model.UserGroup;
 import com.curleesoft.pickem.model.constraints.AssertUserHasAtLeastOneGroup;
 
 public class UserHasAtLeastOneGroupValidator implements ConstraintValidator<AssertUserHasAtLeastOneGroup, User> {
@@ -23,12 +23,12 @@ public class UserHasAtLeastOneGroupValidator implements ConstraintValidator<Asse
 			return false;
 		}
 		
-		if (user.getUserGroups().size() < 1) {
+		if (user.getGroups().size() < 1) {
 			return false;
 		}
 		
-		for (UserGroup userGroup : user.getUserGroups()) {
-			if (userGroup != null) {
+		for (Group group : user.getGroups()) {
+			if (group != null) {
 				result = true;
 				break;
 			}

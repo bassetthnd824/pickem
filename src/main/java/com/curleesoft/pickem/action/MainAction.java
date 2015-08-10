@@ -69,23 +69,25 @@ public class MainAction extends ActionSupport implements Action, ModelDriven<Lis
 		User currentUser = (User) request.getSession(false).getAttribute(Globals.ACTIVE_USER);
 		Season currentSeason = (Season) request.getSession(false).getAttribute(Globals.CURRENT_SEASON);
 		
-		seasonWeeks = seasonWeekBean.getSeasonWeeksBySeason(currentSeason.getId());
-		
-		this.matchupUserPicks = new HashMap<Long, List<MatchupUserPick>>();
-		List<MatchupUserPick> matchupUserPicks = matchupBean.getMatchupUserPicksByUserSeason(currentUser.getId(), currentSeason.getId());
-		
-		for (MatchupUserPick matchupUserPick : matchupUserPicks) {
-			List<MatchupUserPick> matchupUserPickList = this.matchupUserPicks.get(matchupUserPick.getSeasonWeekId());
+		if (currentSeason != null) {
+			seasonWeeks = seasonWeekBean.getSeasonWeeksBySeason(currentSeason.getId());
 			
-			if (matchupUserPickList == null) {
-				matchupUserPickList = new ArrayList<MatchupUserPick>();
-				this.matchupUserPicks.put(matchupUserPick.getSeasonWeekId(), matchupUserPickList);
+			this.matchupUserPicks = new HashMap<Long, List<MatchupUserPick>>();
+			List<MatchupUserPick> matchupUserPicks = matchupBean.getMatchupUserPicksByUserSeason(currentUser.getId(), currentSeason.getId());
+			
+			for (MatchupUserPick matchupUserPick : matchupUserPicks) {
+				List<MatchupUserPick> matchupUserPickList = this.matchupUserPicks.get(matchupUserPick.getSeasonWeekId());
+				
+				if (matchupUserPickList == null) {
+					matchupUserPickList = new ArrayList<MatchupUserPick>();
+					this.matchupUserPicks.put(matchupUserPick.getSeasonWeekId(), matchupUserPickList);
+				}
+				
+				matchupUserPickList.add(matchupUserPick);
 			}
 			
-			matchupUserPickList.add(matchupUserPick);
+			numberOfConferenceTeams = teamBean.getNumberOfConferenceTeams();
 		}
-		
-		numberOfConferenceTeams = teamBean.getNumberOfConferenceTeams();
 		
 		return SUCCESS;
 	}

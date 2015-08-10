@@ -51,6 +51,7 @@ LEFT JOIN PCKM_USER          U
         , UP.RANK        DESC nulls last
         , M.MATCHUP_DATE
         , T1.TEAM_NAME;
-        
-        
-values next value for PCKM_USER_PICK_SEQ;
+
+SELECT MAX(VENUE_ID) FROM PCKM_VENUE;
+
+values next value for PCKM_VENUE_SEQ;
