@@ -1,8 +1,9 @@
 package com.curleesoft.pickem.form;
 
-public class Registration {
+public class Account {
 	
 	private String emailAddr;
+	private String oldPass;
 	private String userPass;
 	private String confirmPass;
 	private String firstName;
@@ -17,6 +18,14 @@ public class Registration {
 		this.emailAddr = emailAddr;
 	}
 	
+	public String getOldPass() {
+		return oldPass;
+	}
+
+	public void setOldPass(String oldPass) {
+		this.oldPass = oldPass;
+	}
+
 	public String getUserPass() {
 		return userPass;
 	}

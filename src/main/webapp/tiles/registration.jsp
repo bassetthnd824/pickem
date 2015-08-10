@@ -8,7 +8,7 @@
 		<h2>Register</h2>
 		
 		<s:form action="register_add" cssClass="clearfix">
-			<s:textfield label="Email Address" name="emailAddress"/>
+			<s:textfield label="Email Address" name="emailAddr"/>
 			<s:password label="Password" name="userPass"/>
 			<s:password label="Confirm Password" name="confirmPass"/>
 			<s:textfield label="First Name" name="firstName"/>

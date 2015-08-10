@@ -60,6 +60,19 @@
 			<result name="error">teamSchedule</result>
 			<result name="success" type="json">matchups</result>
 		</action>
+		
+		<action name="account" class="com.curleesoft.pickem.action.AccountAction">
+			<result name="error">account</result>
+			<result name="success">account</result>
+		</action>
+		
+		<action name="account_save" method="save" class="com.curleesoft.pickem.action.AccountAction">
+			<result name="error">account</result>
+			<result name="success" type="redirectAction">
+				<param name="namespace">/game</param>
+				<param name="actionName">account</param>
+			</result>
+		</action>
 	</package>
 	
 	<package name="manager" extends="pickem-default" namespace="/manager">

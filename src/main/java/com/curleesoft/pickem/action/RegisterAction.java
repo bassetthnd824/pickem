@@ -40,24 +40,24 @@ public class RegisterAction extends ActionSupport implements Action, ServletRequ
 		User user = new User();
 		UserGroup userGroup = new UserGroup();
 		
-		user.setUserId(userRegistration.getEmailAddress());
-		user.setEmailAddr(userRegistration.getEmailAddress());
+		user.setUserId(userRegistration.getEmailAddr());
+		user.setEmailAddr(userRegistration.getEmailAddr());
 		user.setUserPass(Globals.generateHash(userRegistration.getUserPass()));
 		user.setFirstName(userRegistration.getFirstName());
 		user.setLastName(userRegistration.getLastName());
 		user.setNickName(userRegistration.getNickName());
-		user.setCreateUser(userRegistration.getEmailAddress());
-		user.setLastUpdateUser(userRegistration.getEmailAddress());
+		user.setCreateUser(userRegistration.getEmailAddr());
+		user.setLastUpdateUser(userRegistration.getEmailAddr());
 		userGroup.setUser(user);
 		userGroup.setGroup(playerGroup);
-		userGroup.setCreateUser(userRegistration.getEmailAddress());
-		userGroup.setLastUpdateUser(userRegistration.getEmailAddress());
+		userGroup.setCreateUser(userRegistration.getEmailAddr());
+		userGroup.setLastUpdateUser(userRegistration.getEmailAddr());
 		user.getUserGroups().add(userGroup);
 		
 		userBean.makePersistent(user);
 		
 		try {
-			request.login(userRegistration.getEmailAddress(), userRegistration.getUserPass());
+			request.login(userRegistration.getEmailAddr(), userRegistration.getUserPass());
 			
 		} catch (ServletException e) {
 			return "loginError";
