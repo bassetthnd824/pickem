@@ -1,10 +1,9 @@
 package com.curleesoft.pickem.model;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,11 +18,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.curleesoft.pickem.model.constraints.AssertUserHasAtLeastOneGroup;
-import com.curleesoft.pickem.model.constraints.AssertUserPassProperlyFormed;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * The persistent class for the PCKM_USER database table.
@@ -31,8 +30,7 @@ import com.curleesoft.pickem.model.constraints.AssertUserPassProperlyFormed;
  */
 @Entity
 @Table(name = "PCKM_USER")
-@AssertUserHasAtLeastOneGroup
-public class User extends AbstractBaseEntity implements Comparable<User>, Serializable, PickemEntity {
+public class User extends AbstractBaseEntity<Long> implements Comparable<User>, Serializable, PickemEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -43,7 +41,7 @@ public class User extends AbstractBaseEntity implements Comparable<User>, Serial
 	private String userPass;
 	private String nickName;
 	private Theme theme;
-	private Set<Group> groups;
+	private List<Group> groups;
 	
 	public User() {
 	}
@@ -61,7 +59,9 @@ public class User extends AbstractBaseEntity implements Comparable<User>, Serial
 	}
 	
 	@Column(name = "EMAIL_ADDR", nullable = false, length = 200)
-	@NotNull(message = "email address cannot be blank")
+	@NotNull
+	@Size(max = 200)
+	@Email
 	public String getEmailAddr() {
 		return this.emailAddr;
 	}
@@ -71,7 +71,8 @@ public class User extends AbstractBaseEntity implements Comparable<User>, Serial
 	}
 	
 	@Column(name = "FIRST_NAME", nullable = false, length = 40)
-	@NotNull(message = "first name cannot be blank")
+	@NotBlank
+	@Size(max = 40)
 	public String getFirstName() {
 		return this.firstName;
 	}
@@ -81,7 +82,8 @@ public class User extends AbstractBaseEntity implements Comparable<User>, Serial
 	}
 	
 	@Column(name = "LAST_NAME", nullable = false, length = 40)
-	@NotNull(message = "last name cannot be blank")
+	@NotBlank
+	@Size(max = 40)
 	public String getLastName() {
 		return this.lastName;
 	}
@@ -91,7 +93,6 @@ public class User extends AbstractBaseEntity implements Comparable<User>, Serial
 	}
 	
 	@Column(name = "USER_ID", nullable = false, unique = true, length = 200)
-	@NotNull(message = "user id cannot be blank")
 	public String getUserId() {
 		return this.userId;
 	}
@@ -101,8 +102,6 @@ public class User extends AbstractBaseEntity implements Comparable<User>, Serial
 	}
 	
 	@Column(name = "USER_PASS", nullable = false, length = 128)
-	@NotNull(message = "password cannot be blank")
-	@AssertUserPassProperlyFormed
 	public String getUserPass() {
 		return this.userPass;
 	}
@@ -112,6 +111,8 @@ public class User extends AbstractBaseEntity implements Comparable<User>, Serial
 	}
 	
 	@Column(name = "NICK_NAME", length = 40)
+	@NotBlank
+	@Size(max = 40)
 	public String getNickName() {
 		return this.nickName;
 	}
@@ -131,19 +132,19 @@ public class User extends AbstractBaseEntity implements Comparable<User>, Serial
 		this.theme = theme;
 	}
 	
-	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "PCKM_USER_GROUP", 
 			joinColumns = { @JoinColumn(name = "USER_GUID") },
 			inverseJoinColumns = { @JoinColumn(name = "GROUP_ID") })
-	public Set<Group> getGroups() {
+	public List<Group> getGroups() {
 		if (this.groups == null) {
-			this.groups = new HashSet<Group>();
+			this.groups = new ArrayList<Group>();
 		}
 		
 		return this.groups;
 	}
 	
-	public void setGroups(Set<Group> groups) {
+	public void setGroups(List<Group> groups) {
 		this.groups = groups;
 	}
 	

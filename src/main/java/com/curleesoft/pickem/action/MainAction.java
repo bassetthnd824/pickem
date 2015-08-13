@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.curleesoft.pickem.bean.MatchupBean;
 import com.curleesoft.pickem.bean.SeasonWeekBean;
@@ -65,6 +66,7 @@ public class MainAction extends ActionSupport implements Action, ModelDriven<Lis
 	}
 	
 	@Override
+	@SkipValidation
 	public String execute() throws Exception {
 		User currentUser = (User) request.getSession(false).getAttribute(Globals.ACTIVE_USER);
 		Season currentSeason = (Season) request.getSession(false).getAttribute(Globals.CURRENT_SEASON);

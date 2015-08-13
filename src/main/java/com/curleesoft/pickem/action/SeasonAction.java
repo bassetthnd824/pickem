@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.struts2.interceptor.validation.SkipValidation;
+
 import com.curleesoft.pickem.bean.SeasonBean;
 import com.curleesoft.pickem.model.Season;
 import com.opensymphony.xwork2.ModelDriven;
@@ -17,8 +19,11 @@ public class SeasonAction extends BaseAction<Season, Long, SeasonBean> implement
 	@Inject
 	private SeasonBean seasonBean;
 	
-	private Season season;
 	private List<Season> seasons;
+	
+	public SeasonAction() throws InstantiationException, IllegalAccessException {
+		super(Season.class);
+	}
 	
 	@Override
 	public void prepare() throws Exception {}
@@ -27,32 +32,23 @@ public class SeasonAction extends BaseAction<Season, Long, SeasonBean> implement
 		seasons = new ArrayList<Season>();
 	}
 	
+	public void prepareEdit() throws Exception {
+		model = getBean().findById(model.getId(), false);
+	}
+	
 	public void prepareSearch() throws Exception {
-		season = new Season();
 		seasons = new ArrayList<Season>();
 	}
 	
-	public void prepareAdd() throws Exception {
-		season = new Season();
-	}
-	
-	public void prepareSave() throws Exception {
-		season = new Season();
+	@SkipValidation
+	public String getSeasonById() {
+		model = seasonBean.findById(model.getId(), false);
+		return JSON_OBJECT;
 	}
 	
 	@Override
 	protected SeasonBean getBean() {
 		return seasonBean;
-	}
-
-	@Override
-	public Season getModel() {
-		return season;
-	}
-
-	@Override
-	public void setModel(Season season) {
-		this.season = season;
 	}
 
 	@Override
@@ -74,4 +70,5 @@ public class SeasonAction extends BaseAction<Season, Long, SeasonBean> implement
 	
 	@Override
 	protected void setParentEntities(Season model) {}
+
 }

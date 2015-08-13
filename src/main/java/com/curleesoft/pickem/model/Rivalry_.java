@@ -4,7 +4,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2015-07-09T09:57:25.600-0500")
+@Generated(value="Dali", date="2015-08-12T13:30:17.312-0500")
 @StaticMetamodel(Rivalry.class)
 public class Rivalry_ extends AbstractBaseEntity_ {
 	public static volatile SingularAttribute<Rivalry, Long> id;

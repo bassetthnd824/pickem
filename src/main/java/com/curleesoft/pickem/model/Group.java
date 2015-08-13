@@ -1,7 +1,7 @@
 package com.curleesoft.pickem.model;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,12 +21,12 @@ import org.apache.commons.lang.StringUtils;
  */
 @Entity
 @Table(name = "PCKM_GROUP")
-public class Group extends AbstractBaseEntity implements Serializable, PickemEntity {
+public class Group extends AbstractBaseEntity<Long> implements Serializable, PickemEntity {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String groupName;
-	private Set<User> users;
+	private List<User> users;
 
 	@Id
 	@SequenceGenerator(name = "PCKM_GROUP_ID_GENERATOR", sequenceName = "PCKM_GROUP_SEQ", allocationSize = 1)
@@ -51,11 +51,11 @@ public class Group extends AbstractBaseEntity implements Serializable, PickemEnt
 	}
 	
 	@ManyToMany(mappedBy = "groups")
-	public Set<User> getUsers() {
+	public List<User> getUsers() {
 		return this.users;
 	}
 	
-	public void setUsers(Set<User> users) {
+	public void setUsers(List<User> users) {
 		this.users = users;
 	}
 	

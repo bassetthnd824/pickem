@@ -29,12 +29,7 @@
 			
 			<div id="searchResultsPanel" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="searchResultsHeading">
 				<div class="panel-body">
-					<s:if test="modelList.size > 0">
-						<tiles:insertAttribute name="searchResults"/>
-					</s:if>
-					<s:else>
-						<p>No results found</p>
-					</s:else>
+					<tiles:insertAttribute name="searchResults"/>
 				</div>
 			</div>
 		</div>

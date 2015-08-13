@@ -25,7 +25,7 @@ import com.curleesoft.pickem.model.constraints.AssertRivalryTeamsNotEqual;
 @Entity
 @Table(name = "PCKM_RIVALRY")
 @AssertRivalryTeamsNotEqual
-public class Rivalry extends AbstractBaseEntity implements Serializable, PickemEntity {
+public class Rivalry extends AbstractBaseEntity<Long> implements Serializable, PickemEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -113,7 +113,7 @@ public class Rivalry extends AbstractBaseEntity implements Serializable, PickemE
 
 	@Override
 	public String toString() {
-		return team1.toString() + " vs. " + team2.toString() + " " + StringUtils.defaultString(rivalryName);
+		return ((team1 != null) ? team1.toString() : "") + " vs. " + ((team2 != null) ? team2.toString() : "") + " " + StringUtils.defaultString(rivalryName);
 	}
 	
 }

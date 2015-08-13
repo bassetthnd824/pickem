@@ -2,7 +2,7 @@ package com.curleesoft.pickem.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,7 +22,6 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import com.curleesoft.pickem.model.constraints.AssertMatchupTeamsNotEqual;
-import com.curleesoft.pickem.model.constraints.ValidMatchupDate;
 
 /**
  * The persistent class for the PCKM_MATCHUP database table.
@@ -30,9 +29,8 @@ import com.curleesoft.pickem.model.constraints.ValidMatchupDate;
  */
 @Entity
 @Table(name = "PCKM_MATCHUP")
-@ValidMatchupDate
 @AssertMatchupTeamsNotEqual
-public class Matchup extends AbstractBaseEntity implements Serializable, PickemEntity {
+public class Matchup extends AbstractBaseEntity<Long> implements Serializable, PickemEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -43,7 +41,7 @@ public class Matchup extends AbstractBaseEntity implements Serializable, PickemE
 	private Team homeTeam;
 	private Team awayTeam;
 	private Venue venue;
-	private Set<UserPick> userPicks;
+	private List<UserPick> userPicks;
 	
 	public Matchup() {
 	}
@@ -138,11 +136,11 @@ public class Matchup extends AbstractBaseEntity implements Serializable, PickemE
 	
 	// bi-directional many-to-one association to UserPick
 	@OneToMany(mappedBy = "matchup")
-	public Set<UserPick> getUserPicks() {
+	public List<UserPick> getUserPicks() {
 		return this.userPicks;
 	}
 	
-	public void setUserPicks(Set<UserPick> userPicks) {
+	public void setUserPicks(List<UserPick> userPicks) {
 		this.userPicks = userPicks;
 	}
 	

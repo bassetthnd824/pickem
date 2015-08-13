@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.struts2.interceptor.validation.SkipValidation;
+
 import com.curleesoft.pickem.bean.TeamBean;
 import com.curleesoft.pickem.bean.VenueBean;
 import com.curleesoft.pickem.model.Team;
@@ -22,9 +24,12 @@ public class TeamAction extends BaseAction<Team, Long, TeamBean> implements Mode
 	@Inject
 	private VenueBean venueBean;
 	
-	private Team team;
 	private List<Team> teams;
 	private List<Venue> venues;
+	
+	public TeamAction() throws InstantiationException, IllegalAccessException {
+		super(Team.class);
+	}
 	
 	@Override
 	public void prepare() throws Exception {
@@ -36,32 +41,23 @@ public class TeamAction extends BaseAction<Team, Long, TeamBean> implements Mode
 	}
 	
 	public void prepareSearch() throws Exception {
-		team = new Team();
-		team.setHomeVenue(new Venue());
+		model.setHomeVenue(new Venue());
 		teams = new ArrayList<Team>();
 	}
 	
-	public void prepareAdd() throws Exception {
-		team = new Team();
+	public void prepareEdit() throws Exception {
+		model = getBean().findById(model.getId(), false);
 	}
 	
-	public void prepareSave() throws Exception {
-		team = new Team();
+	@SkipValidation
+	public String getTeamById() {
+		model = teamBean.findById(model.getId(), false);
+		return JSON_OBJECT;
 	}
 	
-	@Override
+@Override
 	protected TeamBean getBean() {
 		return teamBean;
-	}
-
-	@Override
-	public Team getModel() {
-		return team;
-	}
-
-	@Override
-	public void setModel(Team venue) {
-		this.team = venue;
 	}
 
 	@Override
@@ -90,4 +86,5 @@ public class TeamAction extends BaseAction<Team, Long, TeamBean> implements Mode
 	protected void setParentEntities(Team model) {
 		model.setHomeVenue(venueBean.findById(model.getHomeVenue().getId(), false));
 	}
+
 }

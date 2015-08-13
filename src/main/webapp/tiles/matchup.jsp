@@ -15,40 +15,44 @@
 						</div>
 					</s:if>
 				</div>
+				
+				<s:if test="hasActionErrors()">
+					<s:actionerror/>
+				</s:if>
 			</s:if>
 			
 			<s:hidden key="formMode" id="formMode"/>
-			<s:hidden name="modelId" value="%{model.id}"/>
-			<s:hidden name="hiddenSeasonWeekId" id="hiddenSeasonWeekId" value="%{model.seasonWeek.id}" /> 
+			<s:hidden key="id" name="id"/>
+			<s:hidden name="hiddenSeasonWeekId" id="hiddenSeasonWeekId" value="%{seasonWeek.id}" /> 
 			
-			<s:select label="Season" name="model.seasonWeek.season.id" list="seasons" listKey="id" listValue="season" headerKey="" headerValue="Please select a Season" cssClass="double-select double-select-master" data-action-name="seasonWeeks_getSeasonWeeksBySeason.action" data-parameter-name="model.season.id" data-slave-id="seasonWeek"/>
-			<s:select label="Week Number" name="model.seasonWeek.id" id="seasonWeek" list="seasonWeeks" listKey="id" listValue="weekNumber" headerKey="" headerValue="Please select a Week Number" cssClass="double-select double-select-slave" data-value-prop="id" data-text-prop="weekNumber" data-hidden-value-holder="hiddenSeasonWeekId"/>
-			<s:textfield label="Date" name="model.matchupDate" cssClass="date"/>
+			<s:select label="Season" name="seasonWeek.season.id" list="seasons" listKey="id" listValue="season" headerKey="" headerValue="Please select a Season" cssClass="double-select double-select-master" data-action-name="seasonWeeks_getSeasonWeeksBySeason.action" data-parameter-name="season.id" data-slave-id="matchups_seasonWeek_id"/>
+			<s:select label="Week Number" name="seasonWeek.id" id="matchups_seasonWeek_id" list="seasonWeeks" listKey="id" listValue="weekNumber" headerKey="" headerValue="Please select a Week Number" cssClass="double-select double-select-slave" data-value-prop="id" data-text-prop="weekNumber" data-hidden-value-holder="hiddenSeasonWeekId"/>
+			<s:textfield label="Date" id="matchups_matchupDate" name="matchupDate" cssClass="date"/>
 			
 			<s:if test="formMode == 'edit' || formMode == 'add'">
-				<s:select label="Home Team" name="model.homeTeam.id" list="teams" listKey="id" listValue="teamName + ' ' + squadName" headerKey="" headerValue="Please select a Team"/>
-				<s:textfield label="Home Team Score" name="model.homeTeamScore"/>
-				<s:select label="Away Team" name="model.awayTeam.id" list="teams" listKey="id" listValue="teamName + ' ' + squadName" headerKey="" headerValue="Please select a Team"/>
-				<s:textfield label="Away Team Score" name="model.awayTeamScore"/>
+				<s:select label="Home Team" id="matchups_homeTeam_id" name="homeTeam.id" list="teams" listKey="id" listValue="teamName + ' ' + squadName" headerKey="" headerValue="Please select a Team"/>
+				<s:textfield label="Home Team Score" name="homeTeamScore"/>
+				<s:select label="Away Team" name="awayTeam.id" list="teams" listKey="id" listValue="teamName + ' ' + squadName" headerKey="" headerValue="Please select a Team"/>
+				<s:textfield label="Away Team Score" name="awayTeamScore"/>
 			</s:if>
 			<s:else>
-				<s:select label="Team" name="model.homeTeam.id" list="teams" listKey="id" listValue="teamName + ' ' + squadName" headerKey="" headerValue="Please select a Team"/>
+				<s:select label="Team" name="homeTeam.id" list="teams" listKey="id" listValue="teamName + ' ' + squadName" headerKey="" headerValue="Please select a Team"/>
 			</s:else>
 			
-			<s:select label="Venue" name="model.venue.id" list="venues" listKey="id" listValue="venueName" headerKey="" headerValue="Please select a Venue"/>
+			<s:select label="Venue" id="matchups_venue_id" name="venue.id" list="venues" listKey="id" listValue="venueName" headerKey="" headerValue="Please select a Venue"/>
 			
 			<s:if test="formMode == 'edit'">
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Last Updated On</label>
 					<div class="col-sm-9">
-						<p class="form-control-static"><s:date name="model.lastUpdateDate" format="yyyy-MM-dd hh:mm:ss a"/></p>
+						<p class="form-control-static"><s:date name="lastUpdateDate" format="yyyy-MM-dd hh:mm:ss a"/></p>
 					</div>
 				</div>
 				
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Last Updated By</label>
 					<div class="col-sm-9">
-						<p class="form-control-static"><s:property value="model.lastUpdateUser" /></p>
+						<p class="form-control-static"><s:property value="lastUpdateUser" /></p>
 					</div>
 				</div>
 			</s:if>

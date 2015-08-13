@@ -21,7 +21,7 @@ import org.hibernate.annotations.FetchMode;
  */
 @Entity
 @Table(name = "PCKM_USER_PICK")
-public class UserPick extends AbstractBaseEntity implements Serializable, PickemEntity {
+public class UserPick extends AbstractBaseEntity<Long> implements Serializable, PickemEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;

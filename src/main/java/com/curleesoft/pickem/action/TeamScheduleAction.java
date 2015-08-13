@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.curleesoft.pickem.bean.MatchupBean;
 import com.curleesoft.pickem.bean.TeamBean;
@@ -32,10 +33,12 @@ public class TeamScheduleAction extends ActionSupport implements Preparable, Ser
 	private HttpServletRequest request;
 	
 	@Override
+	@SkipValidation
 	public String execute() throws Exception {
 		return SUCCESS;
 	}
 	
+	@SkipValidation
 	public String getSchedule() throws Exception {
 		
 		Season currentSeason = (Season) request.getSession(false).getAttribute(Globals.CURRENT_SEASON);

@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.curleesoft.pickem.bean.MatchupBean;
 import com.curleesoft.pickem.form.UserScore;
@@ -24,6 +25,7 @@ public class LeaderBoardAction extends ActionSupport implements ServletRequestAw
 	private HttpServletRequest request;
 	
 	@Override
+	@SkipValidation
 	public String execute() throws Exception {
 		Season currentSeason = (Season) request.getSession(false).getAttribute(Globals.CURRENT_SEASON);
 		

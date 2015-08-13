@@ -17,6 +17,7 @@
 	<link rel="stylesheet" href="<c:url value="/resources/css/bootstrap-datetimepicker-min-4.0.0.css"/>" type="text/css" media="all"/>
 	<link rel="stylesheet" href="<c:url value="/resources/css/pickem.css"/>" type="text/css" media="all"/>
 	<link href="http://fonts.googleapis.com/css?family=Rokkitt" rel="stylesheet" type="text/css">
+	<tiles:insertAttribute name="headtag"/>
 </head>
 
 <body>

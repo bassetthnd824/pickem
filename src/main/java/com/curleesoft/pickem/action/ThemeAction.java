@@ -17,8 +17,11 @@ public class ThemeAction extends BaseAction<Theme, Long, ThemeBean> implements M
 	@Inject
 	private ThemeBean themeBean;
 	
-	private Theme theme;
 	private List<Theme> themes;
+	
+	public ThemeAction() throws InstantiationException, IllegalAccessException {
+		super(Theme.class);
+	}
 	
 	@Override
 	public void prepare() throws Exception {
@@ -29,31 +32,16 @@ public class ThemeAction extends BaseAction<Theme, Long, ThemeBean> implements M
 	}
 	
 	public void prepareSearch() throws Exception {
-		theme = new Theme();
 		themes = new ArrayList<Theme>();
 	}
 	
-	public void prepareAdd() throws Exception {
-		theme = new Theme();
-	}
-	
-	public void prepareSave() throws Exception {
-		theme = new Theme();
+	public void prepareEdit() throws Exception {
+		model = getBean().findById(model.getId(), false);
 	}
 	
 	@Override
 	protected ThemeBean getBean() {
 		return themeBean;
-	}
-
-	@Override
-	public Theme getModel() {
-		return theme;
-	}
-
-	@Override
-	public void setModel(Theme theme) {
-		this.theme = theme;
 	}
 
 	@Override

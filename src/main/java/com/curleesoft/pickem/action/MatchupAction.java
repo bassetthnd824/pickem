@@ -37,12 +37,15 @@ public class MatchupAction extends BaseAction<Matchup, Long, MatchupBean> implem
 	@Inject
 	private VenueBean venueBean;
 	
-	private Matchup matchup;
 	private List<Matchup> matchups;
 	private List<Season> seasons;
 	private List<SeasonWeek> seasonWeeks;
 	private List<Team> teams;
 	private List<Venue> venues;
+	
+	public MatchupAction() throws InstantiationException, IllegalAccessException {
+		super(Matchup.class);
+	}
 	
 	@Override
 	public void prepare() throws Exception {
@@ -57,46 +60,37 @@ public class MatchupAction extends BaseAction<Matchup, Long, MatchupBean> implem
 	}
 	
 	public void prepareSearch() throws Exception {
-		matchup = new Matchup();
-		matchup.setSeasonWeek(new SeasonWeek());
-		matchup.getSeasonWeek().setSeason(new Season());
-		matchup.setHomeTeam(new Team());
-		matchup.setAwayTeam(new Team());
-		matchup.setVenue(new Venue());
+		model.setSeasonWeek(new SeasonWeek());
+		model.getSeasonWeek().setSeason(new Season());
+		model.setHomeTeam(new Team());
+		model.setAwayTeam(new Team());
+		model.setVenue(new Venue());
 		matchups = new ArrayList<Matchup>();
 	}
 	
 	public void prepareAdd() throws Exception {
-		matchup = new Matchup();
-		matchup.setSeasonWeek(new SeasonWeek());
-		matchup.getSeasonWeek().setSeason(new Season());
-		matchup.setHomeTeam(new Team());
-		matchup.setAwayTeam(new Team());
-		matchup.setVenue(new Venue());
+		model.setSeasonWeek(new SeasonWeek());
+		model.getSeasonWeek().setSeason(new Season());
+		model.setHomeTeam(new Team());
+		model.setAwayTeam(new Team());
+		model.setVenue(new Venue());
+	}
+	
+	public void prepareEdit() throws Exception {
+		model = getBean().findById(model.getId(), false);
 	}
 	
 	public void prepareSave() throws Exception {
-		matchup = new Matchup();
-		matchup.setSeasonWeek(new SeasonWeek());
-		matchup.getSeasonWeek().setSeason(new Season());
-		matchup.setHomeTeam(new Team());
-		matchup.setAwayTeam(new Team());
-		matchup.setVenue(new Venue());
+		model.setSeasonWeek(new SeasonWeek());
+		model.getSeasonWeek().setSeason(new Season());
+		model.setHomeTeam(new Team());
+		model.setAwayTeam(new Team());
+		model.setVenue(new Venue());
 	}
 	
 	@Override
 	protected MatchupBean getBean() {
 		return matchupBean;
-	}
-
-	@Override
-	public Matchup getModel() {
-		return matchup;
-	}
-
-	@Override
-	public void setModel(Matchup venue) {
-		this.matchup = venue;
 	}
 
 	@Override
@@ -143,4 +137,5 @@ public class MatchupAction extends BaseAction<Matchup, Long, MatchupBean> implem
 		model.setAwayTeam(teamBean.findById(model.getAwayTeam().getId(), false));
 		model.setVenue(venueBean.findById(model.getVenue().getId(), false));
 	}
+
 }

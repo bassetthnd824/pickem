@@ -29,7 +29,7 @@ import com.curleesoft.pickem.model.constraints.ValidSeasonWeekEndDate;
 @Table(name = "PCKM_SEASON_WEEK")
 @ValidSeasonWeekBeginDate
 @ValidSeasonWeekEndDate
-public class SeasonWeek extends AbstractBaseEntity implements Serializable, PickemEntity {
+public class SeasonWeek extends AbstractBaseEntity<Long> implements Serializable, PickemEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;

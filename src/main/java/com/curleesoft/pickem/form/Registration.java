@@ -1,6 +1,15 @@
 package com.curleesoft.pickem.form;
 
-public class Registration {
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.curleesoft.pickem.model.constraints.AssertPasswordsMatch;
+import com.curleesoft.pickem.model.constraints.AssertUserPassProperlyFormed;
+
+@AssertPasswordsMatch
+public class Registration implements PasswordConfirmationForm {
 	
 	private String emailAddr;
 	private String userPass;
@@ -9,6 +18,9 @@ public class Registration {
 	private String lastName;
 	private String nickName;
 	
+	@NotBlank
+	@Size(max = 200)
+	@Email
 	public String getEmailAddr() {
 		return emailAddr;
 	}
@@ -17,22 +29,34 @@ public class Registration {
 		this.emailAddr = emailAddr;
 	}
 	
+	@NotBlank
+	@Size(min = 6)
+	@AssertUserPassProperlyFormed
+	@Override
 	public String getUserPass() {
 		return userPass;
 	}
 	
+	@Override
 	public void setUserPass(String userPass) {
 		this.userPass = userPass;
 	}
 	
+	@NotBlank
+	@Size(min = 6)
+	@AssertUserPassProperlyFormed
+	@Override
 	public String getConfirmPass() {
 		return confirmPass;
 	}
 	
+	@Override
 	public void setConfirmPass(String confirmPass) {
 		this.confirmPass = confirmPass;
 	}
 	
+	@NotBlank
+	@Size(max = 40)
 	public String getFirstName() {
 		return firstName;
 	}
@@ -41,6 +65,8 @@ public class Registration {
 		this.firstName = firstName;
 	}
 	
+	@NotBlank
+	@Size(max = 40)
 	public String getLastName() {
 		return lastName;
 	}
@@ -49,6 +75,8 @@ public class Registration {
 		this.lastName = lastName;
 	}
 
+	@NotBlank
+	@Size(max = 40)
 	public String getNickName() {
 		return nickName;
 	}

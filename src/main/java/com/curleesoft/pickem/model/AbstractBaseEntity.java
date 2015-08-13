@@ -8,16 +8,22 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 @MappedSuperclass
-public abstract class AbstractBaseEntity {
+public abstract class AbstractBaseEntity<ID> {
 	
 	private Date lastUpdateDate;
 	private String lastUpdateUser;
 	private Date createDate;
 	private String createUser;
 	private Long sysModCount;
+	
+	@Transient
+	public abstract ID getId();
+	@Transient
+	public abstract void setId(ID id);
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "LAST_UPDATE_DATE", nullable = false)

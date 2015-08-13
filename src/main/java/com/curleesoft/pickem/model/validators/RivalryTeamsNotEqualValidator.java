@@ -22,12 +22,12 @@ public class RivalryTeamsNotEqualValidator implements ConstraintValidator<Assert
 			return true;
 		}
 		
-		isValid = (!rivalry.getTeam1().equals(rivalry.getTeam2()));
+		isValid = (!rivalry.getTeam1().getId().equals(rivalry.getTeam2().getId()));
 		
 		if (!isValid) {
 			context.disableDefaultConstraintViolation();
 			context.buildConstraintViolationWithTemplate("teams cannot be equal")
-					.addPropertyNode("teamId1").addConstraintViolation();
+					.addNode("teamId1").addConstraintViolation();
 		}
 		
 		return isValid;

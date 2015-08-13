@@ -4,6 +4,9 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <dependent-module archiveName="struts2-jsr303-validation-plugin-1.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/jsr303-validator-plugin/jsr303-validator-plugin">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="pickem"/>
         <property name="java-output-path" value="/pickem/target/classes"/>
     </wb-module>

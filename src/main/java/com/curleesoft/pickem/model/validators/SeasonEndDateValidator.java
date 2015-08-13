@@ -51,7 +51,7 @@ public class SeasonEndDateValidator implements ConstraintValidator<ValidSeasonEn
 		if (!isValid) {
 			context.disableDefaultConstraintViolation();
 			context.buildConstraintViolationWithTemplate("season end date is invalid")
-					.addPropertyNode("endDate").addConstraintViolation();
+					.addNode("endDate").addConstraintViolation();
 		}
 		
 		return isValid;

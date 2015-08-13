@@ -1,11 +1,11 @@
 package com.curleesoft.pickem.model;
 
 import javax.annotation.Generated;
-import javax.persistence.metamodel.SetAttribute;
+import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2015-08-10T14:04:31.860-0500")
+@Generated(value="Dali", date="2015-08-12T15:02:01.213-0500")
 @StaticMetamodel(User.class)
 public class User_ extends AbstractBaseEntity_ {
 	public static volatile SingularAttribute<User, Long> id;
@@ -16,5 +16,5 @@ public class User_ extends AbstractBaseEntity_ {
 	public static volatile SingularAttribute<User, String> userPass;
 	public static volatile SingularAttribute<User, String> nickName;
 	public static volatile SingularAttribute<User, Theme> theme;
-	public static volatile SetAttribute<User, Group> groups;
+	public static volatile ListAttribute<User, Group> groups;
 }

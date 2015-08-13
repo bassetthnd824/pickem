@@ -15,49 +15,56 @@
 						</div>
 					</s:if>
 				</div>
+				
+				<s:if test="hasActionErrors()">
+					<s:actionerror/>
+				</s:if>
 			</s:if>
 			
 			<s:hidden key="formMode" id="formMode"/>
-			<s:hidden name="modelId" value="%{model.id}"/>
+			<s:hidden key="id" name="id"/>
 			
-			<s:textfield label="Email Address" name="model.emailAddr"/>
-			<s:textfield label="First Name" name="model.firstName"/>
-			<s:textfield label="Last Name" name="model.lastName"/>
-			<s:textfield label="Nickname" name="model.nickName"/>
-			<s:select label="Theme" name="model.theme.id" list="themes" listKey="id" listValue="themeName" headerKey="" headerValue="Please select a Theme"/>
+			<s:textfield label="Email Address" name="emailAddr"/>
+			<s:textfield label="First Name" name="firstName"/>
+			<s:textfield label="Last Name" name="lastName"/>
+			<s:textfield label="Nickname" name="nickName"/>
+			<s:select label="Theme" name="theme.id" list="themes" listKey="id" listValue="themeName" headerKey="" headerValue="Please select a Theme"/>
 			
 			<s:if test="formMode == 'edit'">
-				<c:set var="i" value="0"/>
-				<jsp:useBean id="model" scope="request" class="com.curleesoft.pickem.model.User"/>
-				
-				<c:forEach items="${grps}" var="group">
-					<jsp:useBean id="group" class="com.curleesoft.pickem.model.Group"/>
-					
-					<div class="form-group">
-						<div class="col-sm-offset-3 col-sm-9">
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Groups</label>
+					<div class="col-sm-9 controls">
+						<c:set var="i" value="0"/>
+						<c:forEach items="${grps}" var="group">
+							<c:set var="checkedText" value=""/>
+							<c:forEach items="${selectedGroups}" var="groupId">
+								<c:if test="${group.id == groupId}">
+									<c:set var="checkedText" value='checked="checked"'/>
+								</c:if>
+							</c:forEach>
+							
 							<div class="checkbox">
-								<label for="groups[${i}]">
-									<input type="checkbox" id="groups[${i}]" name="grps[${i}].id" value="${group.id}" <%=(model.isInGroup(group.getId())) ? "checked=\"checked\"" : "" %>/>
+								<label for="selectedGroups[${i}]">
+									<input type="checkbox" id="selectedGroups[${i}]" name="selectedGroups[${i}]" value="${group.id}" ${checkedText}/>
 									${group.groupName}
 								</label>
 							</div>
-						</div>
+							<c:set var="i" value="${i + 1}"/>
+						</c:forEach>
 					</div>
-					
-					<c:set var="i" value="${i + 1}"/>
-				</c:forEach>
+				</div>
 				
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Last Updated On</label>
 					<div class="col-sm-9">
-						<p class="form-control-static"><s:date name="model.lastUpdateDate" format="yyyy-MM-dd hh:mm:ss a"/></p>
+						<p class="form-control-static"><s:date name="lastUpdateDate" format="yyyy-MM-dd hh:mm:ss a"/></p>
 					</div>
 				</div>
 				
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Last Updated By</label>
 					<div class="col-sm-9">
-						<p class="form-control-static"><s:property value="model.lastUpdateUser" /></p>
+						<p class="form-control-static"><s:property value="lastUpdateUser" /></p>
 					</div>
 				</div>
 			</s:if>

@@ -8,37 +8,44 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.curleesoft.pickem.bean.GenericHibernateBean;
 import com.curleesoft.pickem.model.AbstractBaseEntity;
 import com.opensymphony.xwork2.ActionSupport;
 
-public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serializable, B extends GenericHibernateBean<E, ID>> extends ActionSupport implements ServletRequestAware {
+public abstract class BaseAction<E extends AbstractBaseEntity<ID>, ID extends Serializable, B extends GenericHibernateBean<E, ID>> extends ActionSupport implements ServletRequestAware {
 
 	private static final long serialVersionUID = 1L;
 	
 	public static final String INIT = "init";
 	public static final String LIST = "list";
-	public static final String ADD = "add";
-	public static final String EDIT = "edit";
-	public static final String JSONLIST = "jsonlist";
+	public static final String INPUT = "input";
+	public static final String JSON_OBJECT = "jsonObject";
+	public static final String JSON_LIST = "jsonList";
 	
+	protected E model;
 	private String formMode;
-	private ID modelId;
 	private HttpServletRequest request;
 	private Boolean reuseCriteria;
 	
+	public BaseAction(Class<E> entityClass) throws InstantiationException, IllegalAccessException {
+		model = entityClass.newInstance();
+	}
+	
+	@SkipValidation
 	public String init() {
 		formMode = "init";
 		return INIT;
 	}
 	
 	@SuppressWarnings("unchecked")
+	@SkipValidation
 	public String search() {
 		formMode = "search";
 		
 		if (reuseCriteria != null && reuseCriteria.booleanValue()) {
-			setModel((E) request.getSession(false).getAttribute("searchCriteria"));
+			model = (E) request.getSession(false).getAttribute("searchCriteria");
 		} else {
 			request.getSession(false).setAttribute("searchCriteria", getModel());
 		}
@@ -48,29 +55,32 @@ public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serial
 	}
 	
 	@SuppressWarnings("unchecked")
+	@SkipValidation
 	public String cancel() {
-		setModel((E) request.getSession(false).getAttribute("searchCriteria"));
+		model = (E) request.getSession(false).getAttribute("searchCriteria");
 		return SUCCESS;
 	}
 	
+	@SkipValidation
 	public String add() {
 		formMode = "add";
-		return ADD;
+		return INPUT;
 	}
 	
+	@SkipValidation
 	public String edit() {
 		formMode = "edit";
-		setModel(getBean().findById(getModelId(), false));
-		return EDIT;
+		return INPUT;
 	}
 	
 	@SuppressWarnings("unchecked")
+	@SkipValidation
 	public String delete() {
-		E model = getBean().findById(getModelId(), false);
+		model = getBean().findById(model.getId(), false);
 		
 		getBean().makeTransient(model);
 		
-		setModel((E) request.getSession(false).getAttribute("searchCriteria"));
+		model = (E) request.getSession(false).getAttribute("searchCriteria");
 		return SUCCESS;
 	}
 	
@@ -80,9 +90,14 @@ public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serial
 		E model = getModel();
 		
 		if (StringUtils.equals(formMode, "edit")) {
-			E existingModel = getBean().findById(getModelId(), false);
+			E existingModel = getBean().findById(model.getId(), false);
 			
-			setExistingModelFields(existingModel, model);
+			try {
+				setExistingModelFields(existingModel, model);
+			} catch (IllegalArgumentException e) {
+				addActionError(e.getMessage());
+				return INPUT;
+			}
 			
 			existingModel.setLastUpdateDate(now);
 			existingModel.setLastUpdateUser(request.getUserPrincipal().getName());
@@ -99,8 +114,7 @@ public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serial
 			getBean().makePersistent(model);
 		}
 		
-		
-		setModel((E) request.getSession(false).getAttribute("searchCriteria"));
+		model = (E) request.getSession(false).getAttribute("searchCriteria");
 		return SUCCESS;
 	}
 	
@@ -112,14 +126,6 @@ public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serial
 		this.formMode = formMode;
 	}
 	
-	public ID getModelId() {
-		return modelId;
-	}
-	
-	public void setModelId(ID modelId) {
-		this.modelId = modelId;
-	}
-	
 	public Boolean getReuseCriteria() {
 		return reuseCriteria;
 	}
@@ -128,20 +134,20 @@ public abstract class BaseAction<E extends AbstractBaseEntity, ID extends Serial
 		this.reuseCriteria = reuseCriteria;
 	}
 	
+	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request = request;
+	}
+	
+	public E getModel() {
+		return model;
 	}
 	
 	protected HttpServletRequest getRequest() {
 		return request;
 	}
 	
-	public abstract E getModel();
-	
-	public abstract void setModel(E model);
-	
 	public abstract List<E> getModelList();
-	
 	public abstract void setModelList(List<E> modelList);
 	
 	protected abstract B getBean();

@@ -1,10 +1,11 @@
 package com.curleesoft.pickem.model;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,7 +35,7 @@ import org.hibernate.annotations.Type;
 	@NamedNativeQuery(name = "matchups", query = "SELECT MATCHUP_ID, SEASON_WEEK_ID, VENUE_ID, MATCHUP_DATE, HOME_TEAM_ID, AWAY_TEAM_ID, HOME_TEAM_SCORE, AWAY_TEAM_SCORE, LAST_UPDATE_DATE, LAST_UPDATE_USER, CREATE_DATE, CREATE_USER, SYS_MOD_COUNT FROM PCKM_MATCHUP WHERE HOME_TEAM_ID = ? OR AWAY_TEAM_ID = ?", resultClass = Matchup.class),
 	@NamedNativeQuery(name = "rivalries", query = "SELECT RIVALRY_ID, RIVALRY_NAME, TEAM_ID1, TEAM_ID2, LAST_UPDATE_DATE, LAST_UPDATE_USER, CREATE_DATE, CREATE_USER, SYS_MOD_COUNT FROM PCKM_RIVALRY WHERE TEAM_ID1 = ? OR TEAM_ID2 = ?", resultClass = Rivalry.class)
 })
-public class Team extends AbstractBaseEntity implements Serializable, PickemEntity {
+public class Team extends AbstractBaseEntity<Long> implements Serializable, PickemEntity {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -42,7 +43,7 @@ public class Team extends AbstractBaseEntity implements Serializable, PickemEnti
 	private String squadName;
 	private String teamName;
 	private Venue homeVenue;
-	private Set<Rivalry> rivalries;
+	private List<Rivalry> rivalries;
 	
 	public Team() {
 	}
@@ -102,17 +103,17 @@ public class Team extends AbstractBaseEntity implements Serializable, PickemEnti
 	}
 
 	// bi-directional many-to-one association to Rivalry
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumns({
 		@JoinColumn(name = "TEAM_ID1", referencedColumnName = "TEAM_ID"),
 		@JoinColumn(name = "TEAM_ID2", referencedColumnName = "TEAM_ID")
 	})
 	@Loader(namedQuery = "rivalries")
-	public Set<Rivalry> getRivalries() {
+	public List<Rivalry> getRivalries() {
 		return this.rivalries;
 	}
 	
-	public void setRivalries(Set<Rivalry> rivalries) {
+	public void setRivalries(List<Rivalry> rivalries) {
 		this.rivalries = rivalries;
 	}
 

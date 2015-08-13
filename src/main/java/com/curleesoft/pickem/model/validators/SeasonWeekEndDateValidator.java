@@ -50,7 +50,7 @@ public class SeasonWeekEndDateValidator implements ConstraintValidator<ValidSeas
 		if (!isValid) {
 			context.disableDefaultConstraintViolation();
 			context.buildConstraintViolationWithTemplate("season week end date is invalid")
-					.addPropertyNode("endDate").addConstraintViolation();
+					.addNode("endDate").addConstraintViolation();
 		}
 		
 		return isValid;

@@ -3,8 +3,10 @@ package com.curleesoft.pickem.action;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.curleesoft.pickem.bean.GroupBean;
 import com.curleesoft.pickem.bean.UserBean;
@@ -27,13 +29,15 @@ public class RegisterAction extends ActionSupport implements Action, ServletRequ
 	private GroupBean groupBean;
 	
 	private HttpServletRequest request;
+	
 	private Registration registration;
 	
-	public String init() {
-		return "init";
+	@SkipValidation
+	public String execute() {
+		return SUCCESS;
 	}
 	
-	public String add() {
+	public String save() {
 		Registration userRegistration = getModel();
 		Group playerGroup = groupBean.getGroupByName("player");
 		User user = new User();
@@ -61,6 +65,7 @@ public class RegisterAction extends ActionSupport implements Action, ServletRequ
 	}
 
 	@Override
+	@Valid
 	public Registration getModel() {
 		if (registration == null) {
 			registration = new Registration();

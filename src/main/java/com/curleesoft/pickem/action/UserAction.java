@@ -28,10 +28,14 @@ public class UserAction extends BaseAction<User, Long, UserBean> implements Mode
 	@Inject
 	private ThemeBean themeBean;
 	
-	private User user;
 	private List<User> users;
 	private List<Group> groups;
+	private Long[] selectedGroups;
 	private List<Theme> themes;
+	
+	public UserAction() throws InstantiationException, IllegalAccessException {
+		super(User.class);
+	}
 	
 	@Override
 	public void prepare() throws Exception {
@@ -43,38 +47,34 @@ public class UserAction extends BaseAction<User, Long, UserBean> implements Mode
 	}
 	
 	public void prepareSearch() throws Exception {
-		user = new User();
-		user.setTheme(new Theme());
+		model.setTheme(new Theme());
 		users = new ArrayList<User>();
 	}
 	
 	public void prepareAdd() throws Exception {
-		user = new User();
 		groups = groupBean.findAll();
 	}
 	
 	public void prepareEdit() throws Exception {
 		groups = groupBean.findAll();
+		model = getBean().findById(model.getId(), false);
+		selectedGroups = new Long[model.getGroups().size()];
+		int i = 0;
+		
+		for (Group group : model.getGroups()) {
+			selectedGroups[i] = group.getId();
+			i++;
+		}
 	}
 	
 	public void prepareSave() throws Exception {
-		user = new User();
-		groups = new ArrayList<Group>();
+		groups = groupBean.findAll();
+		selectedGroups = new Long[groups.size()];
 	}
 	
 	@Override
 	protected UserBean getBean() {
 		return userBean;
-	}
-
-	@Override
-	public User getModel() {
-		return user;
-	}
-
-	@Override
-	public void setModel(User user) {
-		this.user = user;
 	}
 
 	@Override
@@ -85,6 +85,14 @@ public class UserAction extends BaseAction<User, Long, UserBean> implements Mode
 	@Override
 	public void setModelList(List<User> modelList) {
 		this.users = modelList;
+	}
+	
+	public Long[] getSelectedGroups() {
+		return selectedGroups;
+	}
+	
+	public void setSelectedGroups(Long[] selectedGroups) {
+		this.selectedGroups = selectedGroups;
 	}
 	
 	public List<Group> getGrps() {
@@ -106,19 +114,19 @@ public class UserAction extends BaseAction<User, Long, UserBean> implements Mode
 			existingModel.setTheme(themeBean.findById(model.getTheme().getId(), false));
 		}
 		
-		for (Group group : groups) {
-			if (group != null && group.getId() != null) {
+		for (Long groupId : selectedGroups) {
+			if (groupId != null) {
 				boolean found = false;
 				
-				for (Group group2 : existingModel.getGroups()) {
-					if (group2.getId().equals(group.getId())) {
+				for (Group group : existingModel.getGroups()) {
+					if (group.getId().equals(groupId)) {
 						found = true;
 						break;
 					}
 				}
 				
 				if (!found) {
-					existingModel.getGroups().add(groupBean.findById(group.getId(), false));
+					existingModel.getGroups().add(groupBean.findById(groupId, false));
 				}
 			}
 		}
@@ -127,8 +135,8 @@ public class UserAction extends BaseAction<User, Long, UserBean> implements Mode
 			Group group = it.next();
 			boolean found = false;
 			
-			for (Group group2 : groups) {
-				if (group2 != null && group.getId().equals(group2.getId())) {
+			for (Long groupId : selectedGroups) {
+				if (groupId != null && group.getId().equals(groupId)) {
 					found = true;
 					break;
 				}
@@ -137,6 +145,10 @@ public class UserAction extends BaseAction<User, Long, UserBean> implements Mode
 			if (!found) {
 				it.remove();
 			}
+		}
+		
+		if (existingModel.getGroups().size() < 1) {
+			throw new IllegalArgumentException("User must belong to at least one group.");
 		}
 		
 		existingModel.setUserId(model.getEmailAddr());
@@ -148,4 +160,5 @@ public class UserAction extends BaseAction<User, Long, UserBean> implements Mode
 			model.setTheme(themeBean.findById(model.getTheme().getId(), false));
 		}
 	}
+
 }

@@ -15,32 +15,36 @@
 						</div>
 					</s:if>
 				</div>
+				
+				<s:if test="hasActionErrors()">
+					<s:actionerror/>
+				</s:if>
 			</s:if>
 			
 			<s:hidden key="formMode" id="formMode"/>
-			<s:hidden name="modelId" value="%{model.id}"/>
+			<s:hidden key="id" name="id"/>
 			
-			<s:textfield label="Name" name="model.teamName"/>
-			<s:textfield label="Squad Name" name="model.squadName"/>
+			<s:textfield label="Name" name="teamName"/>
+			<s:textfield label="Squad Name" name="squadName"/>
 			
 			<s:if test="formMode == 'edit' || formMode == 'add'">
-				<s:checkbox label="Conference Member" name="model.conferenceMember" />
+				<s:checkbox label="Conference Member" name="conferenceMember" />
 			</s:if>
 			
-			<s:select label="Home Venue" name="model.homeVenue.id" list="venues" listKey="id" listValue="venueName" headerKey="" headerValue="Please select a Home Venue"/>
+			<s:select label="Home Venue" name="homeVenue.id" list="venues" listKey="id" listValue="venueName" headerKey="" headerValue="Please select a Home Venue"/>
 			
 			<s:if test="formMode == 'edit'">
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Last Updated On</label>
 					<div class="col-sm-9">
-						<p class="form-control-static"><s:date name="model.lastUpdateDate" format="yyyy-MM-dd hh:mm:ss a"/></p>
+						<p class="form-control-static"><s:date name="lastUpdateDate" format="yyyy-MM-dd hh:mm:ss a"/></p>
 					</div>
 				</div>
 				
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Last Updated By</label>
 					<div class="col-sm-9">
-						<p class="form-control-static"><s:property value="model.lastUpdateUser" /></p>
+						<p class="form-control-static"><s:property value="lastUpdateUser" /></p>
 					</div>
 				</div>
 			</s:if>

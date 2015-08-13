@@ -37,23 +37,12 @@ public class SeasonWeekBeginDateValidator implements ConstraintValidator<ValidSe
 			if (dayOfWeek != Calendar.THURSDAY) {
 				isValid = false;
 			}
-			
-			if (isValid) {
-				Season season = seasonWeek.getSeason();
-				cal.setTime(season.getBeginDate());
-				int daysToAdd = (int) ((seasonWeek.getWeekNumber() - 1) * 7);
-				cal.add(Calendar.DATE, daysToAdd);
-				
-				if (!cal.getTime().equals(seasonWeek.getBeginDate())) {
-					isValid = false;
-				}
-			}
 		}
 		
 		if (!isValid) {
 			context.disableDefaultConstraintViolation();
 			context.buildConstraintViolationWithTemplate("season week begin date invalid")
-					.addPropertyNode("beginDate").addConstraintViolation();
+					.addNode("beginDate").addConstraintViolation();
 		}
 		
 		return isValid;

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.curleesoft.pickem.bean.UserBean;
 import com.curleesoft.pickem.form.Account;
@@ -23,14 +24,14 @@ public class AccountAction extends ActionSupport implements Action, ModelDriven<
 	@Inject
 	private UserBean userBean;
 	
-	private Account account;
+	private Account account = new Account();
 	private HttpServletRequest request;
-
+	
 	@Override
+	@SkipValidation
 	public String execute() throws Exception {
 		User currentUser = (User) request.getSession(false).getAttribute(Globals.ACTIVE_USER);
 		
-		account = new Account();
 		account.setEmailAddr(currentUser.getEmailAddr());
 		account.setFirstName(currentUser.getFirstName());
 		account.setLastName(currentUser.getLastName());

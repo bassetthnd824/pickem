@@ -14,27 +14,31 @@
 						</div>
 					</s:if>
 				</div>
+				
+				<s:if test="hasActionErrors()">
+					<s:actionerror/>
+				</s:if>
 			</s:if>
 			
 			<s:hidden key="formMode" id="formMode"/>
-			<s:hidden name="modelId" value="%{model.id}"/>
+			<s:hidden key="id" name="id"/>
 			
-			<s:textfield label="Season" name="model.season"/>
-			<s:textfield label="Begin Date" name="model.beginDate" cssClass="date begin-date" />
-			<s:textfield label="End Date" name="model.endDate" cssClass="date end-date" data-duration="months"/>
+			<s:textfield label="Season" name="season"/>
+			<s:textfield label="Begin Date" name="beginDate" cssClass="date begin-date" />
+			<s:textfield label="End Date" name="endDate" cssClass="date end-date" data-duration="months"/>
 			 
 			<s:if test="formMode == 'edit'">
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Last Updated On</label>
 					<div class="col-sm-9">
-						<p class="form-control-static"><s:date name="model.lastUpdateDate" format="yyyy-MM-dd hh:mm:ss a"/></p>
+						<p class="form-control-static"><s:date name="lastUpdateDate" format="yyyy-MM-dd hh:mm:ss a"/></p>
 					</div>
 				</div>
 				
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Last Updated By</label>
 					<div class="col-sm-9">
-						<p class="form-control-static"><s:property value="model.lastUpdateUser" /></p>
+						<p class="form-control-static"><s:property value="lastUpdateUser" /></p>
 					</div>
 				</div>
 			</s:if>

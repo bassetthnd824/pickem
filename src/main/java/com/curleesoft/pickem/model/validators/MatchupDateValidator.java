@@ -45,7 +45,7 @@ public class MatchupDateValidator implements ConstraintValidator<ValidMatchupDat
 		if (!isValid) {
 			context.disableDefaultConstraintViolation();
 			context.buildConstraintViolationWithTemplate("matchup date is invalid")
-					.addPropertyNode("matchupDate").addConstraintViolation();
+					.addNode("matchupDate").addConstraintViolation();
 		}
 		
 		return isValid;

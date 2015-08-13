@@ -1,9 +1,12 @@
 package com.curleesoft.pickem.action;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.curleesoft.pickem.bean.SeasonBean;
 import com.curleesoft.pickem.bean.SeasonWeekBean;
@@ -22,9 +25,12 @@ public class SeasonWeekAction extends BaseAction<SeasonWeek, Long, SeasonWeekBea
 	@Inject
 	private SeasonBean seasonBean;
 	
-	private SeasonWeek seasonWeek;
 	private List<SeasonWeek> seasonWeeks;
 	private List<Season> seasons;
+	
+	public SeasonWeekAction() throws InstantiationException, IllegalAccessException {
+		super(SeasonWeek.class);
+	}
 	
 	@Override
 	public void prepare() throws Exception {
@@ -36,37 +42,29 @@ public class SeasonWeekAction extends BaseAction<SeasonWeek, Long, SeasonWeekBea
 	}
 	
 	public void prepareSearch() throws Exception {
-		seasonWeek = new SeasonWeek();
-		seasonWeek.setSeason(new Season());
+		model.setSeason(new Season());
 		seasonWeeks = new ArrayList<SeasonWeek>();
 	}
 	
 	public void prepareAdd() throws Exception {
-		seasonWeek = new SeasonWeek();
+		model.setSeason(new Season());
+	}
+	
+	public void prepareEdit() throws Exception {
+		model = getBean().findById(model.getId(), false);
 	}
 	
 	public void prepareSave() throws Exception {
-		seasonWeek = new SeasonWeek();
+		model.setSeason(new Season());
 	}
 	
 	public void prepareGetSeasonWeeksBySeason() throws Exception {
-		seasonWeek = new SeasonWeek();
-		seasonWeek.setSeason(new Season());
+		model.setSeason(new Season());
 	}
 	
 	@Override
 	protected SeasonWeekBean getBean() {
 		return seasonWeekBean;
-	}
-
-	@Override
-	public SeasonWeek getModel() {
-		return seasonWeek;
-	}
-
-	@Override
-	public void setModel(SeasonWeek seasonWeek) {
-		this.seasonWeek = seasonWeek;
 	}
 
 	@Override
@@ -83,9 +81,16 @@ public class SeasonWeekAction extends BaseAction<SeasonWeek, Long, SeasonWeekBea
 		return seasons;
 	}
 	
+	@SkipValidation
+	public String getSeasonWeekById() {
+		model = seasonWeekBean.findById(model.getId(), false);
+		return JSON_OBJECT;
+	}
+	
+	@SkipValidation
 	public String getSeasonWeeksBySeason() {
-		setModelList(seasonWeekBean.getSeasonWeeksBySeason(seasonWeek.getSeason().getId()));
-		return JSONLIST;
+		setModelList(seasonWeekBean.getSeasonWeeksBySeason(model.getSeason().getId()));
+		return JSON_LIST;
 	}
 	
 	@Override
@@ -94,10 +99,20 @@ public class SeasonWeekAction extends BaseAction<SeasonWeek, Long, SeasonWeekBea
 		existingModel.setWeekNumber(model.getWeekNumber());
 		existingModel.setBeginDate(model.getBeginDate());
 		existingModel.setEndDate(model.getEndDate());
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(existingModel.getSeason().getBeginDate());
+		int daysToAdd = (int) ((existingModel.getWeekNumber() - 1) * 7);
+		cal.add(Calendar.DATE, daysToAdd);
+		
+		if (!cal.getTime().equals(existingModel.getBeginDate())) {
+			throw new IllegalArgumentException("Week Begin Date is invalid");
+		}
 	}
 	
 	@Override
 	protected void setParentEntities(SeasonWeek model) {
 		model.setSeason(seasonBean.findById(model.getSeason().getId(), false));
 	}
+
 }

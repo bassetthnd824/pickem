@@ -4,16 +4,20 @@
 <%@ taglib uri="/struts-bootstrap-tags" prefix="sb" %>
 
 <div class="row">
-	<div class="col-sm-4 col-sm-offset-4">
+	<div class="col-sm-6 col-sm-offset-3">
 		<h2>Register</h2>
 		
-		<s:form action="register_add" cssClass="clearfix">
-			<s:textfield label="Email Address" name="emailAddr"/>
-			<s:password label="Password" name="userPass"/>
-			<s:password label="Confirm Password" name="confirmPass"/>
-			<s:textfield label="First Name" name="firstName"/>
-			<s:textfield label="Last Name" name="lastName"/>
-			<s:textfield label="Screen Name" name="nickName"/>
+		<s:if test="hasActionErrors()">
+			<s:actionerror/>
+		</s:if>
+		
+		<s:form action="register_save" cssClass="form-horizontal clearfix margin-before">
+			<s:textfield label="Email Address" name="emailAddr" requiredLabel="true"/>
+			<s:password label="Password" name="userPass" requiredLabel="true"/>
+			<s:password label="Confirm Password" name="confirmPass" requiredLabel="true"/>
+			<s:textfield label="First Name" name="firstName" requiredLabel="true"/>
+			<s:textfield label="Last Name" name="lastName" requiredLabel="true"/>
+			<s:textfield label="Screen Name" name="nickName" requiredLabel="true"/>
 			
 			<div class="pull-right">
 				<button type="button" id="resetButton" class="btn btn-default">Reset</button>

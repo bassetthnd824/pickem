@@ -8,15 +8,47 @@
 	<constant name="struts.custom.i18n.resources" value="MessageResources"/>
 	<constant name="struts.mapper.action.prefix.enabled" value="true"/>
 	
-	<package name="pickem-default" extends="tiles-default" namespace="/">
+	<package name="pickem-default" extends="jsr303" namespace="/">
 		<result-types>
 			<result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" default="true"/>
 			<result-type name="json" class="com.curleesoft.pickem.result.JSONResult"/>
 		</result-types>
 		
-		<action name="register_*" method="{1}" class="com.curleesoft.pickem.action.RegisterAction">
-			<result name="init">register</result>
-			<result name="error">register</result>
+		<interceptors>
+			<interceptor-stack name="jsr303ParamsPrepareParamsStack">
+				<interceptor-ref name="exception" />
+				<interceptor-ref name="alias" />
+				<interceptor-ref name="i18n" />
+				<interceptor-ref name="checkbox" />
+				<interceptor-ref name="datetime" />
+				<interceptor-ref name="multiselect" />
+				<interceptor-ref name="params" />
+				<interceptor-ref name="servletConfig" />
+				<interceptor-ref name="prepare" />
+				<interceptor-ref name="chain" />
+				<interceptor-ref name="modelDriven" />
+				<interceptor-ref name="fileUpload" />
+				<interceptor-ref name="staticParams" />
+				<interceptor-ref name="actionMappingParams" />
+				<interceptor-ref name="params" />
+				<interceptor-ref name="conversionError" />
+				<interceptor-ref name="beanValidation">
+					<param name="excludeMethods">input,back,cancel,browse</param>
+				</interceptor-ref>
+				<interceptor-ref name="workflow">
+					<param name="excludeMethods">input,back,cancel,browse</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		
+		<default-interceptor-ref name="jsr303ParamsPrepareParamsStack"/>
+		
+		<action name="register" class="com.curleesoft.pickem.action.RegisterAction">
+			<result name="success">register</result>
+		</action>
+		
+		<action name="register_save" method="save" class="com.curleesoft.pickem.action.RegisterAction">
+			<result name="input">register</result>
 			<result name="loginError">loginError</result>
 			<result name="success" type="redirectAction">
 				<param name="namespace">/game</param>
@@ -39,7 +71,7 @@
 		</action>
 		
 		<action name="main_save" method="save" class="com.curleesoft.pickem.action.MainAction">
-			<result name="error">main</result>
+			<result name="input">main</result>
 			<result name="success" type="redirectAction">
 				<param name="namespace">/game</param>
 				<param name="actionName">main</param>
@@ -62,12 +94,12 @@
 		</action>
 		
 		<action name="account" class="com.curleesoft.pickem.action.AccountAction">
-			<result name="error">account</result>
+			<result name="input">account</result>
 			<result name="success">account</result>
 		</action>
 		
 		<action name="account_save" method="save" class="com.curleesoft.pickem.action.AccountAction">
-			<result name="error">account</result>
+			<result name="input">account</result>
 			<result name="success" type="redirectAction">
 				<param name="namespace">/game</param>
 				<param name="actionName">account</param>
@@ -79,8 +111,8 @@
 		<action name="seasons_*" method="{1}" class="com.curleesoft.pickem.action.SeasonAction">
 			<result name="init">seasons.list</result>
 			<result name="list">seasons.list</result>
-			<result name="add">seasons.detail</result>
-			<result name="edit">seasons.detail</result>
+			<result name="input">seasons.detail</result>
+			<result name="jsonObject" type="json">model</result>
 			<result name="success" type="redirectAction">
 				<param name="namespace">/manager</param>
 				<param name="actionName">seasons_search</param>
@@ -91,9 +123,9 @@
 		<action name="seasonWeeks_*" method="{1}" class="com.curleesoft.pickem.action.SeasonWeekAction">
 			<result name="init">seasonWeeks.list</result>
 			<result name="list">seasonWeeks.list</result>
-			<result name="add">seasonWeeks.detail</result>
-			<result name="edit">seasonWeeks.detail</result>
-			<result name="jsonlist" type="json">modelList</result>
+			<result name="input">seasonWeeks.detail</result>
+			<result name="jsonObject" type="json">model</result>
+			<result name="jsonList" type="json">modelList</result>
 			<result name="success" type="redirectAction">
 				<param name="namespace">/manager</param>
 				<param name="actionName">seasonWeeks_search</param>
@@ -104,8 +136,7 @@
 		<action name="users_*" method="{1}" class="com.curleesoft.pickem.action.UserAction">
 			<result name="init">users.list</result>
 			<result name="list">users.list</result>
-			<result name="add">users.detail</result>
-			<result name="edit">users.detail</result>
+			<result name="input">users.detail</result>
 			<result name="success" type="redirectAction">
 				<param name="namespace">/manager</param>
 				<param name="actionName">users_search</param>
@@ -116,8 +147,7 @@
 		<action name="themes_*" method="{1}" class="com.curleesoft.pickem.action.ThemeAction">
 			<result name="init">themes.list</result>
 			<result name="list">themes.list</result>
-			<result name="add">themes.detail</result>
-			<result name="edit">themes.detail</result>
+			<result name="input">themes.detail</result>
 			<result name="success" type="redirectAction">
 				<param name="namespace">/manager</param>
 				<param name="actionName">themes_search</param>
@@ -128,8 +158,8 @@
 		<action name="venues_*" method="{1}" class="com.curleesoft.pickem.action.VenueAction">
 			<result name="init">venues.list</result>
 			<result name="list">venues.list</result>
-			<result name="add">venues.detail</result>
-			<result name="edit">venues.detail</result>
+			<result name="input">venues.detail</result>
+			<result name="jsonObject" type="json">model</result>
 			<result name="success" type="redirectAction">
 				<param name="namespace">/manager</param>
 				<param name="actionName">venues_search</param>
@@ -140,8 +170,8 @@
 		<action name="teams_*" method="{1}" class="com.curleesoft.pickem.action.TeamAction">
 			<result name="init">teams.list</result>
 			<result name="list">teams.list</result>
-			<result name="add">teams.detail</result>
-			<result name="edit">teams.detail</result>
+			<result name="input">teams.detail</result>
+			<result name="jsonObject" type="json">model</result>
 			<result name="success" type="redirectAction">
 				<param name="namespace">/manager</param>
 				<param name="actionName">teams_search</param>
@@ -152,8 +182,7 @@
 		<action name="rivalries_*" method="{1}" class="com.curleesoft.pickem.action.RivalryAction">
 			<result name="init">rivalries.list</result>
 			<result name="list">rivalries.list</result>
-			<result name="add">rivalries.detail</result>
-			<result name="edit">rivalries.detail</result>
+			<result name="input">rivalries.detail</result>
 			<result name="success" type="redirectAction">
 				<param name="namespace">/manager</param>
 				<param name="actionName">rivalries_search</param>
@@ -164,8 +193,7 @@
 		<action name="matchups_*" method="{1}" class="com.curleesoft.pickem.action.MatchupAction">
 			<result name="init">matchups.list</result>
 			<result name="list">matchups.list</result>
-			<result name="add">matchups.detail</result>
-			<result name="edit">matchups.detail</result>
+			<result name="input">matchups.detail</result>
 			<result name="success" type="redirectAction">
 				<param name="namespace">/manager</param>
 				<param name="actionName">matchups_search</param>

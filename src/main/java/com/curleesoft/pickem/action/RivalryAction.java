@@ -22,9 +22,12 @@ public class RivalryAction extends BaseAction<Rivalry, Long, RivalryBean> implem
 	@Inject
 	private TeamBean teamBean;
 	
-	private Rivalry rivalry;
 	private List<Rivalry> rivalries;
 	private List<Team> teams;
+	
+	public RivalryAction() throws InstantiationException, IllegalAccessException {
+		super(Rivalry.class);
+	}
 	
 	@Override
 	public void prepare() throws Exception {
@@ -36,37 +39,28 @@ public class RivalryAction extends BaseAction<Rivalry, Long, RivalryBean> implem
 	}
 	
 	public void prepareSearch() throws Exception {
-		rivalry = new Rivalry();
-		rivalry.setTeam1(new Team());
-		rivalry.setTeam2(new Team());
+		model.setTeam1(new Team());
+		model.setTeam2(new Team());
 		rivalries = new ArrayList<Rivalry>();
 	}
 	
 	public void prepareAdd() throws Exception {
-		rivalry = new Rivalry();
-		rivalry.setTeam1(new Team());
-		rivalry.setTeam2(new Team());
+		model.setTeam1(new Team());
+		model.setTeam2(new Team());
+	}
+	
+	public void prepareEdit() throws Exception {
+		model = getBean().findById(model.getId(), false);
 	}
 	
 	public void prepareSave() throws Exception {
-		rivalry = new Rivalry();
-		rivalry.setTeam1(new Team());
-		rivalry.setTeam2(new Team());
+		model.setTeam1(new Team());
+		model.setTeam2(new Team());
 	}
 	
 	@Override
 	protected RivalryBean getBean() {
 		return rivalryBean;
-	}
-
-	@Override
-	public Rivalry getModel() {
-		return rivalry;
-	}
-
-	@Override
-	public void setModel(Rivalry venue) {
-		this.rivalry = venue;
 	}
 
 	@Override
@@ -95,4 +89,5 @@ public class RivalryAction extends BaseAction<Rivalry, Long, RivalryBean> implem
 		model.setTeam1(teamBean.findById(model.getTeam1().getId(), false));
 		model.setTeam2(teamBean.findById(model.getTeam2().getId(), false));
 	}
+
 }

@@ -17,8 +17,11 @@ public class VenueAction extends BaseAction<Venue, Long, VenueBean> implements M
 	@Inject
 	private VenueBean venueBean;
 	
-	private Venue venue;
 	private List<Venue> venues;
+	
+	public VenueAction() throws InstantiationException, IllegalAccessException {
+		super(Venue.class);
+	}
 	
 	@Override
 	public void prepare() throws Exception {
@@ -29,31 +32,16 @@ public class VenueAction extends BaseAction<Venue, Long, VenueBean> implements M
 	}
 	
 	public void prepareSearch() throws Exception {
-		venue = new Venue();
 		venues = new ArrayList<Venue>();
 	}
 	
-	public void prepareAdd() throws Exception {
-		venue = new Venue();
-	}
-	
-	public void prepareSave() throws Exception {
-		venue = new Venue();
+	public void prepareEdit() throws Exception {
+		model = getBean().findById(model.getId(), false);
 	}
 	
 	@Override
 	protected VenueBean getBean() {
 		return venueBean;
-	}
-
-	@Override
-	public Venue getModel() {
-		return venue;
-	}
-
-	@Override
-	public void setModel(Venue venue) {
-		this.venue = venue;
 	}
 
 	@Override

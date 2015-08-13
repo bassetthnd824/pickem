@@ -19,7 +19,7 @@ import org.apache.commons.lang.StringUtils;
  */
 @Entity
 @Table(name = "PCKM_VENUE")
-public class Venue extends AbstractBaseEntity implements Serializable, PickemEntity {
+public class Venue extends AbstractBaseEntity<Long> implements Serializable, PickemEntity {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;

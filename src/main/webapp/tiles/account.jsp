@@ -12,16 +12,16 @@
 		</s:if>
 		
 		<s:form cssClass="form-horizontal clearfix margin-before">
-			<s:textfield label="Email Address" name="model.emailAddr"/>
-			<s:textfield label="First Name" name="model.firstName"/>
-			<s:textfield label="Last Name" name="model.lastName"/>
-			<s:textfield label="Screen Name" name="model.nickName"/>
+			<s:textfield label="Email Address" name="emailAddr"/>
+			<s:textfield label="First Name" name="firstName"/>
+			<s:textfield label="Last Name" name="lastName"/>
+			<s:textfield label="Screen Name" name="nickName"/>
 			
 			<p class="alert alert-warning">If you do not wish to change your password, leave it blank.</p>
 			
-			<s:password label="Old Password" name="model.oldPass"/>
-			<s:password label="New Password" name="model.userPass"/>
-			<s:password label="Confirm Password" name="model.confirmPass"/>
+			<s:password label="Old Password" name="oldPass"/>
+			<s:password label="New Password" name="userPass"/>
+			<s:password label="Confirm Password" name="confirmPass"/>
 			
 			<div class="button-container pull-right">
 				<s:submit type="button" action="account" cssClass="btn btn-default">Cancel</s:submit>
