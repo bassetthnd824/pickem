@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Fetch;
@@ -71,7 +72,8 @@ public class Team extends AbstractBaseEntity<Long> implements Serializable, Pick
 	}
 	
 	@Column(name = "SQUAD_NAME", nullable = false, length = 40)
-	@NotNull(message = "squad name cannot be blank")
+	@NotNull
+	@Size(max = 40)
 	public String getSquadName() {
 		return this.squadName;
 	}
@@ -81,7 +83,8 @@ public class Team extends AbstractBaseEntity<Long> implements Serializable, Pick
 	}
 	
 	@Column(name = "TEAM_NAME", nullable = false, unique = true, length = 40)
-	@NotNull(message = "team name cannot be blank")
+	@NotNull
+	@Size(max = 40)
 	public String getTeamName() {
 		return this.teamName;
 	}

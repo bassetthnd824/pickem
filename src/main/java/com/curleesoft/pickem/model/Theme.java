@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
@@ -57,7 +58,8 @@ public class Theme extends AbstractBaseEntity<Long> implements Serializable, Pic
 	}
 	
 	@Column(name = "THEME_NAME", nullable = false, unique = true, length = 40)
-	@NotNull(message = "theme name cannot be blank")
+	@NotNull
+	@Size(max = 40)
 	public String getThemeName() {
 		return this.themeName;
 	}
@@ -68,6 +70,7 @@ public class Theme extends AbstractBaseEntity<Long> implements Serializable, Pic
 	
 	@Column(name = "THEME_PATH", length = 100)
 	@AssertThemePathDoesNotBeginWithSlash
+	@Size(max = 100)
 	public String getThemePath() {
 		return this.themePath;
 	}

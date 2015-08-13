@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Fetch;
@@ -49,6 +51,8 @@ public class Rivalry extends AbstractBaseEntity<Long> implements Serializable, P
 	}
 	
 	@Column(name = "RIVALRY_NAME", nullable = false, length = 60)
+	@NotNull
+	@Size(max = 60)
 	public String getRivalryName() {
 		return this.rivalryName;
 	}

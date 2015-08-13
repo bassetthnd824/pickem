@@ -12,6 +12,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -41,7 +42,8 @@ public class Group extends AbstractBaseEntity<Long> implements Serializable, Pic
 	}
 	
 	@Column(name = "GROUP_NAME", nullable = false, length = 20)
-	@NotNull(message = "group name cannot be blank")
+	@NotNull
+	@Size(max = 20)
 	public String getGroupName() {
 		return this.groupName;
 	}

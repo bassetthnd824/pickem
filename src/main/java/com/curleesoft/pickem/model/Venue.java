@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -42,7 +43,8 @@ public class Venue extends AbstractBaseEntity<Long> implements Serializable, Pic
 	}
 
 	@Column(name = "CITY_STATE", nullable = false, length = 60)
-	@NotNull(message = "city/state cannot be blank")
+	@NotNull
+	@Size(max = 60)
 	public String getCityState() {
 		return this.cityState;
 	}
@@ -52,7 +54,8 @@ public class Venue extends AbstractBaseEntity<Long> implements Serializable, Pic
 	}
 
 	@Column(name = "VENUE_NAME", nullable = false, length = 60)
-	@NotNull(message = "venue name cannot be blank")
+	@NotNull
+	@Size(max = 60)
 	public String getVenueName() {
 		return this.venueName;
 	}
