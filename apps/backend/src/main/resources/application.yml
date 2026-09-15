@@ -9,16 +9,16 @@ spring:
 pickem:
   secrets:
     secret-manager-enabled: ${PICKEM_SECRET_MANAGER_ENABLED:false}
-    # OS environment and .env win. Secret Manager (sm://) is the fallback
+    # OS environment and .env win. Secret Manager (sm@) is the fallback
     # when PICKEM_SECRET_MANAGER_ENABLED=true.
-    cfbd-api-key: ${CFBD_API_KEY:${sm://cfbd-api-key:}}
+    cfbd-api-key: ${CFBD_API_KEY:${sm@cfbd-api-key:}}
 
 ---
 spring:
   config:
     activate:
       on-property: pickem.secrets.secret-manager-enabled
-    import: sm://
+    import: sm@
   cloud:
     gcp:
       secretmanager:
