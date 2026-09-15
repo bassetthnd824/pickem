@@ -24,6 +24,7 @@ jobs:
           java-version: 21
           cache: maven
       - run: npm ci
+      - run: chmod +x mvnw
       - run: npx nx show projects
       - run: npx nx build frontend
       - run: npx nx test frontend
