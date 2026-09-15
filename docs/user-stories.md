@@ -14,6 +14,7 @@ Companion to [`modernization-plan.md`](./modernization-plan.md). These stories b
 | **Predecessors** | Stories that must be complete before this one starts. |
 | **Successors** | Stories that wait on this one. |
 | **Source** | Legacy types/JSPs and/or modernization-plan section. |
+| **Status** | `Done` when every acceptance criterion holds and the work is on `main`. |
 
 Password registration, JAAS, and SHA-256 hashing are intentionally absent: Google/Firebase owns identity.
 
@@ -41,48 +42,48 @@ College Football Data (CFBD) is new product scope (not in the legacy app):
 
 ## Index
 
-| ID | Title | Epic | Predecessors | Successors |
-|---|---|---|---|---|
-| US-01 | Bootstrap the Nx monorepo | A Foundation | — | US-03, US-13 |
-| US-02 | Publish architecture docs and Firestore rules | A Foundation | — | US-03, US-12, US-14, US-27, US-39 |
-| US-03 | Stand up the Spring Boot API with Firestore persistence | B Backend platform | US-01, US-02 | US-04, US-05, US-06, US-27, US-40 |
-| US-04 | Authenticate with Google via an HttpOnly session cookie | B Backend platform | US-03 | US-05, US-06, US-08, US-09, US-11, US-31, US-32 |
-| US-05 | Manage seasons and season weeks via REST | C Manager APIs | US-03, US-04 | US-07, US-12, US-20, US-22, US-38 |
-| US-06 | Manage venues, teams, and rivalries via REST | C Manager APIs | US-03, US-04 | US-07, US-12, US-20, US-22, US-27, US-35 |
-| US-07 | Manage matchups via REST | C Manager APIs | US-05, US-06 | US-09, US-10, US-11, US-21, US-22, US-28, US-34, US-35 |
-| US-08 | Manage users and themes via REST | C Manager APIs | US-04 | US-11, US-12, US-21, US-22, US-36 |
-| US-09 | Load and save a player’s weekly confidence picks | D Game APIs | US-04, US-07 | US-16, US-22, US-24, US-34 |
-| US-10 | Rank players on the season leaderboard | D Game APIs | US-07 | US-17, US-24 |
-| US-11 | Show a team schedule and let a player edit their profile | D Game APIs | US-04, US-07, US-08 | US-18, US-19, US-24 |
-| US-12 | Seed Firestore with reference data and themes | E Seed | US-02, US-05, US-06, US-08 | US-16, US-24, US-27 |
-| US-13 | Scaffold the Next.js app and API client | F Frontend shell | US-01 | US-14, US-15, US-31 |
-| US-14 | Apply switchable Light, Dark, and SEC school themes | F Frontend shell | US-02, US-13 | US-15, US-23, US-36 |
-| US-15 | Sign in with Google and protect game and manager routes | F Frontend shell | US-04, US-13, US-14, US-31, US-32, US-33 | US-16, US-17, US-18, US-19, US-20, US-37 |
-| US-31 | Proxy browser API calls through Next.js with Axios | F Frontend shell | US-04, US-13 | US-15, US-25, US-33 |
-| US-32 | Verify the session cookie in Next.js middleware | F Frontend shell | US-04, US-13 | US-15 |
-| US-33 | Lock down the BFF allowlist and internal jobs | F Frontend shell | US-31 | US-15, US-25, US-29, US-38 |
-| US-16 | Make and reorder weekly confidence picks | G Player / manager UI | US-09, US-12, US-15, US-34 | US-22, US-24 |
-| US-17 | View the season leaderboard | G Player / manager UI | US-10, US-15 | US-24 |
-| US-18 | Browse a conference team’s schedule | G Player / manager UI | US-11, US-15 | US-24 |
-| US-19 | Update nickname and pick a theme | G Player / manager UI | US-11, US-14, US-15, US-36 | US-23, US-24 |
-| US-20 | Administer seasons, weeks, venues, teams, and rivalries | G Player / manager UI | US-05, US-06, US-15, US-35 | US-21, US-22 |
-| US-21 | Administer matchups, users, and themes | G Player / manager UI | US-07, US-08, US-20, US-35, US-36 | US-22, US-24, US-30 |
-| US-34 | Lock picks at week start and reject tied scores | D Game APIs | US-09 | US-16, US-22, US-24 |
-| US-35 | Refresh snapshots and block unsafe deletes | C Manager APIs | US-06, US-07 | US-20, US-21, US-24 |
-| US-36 | Keep the theme catalog a closed set of 18 | G Player / manager UI | US-08, US-14 | US-19, US-21 |
-| US-37 | Empty season, sign-in failure, and expired session | G Player / manager UI | US-15 | US-24 |
-| US-22 | Enforce validation parity on client and server | H Quality / deploy | US-05, US-07, US-08, US-16, US-21 | US-24 |
-| US-23 | Meet WCAG AA contrast in every theme | H Quality / deploy | US-14, US-19 | US-24 |
-| US-24 | Prove parity with emulator tests and Playwright | H Quality / deploy | US-12, US-16–US-19, US-21–US-23, US-29–US-40 | US-25 |
-| US-25 | Deploy public Next.js and internal Spring Cloud Run | H Quality / deploy | US-24, US-29, US-31, US-33, US-39, US-40 | US-26 |
-| US-39 | Provision Firestore composite indexes | A Foundation | US-02, US-03 | US-24, US-25 |
-| US-40 | Expose Cloud Run health checks | H Quality / deploy | US-03, US-13 | US-25 |
-| US-26 | Remove the legacy Struts application | H Quality / deploy | US-25 | — |
-| US-27 | Integrate the College Football Data API client | I CFBD | US-02, US-03, US-06, US-12 | US-28 |
-| US-28 | Import a season’s SEC-team matchups from CFBD | I CFBD | US-07, US-27, US-38 | US-29, US-30 |
-| US-29 | Automatically import scores on game days | I CFBD | US-28, US-33 | US-24, US-25 |
-| US-30 | Trigger and review CFBD imports from the admin UI | I CFBD | US-21, US-28, US-31, US-38 | US-24 |
-| US-38 | Harden CFBD import (calendar weeks, opponents, job) | I CFBD | US-05, US-06, US-27, US-31, US-33 | US-28, US-30, US-24 |
+| ID | Title | Epic | Status | Predecessors | Successors |
+|---|---|---|---|---|---|
+| US-01 | Bootstrap the Nx monorepo | A Foundation | Done | — | US-03, US-13 |
+| US-02 | Publish architecture docs and Firestore rules | A Foundation | — | — | US-03, US-12, US-14, US-27, US-39 |
+| US-03 | Stand up the Spring Boot API with Firestore persistence | B Backend platform | — | US-01, US-02 | US-04, US-05, US-06, US-27, US-40 |
+| US-04 | Authenticate with Google via an HttpOnly session cookie | B Backend platform | — | US-03 | US-05, US-06, US-08, US-09, US-11, US-31, US-32 |
+| US-05 | Manage seasons and season weeks via REST | C Manager APIs | — | US-03, US-04 | US-07, US-12, US-20, US-22, US-38 |
+| US-06 | Manage venues, teams, and rivalries via REST | C Manager APIs | — | US-03, US-04 | US-07, US-12, US-20, US-22, US-27, US-35 |
+| US-07 | Manage matchups via REST | C Manager APIs | — | US-05, US-06 | US-09, US-10, US-11, US-21, US-22, US-28, US-34, US-35 |
+| US-08 | Manage users and themes via REST | C Manager APIs | — | US-04 | US-11, US-12, US-21, US-22, US-36 |
+| US-09 | Load and save a player’s weekly confidence picks | D Game APIs | — | US-04, US-07 | US-16, US-22, US-24, US-34 |
+| US-10 | Rank players on the season leaderboard | D Game APIs | — | US-07 | US-17, US-24 |
+| US-11 | Show a team schedule and let a player edit their profile | D Game APIs | — | US-04, US-07, US-08 | US-18, US-19, US-24 |
+| US-12 | Seed Firestore with reference data and themes | E Seed | — | US-02, US-05, US-06, US-08 | US-16, US-24, US-27 |
+| US-13 | Scaffold the Next.js app and API client | F Frontend shell | — | US-01 | US-14, US-15, US-31 |
+| US-14 | Apply switchable Light, Dark, and SEC school themes | F Frontend shell | — | US-02, US-13 | US-15, US-23, US-36 |
+| US-15 | Sign in with Google and protect game and manager routes | F Frontend shell | — | US-04, US-13, US-14, US-31, US-32, US-33 | US-16, US-17, US-18, US-19, US-20, US-37 |
+| US-31 | Proxy browser API calls through Next.js with Axios | F Frontend shell | — | US-04, US-13 | US-15, US-25, US-33 |
+| US-32 | Verify the session cookie in Next.js middleware | F Frontend shell | — | US-04, US-13 | US-15 |
+| US-33 | Lock down the BFF allowlist and internal jobs | F Frontend shell | — | US-31 | US-15, US-25, US-29, US-38 |
+| US-16 | Make and reorder weekly confidence picks | G Player / manager UI | — | US-09, US-12, US-15, US-34 | US-22, US-24 |
+| US-17 | View the season leaderboard | G Player / manager UI | — | US-10, US-15 | US-24 |
+| US-18 | Browse a conference team’s schedule | G Player / manager UI | — | US-11, US-15 | US-24 |
+| US-19 | Update nickname and pick a theme | G Player / manager UI | — | US-11, US-14, US-15, US-36 | US-23, US-24 |
+| US-20 | Administer seasons, weeks, venues, teams, and rivalries | G Player / manager UI | — | US-05, US-06, US-15, US-35 | US-21, US-22 |
+| US-21 | Administer matchups, users, and themes | G Player / manager UI | — | US-07, US-08, US-20, US-35, US-36 | US-22, US-24, US-30 |
+| US-34 | Lock picks at week start and reject tied scores | D Game APIs | — | US-09 | US-16, US-22, US-24 |
+| US-35 | Refresh snapshots and block unsafe deletes | C Manager APIs | — | US-06, US-07 | US-20, US-21, US-24 |
+| US-36 | Keep the theme catalog a closed set of 18 | G Player / manager UI | — | US-08, US-14 | US-19, US-21 |
+| US-37 | Empty season, sign-in failure, and expired session | G Player / manager UI | — | US-15 | US-24 |
+| US-22 | Enforce validation parity on client and server | H Quality / deploy | — | US-05, US-07, US-08, US-16, US-21 | US-24 |
+| US-23 | Meet WCAG AA contrast in every theme | H Quality / deploy | — | US-14, US-19 | US-24 |
+| US-24 | Prove parity with emulator tests and Playwright | H Quality / deploy | — | US-12, US-16–US-19, US-21–US-23, US-29–US-40 | US-25 |
+| US-25 | Deploy public Next.js and internal Spring Cloud Run | H Quality / deploy | — | US-24, US-29, US-31, US-33, US-39, US-40 | US-26 |
+| US-39 | Provision Firestore composite indexes | A Foundation | — | US-02, US-03 | US-24, US-25 |
+| US-40 | Expose Cloud Run health checks | H Quality / deploy | — | US-03, US-13 | US-25 |
+| US-26 | Remove the legacy Struts application | H Quality / deploy | — | US-25 | — |
+| US-27 | Integrate the College Football Data API client | I CFBD | — | US-02, US-03, US-06, US-12 | US-28 |
+| US-28 | Import a season’s SEC-team matchups from CFBD | I CFBD | — | US-07, US-27, US-38 | US-29, US-30 |
+| US-29 | Automatically import scores on game days | I CFBD | — | US-28, US-33 | US-24, US-25 |
+| US-30 | Trigger and review CFBD imports from the admin UI | I CFBD | — | US-21, US-28, US-31, US-38 | US-24 |
+| US-38 | Harden CFBD import (calendar weeks, opponents, job) | I CFBD | — | US-05, US-06, US-27, US-31, US-33 | US-28, US-30, US-24 |
 
 ---
 
@@ -261,18 +262,20 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 ### US-01 — Bootstrap the Nx monorepo
 
+**Status:** Done ([PR #1](https://github.com/bassetthnd824/pickem/pull/1)).
+
 **User story.** As a developer, I want a single Nx workspace that hosts the Next.js frontend and the Maven Spring Boot backend so that both stacks share one project graph, task runner, and CI cache.
 
 **Description.** Replace the single Java 7 Maven WAR as the *build* unit (the legacy tree stays on disk as reference). Bootstrap with `@jnxplus/nx-maven:init` (Java 21, Spring Boot parent POM), generate `apps/backend`, add `apps/frontend` with `@nx/next`, and set `skipProjectWithoutProjectJson: true` so the existing `pom.xml` under `src/` is not pulled into the Nx graph.
 
 **Acceptance criteria.**
 
-- Workspace root contains `nx.json`, `package.json`, and `tsconfig.base.json`.
-- `apps/frontend` is a TypeScript Next.js App Router app generated by `@nx/next`.
-- `apps/backend` is a Maven Spring Boot 3.x / Java 21 module wired through `@jnxplus/nx-maven`.
-- `nx build|test|serve frontend` and `nx build|test|serve backend` succeed (backend tasks delegate to Maven).
-- The legacy `src/` Maven project is excluded from the Nx graph.
-- Nothing under `src/main` is modified.
+- [x] Workspace root contains `nx.json`, `package.json`, and `tsconfig.base.json`.
+- [x] `apps/frontend` is a TypeScript Next.js App Router app generated by `@nx/next`.
+- [x] `apps/backend` is a Maven Spring Boot 3.x / Java 21 module wired through `@jnxplus/nx-maven`.
+- [x] `nx build|test|serve frontend` and `nx build|test|serve backend` succeed (backend tasks delegate to Maven).
+- [x] The legacy `src/` Maven project is excluded from the Nx graph.
+- [x] Nothing under `src/main` is modified.
 
 **Predecessors:** none.
 
