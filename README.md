@@ -34,7 +34,7 @@ pickem/
 |---|---|
 | `npx nx serve frontend` | Next.js dev server |
 | `npx nx build frontend` | Production Next.js build |
-| `npx nx test frontend` | Jest |
+| `npx nx test frontend` | Vitest |
 | `npx nx serve backend` | `spring-boot:run` on port 8080 |
 | `npx nx build backend` | Maven `package` (skip tests) |
 | `npx nx test backend` | Maven `test` |

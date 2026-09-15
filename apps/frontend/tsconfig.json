@@ -20,7 +20,7 @@
         "name": "next"
       }
     ],
-    "types": ["jest", "node"]
+    "types": ["node"]
   },
   "include": [
     "**/*.ts",
@@ -34,10 +34,14 @@
   ],
   "exclude": [
     "node_modules",
-    "jest.config.ts",
-    "jest.config.cts",
+    "vite.config.ts",
+    "vite.config.mts",
+    "vitest.config.ts",
+    "vitest.config.mts",
     "**/*.spec.ts",
     "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx",
     "src/**/*.spec.ts",
     "src/**/*.test.ts"
   ]

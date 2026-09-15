@@ -70,3 +70,6 @@ target/
 # Next.js
 .next
 out
+
+# Vitest
+vitest.config.*.timestamp*
