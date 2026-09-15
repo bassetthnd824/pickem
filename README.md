@@ -2,7 +2,7 @@
 
 A season-long college football **confidence pick'em**. Each week, players pick a winner for every matchup and rank those picks by confidence. A correct pick scores its rank in points; the leaderboard is the season total.
 
-This repository is the original Java EE application. A planned rewrite (Next.js + Spring Boot + Firestore) is documented under [`docs/`](docs/).
+This repository is an **Nx monorepo** rewrite (Next.js + Spring Boot + Firestore). The original Java EE application remains under `src/` as the functional spec until [US-26](docs/user-stories.md).
 
 ## How the game works
 
@@ -12,93 +12,81 @@ This repository is the original Java EE application. A planned rewrite (Next.js 
 4. After scores are entered, a correct pick earns its rank. Wrong picks earn `0`.
 5. The **leaderboard** sums those points for the season.
 
-Picks for a week are considered locked once that week's begin date has arrived. Results show for the current and past weeks.
+Picks for a week lock once that week's begin date has arrived. Results show for the current and past weeks.
 
-## Features
-
-**Players** (`/game/*`)
-
-- Weekly picks grid with up/down reordering for confidence rank
-- Season leaderboard
-- Team schedule (win/loss for a selected team)
-- Account: nickname, theme, and password
-
-**Managers** (`/manager/*`)
-
-CRUD for users, themes, teams, venues, rivalries, seasons, season weeks, and matchups.
-
-Auth is container-managed **JAAS FORM** login on WildFly (`pickemDomain`). Roles are `player` and `manager`. New users can self-register.
-
-## Stack
-
-| Layer | Technology |
-|---|---|
-| App server | JBoss WildFly (Java EE 7 BOM 8.2.1) |
-| Language | Java 7 |
-| Web | Struts 2.3.24, Apache Tiles 3, JSP |
-| UI | Bootstrap 3, jQuery, jQuery Mobile, Underscore |
-| Persistence | JPA / Hibernate, Apache Derby |
-| Services | CDI + EJB `@Stateless` beans |
-| Validation | Bean Validation (JSR-303) |
-| Build | Maven WAR (`com.curleesoft.pickem:pickem`) |
-
-## Project layout
+## Workspace
 
 ```
 pickem/
-  pom.xml
-  docs/                          # modernization plan and user stories
-  src/main/java/.../pickem/
-    action/                      # Struts actions (player + manager)
-    bean/                        # EJB/Hibernate DAOs
-    model/                       # JPA entities (PCKM_* tables)
-    form/                        # form DTOs
-    filter/                      # login filter
-  src/main/resources/
-    struts.xml
-    META-INF/persistence.xml
-  src/main/webapp/
-    tiles/                       # JSP views
-    WEB-INF/                     # web.xml, Tiles, Derby datasource
-    resources/                   # CSS, JS, images
+  apps/frontend/     # Next.js App Router (@nx/next)
+  apps/backend/      # Spring Boot 4.1 / Java 21 (@jnxplus/nx-maven)
+  docs/              # modernization plan and user stories
+  src/               # legacy Struts WAR (do not edit until US-26)
+  legacy-pom.xml     # original Java 7 WAR POM
+  pom.xml            # Maven aggregator (Spring Boot parent)
+  nx.json
+  package.json
+  tsconfig.base.json
+  AGENTS.md
 ```
 
-Database tables are prefixed `PCKM_` (for example `PCKM_USER`, `PCKM_MATCHUP`, `PCKM_USER_PICK`).
+| Command | What it does |
+|---|---|
+| `npx nx serve frontend` | Next.js dev server |
+| `npx nx build frontend` | Production Next.js build |
+| `npx nx test frontend` | Vitest |
+| `npx nx serve backend` | `spring-boot:run` on port 8080 |
+| `npx nx build backend` | Maven `package` (skip tests) |
+| `npx nx test backend` | Maven `test` |
+| `npx nx show projects` | Project graph membership |
+
+The legacy `src/` Maven WAR is **not** in the Nx graph (`skipProjectWithoutProjectJson`). To package it: `mvn -f legacy-pom.xml package`.
 
 ## Prerequisites
 
-- JDK 7
-- Apache Maven 3.x
-- WildFly (matching the Java EE 7 / 8.2.1 stack)
-- Apache Derby, network server on port `1527`
+- Node.js 20+ (24 recommended)
+- JDK 21+ (Maven Wrapper included)
+- npm 11+
 
-The unmanaged datasource in `src/main/webapp/WEB-INF/pickem-ds.xml` expects:
-
-```
-jdbc:derby://localhost:1527/c:/DATA/derby/databases/pickem
-user: pickem
-password: pickempass
-```
-
-Adjust the URL, credentials, and WildFly security domain (`pickemDomain` in `jboss-web.xml`) for your environment.
-
-## Build and deploy
+## Setup
 
 ```bash
-mvn package
-mvn package wildfly:deploy
+npm install
+cp apps/backend/.env.example apps/backend/.env
+npx nx serve frontend
+npx nx serve backend
 ```
 
-Tests are skipped by default. To run Arquillian tests against WildFly:
+### Secrets
 
-```bash
-mvn clean test -Parq-wildfly-managed
-mvn clean test -Parq-wildfly-remote
+The Spring Boot API reads secrets from **OS environment variables**, a **`.env` file**, or **Google Secret Manager**. Existing environment variables always win over `.env`.
+
+| Source | When |
+|---|---|
+| `.env` | Local. The backend looks at `PICKEM_DOTENV_FILE`, then `./.env`, `./apps/backend/.env`, and `../.env`. |
+| Environment variables | Any environment, including Cloud Run secrets mounted as env vars. |
+| Google Secret Manager | Set `PICKEM_SECRET_MANAGER_ENABLED=true` (ADC + `GOOGLE_CLOUD_PROJECT`). Values resolve as `sm://secret-id`. |
+
+Example: `CFBD_API_KEY` or Secret Manager secret `cfbd-api-key`. Do not commit `.env`. See `apps/backend/.env.example`.
+
+## Conventional commits
+
+Commits and PR titles must follow [Conventional Commits](https://www.conventionalcommits.org/). Include the user-story id (for example `US-01`).
+
+```
+feat(workspace): bootstrap nx monorepo
+
+US-01
 ```
 
-After deploy, the WAR context root is `pickem`.
+Enforced locally by Husky + commitlint, and on PRs by `.github/workflows/lint-commits.yml`.
 
 ## Docs
 
 - [Modernization plan](docs/modernization-plan.md) — rewrite to Next.js, Spring Boot, and Firestore
 - [User stories](docs/user-stories.md) — implementable work for that rewrite
+- [AGENTS.md](AGENTS.md) — conventions for coding agents
+
+## Legacy stack (reference)
+
+The original WAR (`src/` + `legacy-pom.xml`) is Struts 2.3.24 + Tiles 3 + JPA/Hibernate on WildFly / Java 7 / Apache Derby. Auth was container-managed JAAS (`player` / `manager`). It is not the build unit anymore.

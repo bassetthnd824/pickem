@@ -1,0 +1,23 @@
+# Maven
+target/
+.m2/repository
+
+# Nx / Node
+node_modules/
+dist/
+.nx/
+coverage/
+tmp/
+out-tsc/
+
+# Next.js
+.next/
+out/
+
+# Legacy Struts WAR (reference only until US-26)
+src/
+legacy-pom.xml
+
+# Generated / lockfiles
+package-lock.json
+apps/frontend/next-env.d.ts
