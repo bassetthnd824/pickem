@@ -26,7 +26,7 @@ Work breakdown: [`docs/user-stories.md`](docs/user-stories.md).
 2. **One user story per branch.** Branch as `feat/US-NN-short-slug` (or `fix/` / `docs/` / `chore/` matching the commit type).
 3. **Conventional Commits are enforced** (husky `commit-msg` + GitHub Action on PR title and commit range). Include the story id.
 4. **Do not expose the Spring API to the browser.** No CORS on Spring; no client-side calls to `:8080`.
-5. **Do not put secrets in the client.** `CFBD_API_KEY`, Firebase Admin credentials, and session secrets stay on the server.
+5. **Do not put secrets in the client.** `CFBD_API_KEY`, Firebase Admin credentials, and session secrets stay on the server. Locally they come from `.env` (see `apps/backend/.env.example`). In GCP they come from Secret Manager (`PICKEM_SECRET_MANAGER_ENABLED=true` and `sm://`) or Cloud Run env injection. Never commit `.env`.
 
 ## Conventional commits
 

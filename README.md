@@ -52,9 +52,22 @@ The legacy `src/` Maven WAR is **not** in the Nx graph (`skipProjectWithoutProje
 
 ```bash
 npm install
+cp apps/backend/.env.example apps/backend/.env
 npx nx serve frontend
 npx nx serve backend
 ```
+
+### Secrets
+
+The Spring Boot API reads secrets from **OS environment variables**, a **`.env` file**, or **Google Secret Manager**. Existing environment variables always win over `.env`.
+
+| Source | When |
+|---|---|
+| `.env` | Local. The backend looks at `PICKEM_DOTENV_FILE`, then `./.env`, `./apps/backend/.env`, and `../.env`. |
+| Environment variables | Any environment, including Cloud Run secrets mounted as env vars. |
+| Google Secret Manager | Set `PICKEM_SECRET_MANAGER_ENABLED=true` (ADC + `GOOGLE_CLOUD_PROJECT`). Values resolve as `sm://secret-id`. |
+
+Example: `CFBD_API_KEY` or Secret Manager secret `cfbd-api-key`. Do not commit `.env`. See `apps/backend/.env.example`.
 
 ## Conventional commits
 

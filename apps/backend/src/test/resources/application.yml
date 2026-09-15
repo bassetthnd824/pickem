@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    gcp:
+      core:
+        enabled: false
+      secretmanager:
+        enabled: false
+
+pickem:
+  secrets:
+    secret-manager-enabled: false
+    cfbd-api-key: test-cfbd-api-key
