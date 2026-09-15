@@ -19,7 +19,7 @@ Picks for a week lock once that week's begin date has arrived. Results show for 
 ```
 pickem/
   apps/frontend/     # Next.js App Router (@nx/next)
-  apps/backend/      # Spring Boot 3 / Java 21 (@jnxplus/nx-maven)
+  apps/backend/      # Spring Boot 4.1 / Java 21 (@jnxplus/nx-maven)
   docs/              # modernization plan and user stories
   src/               # legacy Struts WAR (do not edit until US-26)
   legacy-pom.xml     # original Java 7 WAR POM

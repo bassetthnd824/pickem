@@ -10,7 +10,7 @@ This tree is a **greenfield rewrite** of a Java EE 7 / Struts 2 WAR into:
 | Layer | Stack |
 |---|---|
 | Frontend | Next.js App Router (`apps/frontend`) via `@nx/next` |
-| Backend | Spring Boot 3.x / Java 21 (`apps/backend`) via `@jnxplus/nx-maven` |
+| Backend | Spring Boot 4.1 / Java 21 (`apps/backend`) via `@jnxplus/nx-maven` |
 | Data | Firestore (native mode) — later stories |
 | Auth | Firebase Google sign-in + HttpOnly `__session` cookie — later stories |
 | Workspace | Nx monorepo (`nx.json`, `package.json`, `tsconfig.base.json`) |
@@ -88,7 +88,7 @@ mvn -f legacy-pom.xml package
 
 ```
 apps/frontend/          Next.js App Router (TypeScript)
-apps/backend/           Spring Boot 3 / Java 21
+apps/backend/           Spring Boot 4.1 / Java 21
 docs/                   modernization plan + user stories
 src/                    legacy Struts/JSP WAR (do not edit until US-26)
 legacy-pom.xml          original Java 7 WAR POM
