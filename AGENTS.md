@@ -7,13 +7,13 @@ Guidance for coding agents working in this repository.
 Kenney's Pickem is a season-long college football **confidence pick'em**.
 This tree is a **greenfield rewrite** of a Java EE 7 / Struts 2 WAR into:
 
-| Layer | Stack |
-|---|---|
-| Frontend | Next.js App Router (`apps/frontend`) via `@nx/next` |
-| Backend | Spring Boot 4.1 / Java 21 (`apps/backend`) via `@jnxplus/nx-maven` |
-| Data | Firestore (native mode) — later stories |
-| Auth | Firebase Google sign-in + HttpOnly `__session` cookie — later stories |
-| Workspace | Nx monorepo (`nx.json`, `package.json`, `tsconfig.base.json`) |
+| Layer     | Stack                                                                 |
+| --------- | --------------------------------------------------------------------- |
+| Frontend  | Next.js App Router (`apps/frontend`) via `@nx/next`                   |
+| Backend   | Spring Boot 4.1 / Java 21 (`apps/backend`) via `@jnxplus/nx-maven`    |
+| Data      | Firestore (native mode) — later stories                               |
+| Auth      | Firebase Google sign-in + HttpOnly `__session` cookie — later stories |
+| Workspace | Nx monorepo (`nx.json`, `package.json`, `tsconfig.base.json`)         |
 
 The browser never calls Spring. Next.js will Axios-proxy `/api/*` to the backend (US-31).
 
@@ -23,7 +23,7 @@ Work breakdown: [`docs/user-stories.md`](docs/user-stories.md).
 ## Non-negotiable rules
 
 1. **Do not modify `src/main` (or any of the legacy Struts tree under `src/`) until US-26.** It is the functional spec, not the build unit. The old WAR POM is preserved as [`legacy-pom.xml`](legacy-pom.xml).
-2. **One user story per branch.** Branch as `feat/US-NN-short-slug` (or `fix/` / `docs/` / `chore/` matching the commit type).
+2. **One user story per branch.** Branch as `US-NN-short-slug`.
 3. **Conventional Commits are enforced** (husky `commit-msg` + GitHub Action on PR title and commit range). Include the story id.
 4. **Do not expose the Spring API to the browser.** No CORS on Spring; no client-side calls to `:8080`.
 5. **Do not put secrets in the client.** `CFBD_API_KEY`, Firebase Admin credentials, and session secrets stay on the server. Locally they come from `.env` (see `apps/backend/.env.example`). In GCP they come from Secret Manager (`PICKEM_SECRET_MANAGER_ENABLED=true` and `sm://`) or Cloud Run env injection. Never commit `.env`.
