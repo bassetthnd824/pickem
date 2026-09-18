@@ -4,7 +4,6 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
 /**
  * Builds the Firestore client. Production uses ADC against the real project.
@@ -15,9 +14,10 @@ public class FirestoreConfig {
 
   @Bean(destroyMethod = "close")
   public Firestore firestore(PickemFirestoreProperties properties) {
-    String projectId = StringUtils.hasText(properties.projectId())
-      ? properties.projectId()
-      : "pickem-local";
+    String projectId = properties.projectId();
+    if (projectId == null || projectId.isBlank()) {
+      projectId = "pickem-local";
+    }
 
     FirestoreOptions.Builder builder = FirestoreOptions.newBuilder().setProjectId(
       projectId
@@ -35,14 +35,15 @@ public class FirestoreConfig {
 
   static String resolveEmulatorHost(PickemFirestoreProperties properties) {
     String fromEnv = System.getenv("FIRESTORE_EMULATOR_HOST");
-    if (!StringUtils.hasText(fromEnv)) {
+    if (fromEnv == null || fromEnv.isBlank()) {
       fromEnv = System.getProperty("FIRESTORE_EMULATOR_HOST");
     }
-    if (StringUtils.hasText(fromEnv)) {
+    if (fromEnv != null && !fromEnv.isBlank()) {
       return fromEnv.trim();
     }
-    if (properties.emulatorEnabled() && StringUtils.hasText(properties.emulatorHost())) {
-      return properties.emulatorHost().trim();
+    String configuredHost = properties.emulatorHost();
+    if (properties.emulatorEnabled() && configuredHost != null && !configuredHost.isBlank()) {
+      return configuredHost.trim();
     }
     return null;
   }

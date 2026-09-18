@@ -2,7 +2,6 @@ package com.curleesoft.pickem.backend.support;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.util.StringUtils;
 import org.testcontainers.gcloud.FirestoreEmulatorContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -22,12 +21,12 @@ public abstract class FirestoreEmulatorSupport {
     System.getProperty("FIRESTORE_EMULATOR_HOST")
   );
 
-  private static final FirestoreEmulatorContainer CONTAINER = EXTERNAL_HOST ==
-    null
-    ? createAndStart()
-    : null;
+  private static final FirestoreEmulatorContainer CONTAINER = startIfNeeded();
 
-  private static FirestoreEmulatorContainer createAndStart() {
+  private static FirestoreEmulatorContainer startIfNeeded() {
+    if (EXTERNAL_HOST != null) {
+      return null;
+    }
     FirestoreEmulatorContainer container = new FirestoreEmulatorContainer(
       EMULATOR_IMAGE
     );
@@ -44,15 +43,18 @@ public abstract class FirestoreEmulatorSupport {
   }
 
   protected static String emulatorEndpoint() {
-    if (StringUtils.hasText(EXTERNAL_HOST)) {
+    if (EXTERNAL_HOST != null) {
       return EXTERNAL_HOST;
+    }
+    if (CONTAINER == null) {
+      throw new IllegalStateException("Firestore emulator container was not started");
     }
     return CONTAINER.getEmulatorEndpoint();
   }
 
   private static String firstNonBlank(String... values) {
     for (String value : values) {
-      if (StringUtils.hasText(value)) {
+      if (value != null && !value.isBlank()) {
         return value.trim();
       }
     }

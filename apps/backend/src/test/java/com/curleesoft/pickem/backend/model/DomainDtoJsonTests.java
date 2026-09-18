@@ -35,10 +35,10 @@ class DomainDtoJsonTests {
 
     JsonNode json = objectMapper.readTree(objectMapper.writeValueAsString(season));
 
-    assertThat(json.get("beginDate").asText()).isEqualTo("2024-08-29");
-    assertThat(json.get("endDate").asText()).isEqualTo("2025-01-13");
-    assertThat(json.get("isCurrent").asBoolean()).isTrue();
-    assertThat(json.get("createDate").asText()).isEqualTo("2024-08-01T15:30:00Z");
+    assertThat(json.path("beginDate").asText()).isEqualTo("2024-08-29");
+    assertThat(json.path("endDate").asText()).isEqualTo("2025-01-13");
+    assertThat(json.path("isCurrent").asBoolean()).isTrue();
+    assertThat(json.path("createDate").asText()).isEqualTo("2024-08-01T15:30:00Z");
   }
 
   @Test
@@ -57,13 +57,15 @@ class DomainDtoJsonTests {
 
     JsonNode json = objectMapper.readTree(objectMapper.writeValueAsString(matchup));
 
-    assertThat(json.get("matchupDate").asText()).isEqualTo("2024-09-14");
-    assertThat(json.get("homeTeam").get("name").asText()).isEqualTo("Alabama");
-    assertThat(json.get("homeTeam").get("squad").asText()).isEqualTo("Crimson Tide");
-    assertThat(json.get("venue").get("cityState").asText()).isEqualTo(
+    assertThat(json.path("matchupDate").asText()).isEqualTo("2024-09-14");
+    assertThat(json.path("homeTeam").path("name").asText()).isEqualTo("Alabama");
+    assertThat(json.path("homeTeam").path("squad").asText()).isEqualTo(
+      "Crimson Tide"
+    );
+    assertThat(json.path("venue").path("cityState").asText()).isEqualTo(
       "Tuscaloosa, AL"
     );
-    assertThat(json.get("homeTeamScore").isNull()).isTrue();
+    assertThat(json.path("homeTeamScore").isNull()).isTrue();
   }
 
   @Test
@@ -82,7 +84,7 @@ class DomainDtoJsonTests {
 
     assertThat(json).doesNotContain("password");
     assertThat(json).doesNotContain("userPass");
-    assertThat(objectMapper.readTree(json).get("roles").get(0).asText()).isEqualTo(
+    assertThat(objectMapper.readTree(json).path("roles").path(0).asText()).isEqualTo(
       "player"
     );
   }

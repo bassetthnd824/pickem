@@ -11,15 +11,13 @@ public class SecurityContextAuditActorResolver implements AuditActorResolver {
   public String currentActor() {
     Authentication authentication = SecurityContextHolder.getContext()
       .getAuthentication();
-    if (
-      authentication == null ||
-      !authentication.isAuthenticated() ||
-      authentication.getName() == null ||
-      authentication.getName().isBlank() ||
-      "anonymousUser".equals(authentication.getName())
-    ) {
+    if (authentication == null || !authentication.isAuthenticated()) {
       return SYSTEM_ACTOR;
     }
-    return authentication.getName();
+    String name = authentication.getName();
+    if (name == null || name.isBlank() || "anonymousUser".equals(name)) {
+      return SYSTEM_ACTOR;
+    }
+    return name;
   }
 }

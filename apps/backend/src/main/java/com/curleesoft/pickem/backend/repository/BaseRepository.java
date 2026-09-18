@@ -21,21 +21,22 @@ import org.springframework.util.StringUtils;
 
 /**
  * Shared Firestore DAO. Ports {@code GenericHibernateBean} + the audit/version
- * behavior of {@code AbstractBaseEntity}.
+ * behavior of {@code AbstractBaseEntity}. The type parameter is {@code D}
+ * so it does not clash with {@code Firestore.runTransaction}'s {@code T}.
  */
-public class BaseRepository<T extends AuditableDocument> {
+public class BaseRepository<D extends AuditableDocument> {
 
   private final Firestore firestore;
   private final Clock clock;
   private final AuditActorResolver auditActorResolver;
-  private final Class<T> type;
+  private final Class<D> type;
   private final String collectionName;
 
   public BaseRepository(
     Firestore firestore,
     Clock clock,
     AuditActorResolver auditActorResolver,
-    Class<T> type,
+    Class<D> type,
     String collectionName
   ) {
     this.firestore = firestore;
@@ -45,7 +46,7 @@ public class BaseRepository<T extends AuditableDocument> {
     this.collectionName = collectionName;
   }
 
-  public Optional<T> findById(String id) {
+  public Optional<D> findById(String id) {
     if (!StringUtils.hasText(id)) {
       return Optional.empty();
     }
@@ -62,24 +63,25 @@ public class BaseRepository<T extends AuditableDocument> {
         ex
       );
     } catch (ExecutionException ex) {
-      throw new FirestoreAccessException(
-        "Failed to read " + collectionName + "/" + id,
-        ex.getCause()
-      );
+      throw wrap("Failed to read " + collectionName + "/" + id, ex);
     }
   }
 
-  public List<T> findAll() {
+  public List<D> findAll() {
     return query(collection -> collection);
   }
 
-  public List<T> query(Function<CollectionReference, Query> queryFactory) {
+  public List<D> query(Function<CollectionReference, Query> queryFactory) {
     Objects.requireNonNull(queryFactory, "queryFactory");
     try {
-      QuerySnapshot snapshot = queryFactory.apply(collection()).get().get();
-      List<T> results = new ArrayList<>(snapshot.size());
+      Query query = Objects.requireNonNull(
+        queryFactory.apply(collection()),
+        "query"
+      );
+      QuerySnapshot snapshot = query.get().get();
+      List<D> results = new ArrayList<>(snapshot.size());
       for (QueryDocumentSnapshot document : snapshot.getDocuments()) {
-        T mapped = document.toObject(type);
+        D mapped = document.toObject(type);
         if (mapped != null) {
           results.add(mapped);
         }
@@ -92,14 +94,11 @@ public class BaseRepository<T extends AuditableDocument> {
         ex
       );
     } catch (ExecutionException ex) {
-      throw new FirestoreAccessException(
-        "Failed to query " + collectionName,
-        ex.getCause()
-      );
+      throw wrap("Failed to query " + collectionName, ex);
     }
   }
 
-  public T save(T document) {
+  public D save(D document) {
     return save(document, auditActorResolver.currentActor());
   }
 
@@ -107,18 +106,18 @@ public class BaseRepository<T extends AuditableDocument> {
    * Inserts or updates {@code document} in a transaction. Stamps audit fields
    * and rejects a stale {@code version}.
    */
-  public T save(T document, String actor) {
+  public D save(D document, String actor) {
     Objects.requireNonNull(document, "document");
     String resolvedActor = StringUtils.hasText(actor)
       ? actor
       : AuditActorResolver.SYSTEM_ACTOR;
     try {
       return firestore
-        .runTransaction(transaction -> {
+        .<D>runTransaction(transaction -> {
           Instant now = clock.instant();
           DocumentReference ref;
           boolean insert;
-          T existing = null;
+          D existing = null;
 
           if (!StringUtils.hasText(document.getId())) {
             ref = collection().document();
@@ -142,7 +141,13 @@ public class BaseRepository<T extends AuditableDocument> {
             document.setLastUpdateUser(resolvedActor);
             document.setVersion(0L);
           } else {
-            Long storedVersion = existing == null ? null : existing.getVersion();
+            if (existing == null) {
+              throw new FirestoreAccessException(
+                "Failed to map " + collectionName + "/" + document.getId(),
+                null
+              );
+            }
+            Long storedVersion = existing.getVersion();
             if (storedVersion == null) {
               storedVersion = 0L;
             }
@@ -175,7 +180,7 @@ public class BaseRepository<T extends AuditableDocument> {
         ex
       );
     } catch (ExecutionException ex) {
-      Throwable cause = ex.getCause();
+      Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
       if (cause instanceof StaleDocumentVersionException stale) {
         throw stale;
       }
@@ -202,10 +207,7 @@ public class BaseRepository<T extends AuditableDocument> {
         ex
       );
     } catch (ExecutionException ex) {
-      throw new FirestoreAccessException(
-        "Failed to delete " + collectionName + "/" + id,
-        ex.getCause()
-      );
+      throw wrap("Failed to delete " + collectionName + "/" + id, ex);
     }
   }
 
@@ -213,7 +215,8 @@ public class BaseRepository<T extends AuditableDocument> {
     return firestore.collection(collectionName);
   }
 
-  protected String collectionName() {
-    return collectionName;
+  private FirestoreAccessException wrap(String message, ExecutionException ex) {
+    Throwable cause = ex.getCause();
+    return new FirestoreAccessException(message, cause != null ? cause : ex);
   }
 }

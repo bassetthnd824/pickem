@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class ClockConfig {
 
   @Bean
-  @ConditionalOnMissingBean
+  @ConditionalOnMissingBean(Clock.class)
   public Clock clock() {
     return Clock.systemUTC();
   }

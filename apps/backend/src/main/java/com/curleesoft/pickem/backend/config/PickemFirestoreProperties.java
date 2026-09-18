@@ -7,5 +7,5 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public record PickemFirestoreProperties(
   @DefaultValue("pickem-local") String projectId,
   @DefaultValue("false") boolean emulatorEnabled,
-  String emulatorHost
+  @DefaultValue("") String emulatorHost
 ) {}
