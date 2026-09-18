@@ -1,12 +1,29 @@
 spring:
   application:
     name: backend
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
   cloud:
     gcp:
+      # Firestore client is created in FirestoreConfig so the emulator can
+      # run without application-default credentials.
+      firestore:
+        enabled: false
       secretmanager:
         enabled: ${PICKEM_SECRET_MANAGER_ENABLED:false}
 
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
 pickem:
+  firestore:
+    project-id: ${GOOGLE_CLOUD_PROJECT:pickem-local}
+    emulator-enabled: ${FIRESTORE_EMULATOR_ENABLED:false}
+    emulator-host: ${FIRESTORE_EMULATOR_HOST:}
   secrets:
     secret-manager-enabled: ${PICKEM_SECRET_MANAGER_ENABLED:false}
     # OS environment and .env win. Secret Manager (sm@) is the fallback

@@ -49,15 +49,21 @@ The legacy `src/` Maven WAR is **not** in the Nx graph (`skipProjectWithoutProje
 - Node.js 20+ (24 recommended)
 - JDK 21+ (Maven Wrapper included)
 - npm 11+
+- Java 21+ (the Firestore emulator JAR also needs a JDK)
+- Docker (backend tests start the Firestore emulator with Testcontainers)
+- Firebase CLI (`npx firebase`) to run the emulator next to `nx serve backend`
 
 ## Setup
 
 ```bash
 npm install
 cp apps/backend/.env.example apps/backend/.env
+npx --yes firebase emulators:start --only firestore
 npx nx serve frontend
 npx nx serve backend
 ```
+
+The Spring API talks to the **Firestore emulator** locally (`FIRESTORE_EMULATOR_HOST=127.0.0.1:8085` in `apps/backend/.env.example`). Port 8085 is used so the emulator does not collide with Spring on 8080. Backend tests start the emulator with Testcontainers.
 
 ### Secrets
 

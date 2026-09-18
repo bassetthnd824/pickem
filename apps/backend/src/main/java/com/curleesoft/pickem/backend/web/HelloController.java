@@ -1,4 +1,4 @@
-package com.curleesoft.pickem.backend;
+package com.curleesoft.pickem.backend.web;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
