@@ -1,7 +1,27 @@
 #
 # https://help.github.com/articles/dealing-with-line-endings/
 #
+# Default to LF in the working tree. Matches this repo's
+# core.autocrlf=false and core.eol=lf so Windows checkouts
+# do not rewrite text files as CRLF.
+* text=auto eol=lf
+
 # Linux start script should use lf
 mvnw text eol=lf
 # Windows script files should use crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
 mvnw.cmd text eol=crlf
+
+# Binary assets (clear eol so the * rule does not apply)
+*.png binary !eol
+*.gif binary !eol
+*.jpg binary !eol
+*.jpeg binary !eol
+*.ico binary !eol
+*.eot binary !eol
+*.ttf binary !eol
+*.woff binary !eol
+*.woff2 binary !eol
+*.jar binary !eol
