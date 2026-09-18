@@ -20,8 +20,10 @@ Picks for a week lock once that week's begin date has arrived. Results show for 
 pickem/
   apps/frontend/     # Next.js App Router (@nx/next)
   apps/backend/      # Spring Boot 4.1 / Java 21 (@jnxplus/nx-maven)
-  docs/              # modernization plan and user stories
+  docs/              # architecture, data model, API contract, themes
   src/               # legacy Struts WAR (do not edit until US-26)
+  firestore.rules    # deny all client reads/writes (Admin SDK only)
+  firebase.json
   legacy-pom.xml     # original Java 7 WAR POM
   pom.xml            # Maven aggregator (Spring Boot parent)
   nx.json
@@ -85,6 +87,11 @@ Enforced locally by Husky + commitlint, and on PRs by `.github/workflows/lint-co
 
 - [Modernization plan](docs/modernization-plan.md) — rewrite to Next.js, Spring Boot, and Firestore
 - [User stories](docs/user-stories.md) — implementable work for that rewrite
+- [Firestore data model](docs/firestore-data-model.md) — collections, snapshots, CFBD ids, dropped Derby tables
+- [API contract](docs/api-contract.md) — `/api/auth`, `/api/game`, `/api/manager` (browser → Next.js BFF → Spring)
+- [Theme colors](docs/sec-theme-colors.md) — 18 theme keys and hex values
+- [Parity checklist](docs/parity-checklist.md) — legacy JSP/action → new route/endpoint
+- [Open decisions](docs/open-decisions.md) — sign-in, default theme, CFBD import/scoring
 - [AGENTS.md](AGENTS.md) — conventions for coding agents
 
 ## Legacy stack (reference)

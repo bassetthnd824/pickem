@@ -1,0 +1,12 @@
+rules_version = '2';
+
+// Client SDK access is denied. The Spring Boot backend (and the seed script)
+// use the Admin SDK / a GCP service account, which bypasses these rules.
+// The browser never talks to Firestore; it calls Next.js /api only.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

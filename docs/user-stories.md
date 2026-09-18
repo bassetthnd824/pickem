@@ -293,12 +293,12 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- `docs/firestore-data-model.md` lists collections (`seasons`, `seasonWeeks`, `venues`, `teams`, `rivalries`, `matchups`, `picks`, `users`, `themes`), denormalized snapshots, audit/`version` fields, `cfbdTeamId` / `cfbdVenueId` / `cfbdGameId`, and the drop of `PCKM_GROUP` / passwords / sequences.
-- `docs/api-contract.md` lists every `/api/auth`, `/api/game`, and `/api/manager` endpoint (including CFBD import and score-sync) with auth role and ISO-8601 dates, and states that the **browser calls Next.js `/api` only**; Next.js Axios-forwards to Spring. Spring has no public URL.
-- `docs/sec-theme-colors.md` contains the 18 theme keys and hex values from the plan.
-- A Firestore rules skeleton denies client writes; only the backend service account writes.
-- A parity checklist maps each legacy JSP/action to a new route/endpoint, plus the CFBD import UI.
-- Open decisions are recorded: open Google sign-in with auto-`player`; default theme Light; CFBD `conference=SEC` includes non-conference games; scores only when `completed`.
+- [x] [`docs/firestore-data-model.md`](./firestore-data-model.md) lists collections (`seasons`, `seasonWeeks`, `venues`, `teams`, `rivalries`, `matchups`, `picks`, `users`, `themes`), denormalized snapshots, audit/`version` fields, `cfbdTeamId` / `cfbdVenueId` / `cfbdGameId`, and the drop of `PCKM_GROUP` / passwords / sequences.
+- [x] [`docs/api-contract.md`](./api-contract.md) lists every `/api/auth`, `/api/game`, and `/api/manager` endpoint (including CFBD import and score-sync) with auth role and ISO-8601 dates, and states that the **browser calls Next.js `/api` only**; Next.js Axios-forwards to Spring. Spring has no public URL.
+- [x] [`docs/sec-theme-colors.md`](./sec-theme-colors.md) contains the 18 theme keys and hex values from the plan.
+- [x] A Firestore rules skeleton ([`firestore.rules`](../firestore.rules)) denies client writes; only the backend service account writes.
+- [x] A parity checklist ([`docs/parity-checklist.md`](./parity-checklist.md)) maps each legacy JSP/action to a new route/endpoint, plus the CFBD import UI.
+- [x] Open decisions are recorded ([`docs/open-decisions.md`](./open-decisions.md)): open Google sign-in with auto-`player`; default theme Light; CFBD `conference=SEC` includes non-conference games; scores only when `completed`.
 
 **Predecessors:** none.
 
