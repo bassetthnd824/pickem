@@ -89,7 +89,8 @@ mvn -f legacy-pom.xml package
 ```
 apps/frontend/          Next.js App Router (TypeScript)
 apps/backend/           Spring Boot 4.1 / Java 21
-docs/                   modernization plan + user stories
+docs/                   plan, stories, data model, API contract, themes, parity
+firestore.rules         deny client reads/writes; Admin SDK only
 src/                    legacy Struts/JSP WAR (do not edit until US-26)
 legacy-pom.xml          original Java 7 WAR POM
 pom.xml                 Maven aggregator (Spring Boot parent, Java 21)
@@ -99,14 +100,16 @@ pom.xml                 Maven aggregator (Spring Boot parent, Java 21)
 
 ## Implementation order
 
-Follow [`docs/user-stories.md`](docs/user-stories.md). Current foundation story is **US-01**. Next independent stories: **US-02** (architecture docs / Firestore rules) and, after US-01, **US-13** (frontend scaffold beyond this shell). Backend platform starts at **US-03**.
+Follow [`docs/user-stories.md`](docs/user-stories.md). Architecture docs and Firestore rules are **US-02**. Next independent stories after US-01: **US-13** (frontend scaffold). Backend platform starts at **US-03** (needs US-01 and US-02).
 
 Keep each PR inside its story's acceptance criteria. Do not pull later stories into this one.
 
 ## Defaults from the plan (do not reopen)
 
+See [`docs/open-decisions.md`](docs/open-decisions.md).
+
 - Any Google account may sign in; new users get the `player` claim.
 - Default theme is Light. Themes are a closed set of 18 (Light, Dark, 16 SEC schools).
 - Picks lock when the week has begun. College football ties are invalid (400).
-- CFBD import uses `GET /games?year={season}&conference=SEC` from Spring only.
+- CFBD import uses `GET /games?year={season}&conference=SEC` from Spring only (`conference=SEC` includes non-conference games). Scores only when CFBD `completed`.
 - Team/venue edits refresh denormalized snapshots; deletes block if referenced.

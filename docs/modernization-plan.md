@@ -66,6 +66,9 @@ pickem/                      # Nx workspace root (nx.json, package.json, tsconfi
 
 ## Data model — Firestore collections
 
+Canonical field list: [`firestore-data-model.md`](./firestore-data-model.md).
+Rules: [`../firestore.rules`](../firestore.rules).
+
 Relational tables become collections. Firestore has no joins, so we **denormalize** read-
 heavy references (team names/squad, venue) onto documents that are displayed together, and
 compute aggregates (leaderboard) in the service layer. IDs are Firestore auto-IDs (string);
@@ -139,6 +142,7 @@ Firebase Admin SDK for session-cookie verification. Springdoc for OpenAPI.
 - `web/` — REST controllers returning JSON (replaces JSP/Tiles + the custom `JSONResult`).
 
 **REST surface** (namespaces map: `/game/*`→`/api/game`, `/manager/*`→`/api/manager`).
+Canonical endpoint list, roles, and CFBD jobs: [`api-contract.md`](./api-contract.md).
 The **browser never calls these URLs**. It calls the same paths on the Next.js origin;
 Next.js Route Handlers Axios-proxy them to Spring (see Frontend BFF).
 
@@ -249,9 +253,9 @@ primary/accent rather than as the page background, and compute a readable foregr
 (white/near-black) per swatch.
 
 **SEC school colors** (official primary/secondary hex, from teamcolorcodes.com / school
-brand guides) — the seed values for the 16 school themes. These go into
-`docs/sec-theme-colors.md`; the seed script writes one `themes` document per school (name,
-key/`themePath`, primary, secondary) plus Light and Dark.
+brand guides) — the seed values for the 16 school themes. Canonical table (all 18 keys):
+[`sec-theme-colors.md`](./sec-theme-colors.md). The seed script writes one `themes`
+document per school (name, key/`themePath`, primary, secondary) plus Light and Dark.
 
 | School | Theme key | Primary | Secondary / accent |
 |---|---|---|---|
@@ -407,11 +411,13 @@ account (by email) so there is an initial admin.
   browser request goes to the Spring origin). Then a smoke test against the **Next.js
   public URL**.
 - **Manual parity checklist** derived from the legacy screen inventory (every JSP/action has
-  a corresponding new route/endpoint).
+  a corresponding new route/endpoint): [`parity-checklist.md`](./parity-checklist.md).
 
 ---
 
 ## Open decisions (assumed defaults, confirm before/at execution)
+
+Canonical record: [`open-decisions.md`](./open-decisions.md).
 
 - **Google sign-in scope:** open to any Google account (auto-assign `player` on first
   sign-in) vs. a domain/email allowlist. *Assumed: open + auto-`player`.*
