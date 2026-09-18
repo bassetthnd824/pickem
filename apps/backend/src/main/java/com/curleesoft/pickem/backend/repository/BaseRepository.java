@@ -9,6 +9,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
+
 import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -50,20 +51,25 @@ public class BaseRepository<D extends AuditableDocument> {
     if (!StringUtils.hasText(id)) {
       return Optional.empty();
     }
+    String resolvedId = Objects.requireNonNull(id, "id");
     try {
-      DocumentSnapshot snapshot = collection().document(id).get().get();
+      DocumentSnapshot snapshot = collection().document(resolvedId).get().get();
+
       if (!snapshot.exists()) {
         return Optional.empty();
       }
+
       return Optional.ofNullable(snapshot.toObject(type));
+
     } catch (InterruptedException ex) {
       Thread.currentThread().interrupt();
       throw new FirestoreAccessException(
-        "Interrupted reading " + collectionName + "/" + id,
+        "Interrupted reading " + collectionName + "/" + resolvedId,
         ex
       );
+
     } catch (ExecutionException ex) {
-      throw wrap("Failed to read " + collectionName + "/" + id, ex);
+      throw wrap("Failed to read " + collectionName + "/" + resolvedId, ex);
     }
   }
 
@@ -73,26 +79,32 @@ public class BaseRepository<D extends AuditableDocument> {
 
   public List<D> query(Function<CollectionReference, Query> queryFactory) {
     Objects.requireNonNull(queryFactory, "queryFactory");
+
     try {
       Query query = Objects.requireNonNull(
         queryFactory.apply(collection()),
         "query"
       );
+
       QuerySnapshot snapshot = query.get().get();
       List<D> results = new ArrayList<>(snapshot.size());
+
       for (QueryDocumentSnapshot document : snapshot.getDocuments()) {
         D mapped = document.toObject(type);
         if (mapped != null) {
           results.add(mapped);
         }
       }
+
       return results;
+
     } catch (InterruptedException ex) {
       Thread.currentThread().interrupt();
       throw new FirestoreAccessException(
         "Interrupted querying " + collectionName,
         ex
       );
+
     } catch (ExecutionException ex) {
       throw wrap("Failed to query " + collectionName, ex);
     }
