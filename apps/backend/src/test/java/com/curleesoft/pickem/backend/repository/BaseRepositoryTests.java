@@ -173,10 +173,18 @@ class BaseRepositoryTests extends FirestoreEmulatorSupport {
     matchup.setHomeTeamId(home.getId());
     matchup.setAwayTeamId(away.getId());
     matchup.setHomeTeam(
-      new TeamSquadSnapshot(home.getId(), home.getTeamName(), home.getSquadName())
+      new TeamSquadSnapshot(
+        home.getId(),
+        home.getTeamName(),
+        home.getSquadName()
+      )
     );
     matchup.setAwayTeam(
-      new TeamSquadSnapshot(away.getId(), away.getTeamName(), away.getSquadName())
+      new TeamSquadSnapshot(
+        away.getId(),
+        away.getTeamName(),
+        away.getSquadName()
+      )
     );
     matchup.setVenueId(venue.getId());
     matchup.setVenue(venueSnapshot);
@@ -193,8 +201,13 @@ class BaseRepositoryTests extends FirestoreEmulatorSupport {
     assertThat(loaded.getRivalryName()).isEqualTo("Third Saturday in October");
     assertThat(loaded.getCfbdGameId()).isEqualTo(401532447L);
     assertThat(loaded.getHomeTeamScore()).isNull();
-    assertThat(teamRepository.findById(home.getId()).orElseThrow().getHomeVenue().getCityState())
-      .isEqualTo("Knoxville, TN");
+    assertThat(
+      teamRepository
+        .findById(home.getId())
+        .orElseThrow()
+        .getHomeVenue()
+        .getCityState()
+    ).isEqualTo("Knoxville, TN");
   }
 
   @Test

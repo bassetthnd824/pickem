@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<profiles version="12">
+  <profile kind="CodeFormatterProfile" name="Custom Java Rules" version="12">
+    <!-- Retain your manual breaks -->
+    <setting
+      id="org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve"
+      value="1"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.join_wrapped_lines"
+      value="false"
+    />
+
+    <!-- Force a blank line before standard statement body entries -->
+    <setting
+      id="org.eclipse.jdt.core.formatter.blank_lines_before_first_class_body_declaration"
+      value="1"
+    />
+
+    <!-- Controls blank lines for blocks and returns -->
+    <setting
+      id="org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve"
+      value="1"
+    />
+
+    <setting
+      id="org.eclipse.jdt.core.formatter.insert_new_line_before_catch_in_try_statement"
+      value="insert"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.insert_new_line_before_finally_in_try_statement"
+      value="insert"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.insert_new_line_at_end_of_file_if_missing"
+      value="insert"
+    />
+
+    <!-- Code alignment formatting -->
+    <setting
+      id="org.eclipse.jdt.core.formatter.tabulation.char"
+      value="space"
+    />
+    <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4" />
+  </profile>
+</profiles>
