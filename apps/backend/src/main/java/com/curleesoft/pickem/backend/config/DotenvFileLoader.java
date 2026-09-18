@@ -55,7 +55,10 @@ final class DotenvFileLoader {
       explicit = System.getProperty(DOTENV_PATH_PROPERTY);
     }
     if (explicit != null && !explicit.isBlank()) {
-      candidates.add(Path.of(explicit));
+      Path configured = Path.of(explicit);
+      return Files.isRegularFile(configured)
+        ? configured.toAbsolutePath().normalize()
+        : null;
     }
 
     Path cwd = Path.of("").toAbsolutePath().normalize();

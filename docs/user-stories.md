@@ -318,12 +318,12 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- Backend boots against the Firestore emulator.
-- DTOs exist for all nine collections, including denormalized team/venue snapshots on matchups, teams, and rivalries.
-- `BaseRepository` stamps `createDate` / `createUser` / `lastUpdateDate` / `lastUpdateUser` and rejects a stale `version` in a transaction.
-- Spring is not browser-facing: no CORS configuration is required (the Next.js BFF is the only caller). Local and production browsers talk only to Next.js.
-- Springdoc serves an OpenAPI spec.
-- No Derby, JPA, EJB, or Struts dependencies in `apps/backend`.
+- [x] Backend boots against the Firestore emulator.
+- [x] DTOs exist for all nine collections, including denormalized team/venue snapshots on matchups, teams, and rivalries.
+- [x] `BaseRepository` stamps `createDate` / `createUser` / `lastUpdateDate` / `lastUpdateUser` and rejects a stale `version` in a transaction.
+- [x] Spring is not browser-facing: no CORS configuration is required (the Next.js BFF is the only caller). Local and production browsers talk only to Next.js.
+- [x] Springdoc serves an OpenAPI spec.
+- [x] No Derby, JPA, EJB, or Struts dependencies in `apps/backend`.
 
 **Predecessors:** US-01, US-02.
 

@@ -3,10 +3,16 @@ spring:
     gcp:
       core:
         enabled: false
+      firestore:
+        enabled: false
       secretmanager:
         enabled: false
 
 pickem:
+  firestore:
+    project-id: pickem-test
+    emulator-enabled: true
+    emulator-host: 127.0.0.1:8085
   secrets:
     secret-manager-enabled: false
     cfbd-api-key: test-cfbd-api-key
