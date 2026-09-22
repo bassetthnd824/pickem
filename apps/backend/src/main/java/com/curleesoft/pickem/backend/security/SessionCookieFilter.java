@@ -10,7 +10,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.curleesoft.pickem.backend.model.User;
 import com.curleesoft.pickem.backend.repository.UserRepository;
 
 import jakarta.servlet.FilterChain;
@@ -75,6 +74,7 @@ public class SessionCookieFilter extends OncePerRequestFilter {
         if (!roles.isEmpty()) {
             return roles;
         }
-        return userRepository.findById(identity.uid()).map(User::getRoles).map(RoleClaims::normalize).orElse(List.of());
+        return userRepository.findById(identity.uid()).map(user -> user.getRoles()).map(RoleClaims::normalize)
+                .orElse(List.of());
     }
 }

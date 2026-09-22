@@ -40,10 +40,8 @@ pickem:
 ---
 spring:
   config:
-    activate:
-      on-property: pickem.secrets.secret-manager-enabled
-    import: sm@
+    import: ${PICKEM_SECRET_MANAGER_IMPORT:}
   cloud:
     gcp:
       secretmanager:
-        enabled: true
+        enabled: ${PICKEM_SECRET_MANAGER_ENABLED:false}

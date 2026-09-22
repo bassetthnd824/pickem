@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.security.core.GrantedAuthority;
 
 class RoleClaimsTests {
 
@@ -29,7 +28,7 @@ class RoleClaimsTests {
 
     @Test
     void authoritiesUseRolePrefix() {
-        assertThat(RoleClaims.authorities(List.of("player", "manager"))).extracting(GrantedAuthority::getAuthority)
-                .containsExactly("ROLE_PLAYER", "ROLE_MANAGER");
+        assertThat(RoleClaims.authorities(List.of("player", "manager")))
+                .extracting(authority -> authority.getAuthority()).containsExactly("ROLE_PLAYER", "ROLE_MANAGER");
     }
 }

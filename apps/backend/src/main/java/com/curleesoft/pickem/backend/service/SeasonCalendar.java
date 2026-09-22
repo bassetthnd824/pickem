@@ -94,7 +94,7 @@ public final class SeasonCalendar {
             return Optional.empty();
         }
 
-        List<Season> flagged = seasons.stream().filter(Season::isCurrent).toList();
+        List<Season> flagged = seasons.stream().filter(season -> season.isCurrent()).toList();
 
         if (!flagged.isEmpty()) {
             return Optional.of(preferFlagged(flagged, today));
@@ -136,7 +136,8 @@ public final class SeasonCalendar {
     }
 
     private static Optional<Season> latest(List<Season> seasons) {
-        return seasons.stream().max(Comparator.comparing(Season::getSeason, Comparator.nullsLast(String::compareTo)));
+        return seasons.stream().max(Comparator.comparing((Season season) -> season.getSeason(),
+                Comparator.nullsLast((String left, String right) -> left.compareTo(right))));
     }
 
     private static LocalDate expectedBegin(LocalDate seasonBegin, int weekNumber) {

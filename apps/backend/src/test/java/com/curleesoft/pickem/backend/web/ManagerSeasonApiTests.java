@@ -315,12 +315,12 @@ class ManagerSeasonApiTests extends FirestoreEmulatorSupport {
     }
 
     private String idOf(MvcResult result) throws Exception {
-        return jsonMapper.readTree(result.getResponse().getContentAsString()).path("id").asText();
+        return jsonMapper.readTree(result.getResponse().getContentAsString()).path("id").asString();
     }
 
     private static int indexOf(JsonNode seasons, String id) {
         for (int i = 0; i < seasons.size(); i++) {
-            if (id.equals(seasons.get(i).path("id").asText())) {
+            if (id.equals(seasons.get(i).path("id").asString())) {
                 return i;
             }
         }

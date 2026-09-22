@@ -41,7 +41,9 @@ public class SeasonService {
                 .filter(item -> begin == null || begin.equals(item.getBeginDate()))
                 .filter(item -> end == null || end.equals(item.getEndDate()))
                 .filter(item -> current == null || item.isCurrent() == current.booleanValue())
-                .sorted(Comparator.comparing(Season::getSeason, Comparator.nullsLast(String::compareTo))).toList();
+                .sorted(Comparator.comparing((Season item) -> item.getSeason(),
+                        Comparator.nullsLast((String left, String right) -> left.compareTo(right))))
+                .toList();
     }
 
     public Season get(String id) {
