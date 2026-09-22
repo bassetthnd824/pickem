@@ -2,8 +2,9 @@ spring:
   application:
     name: backend
   jackson:
-    serialization:
-      write-dates-as-timestamps: false
+    datatype:
+      datetime:
+        write-dates-as-timestamps: false
   cloud:
     gcp:
       # Firestore client is created in FirestoreConfig so the emulator can
