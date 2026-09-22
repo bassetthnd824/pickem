@@ -3,18 +3,20 @@
 ## Context
 
 `pickem` is a season-long college-football **confidence pick'em** game. Each week a
-player picks a winner for every matchup and assigns each pick a *rank* (confidence
+player picks a winner for every matchup and assigns each pick a _rank_ (confidence
 points, 1..N where N = number of conference teams). A correct pick earns its rank in
 points; the leaderboard ranks players by total points. Managers run a back-office that
 CRUDs the reference/schedule data (seasons, weeks, teams, venues, rivalries, matchups,
 users, themes).
 
 Today it is a single Maven WAR: **Struts 2 (2.3.24)** actions + Apache Tiles 3 JSP views
-+ Bootstrap 3/jQuery, a **CDI/EJB** service layer (`@Stateless` beans extending a generic
-Hibernate DAO), **JPA/Hibernate** entities over **Apache Derby**, and container-managed
-**JAAS FORM** auth on WildFly. It targets Java 7 and requires a full JBoss/WildFly install.
+
+- Bootstrap 3/jQuery, a **CDI/EJB** service layer (`@Stateless` beans extending a generic
+  Hibernate DAO), **JPA/Hibernate** entities over **Apache Derby**, and container-managed
+  **JAAS FORM** auth on WildFly. It targets Java 7 and requires a full JBoss/WildFly install.
 
 The goal is a modern, cloud-native rebuild with the same feature set:
+
 - **Frontend:** Next.js (App Router) + React, TanStack Form, Valibot validation, Tailwind CSS,
   with a switchable **theming system** (Light, Dark, + one per SEC school).
 - **Backend:** Spring Boot REST API persisting to **Firestore** (native mode).
@@ -54,6 +56,7 @@ pickem/                      # Nx workspace root (nx.json, package.json, tsconfi
 ```
 
 **Nx setup notes:**
+
 - Bootstrap with `@jnxplus/nx-maven:init` (Java 21, Spring Boot parent POM), then generate
   the backend app; add the Next.js app with `@nx/next`. `nx-maven` builds the Maven module
   and adds it to the graph automatically; set `skipProjectWithoutProjectJson: true` to keep
@@ -74,17 +77,17 @@ heavy references (team names/squad, venue) onto documents that are displayed tog
 compute aggregates (leaderboard) in the service layer. IDs are Firestore auto-IDs (string);
 the old `PCKM_*_SEQ` sequences and `_` metamodel classes go away.
 
-| Collection | Key fields | Notes / denormalization |
-|---|---|---|
-| `seasons` | `season` (e.g. "2024"), `beginDate`, `endDate`, `isCurrent` | replaces `getCurrentSeason` native query with an `isCurrent`/date query |
-| `seasonWeeks` | `seasonId`, `weekNumber`, `beginDate`, `endDate` | query by `seasonId` |
-| `venues` | `venueName`, `cityState` | |
-| `teams` | `teamName`, `squadName`, `conferenceMember`, `homeVenue{id,name,cityState}` | embed venue snapshot; keep `homeVenueId` for edits |
-| `rivalries` | `rivalryName`, `team1{id,name}`, `team2{id,name}` | |
-| `matchups` | `seasonId`, `seasonWeekId`, `weekNumber`, `matchupDate`, `homeTeam{id,name,squad}`, `awayTeam{id,name,squad}`, `homeTeamScore`, `awayTeamScore`, `venue{...}`, `rivalryName?` | denormalizes the big `Test.sql` join; `winningTeamId` computed server-side |
-| `picks` | `userId`, `matchupId`, `seasonId`, `seasonWeekId`, `pickedTeamId`, `rank` | one doc per user-per-matchup; query by `userId`+`seasonId` |
-| `users` | `uid` (Firebase), `emailAddr`, `firstName`, `lastName`, `nickName`, `themeId`, `roles[]` | **no password** (Google/Firebase owns identity); doc id = Firebase `uid`. `emailAddr`/name seeded from the Google profile on first sign-in |
-| `themes` | `themeName`, `themePath`, `active` | |
+| Collection    | Key fields                                                                                                                                                                    | Notes / denormalization                                                                                                                    |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `seasons`     | `season` (e.g. "2024"), `beginDate`, `endDate`, `isCurrent`                                                                                                                   | replaces `getCurrentSeason` native query with an `isCurrent`/date query                                                                    |
+| `seasonWeeks` | `seasonId`, `weekNumber`, `beginDate`, `endDate`                                                                                                                              | query by `seasonId`                                                                                                                        |
+| `venues`      | `venueName`, `cityState`                                                                                                                                                      |                                                                                                                                            |
+| `teams`       | `teamName`, `squadName`, `conferenceMember`, `homeVenue{id,name,cityState}`                                                                                                   | embed venue snapshot; keep `homeVenueId` for edits                                                                                         |
+| `rivalries`   | `rivalryName`, `team1{id,name}`, `team2{id,name}`                                                                                                                             |                                                                                                                                            |
+| `matchups`    | `seasonId`, `seasonWeekId`, `weekNumber`, `matchupDate`, `homeTeam{id,name,squad}`, `awayTeam{id,name,squad}`, `homeTeamScore`, `awayTeamScore`, `venue{...}`, `rivalryName?` | denormalizes the big `Test.sql` join; `winningTeamId` computed server-side                                                                 |
+| `picks`       | `userId`, `matchupId`, `seasonId`, `seasonWeekId`, `pickedTeamId`, `rank`                                                                                                     | one doc per user-per-matchup; query by `userId`+`seasonId`                                                                                 |
+| `users`       | `uid` (Firebase), `emailAddr`, `firstName`, `lastName`, `nickName`, `themeId`, `roles[]`                                                                                      | **no password** (Google/Firebase owns identity); doc id = Firebase `uid`. `emailAddr`/name seeded from the Google profile on first sign-in |
+| `themes`      | `themeName`, `themePath`, `active`                                                                                                                                            |                                                                                                                                            |
 
 Groups (`manager`/`player`) become **Firebase custom claims** + a `roles[]` mirror on the
 user doc — the `PCKM_GROUP`/`PCKM_USER_GROUP` tables are dropped.
@@ -107,6 +110,7 @@ Every custom bean-validation rule is reproduced (see Validation section).
 Firebase Admin SDK for session-cookie verification. Springdoc for OpenAPI.
 
 **Layering** (mirrors the old action→bean→entity split):
+
 - `config/` — Firestore client bean, Firebase Admin init, security filter chain. No
   browser CORS: the browser never calls Spring.
 - `security/` — a `SessionCookieFilter` reads the **`__session` HttpOnly cookie** (forwarded
@@ -151,7 +155,7 @@ Next.js Route Handlers Axios-proxy them to Spring (see Frontend BFF).
   first sign-in (email/name from the Google profile) + assigns the `player` claim if new,
   then mints a **session cookie** (`createSessionCookie`, ~5–14 day expiry) and returns
   `Set-Cookie`. Next.js copies that cookie onto the browser response (`HttpOnly; Secure;
-  SameSite`, host-only on the Next.js hostname). Replaces `RegisterAction` + client login
+SameSite`, host-only on the Next.js hostname). Replaces `RegisterAction` + client login
   (no registration form).
 - `POST /api/auth/logout` — clears the session cookie (and optionally revokes refresh
   tokens). Replaces `LogoutAction`.
@@ -180,6 +184,7 @@ server** (BFF proxy only — not in client bundles). This replaces JSP, Tiles, j
 Underscore templates, Bootstrap, and the datetimepicker.
 
 **Routing / layout** (Tiles `template.jsp` → root layout; navbar → shared component):
+
 ```
 app/
   (auth)/login                       # single "Sign in with Google" button; replaces login.jsp + registration.jsp (no register route)
@@ -191,6 +196,7 @@ app/
                                      # list + detail routes; replaces searchTemplate.jsp accordion CRUD
   api/[...path]/route.ts             # BFF: Axios-proxy /api/* to Spring with the session cookie
 ```
+
 - **BFF proxy (required):** the browser must **not** call Spring. Client code uses
   same-origin relative `/api/...` (`credentials: 'include'`). App Router Route Handlers
   receive the request, and **Axios** (server-side) forwards method, query, body, and the
@@ -226,6 +232,7 @@ switchable theming system. Ship **18 themes**: a generic **Light** and **Dark**,
 per **SEC school (16)** derived from that school's official team colors.
 
 **Mechanism (Tailwind + CSS variables):**
+
 - Define a fixed set of **semantic design tokens** as CSS custom properties:
   `--color-bg`, `--color-surface`, `--color-text`, `--color-muted`, `--color-border`,
   `--color-primary`, `--color-primary-fg`, `--color-secondary`, `--color-accent`,
@@ -257,24 +264,24 @@ brand guides) — the seed values for the 16 school themes. Canonical table (all
 [`sec-theme-colors.md`](./sec-theme-colors.md). The seed script writes one `themes`
 document per school (name, key/`themePath`, primary, secondary) plus Light and Dark.
 
-| School | Theme key | Primary | Secondary / accent |
-|---|---|---|---|
-| Alabama Crimson Tide | `alabama` | Crimson `#9E1B32` | Cool Gray `#828A8F` |
-| Arkansas Razorbacks | `arkansas` | Cardinal Red `#9D2235` | White `#FFFFFF` |
-| Auburn Tigers | `auburn` | Navy Blue `#0C2340` | Orange `#E87722` |
-| Florida Gators | `florida` | Blue `#0021A5` | Orange `#FA4616` |
-| Georgia Bulldogs | `georgia` | Bulldog Red `#BA0C2F` | Black `#000000` |
-| Kentucky Wildcats | `kentucky` | Wildcat Blue `#0033A0` | Black `#000000` |
-| LSU Tigers | `lsu` | Purple `#461D7C` | Gold `#FDD023` |
-| Mississippi State Bulldogs | `mississippi-state` | Maroon `#660000` | Gray `#75787B` |
-| Missouri Tigers | `missouri` | Black `#000000` | MU Gold `#F1B82D` |
-| Oklahoma Sooners | `oklahoma` | Crimson `#841617` | Cream `#FDF9D8` |
-| Ole Miss Rebels | `ole-miss` | Red `#CE1126` | Navy Blue `#14213D` |
-| South Carolina Gamecocks | `south-carolina` | Garnet `#73000A` | Black `#000000` |
-| Tennessee Volunteers | `tennessee` | Tennessee Orange `#FF8200` | Smokey Gray `#58595B` |
-| Texas Longhorns | `texas` | Burnt Orange `#BF5700` | Dark Gray `#333F48` |
-| Texas A&M Aggies | `texas-am` | Maroon `#500000` | White `#FFFFFF` |
-| Vanderbilt Commodores | `vanderbilt` | Black `#000000` | Old Gold `#866D4B` |
+| School                     | Theme key           | Primary                    | Secondary / accent    |
+| -------------------------- | ------------------- | -------------------------- | --------------------- |
+| Alabama Crimson Tide       | `alabama`           | Crimson `#9E1B32`          | Cool Gray `#828A8F`   |
+| Arkansas Razorbacks        | `arkansas`          | Cardinal Red `#9D2235`     | White `#FFFFFF`       |
+| Auburn Tigers              | `auburn`            | Navy Blue `#0C2340`        | Orange `#E87722`      |
+| Florida Gators             | `florida`           | Blue `#0021A5`             | Orange `#FA4616`      |
+| Georgia Bulldogs           | `georgia`           | Bulldog Red `#BA0C2F`      | Black `#000000`       |
+| Kentucky Wildcats          | `kentucky`          | Wildcat Blue `#0033A0`     | Black `#000000`       |
+| LSU Tigers                 | `lsu`               | Purple `#461D7C`           | Gold `#FDD023`        |
+| Mississippi State Bulldogs | `mississippi-state` | Maroon `#660000`           | Gray `#75787B`        |
+| Missouri Tigers            | `missouri`          | Black `#000000`            | MU Gold `#F1B82D`     |
+| Oklahoma Sooners           | `oklahoma`          | Crimson `#841617`          | Cream `#FDF9D8`       |
+| Ole Miss Rebels            | `ole-miss`          | Red `#CE1126`              | Navy Blue `#14213D`   |
+| South Carolina Gamecocks   | `south-carolina`    | Garnet `#73000A`           | Black `#000000`       |
+| Tennessee Volunteers       | `tennessee`         | Tennessee Orange `#FF8200` | Smokey Gray `#58595B` |
+| Texas Longhorns            | `texas`             | Burnt Orange `#BF5700`     | Dark Gray `#333F48`   |
+| Texas A&M Aggies           | `texas-am`          | Maroon `#500000`           | White `#FFFFFF`       |
+| Vanderbilt Commodores      | `vanderbilt`        | Black `#000000`            | Old Gold `#866D4B`    |
 
 Notes: For **Missouri**, MU Gold is the distinctive color but black is the brand primary —
 theme built as gold-accent on a dark/black primary. Where the secondary is effectively
@@ -420,9 +427,9 @@ account (by email) so there is an initial admin.
 Canonical record: [`open-decisions.md`](./open-decisions.md).
 
 - **Google sign-in scope:** open to any Google account (auto-assign `player` on first
-  sign-in) vs. a domain/email allowlist. *Assumed: open + auto-`player`.*
+  sign-in) vs. a domain/email allowlist. _Assumed: open + auto-`player`._
 - **Light/Dark default:** follow `prefers-color-scheme` on first visit vs. always Light.
-  *Assumed: Light default, prefers-color-scheme as an option.*
+  _Assumed: Light default, prefers-color-scheme as an option._
 
 ## Decided behaviors (gap review)
 

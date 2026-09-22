@@ -6,26 +6,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.curleesoft.pickem.backend.support.FirestoreEmulatorSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.curleesoft.pickem.backend.support.FirestoreEmulatorSupport;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 public class HelloControllerTests extends FirestoreEmulatorSupport {
 
-  @Autowired
-  private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-  @Test
-  public void shouldReturnHelloWorld() throws Exception {
-    this.mockMvc.perform(get("/"))
-      .andDo(print())
-      .andExpect(status().isOk())
-      .andExpect(content().string(containsString("Hello World")));
-  }
+    @Test
+    public void shouldReturnHelloWorld() throws Exception {
+        this.mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk())
+                .andExpect(content().string(containsString("Hello World")));
+    }
 }
-

@@ -32,15 +32,15 @@ pickem/
   AGENTS.md
 ```
 
-| Command | What it does |
-|---|---|
-| `npx nx serve frontend` | Next.js dev server |
-| `npx nx build frontend` | Production Next.js build |
-| `npx nx test frontend` | Vitest |
-| `npx nx serve backend` | `spring-boot:run` on port 8080 |
-| `npx nx build backend` | Maven `package` (skip tests) |
-| `npx nx test backend` | Maven `test` |
-| `npx nx show projects` | Project graph membership |
+| Command                 | What it does                   |
+| ----------------------- | ------------------------------ |
+| `npx nx serve frontend` | Next.js dev server             |
+| `npx nx build frontend` | Production Next.js build       |
+| `npx nx test frontend`  | Vitest                         |
+| `npx nx serve backend`  | `spring-boot:run` on port 8080 |
+| `npx nx build backend`  | Maven `package` (skip tests)   |
+| `npx nx test backend`   | Maven `test`                   |
+| `npx nx show projects`  | Project graph membership       |
 
 The legacy `src/` Maven WAR is **not** in the Nx graph (`skipProjectWithoutProjectJson`). To package it: `mvn -f legacy-pom.xml package`.
 
@@ -69,10 +69,10 @@ The Spring API talks to the **Firestore emulator** locally (`FIRESTORE_EMULATOR_
 
 The Spring Boot API reads secrets from **OS environment variables**, a **`.env` file**, or **Google Secret Manager**. Existing environment variables always win over `.env`.
 
-| Source | When |
-|---|---|
-| `.env` | Local. The backend looks at `PICKEM_DOTENV_FILE`, then `./.env`, `./apps/backend/.env`, and `../.env`. |
-| Environment variables | Any environment, including Cloud Run secrets mounted as env vars. |
+| Source                | When                                                                                                         |
+| --------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `.env`                | Local. The backend looks at `PICKEM_DOTENV_FILE`, then `./.env`, `./apps/backend/.env`, and `../.env`.       |
+| Environment variables | Any environment, including Cloud Run secrets mounted as env vars.                                            |
 | Google Secret Manager | Set `PICKEM_SECRET_MANAGER_ENABLED=true` (ADC + `GOOGLE_CLOUD_PROJECT`). Values resolve as `sm://secret-id`. |
 
 Example: `CFBD_API_KEY` or Secret Manager secret `cfbd-api-key`. Do not commit `.env`. See `apps/backend/.env.example`.
