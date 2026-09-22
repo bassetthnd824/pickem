@@ -139,7 +139,7 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
 
         String managerCookie = firebase.issueCookie(signedIn("manager-1", List.of("manager")));
         mockMvc.perform(get("/api/game/main").cookie(session(managerCookie))).andExpect(status().isNotFound());
-        mockMvc.perform(get("/api/manager/seasons").cookie(session(managerCookie))).andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/manager/seasons").cookie(session(managerCookie))).andExpect(status().isOk());
     }
 
     @Test

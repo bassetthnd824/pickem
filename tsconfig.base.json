@@ -12,9 +12,7 @@
     "module": "ESNext",
     "lib": ["ES2022", "dom"],
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "paths": {}
+    "skipDefaultLibCheck": true
   },
   "exclude": ["node_modules", "tmp", "dist", "apps/backend"]
 }
