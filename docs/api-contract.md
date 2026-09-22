@@ -1,8 +1,8 @@
 # API contract
 
 Source of truth for the REST surface. Companion to
-[`modernization-plan.md`](./modernization-plan.md) (*REST surface*, *Frontend
-BFF*) and [`firestore-data-model.md`](./firestore-data-model.md).
+[`modernization-plan.md`](./modernization-plan.md) (_REST surface_, _Frontend
+BFF_) and [`firestore-data-model.md`](./firestore-data-model.md).
 
 ## Call path
 
@@ -33,10 +33,10 @@ Browser  ── same-origin /api/* ──►  Next.js (public)
 
 Roles come from Firebase custom claims, mirrored on `users.roles[]`.
 
-| Role | May call |
-|---|---|
-| *(none)* | `POST /api/auth/session` only |
-| `player` | `/api/auth/**`, `/api/game/**` |
+| Role      | May call                                          |
+| --------- | ------------------------------------------------- |
+| _(none)_  | `POST /api/auth/session` only                     |
+| `player`  | `/api/auth/**`, `/api/game/**`                    |
 | `manager` | `/api/auth/**`, `/api/game/**`, `/api/manager/**` |
 
 Unauthenticated requests to `/api/game/**` and `/api/manager/**` are rejected.
@@ -46,11 +46,11 @@ Players are blocked from `/api/manager/**`.
 
 ## `/api/auth`
 
-| Method | Path | Auth | Purpose |
-|---|---|---|---|
+| Method | Path                | Auth                           | Purpose                                                                          |
+| ------ | ------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
 | `POST` | `/api/auth/session` | none (Google ID token in body) | Verify ID token, provision/refresh `users`, mint `__session` cookie (~5–14 days) |
-| `POST` | `/api/auth/logout` | session | Clear `__session` (and optionally revoke refresh tokens) |
-| `GET` | `/api/auth/me` | session | Current profile + roles for `AuthProvider` |
+| `POST` | `/api/auth/logout`  | session                        | Clear `__session` (and optionally revoke refresh tokens)                         |
+| `GET`  | `/api/auth/me`      | session                        | Current profile + roles for `AuthProvider`                                       |
 
 `POST /api/auth/session` body: `{ "idToken": "<Firebase ID token>" }`.
 First sign-in creates `users/{uid}` with email/name from Google,
@@ -65,15 +65,15 @@ No registration endpoint. No password fields.
 
 All endpoints require a signed-in user (`player` or `manager`).
 
-| Method | Path | Auth | Purpose |
-|---|---|---|---|
-| `GET` | `/api/game/main` | session | Current season weeks + the user's matchup/pick grid + `numberOfConferenceTeams` |
-| `POST` | `/api/game/picks` | session | Bulk-upsert the authenticated user's weekly picks |
-| `GET` | `/api/game/leaderboard` | session | Season leaderboard. Query: `seasonId` (default current) |
-| `GET` | `/api/game/team-schedule` | session | Conference team W/L schedule. Query: `teamId`, `seasonId` |
-| `GET` | `/api/game/account` | session | Profile: email, name, `nickName`, `themeId` |
-| `PUT` | `/api/game/account` | session | Update `nickName` (required, ≤ 40) and `themeId` only |
-| `GET` | `/api/game/teams` | session | Conference-member list for the team-schedule dropdown. Query: `conferenceMember=true` |
+| Method | Path                      | Auth    | Purpose                                                                               |
+| ------ | ------------------------- | ------- | ------------------------------------------------------------------------------------- |
+| `GET`  | `/api/game/main`          | session | Current season weeks + the user's matchup/pick grid + `numberOfConferenceTeams`       |
+| `POST` | `/api/game/picks`         | session | Bulk-upsert the authenticated user's weekly picks                                     |
+| `GET`  | `/api/game/leaderboard`   | session | Season leaderboard. Query: `seasonId` (default current)                               |
+| `GET`  | `/api/game/team-schedule` | session | Conference team W/L schedule. Query: `teamId`, `seasonId`                             |
+| `GET`  | `/api/game/account`       | session | Profile: email, name, `nickName`, `themeId`                                           |
+| `PUT`  | `/api/game/account`       | session | Update `nickName` (required, ≤ 40) and `themeId` only                                 |
+| `GET`  | `/api/game/teams`         | session | Conference-member list for the team-schedule dropdown. Query: `conferenceMember=true` |
 
 ### Picks
 
@@ -117,20 +117,20 @@ Audit (`createDate` / `createUser` / `lastUpdateDate` / `lastUpdateUser`) and
 
 ### Reference data
 
-| Method | Path | Purpose |
-|---|---|---|
-| *CRUD* | `/api/manager/seasons` | Seasons. `season` unique; begin year matches season year |
-| *CRUD* | `/api/manager/season-weeks` | Weeks. Query `seasonId` replaces `seasonWeeks_getSeasonWeeksBySeason` |
-| `GET` | `/api/manager/seasons/{id}` | Replaces `seasons_getSeasonById` |
-| `GET` | `/api/manager/season-weeks/{id}` | Replaces `seasonWeeks_getSeasonWeekById` |
-| *CRUD* | `/api/manager/venues` | Venues. Optional unique `cfbdVenueId` |
-| *CRUD* | `/api/manager/teams` | Teams. Embed `homeVenue`. Optional unique `cfbdTeamId` |
-| `GET` | `/api/manager/teams/{id}` | Includes home venue (replaces `teams_getTeamById` auto-fill) |
-| `GET` | `/api/manager/teams?conferenceMember=true` | Replaces `TeamBean.getConferenceTeams` |
-| *CRUD* | `/api/manager/rivalries` | Rivalries. Two different teams; name ≤ 60 |
-| *CRUD* | `/api/manager/matchups` | Matchups. Optional unique `cfbdGameId`. `winningTeamId` is derived, not client-set |
-| *CRUD* | `/api/manager/users` | List/search by email, first, last. Edit name/email/nickname/theme/roles. No passwords |
-| *CRUD* | `/api/manager/themes` | Name, key/`themePath` (no leading `/`), `active`. Closed set of 18 keys |
+| Method | Path                                       | Purpose                                                                               |
+| ------ | ------------------------------------------ | ------------------------------------------------------------------------------------- |
+| _CRUD_ | `/api/manager/seasons`                     | Seasons. `season` unique; begin year matches season year                              |
+| _CRUD_ | `/api/manager/season-weeks`                | Weeks. Query `seasonId` replaces `seasonWeeks_getSeasonWeeksBySeason`                 |
+| `GET`  | `/api/manager/seasons/{id}`                | Replaces `seasons_getSeasonById`                                                      |
+| `GET`  | `/api/manager/season-weeks/{id}`           | Replaces `seasonWeeks_getSeasonWeekById`                                              |
+| _CRUD_ | `/api/manager/venues`                      | Venues. Optional unique `cfbdVenueId`                                                 |
+| _CRUD_ | `/api/manager/teams`                       | Teams. Embed `homeVenue`. Optional unique `cfbdTeamId`                                |
+| `GET`  | `/api/manager/teams/{id}`                  | Includes home venue (replaces `teams_getTeamById` auto-fill)                          |
+| `GET`  | `/api/manager/teams?conferenceMember=true` | Replaces `TeamBean.getConferenceTeams`                                                |
+| _CRUD_ | `/api/manager/rivalries`                   | Rivalries. Two different teams; name ≤ 60                                             |
+| _CRUD_ | `/api/manager/matchups`                    | Matchups. Optional unique `cfbdGameId`. `winningTeamId` is derived, not client-set    |
+| _CRUD_ | `/api/manager/users`                       | List/search by email, first, last. Edit name/email/nickname/theme/roles. No passwords |
+| _CRUD_ | `/api/manager/themes`                      | Name, key/`themePath` (no leading `/`), `active`. Closed set of 18 keys               |
 
 Manual week CRUD still requires Thursday begin and Wednesday = begin + 6.
 Imported CFBD weeks are not subject to that day-of-week rule.
@@ -145,11 +145,11 @@ not one of the compiled 18 is 400.
 
 ### CFBD import and score-sync
 
-| Method | Path | Auth | Purpose |
-|---|---|---|---|
+| Method | Path                            | Auth    | Purpose                                                                                             |
+| ------ | ------------------------------- | ------- | --------------------------------------------------------------------------------------------------- |
 | `POST` | `/api/manager/imports/matchups` | manager | Enqueue a season import job. Body: `{ "seasonId", "seasonType"? }`. Returns **202** + `{ "jobId" }` |
-| `GET` | `/api/manager/imports/{jobId}` | manager | Poll job status and summary (created / updated / skipped with reasons) |
-| `POST` | `/api/manager/imports/scores` | manager | Optional UI "Refresh scores" for a season. Same worker as the game-day job |
+| `GET`  | `/api/manager/imports/{jobId}`  | manager | Poll job status and summary (created / updated / skipped with reasons)                              |
+| `POST` | `/api/manager/imports/scores`   | manager | Optional UI "Refresh scores" for a season. Same worker as the game-day job                          |
 
 `POST /api/manager/imports/matchups` must return quickly. The worker (not the
 BFF request) calls CFBD `GET /games?year={season}&conference=SEC` (default
@@ -166,10 +166,10 @@ The catch-all BFF does not expose the worker.
 These paths are **outside** the BFF allowlist. Invoked with Cloud Scheduler
 OIDC or a shared secret (loopback locally). Not the `__session` cookie.
 
-| Method | Path | Auth | Purpose |
-|---|---|---|---|
-| `POST` | `/api/internal/jobs/cfbd-scores` | OIDC / shared secret | Game-day score sync. Preferred production entry: Next.js forwards this to Spring |
-| `POST` | `/api/internal/jobs/cfbd-matchups` | OIDC / shared secret | Import worker. Not started by the browser |
+| Method | Path                               | Auth                 | Purpose                                                                          |
+| ------ | ---------------------------------- | -------------------- | -------------------------------------------------------------------------------- |
+| `POST` | `/api/internal/jobs/cfbd-scores`   | OIDC / shared secret | Game-day score sync. Preferred production entry: Next.js forwards this to Spring |
+| `POST` | `/api/internal/jobs/cfbd-matchups` | OIDC / shared secret | Import worker. Not started by the browser                                        |
 
 Score job: current-season matchups whose `matchupDate` is today in
 `America/New_York` (or whose CFBD game is still not completed after a kickoff
@@ -182,10 +182,10 @@ current season; can be disabled out of season.
 
 ## Health (not proxied to Spring)
 
-| Method | Path | Auth | Purpose |
-|---|---|---|---|
-| `GET` | `/health` | none | Spring process up (Cloud Run probe). Inside GCP only |
-| `GET` | `/health` (Next.js) | none | UI process up. Does **not** call Spring |
+| Method | Path                | Auth | Purpose                                              |
+| ------ | ------------------- | ---- | ---------------------------------------------------- |
+| `GET`  | `/health`           | none | Spring process up (Cloud Run probe). Inside GCP only |
+| `GET`  | `/health` (Next.js) | none | UI process up. Does **not** call Spring              |
 
 Documented here for operators; owned by US-40. Not on the BFF allowlist as a
 Spring proxy.
@@ -194,13 +194,13 @@ Spring proxy.
 
 ## Error shape
 
-| Status | When |
-|---|---|
-| 400 | Validation failure (including ties, zero roles, unknown theme key, bad dates) |
-| 401 | Missing / expired / revoked session |
-| 403 | Authenticated but missing `manager` for `/api/manager/**`; browser hitting `/api/internal/**` |
-| 409 | Stale `version`; pick lock; delete blocked by references |
-| 202 | Import job accepted |
-| 5xx | CFBD or persistence failure after retries; Scheduler may retry jobs |
+| Status | When                                                                                          |
+| ------ | --------------------------------------------------------------------------------------------- |
+| 400    | Validation failure (including ties, zero roles, unknown theme key, bad dates)                 |
+| 401    | Missing / expired / revoked session                                                           |
+| 403    | Authenticated but missing `manager` for `/api/manager/**`; browser hitting `/api/internal/**` |
+| 409    | Stale `version`; pick lock; delete blocked by references                                      |
+| 202    | Import job accepted                                                                           |
+| 5xx    | CFBD or persistence failure after retries; Scheduler may retry jobs                           |
 
 Validation messages follow legacy `MessageResources.properties` intent (US-22).

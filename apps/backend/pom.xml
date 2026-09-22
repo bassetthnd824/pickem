@@ -54,6 +54,21 @@
       <version>3.1.0</version>
     </dependency>
     <dependency>
+      <groupId>com.google.firebase</groupId>
+      <artifactId>firebase-admin</artifactId>
+      <version>9.10.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.cloud</groupId>
+          <artifactId>google-cloud-firestore</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.cloud</groupId>
+          <artifactId>google-cloud-storage</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-configuration-processor</artifactId>
       <optional>true</optional>

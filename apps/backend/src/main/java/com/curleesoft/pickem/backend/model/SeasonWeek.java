@@ -8,47 +8,47 @@ import jakarta.validation.constraints.NotNull;
  */
 public class SeasonWeek extends AuditableDocument {
 
-  @NotBlank
-  private String seasonId;
+    @NotBlank
+    private String seasonId;
 
-  @NotNull
-  private Integer weekNumber;
+    @NotNull
+    private Integer weekNumber;
 
-  @NotBlank
-  private String beginDate;
+    @NotBlank
+    private String beginDate;
 
-  @NotBlank
-  private String endDate;
+    @NotBlank
+    private String endDate;
 
-  public String getSeasonId() {
-    return seasonId;
-  }
+    public String getSeasonId() {
+        return seasonId;
+    }
 
-  public void setSeasonId(String seasonId) {
-    this.seasonId = seasonId;
-  }
+    public void setSeasonId(String seasonId) {
+        this.seasonId = seasonId;
+    }
 
-  public Integer getWeekNumber() {
-    return weekNumber;
-  }
+    public Integer getWeekNumber() {
+        return weekNumber;
+    }
 
-  public void setWeekNumber(Integer weekNumber) {
-    this.weekNumber = weekNumber;
-  }
+    public void setWeekNumber(Integer weekNumber) {
+        this.weekNumber = weekNumber;
+    }
 
-  public String getBeginDate() {
-    return beginDate;
-  }
+    public String getBeginDate() {
+        return beginDate;
+    }
 
-  public void setBeginDate(String beginDate) {
-    this.beginDate = beginDate;
-  }
+    public void setBeginDate(String beginDate) {
+        this.beginDate = beginDate;
+    }
 
-  public String getEndDate() {
-    return endDate;
-  }
+    public String getEndDate() {
+        return endDate;
+    }
 
-  public void setEndDate(String endDate) {
-    this.endDate = endDate;
-  }
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
 }

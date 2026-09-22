@@ -9,6 +9,9 @@ spring:
         enabled: false
 
 pickem:
+  auth:
+    provider: fake
+    session-duration: P14D
   firestore:
     project-id: pickem-test
     emulator-enabled: true

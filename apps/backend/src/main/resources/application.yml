@@ -20,6 +20,12 @@ springdoc:
     path: /swagger-ui.html
 
 pickem:
+  auth:
+    # Firebase Admin allows 5 minutes through 14 days. Product window is 5-14 days.
+    session-duration: ${PICKEM_AUTH_SESSION_DURATION:P14D}
+    # Admin SDK reads FIREBASE_AUTH_EMULATOR_HOST from the process environment.
+    # This binding also accepts the value from .env so startup can publish it.
+    emulator-host: ${FIREBASE_AUTH_EMULATOR_HOST:}
   firestore:
     project-id: ${GOOGLE_CLOUD_PROJECT:pickem-local}
     emulator-enabled: ${FIRESTORE_EMULATOR_ENABLED:false}

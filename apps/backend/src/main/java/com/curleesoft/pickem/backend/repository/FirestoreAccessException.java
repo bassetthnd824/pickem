@@ -2,7 +2,7 @@ package com.curleesoft.pickem.backend.repository;
 
 public class FirestoreAccessException extends RuntimeException {
 
-  public FirestoreAccessException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public FirestoreAccessException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
