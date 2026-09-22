@@ -341,13 +341,13 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- First Google sign-in creates a `users` doc keyed by Firebase `uid` with email, first/last name, default `themeId=light`, `roles: ['player']`, and sets the `player` custom claim.
-- Repeat sign-in does not duplicate the user doc; it **refreshes** `emailAddr`, `firstName`, and `lastName` from the Google profile and leaves `nickName` and `themeId` unchanged.
-- Subsequent browser calls go to Next.js `/api` with the host-only cookie; Spring authenticates the cookie only after Axios forwards it (the browser never calls Spring).
-- Unauthenticated requests to `/api/game/**` and `/api/manager/**` are rejected.
-- Players are blocked from `/api/manager/**`; managers may call both namespaces.
-- Logout clears the cookie; a revoked session is rejected on the next request.
-- No password fields, hashes, or registration endpoint exist.
+- [x] First Google sign-in creates a `users` doc keyed by Firebase `uid` with email, first/last name, default `themeId=light`, `roles: ['player']`, and sets the `player` custom claim.
+- [x] Repeat sign-in does not duplicate the user doc; it **refreshes** `emailAddr`, `firstName`, and `lastName` from the Google profile and leaves `nickName` and `themeId` unchanged.
+- [x] Subsequent browser calls go to Next.js `/api` with the host-only cookie; Spring authenticates the cookie only after Axios forwards it (the browser never calls Spring).
+- [x] Unauthenticated requests to `/api/game/**` and `/api/manager/**` are rejected.
+- [x] Players are blocked from `/api/manager/**`; managers may call both namespaces.
+- [x] Logout clears the cookie; a revoked session is rejected on the next request.
+- [x] No password fields, hashes, or registration endpoint exist.
 
 **Predecessors:** US-03.
 
@@ -367,13 +367,13 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- `GET/POST/PUT/DELETE /api/manager/seasons` and `/api/manager/season-weeks` require `MANAGER`.
-- Season `season` is unique; begin year matches the season year; end year is the season year or season year + 1.
-- Weeks are queryable by `seasonId`; helper endpoints replace `seasons_getSeasonById` and `seasonWeeks_getSeasonWeeksBySeason` / `getSeasonWeekById`.
-- Invalid week bounds return 400 with the legacy message intent (“season week begin/end date is invalid”, “Week Begin Date is invalid”).
-- List/search by example fields (season name, dates, week number) works.
-- Audit and version fields are set on write.
-- Manual week CRUD still requires Thursday begin and Wednesday = begin + 6. Imported CFBD weeks (US-38) are not subject to that day-of-week rule.
+- [x] `GET/POST/PUT/DELETE /api/manager/seasons` and `/api/manager/season-weeks` require `MANAGER`.
+- [x] Season `season` is unique; begin year matches the season year; end year is the season year or season year + 1.
+- [x] Weeks are queryable by `seasonId`; helper endpoints replace `seasons_getSeasonById` and `seasonWeeks_getSeasonWeeksBySeason` / `getSeasonWeekById`.
+- [x] Invalid week bounds return 400 with the legacy message intent (“season week begin/end date is invalid”, “Week Begin Date is invalid”).
+- [x] List/search by example fields (season name, dates, week number) works.
+- [x] Audit and version fields are set on write.
+- [x] Manual week CRUD still requires Thursday begin and Wednesday = begin + 6. Imported CFBD weeks (US-38) are not subject to that day-of-week rule.
 
 **Predecessors:** US-03, US-04.
 
