@@ -45,8 +45,11 @@ public class SeasonWeekService {
         return candidates.stream().filter(item -> weekNumber == null || weekNumber.equals(item.getWeekNumber()))
                 .filter(item -> begin == null || begin.equals(item.getBeginDate()))
                 .filter(item -> end == null || end.equals(item.getEndDate()))
-                .sorted(Comparator.comparing(SeasonWeek::getSeasonId, Comparator.nullsLast(String::compareTo))
-                        .thenComparing(SeasonWeek::getWeekNumber, Comparator.nullsLast(Integer::compareTo)))
+                .sorted(Comparator
+                        .comparing((SeasonWeek week) -> week.getSeasonId(),
+                                Comparator.nullsLast((String left, String right) -> left.compareTo(right)))
+                        .thenComparing((SeasonWeek week) -> week.getWeekNumber(),
+                                Comparator.nullsLast((Integer left, Integer right) -> left.compareTo(right))))
                 .toList();
     }
 

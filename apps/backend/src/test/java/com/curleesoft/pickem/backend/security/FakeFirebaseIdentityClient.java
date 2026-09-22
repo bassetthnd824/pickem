@@ -106,7 +106,8 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
     @Override
     public void setCustomUserClaims(String uid, Map<String, Object> claims) {
         customClaims.put(uid, Map.copyOf(claims));
-        claimWrites.merge(uid, 1, Integer::sum);
+        Integer count = claimWrites.get(uid);
+        claimWrites.put(uid, count == null ? 1 : count + 1);
     }
 
     @Override

@@ -100,7 +100,7 @@ class BaseRepositoryTests extends FirestoreEmulatorSupport {
         venueRepository.save(two, "tester");
 
         List<Venue> all = venueRepository.findAll();
-        assertThat(all).extracting(Venue::getVenueName).contains(one.getVenueName(), two.getVenueName());
+        assertThat(all).extracting(venue -> venue.getVenueName()).contains(one.getVenueName(), two.getVenueName());
 
         List<Venue> queried = venueRepository
                 .query(collection -> collection.whereEqualTo("venueName", one.getVenueName()));

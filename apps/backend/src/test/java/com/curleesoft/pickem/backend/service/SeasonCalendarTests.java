@@ -83,22 +83,22 @@ class SeasonCalendarTests {
         Season inWindow = season("2026", "2026-08-27", "2027-01-10", false);
 
         assertThat(SeasonCalendar.selectCurrent(List.of(inWindow, flagged), LocalDate.parse("2026-10-01")))
-                .map(Season::getSeason).contains("2020");
+                .map(season -> season.getSeason()).contains("2020");
 
         Season older = season("2024", "2024-01-15", "2024-12-15", false);
         Season newer = season("2025", "2025-01-15", "2025-12-15", false);
         assertThat(SeasonCalendar.selectCurrent(List.of(older, newer), LocalDate.parse("2025-01-01")))
-                .map(Season::getSeason).contains("2025");
+                .map(season -> season.getSeason()).contains("2025");
 
         Season flaggedLater = season("2026", "2026-08-27", "2027-01-10", true);
         Season flaggedInWindow = season("2024", "2024-08-29", "2025-01-13", true);
         assertThat(SeasonCalendar.selectCurrent(List.of(flaggedLater, flaggedInWindow), LocalDate.parse("2024-10-01")))
-                .map(Season::getSeason).contains("2024");
+                .map(season -> season.getSeason()).contains("2024");
 
         Season twenty = season("2020", "2020-01-15", "2020-12-15", true);
         Season twentyOne = season("2021", "2021-01-15", "2021-12-15", true);
         assertThat(SeasonCalendar.selectCurrent(List.of(twenty, twentyOne), LocalDate.parse("2026-09-21")))
-                .map(Season::getSeason).contains("2021");
+                .map(season -> season.getSeason()).contains("2021");
 
         assertThat(SeasonCalendar.selectCurrent(List.of(), LocalDate.parse("2026-09-21"))).isEmpty();
     }

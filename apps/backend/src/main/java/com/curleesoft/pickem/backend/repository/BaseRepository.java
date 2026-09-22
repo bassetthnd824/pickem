@@ -44,27 +44,25 @@ public class BaseRepository<D extends AuditableDocument> {
     }
 
     public Optional<D> findById(String id) {
-        if (!StringUtils.hasText(id)) {
+        if (id == null || id.isBlank()) {
             return Optional.empty();
         }
 
-        String resolvedId = Objects.requireNonNull(id, "id");
-
         try {
-            DocumentSnapshot snapshot = collection().document(resolvedId).get().get();
+            DocumentSnapshot snapshot = collection().document(id).get().get();
 
             if (!snapshot.exists()) {
                 return Optional.empty();
             }
 
-            return Optional.ofNullable(snapshot.toObject(type));
+            return Optional.ofNullable(toDocument(snapshot));
 
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            throw new FirestoreAccessException("Interrupted reading " + collectionName + "/" + resolvedId, ex);
+            throw new FirestoreAccessException("Interrupted reading " + collectionName + "/" + id, ex);
 
         } catch (ExecutionException ex) {
-            throw wrap("Failed to read " + collectionName + "/" + resolvedId, ex);
+            throw wrap("Failed to read " + collectionName + "/" + id, ex);
         }
     }
 
@@ -82,7 +80,7 @@ public class BaseRepository<D extends AuditableDocument> {
             List<D> results = new ArrayList<>(snapshot.size());
 
             for (QueryDocumentSnapshot document : snapshot.getDocuments()) {
-                D mapped = document.toObject(type);
+                D mapped = toDocument(document);
 
                 if (mapped != null) {
                     results.add(mapped);
@@ -119,20 +117,22 @@ public class BaseRepository<D extends AuditableDocument> {
                 boolean insert;
                 D existing = null;
 
-                if (!StringUtils.hasText(document.getId())) {
+                String documentId = document.getId();
+
+                if (documentId == null || documentId.isBlank()) {
                     ref = collection().document();
                     document.setId(ref.getId());
                     insert = true;
 
                 } else {
-                    ref = collection().document(document.getId());
+                    ref = collection().document(documentId);
                     DocumentSnapshot snapshot = transaction.get(ref).get();
 
                     if (!snapshot.exists()) {
                         insert = true;
                     } else {
                         insert = false;
-                        existing = snapshot.toObject(type);
+                        existing = toDocument(snapshot);
                     }
                 }
 
@@ -191,7 +191,7 @@ public class BaseRepository<D extends AuditableDocument> {
     }
 
     public void delete(String id) {
-        if (!StringUtils.hasText(id)) {
+        if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("id is required");
         }
 
@@ -208,7 +208,23 @@ public class BaseRepository<D extends AuditableDocument> {
     }
 
     protected CollectionReference collection() {
-        return firestore.collection(collectionName);
+        String name = collectionName;
+
+        if (name == null) {
+            throw new IllegalStateException("collection name is required");
+        }
+
+        return firestore.collection(name);
+    }
+
+    private D toDocument(DocumentSnapshot snapshot) {
+        Class<D> documentType = type;
+
+        if (documentType == null) {
+            throw new IllegalStateException("document type is required");
+        }
+
+        return snapshot.toObject(documentType);
     }
 
     private FirestoreAccessException wrap(String message, ExecutionException ex) {
