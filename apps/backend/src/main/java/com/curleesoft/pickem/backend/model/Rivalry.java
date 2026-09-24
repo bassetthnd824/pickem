@@ -2,13 +2,13 @@ package com.curleesoft.pickem.backend.model;
 
 import com.curleesoft.pickem.backend.model.snapshot.TeamNameSnapshot;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * {@code rivalries} document. Embeds both team snapshots.
+ * {@code rivalries} document. Embeds both team snapshots. {@code team1} and
+ * {@code team2} are written by the service from the team documents and may be
+ * omitted on input. {@code team1Id} and {@code team2Id} must differ.
  */
 public class Rivalry extends AuditableDocument {
 
@@ -22,12 +22,8 @@ public class Rivalry extends AuditableDocument {
     @NotBlank
     private String team2Id;
 
-    @NotNull
-    @Valid
     private TeamNameSnapshot team1;
 
-    @NotNull
-    @Valid
     private TeamNameSnapshot team2;
 
     public String getRivalryName() {

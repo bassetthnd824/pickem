@@ -10,7 +10,12 @@ import com.curleesoft.pickem.backend.model.Season;
 import com.curleesoft.pickem.backend.model.SeasonWeek;
 import com.curleesoft.pickem.backend.repository.SeasonRepository;
 import com.curleesoft.pickem.backend.repository.SeasonWeekRepository;
+import com.curleesoft.pickem.backend.repository.TransactionReads;
 import com.curleesoft.pickem.backend.service.SeasonCalendar.ParsedWeek;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.Transaction;
 
 /**
  * Manual week CRUD. Thursday begin and Wednesday end (begin + 6 days) are
@@ -60,16 +65,16 @@ public class SeasonWeekService {
     public SeasonWeek create(SeasonWeek request) {
         SeasonWeek week = new SeasonWeek();
         apply(week, request);
-        ensureUnique(week);
-        return seasonWeekRepository.save(week);
+        return seasonWeekRepository.save(week,
+                (transaction, collection, documentId) -> rejectDuplicate(transaction, collection, documentId, week));
     }
 
     public SeasonWeek update(String id, SeasonWeek request) {
         SeasonWeek existing = get(id);
         apply(existing, request);
         existing.setVersion(request.getVersion());
-        ensureUnique(existing);
-        return seasonWeekRepository.save(existing);
+        return seasonWeekRepository.save(existing, (transaction, collection, documentId) -> rejectDuplicate(transaction,
+                collection, documentId, existing));
     }
 
     public void delete(String id) {
@@ -94,14 +99,21 @@ public class SeasonWeekService {
         target.setEndDate(parsed.endDate().toString());
     }
 
-    private void ensureUnique(SeasonWeek week) {
-        boolean duplicate = seasonWeekRepository
-                .query(collection -> collection.whereEqualTo("seasonId", week.getSeasonId())).stream()
-                .anyMatch(found -> week.getWeekNumber().equals(found.getWeekNumber())
-                        && !found.getId().equals(week.getId()));
+    private static void rejectDuplicate(Transaction transaction, CollectionReference collection, String documentId,
+            SeasonWeek week) {
+        QuerySnapshot snapshot = TransactionReads.get(transaction,
+                collection.whereEqualTo("seasonId", week.getSeasonId()));
 
-        if (duplicate) {
-            throw new ConflictException(NOT_UNIQUE);
+        for (QueryDocumentSnapshot found : snapshot.getDocuments()) {
+            if (found.getId().equals(documentId)) {
+                continue;
+            }
+
+            SeasonWeek other = found.toObject(SeasonWeek.class);
+
+            if (other != null && week.getWeekNumber().equals(other.getWeekNumber())) {
+                throw new ConflictException(NOT_UNIQUE);
+            }
         }
     }
 

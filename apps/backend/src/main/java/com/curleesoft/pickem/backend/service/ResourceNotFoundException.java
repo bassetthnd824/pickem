@@ -1,7 +1,7 @@
 package com.curleesoft.pickem.backend.service;
 
 /**
- * The season or season week document does not exist. Mapped to HTTP 404.
+ * The requested document does not exist. Mapped to HTTP 404.
  */
 public class ResourceNotFoundException extends RuntimeException {
 

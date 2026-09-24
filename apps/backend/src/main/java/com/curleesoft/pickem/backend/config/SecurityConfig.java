@@ -36,8 +36,8 @@ public class SecurityConfig {
 
     @Bean
     public SessionCookieFilter sessionCookieFilter(FirebaseIdentityClient identityClient, SessionCookies sessionCookies,
-            UserRepository userRepository) {
-        return new SessionCookieFilter(identityClient, sessionCookies, userRepository);
+            UserRepository userRepository, JsonMapper jsonMapper) {
+        return new SessionCookieFilter(identityClient, sessionCookies, userRepository, jsonMapper);
     }
 
     /**

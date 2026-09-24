@@ -11,7 +11,10 @@ import org.springframework.util.StringUtils;
 
 import com.curleesoft.pickem.backend.model.Season;
 import com.curleesoft.pickem.backend.repository.SeasonRepository;
+import com.curleesoft.pickem.backend.repository.TransactionReads;
 import com.curleesoft.pickem.backend.service.SeasonCalendar.ParsedSeason;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.Transaction;
 
 @Service
 public class SeasonService {
@@ -58,16 +61,16 @@ public class SeasonService {
     public Season create(Season request) {
         Season season = new Season();
         apply(season, request);
-        ensureUnique(season);
-        return seasonRepository.save(season);
+        return seasonRepository.save(season, (transaction, collection, documentId) -> rejectDuplicate(transaction,
+                collection, documentId, season.getSeason()));
     }
 
     public Season update(String id, Season request) {
         Season existing = get(id);
         apply(existing, request);
         existing.setVersion(request.getVersion());
-        ensureUnique(existing);
-        return seasonRepository.save(existing);
+        return seasonRepository.save(existing, (transaction, collection, documentId) -> rejectDuplicate(transaction,
+                collection, documentId, existing.getSeason()));
     }
 
     public void delete(String id) {
@@ -84,11 +87,10 @@ public class SeasonService {
         target.setCurrent(request.isCurrent());
     }
 
-    private void ensureUnique(Season season) {
-        boolean duplicate = seasonRepository.query(collection -> collection.whereEqualTo("season", season.getSeason()))
-                .stream().anyMatch(found -> !found.getId().equals(season.getId()));
-
-        if (duplicate) {
+    private static void rejectDuplicate(Transaction transaction, CollectionReference collection, String documentId,
+            String seasonYear) {
+        if (TransactionReads.anotherDocumentMatches(transaction, collection.whereEqualTo("season", seasonYear),
+                documentId)) {
             throw new ConflictException(NOT_UNIQUE);
         }
     }

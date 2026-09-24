@@ -82,9 +82,15 @@ class BaseRepositoryTests extends FirestoreEmulatorSupport {
 
         saved.setVersion(0L);
         saved.setVenueName("stale write");
+        String updateUserBefore = saved.getLastUpdateUser();
+        Instant updateDateBefore = saved.getLastUpdateDate();
 
         assertThatThrownBy(() -> venueRepository.save(saved, "tester"))
                 .isInstanceOf(StaleDocumentVersionException.class).hasMessageContaining(saved.getId());
+        assertThat(saved.getVersion()).isZero();
+        assertThat(saved.getVenueName()).isEqualTo("stale write");
+        assertThat(saved.getLastUpdateUser()).isEqualTo(updateUserBefore);
+        assertThat(saved.getLastUpdateDate()).isEqualTo(updateDateBefore);
 
         Venue current = venueRepository.findById(saved.getId()).orElseThrow();
         assertThat(current.getVenueName()).isEqualTo("Death Valley");
