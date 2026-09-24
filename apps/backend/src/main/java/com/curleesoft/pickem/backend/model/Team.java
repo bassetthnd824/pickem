@@ -2,14 +2,14 @@ package com.curleesoft.pickem.backend.model;
 
 import com.curleesoft.pickem.backend.model.snapshot.VenueSnapshot;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
  * {@code teams} document. Embeds a home-venue snapshot and keeps
- * {@code homeVenueId} for edits.
+ * {@code homeVenueId} for edits. {@code homeVenue} is written by the service
+ * from the venue document and may be omitted on input.
  */
 public class Team extends AuditableDocument {
 
@@ -27,8 +27,6 @@ public class Team extends AuditableDocument {
     @NotBlank
     private String homeVenueId;
 
-    @NotNull
-    @Valid
     private VenueSnapshot homeVenue;
 
     private Long cfbdTeamId;

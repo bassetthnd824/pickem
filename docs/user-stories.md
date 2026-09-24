@@ -391,13 +391,13 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- Standard REST CRUD under `/api/manager/venues|teams|rivalries` requires `MANAGER`.
-- Team requires name (≤40, unique), squad (≤40), `conferenceMember` flag, and a home venue.
-- `GET /api/manager/teams/{id}` returns the team including home venue (replaces `teams_getTeamById`).
-- A conference-member query exists (replaces `TeamBean.getConferenceTeams` / `getNumberOfConferenceTeams`).
-- Rivalry requires two different teams and a name (≤60).
-- Venue requires name and cityState (≤60).
-- Team and venue documents accept optional `cfbdTeamId` / `cfbdVenueId` (unique when present) so CFBD import can match without relying on display names.
+- [x] Standard REST CRUD under `/api/manager/venues|teams|rivalries` requires `MANAGER`.
+- [x] Team requires name (≤40, unique), squad (≤40), `conferenceMember` flag, and a home venue.
+- [x] `GET /api/manager/teams/{id}` returns the team including home venue (replaces `teams_getTeamById`).
+- [x] A conference-member query exists (replaces `TeamBean.getConferenceTeams` / `getNumberOfConferenceTeams`).
+- [x] Rivalry requires two different teams and a name (≤60).
+- [x] Venue requires name and cityState (≤60).
+- [x] Team and venue documents accept optional `cfbdTeamId` / `cfbdVenueId` (unique when present) so CFBD import can match without relying on display names.
 
 **Predecessors:** US-03, US-04.
 
