@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 
 import com.curleesoft.pickem.backend.config.AuditActorResolver;
@@ -20,6 +21,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.Transaction;
 
 /**
  * Shared Firestore DAO. Ports {@code GenericHibernateBean} + the audit/version
@@ -104,72 +106,23 @@ public class BaseRepository<D extends AuditableDocument> {
 
     /**
      * Inserts or updates {@code document} in a transaction. Stamps audit fields and
-     * rejects a stale {@code version}.
+     * rejects a stale {@code version}. {@code constraints} run in that same
+     * transaction, before the write.
+     * <p>
+     * Firestore may invoke the callback again after a retryable commit failure.
+     * Each attempt copies {@code document} and the caller's instance is updated
+     * only after the commit succeeds, so a retry still sees the submitted version.
      */
-    public D save(D document, String actor) {
+    public D save(D document, String actor, SaveConstraint... constraints) {
         Objects.requireNonNull(document, "document");
         String resolvedActor = StringUtils.hasText(actor) ? actor : AuditActorResolver.SYSTEM_ACTOR;
+        SaveConstraint[] checks = constraints == null ? new SaveConstraint[0] : constraints;
 
         try {
-            return firestore.<D>runTransaction(transaction -> {
-                Instant now = clock.instant();
-                DocumentReference ref;
-                boolean insert;
-                D existing = null;
-
-                String documentId = document.getId();
-
-                if (documentId == null || documentId.isBlank()) {
-                    ref = collection().document();
-                    document.setId(ref.getId());
-                    insert = true;
-
-                } else {
-                    ref = collection().document(documentId);
-                    DocumentSnapshot snapshot = transaction.get(ref).get();
-
-                    if (!snapshot.exists()) {
-                        insert = true;
-                    } else {
-                        insert = false;
-                        existing = toDocument(snapshot);
-                    }
-                }
-
-                if (insert) {
-                    document.setCreateDate(now);
-                    document.setCreateUser(resolvedActor);
-                    document.setLastUpdateDate(now);
-                    document.setLastUpdateUser(resolvedActor);
-                    document.setVersion(0L);
-
-                } else {
-                    if (existing == null) {
-                        throw new FirestoreAccessException("Failed to map " + collectionName + "/" + document.getId(),
-                                null);
-                    }
-
-                    Long storedVersion = existing.getVersion();
-
-                    if (storedVersion == null) {
-                        storedVersion = 0L;
-                    }
-
-                    if (document.getVersion() == null || !storedVersion.equals(document.getVersion())) {
-                        throw new StaleDocumentVersionException(collectionName, document.getId(), storedVersion,
-                                document.getVersion());
-                    }
-
-                    document.setCreateDate(existing.getCreateDate());
-                    document.setCreateUser(existing.getCreateUser());
-                    document.setLastUpdateDate(now);
-                    document.setLastUpdateUser(resolvedActor);
-                    document.setVersion(storedVersion + 1);
-                }
-
-                transaction.set(ref, document);
-                return document;
-            }).get();
+            D committed = firestore.<D>runTransaction(transaction -> attempt(transaction, document, resolvedActor, checks))
+                    .get();
+            BeanUtils.copyProperties(committed, document);
+            return document;
 
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
@@ -187,6 +140,101 @@ public class BaseRepository<D extends AuditableDocument> {
             }
 
             throw new FirestoreAccessException("Failed to save " + collectionName, cause);
+        }
+    }
+
+    public D save(D document, SaveConstraint... constraints) {
+        return save(document, auditActorResolver.currentActor(), constraints);
+    }
+
+    private D attempt(Transaction transaction, D source, String actor, SaveConstraint[] checks) {
+        try {
+            D draft = draftOf(source);
+            Instant now = clock.instant();
+            DocumentReference ref;
+            boolean insert;
+            D existing = null;
+            String documentId = draft.getId();
+
+            if (documentId == null || documentId.isBlank()) {
+                ref = collection().document();
+                documentId = ref.getId();
+                draft.setId(documentId);
+                insert = true;
+
+            } else {
+                ref = collection().document(documentId);
+                DocumentSnapshot snapshot = transaction.get(ref).get();
+
+                if (!snapshot.exists()) {
+                    insert = true;
+                } else {
+                    insert = false;
+                    existing = toDocument(snapshot);
+                }
+            }
+
+            for (SaveConstraint check : checks) {
+                if (check != null) {
+                    check.check(transaction, collection(), documentId);
+                }
+            }
+
+            if (insert) {
+                draft.setCreateDate(now);
+                draft.setCreateUser(actor);
+                draft.setLastUpdateDate(now);
+                draft.setLastUpdateUser(actor);
+                draft.setVersion(0L);
+
+            } else {
+                if (existing == null) {
+                    throw new FirestoreAccessException("Failed to map " + collectionName + "/" + documentId, null);
+                }
+
+                Long storedVersion = existing.getVersion();
+
+                if (storedVersion == null) {
+                    storedVersion = 0L;
+                }
+
+                if (draft.getVersion() == null || !storedVersion.equals(draft.getVersion())) {
+                    throw new StaleDocumentVersionException(collectionName, documentId, storedVersion, draft.getVersion());
+                }
+
+                draft.setCreateDate(existing.getCreateDate());
+                draft.setCreateUser(existing.getCreateUser());
+                draft.setLastUpdateDate(now);
+                draft.setLastUpdateUser(actor);
+                draft.setVersion(storedVersion + 1);
+            }
+
+            transaction.set(ref, draft);
+            return draft;
+
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new FirestoreAccessException("Interrupted saving " + collectionName, ex);
+
+        } catch (ExecutionException ex) {
+            Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+
+            if (cause instanceof RuntimeException runtime) {
+                throw runtime;
+            }
+
+            throw new FirestoreAccessException("Failed to save " + collectionName, cause);
+        }
+    }
+
+    private D draftOf(D source) {
+        try {
+            D draft = type.getDeclaredConstructor().newInstance();
+            BeanUtils.copyProperties(source, draft);
+            return draft;
+
+        } catch (ReflectiveOperationException ex) {
+            throw new FirestoreAccessException("Failed to copy " + collectionName, ex);
         }
     }
 
@@ -230,5 +278,14 @@ public class BaseRepository<D extends AuditableDocument> {
     private FirestoreAccessException wrap(String message, ExecutionException ex) {
         Throwable cause = ex.getCause();
         return new FirestoreAccessException(message, cause != null ? cause : ex);
+    }
+
+    /**
+     * Read-only check inside {@link #save}. Throw to reject the write. Reads must
+     * use {@code transaction} so they participate in the commit.
+     */
+    @FunctionalInterface
+    public interface SaveConstraint {
+        void check(Transaction transaction, CollectionReference collection, String documentId);
     }
 }

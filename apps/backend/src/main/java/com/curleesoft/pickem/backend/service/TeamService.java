@@ -3,7 +3,6 @@ package com.curleesoft.pickem.backend.service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -12,7 +11,10 @@ import com.curleesoft.pickem.backend.model.Team;
 import com.curleesoft.pickem.backend.model.Venue;
 import com.curleesoft.pickem.backend.model.snapshot.VenueSnapshot;
 import com.curleesoft.pickem.backend.repository.TeamRepository;
+import com.curleesoft.pickem.backend.repository.TransactionReads;
 import com.curleesoft.pickem.backend.repository.VenueRepository;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.Transaction;
 
 /**
  * Manager CRUD for teams. The home-venue snapshot is copied from the venue
@@ -70,16 +72,16 @@ public class TeamService {
     public Team create(Team request) {
         Team team = new Team();
         apply(team, request);
-        ensureUnique(team);
-        return teamRepository.save(team);
+        return teamRepository.save(team,
+                (transaction, collection, documentId) -> rejectDuplicate(transaction, collection, documentId, team));
     }
 
     public Team update(String id, Team request) {
         Team existing = get(id);
         apply(existing, request);
         existing.setVersion(request.getVersion());
-        ensureUnique(existing);
-        return teamRepository.save(existing);
+        return teamRepository.save(existing, (transaction, collection, documentId) -> rejectDuplicate(transaction,
+                collection, documentId, existing));
     }
 
     public void delete(String id) {
@@ -115,12 +117,10 @@ public class TeamService {
         target.setCfbdTeamId(request.getCfbdTeamId());
     }
 
-    private void ensureUnique(Team team) {
-        boolean duplicateName = teamRepository
-                .query(collection -> collection.whereEqualTo("teamName", team.getTeamName())).stream()
-                .anyMatch(found -> !Objects.equals(found.getId(), team.getId()));
-
-        if (duplicateName) {
+    private static void rejectDuplicate(Transaction transaction, CollectionReference collection, String documentId,
+            Team team) {
+        if (TransactionReads.anotherDocumentMatches(transaction, collection.whereEqualTo("teamName", team.getTeamName()),
+                documentId)) {
             throw new ConflictException(NAME_NOT_UNIQUE);
         }
 
@@ -130,11 +130,8 @@ public class TeamService {
             return;
         }
 
-        boolean duplicateExternalId = teamRepository
-                .query(collection -> collection.whereEqualTo("cfbdTeamId", externalId)).stream()
-                .anyMatch(found -> !Objects.equals(found.getId(), team.getId()));
-
-        if (duplicateExternalId) {
+        if (TransactionReads.anotherDocumentMatches(transaction, collection.whereEqualTo("cfbdTeamId", externalId),
+                documentId)) {
             throw new ConflictException(CFBD_NOT_UNIQUE);
         }
     }

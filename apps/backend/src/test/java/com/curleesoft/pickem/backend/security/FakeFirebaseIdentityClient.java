@@ -7,14 +7,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
  * In-memory Firebase Auth. Session cookies keep the ID token's claims, matching
- * {@code createSessionCookie}. Revocation rejects cookies issued at or before
- * {@code revokeRefreshTokens}.
+ * {@code createSessionCookie}. Revocation rejects cookies and ID tokens issued
+ * at or before {@code revokeRefreshTokens}. A token registered after revocation
+ * is a new Google sign-in and is accepted.
  */
 @Component
 @ConditionalOnProperty(prefix = "pickem.auth", name = "provider", havingValue = "fake")
@@ -32,12 +34,19 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
 
     private final Map<String, Instant> revokedAt = new ConcurrentHashMap<>();
 
+    private final Map<String, Long> idTokenIssuedAt = new ConcurrentHashMap<>();
+
+    private final Map<String, Long> revokedAfter = new ConcurrentHashMap<>();
+
+    private final AtomicLong sequence = new AtomicLong();
+
     public FakeFirebaseIdentityClient(Clock clock) {
         this.clock = clock;
     }
 
     public void registerIdToken(String idToken, VerifiedIdentity identity) {
         idTokens.put(idToken, identity);
+        idTokenIssuedAt.put(idToken, sequence.incrementAndGet());
     }
 
     public String issueCookie(VerifiedIdentity identity) {
@@ -68,12 +77,19 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
         customClaims.clear();
         claimWrites.clear();
         revokedAt.clear();
+        idTokenIssuedAt.clear();
+        revokedAfter.clear();
     }
 
     @Override
     public VerifiedIdentity verifyIdToken(String idToken) {
         VerifiedIdentity identity = idTokens.get(idToken);
         if (identity == null) {
+            throw new InvalidCredentialException("Invalid Google ID token");
+        }
+        Long issued = idTokenIssuedAt.get(idToken);
+        Long revoked = revokedAfter.get(identity.uid());
+        if (issued != null && revoked != null && issued <= revoked) {
             throw new InvalidCredentialException("Invalid Google ID token");
         }
         return identity;
@@ -113,6 +129,7 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
     @Override
     public void revokeRefreshTokens(String uid) {
         revokedAt.put(uid, clock.instant());
+        revokedAfter.put(uid, sequence.incrementAndGet());
     }
 
     private static String newCookie() {

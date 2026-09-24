@@ -160,6 +160,24 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
     }
 
     @Test
+    void logoutRejectsTheSameIdTokenUntilANewGoogleSignIn() throws Exception {
+        String uid = uid();
+        registerGoogle(uid, "token-1", "kenney@example.com", "Kenney", "Curlee");
+        MvcResult login = mockMvc.perform(
+                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-1\"}"))
+                .andExpect(status().isNoContent()).andReturn();
+
+        mockMvc.perform(post("/api/auth/logout").cookie(session(sessionCookie(login)))).andExpect(status().isNoContent());
+
+        mockMvc.perform(post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-1\"}"))
+                .andExpect(status().isUnauthorized());
+
+        registerGoogle(uid, "token-2", "kenney@example.com", "Kenney", "Curlee");
+        mockMvc.perform(post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-2\"}"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
     void invalidTokenMissingTokenAndRegistrationAreRejected() throws Exception {
         mockMvc.perform(
                 post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"missing\"}"))

@@ -3,13 +3,15 @@ package com.curleesoft.pickem.backend.service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.curleesoft.pickem.backend.model.Venue;
+import com.curleesoft.pickem.backend.repository.TransactionReads;
 import com.curleesoft.pickem.backend.repository.VenueRepository;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.Transaction;
 
 /**
  * Manager CRUD for venues. Optional {@code cfbdVenueId} is unique when present.
@@ -54,16 +56,16 @@ public class VenueService {
     public Venue create(Venue request) {
         Venue venue = new Venue();
         apply(venue, request);
-        ensureUniqueCfbdId(venue);
-        return venueRepository.save(venue);
+        return venueRepository.save(venue,
+                (transaction, collection, documentId) -> rejectDuplicate(transaction, collection, documentId, venue));
     }
 
     public Venue update(String id, Venue request) {
         Venue existing = get(id);
         apply(existing, request);
         existing.setVersion(request.getVersion());
-        ensureUniqueCfbdId(existing);
-        return venueRepository.save(existing);
+        return venueRepository.save(existing, (transaction, collection, documentId) -> rejectDuplicate(transaction,
+                collection, documentId, existing));
     }
 
     public void delete(String id) {
@@ -88,17 +90,16 @@ public class VenueService {
         target.setCfbdVenueId(request.getCfbdVenueId());
     }
 
-    private void ensureUniqueCfbdId(Venue venue) {
+    private static void rejectDuplicate(Transaction transaction, CollectionReference collection, String documentId,
+            Venue venue) {
         Long externalId = venue.getCfbdVenueId();
 
         if (externalId == null) {
             return;
         }
 
-        boolean duplicate = venueRepository.query(collection -> collection.whereEqualTo("cfbdVenueId", externalId))
-                .stream().anyMatch(found -> !Objects.equals(found.getId(), venue.getId()));
-
-        if (duplicate) {
+        if (TransactionReads.anotherDocumentMatches(transaction, collection.whereEqualTo("cfbdVenueId", externalId),
+                documentId)) {
             throw new ConflictException(CFBD_NOT_UNIQUE);
         }
     }

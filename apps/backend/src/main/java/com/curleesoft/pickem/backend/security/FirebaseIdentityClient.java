@@ -9,6 +9,12 @@ import java.util.Map;
  */
 public interface FirebaseIdentityClient {
 
+    /**
+     * Verifies a Google ID token with revocation checking
+     * ({@code checkRevoked=true}). A token issued before
+     * {@code revokeRefreshTokens} is rejected, so logout cannot be undone by
+     * minting a new session cookie from that token.
+     */
     VerifiedIdentity verifyIdToken(String idToken);
 
     /**

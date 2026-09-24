@@ -44,7 +44,7 @@ public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
     @Override
     public VerifiedIdentity verifyIdToken(String idToken) {
         try {
-            return toIdentity(auth().verifyIdToken(idToken));
+            return toIdentity(auth().verifyIdToken(idToken, true));
         } catch (FirebaseAuthException ex) {
             throw new InvalidCredentialException("Invalid Google ID token", ex);
         }
