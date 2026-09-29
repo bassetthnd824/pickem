@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -172,7 +173,9 @@ public class UserService {
     }
 
     private static void rejectExisting(Transaction transaction, CollectionReference collection, String documentId) {
-        DocumentReference reference = collection.document(documentId);
+        CollectionReference documents = Objects.requireNonNull(collection, "collection");
+        String id = Objects.requireNonNull(documentId, "documentId");
+        DocumentReference reference = documents.document(id);
 
         if (TransactionReads.documentExists(transaction, reference)) {
             throw new ConflictException(ALREADY_EXISTS);
