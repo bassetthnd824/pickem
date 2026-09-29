@@ -5,11 +5,11 @@ import java.util.List;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 /**
  * {@code users} document. Document id is the Firebase {@code uid}. No password.
+ * Manager saves require at least one of {@code player} or {@code manager}.
  */
 public class User extends AuditableDocument {
 
@@ -18,12 +18,15 @@ public class User extends AuditableDocument {
 
     @NotBlank
     @Email
+    @Size(max = 200)
     private String emailAddr;
 
     @NotBlank
+    @Size(max = 40)
     private String firstName;
 
     @NotBlank
+    @Size(max = 40)
     private String lastName;
 
     @NotBlank
@@ -33,7 +36,6 @@ public class User extends AuditableDocument {
     @NotBlank
     private String themeId;
 
-    @NotEmpty
     private List<String> roles = new ArrayList<>();
 
     public String getUid() {

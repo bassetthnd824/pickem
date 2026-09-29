@@ -3,6 +3,8 @@ package com.curleesoft.pickem.backend.repository;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
@@ -23,6 +25,24 @@ public final class TransactionReads {
 
         try {
             return active.get(checked).get();
+
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new FirestoreAccessException("Interrupted reading Firestore", ex);
+
+        } catch (ExecutionException ex) {
+            Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+            throw new FirestoreAccessException("Failed to read Firestore", cause);
+        }
+    }
+
+    public static boolean documentExists(Transaction transaction, DocumentReference reference) {
+        Transaction active = Objects.requireNonNull(transaction, "transaction");
+        DocumentReference document = Objects.requireNonNull(reference, "reference");
+
+        try {
+            DocumentSnapshot snapshot = Objects.requireNonNull(active.get(document), "document").get();
+            return snapshot.exists();
 
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();

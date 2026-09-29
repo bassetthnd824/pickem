@@ -5,7 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * {@code themes} document. Closed catalog of 18 palettes (US-36).
+ * {@code themes} document. Managers edit the name, key, colors, and active
+ * flag. Rejecting a key outside the closed catalog of 18 is US-36.
  */
 public class Theme extends AuditableDocument {
 
