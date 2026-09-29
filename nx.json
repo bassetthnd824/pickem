@@ -10,10 +10,9 @@
       "!{projectRoot}/vite.config.*",
       "!{projectRoot}/src/test-setup.[jt]s",
       "!{projectRoot}/test-setup.[jt]s",
-      "!{projectRoot}/.eslintrc.json",
-      "!{projectRoot}/eslint.config.js",
-      "!{projectRoot}/src/test/**/*",
-      "!{projectRoot}/eslint.config.mjs"
+      "!{projectRoot}/.oxlintrc.json",
+      "!{workspaceRoot}/.oxlintrc.json",
+      "!{projectRoot}/src/test/**/*"
     ],
     "sharedGlobals": []
   },
@@ -56,7 +55,7 @@
       }
     },
     {
-      "plugin": "@nx/eslint/plugin",
+      "plugin": "@nx/oxlint",
       "options": {
         "targetName": "lint"
       }
@@ -74,7 +73,7 @@
     "@nx/next": {
       "application": {
         "style": "css",
-        "linter": "eslint",
+        "linter": "oxlint",
         "unitTestRunner": "vitest"
       }
     }

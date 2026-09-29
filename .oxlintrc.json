@@ -1,0 +1,93 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "eslint",
+    "typescript",
+    "unicorn",
+    "oxc",
+    "react",
+    "jsx-a11y",
+    "nextjs",
+    "import",
+    "vitest"
+  ],
+  "categories": {
+    "correctness": "error"
+  },
+  "env": {
+    "browser": true,
+    "es2024": true,
+    "node": true
+  },
+  "ignorePatterns": [
+    "src/**",
+    "**/dist/**",
+    "**/.next/**",
+    "**/out-tsc/**",
+    "**/target/**",
+    "**/coverage/**",
+    "**/.nx/**",
+    "**/vitest.config.*.timestamp*"
+  ],
+  "jsPlugins": ["@nx/oxlint/boundaries-plugin"],
+  "settings": {
+    "next": {
+      "rootDir": "apps/frontend/"
+    },
+    "react": {
+      "version": "19.0",
+      "linkComponents": [{ "name": "Link", "linkAttribute": "href" }]
+    },
+    "jsx-a11y": {
+      "components": {
+        "Link": "a"
+      }
+    }
+  },
+  "rules": {
+    "@nx/enforce-module-boundaries": [
+      "error",
+      {
+        "enforceBuildableLibDependency": true,
+        "allow": [
+          "^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$",
+          "^.*/oxlint\\.config\\.[cm]?ts$"
+        ],
+        "depConstraints": [
+          {
+            "sourceTag": "*",
+            "onlyDependOnLibsWithTags": ["*"]
+          }
+        ]
+      }
+    ],
+    "react/rules-of-hooks": "error",
+    "react/display-name": "warn",
+    "react/jsx-no-comment-textnodes": "warn",
+    "react/style-prop-object": "warn",
+    "react/react-in-jsx-scope": "off",
+    "import/no-duplicates": "error",
+    "typescript/ban-ts-comment": "error",
+    "typescript/no-empty-object-type": "error",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-namespace": "error",
+    "typescript/no-non-null-assertion": "warn",
+    "typescript/no-unsafe-function-type": "error",
+    "no-unused-vars": [
+      "warn",
+      {
+        "args": "none",
+        "ignoreRestSiblings": true
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.{spec,test}.{ts,tsx,js,jsx}"],
+      "rules": {
+        "vitest/no-disabled-tests": "warn",
+        "vitest/no-focused-tests": "error"
+      }
+    }
+  ]
+}
