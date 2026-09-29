@@ -415,12 +415,12 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- CRUD under `/api/manager/matchups` requires `MANAGER`.
-- Creating/updating a matchup rejects equal home and away teams and dates outside the week.
-- Selecting a home team can be used by the client to default venue from the team’s home venue (API returns enough data; auto-fill is a GET of the team).
-- Scores may be null (unplayed) or both set; `winningTeamId` is derived, not a free-form client field.
-- List/search by season, week, date, team, venue works.
-- Matchup documents accept optional unique `cfbdGameId` for idempotent CFBD upserts.
+- [x] CRUD under `/api/manager/matchups` requires `MANAGER`.
+- [x] Creating/updating a matchup rejects equal home and away teams and dates outside the week.
+- [x] Selecting a home team can be used by the client to default venue from the team’s home venue (API returns enough data; auto-fill is a GET of the team).
+- [x] Scores may be null (unplayed) or both set; `winningTeamId` is derived, not a free-form client field.
+- [x] List/search by season, week, date, team, venue works.
+- [x] Matchup documents accept optional unique `cfbdGameId` for idempotent CFBD upserts.
 
 **Predecessors:** US-05, US-06.
 
