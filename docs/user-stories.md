@@ -438,12 +438,12 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- `/api/manager/users` and `/api/manager/themes` require `MANAGER`.
-- User list/search by email, first name, last name.
-- Updating roles to include `manager` sets the Firebase custom claim; removing it clears the claim.
-- Saving a user with zero roles returns 400 (“User must belong to at least one group” / at least one role).
-- Theme name unique ≤40; `themePath` / key ≤100 and does not start with `/`; `active` flag is persisted.
-- No password create/reset endpoints.
+- [x] `/api/manager/users` and `/api/manager/themes` require `MANAGER`.
+- [x] User list/search by email, first name, last name.
+- [x] Updating roles to include `manager` sets the Firebase custom claim; removing it clears the claim.
+- [x] Saving a user with zero roles returns 400 (“User must belong to at least one group” / at least one role).
+- [x] Theme name unique ≤40; `themePath` / key ≤100 and does not start with `/`; `active` flag is persisted.
+- [x] No password create/reset endpoints.
 
 **Predecessors:** US-04.
 
