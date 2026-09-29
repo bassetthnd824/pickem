@@ -2,14 +2,16 @@ package com.curleesoft.pickem.backend.model;
 
 import com.curleesoft.pickem.backend.model.snapshot.TeamSquadSnapshot;
 import com.curleesoft.pickem.backend.model.snapshot.VenueSnapshot;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 /**
- * {@code matchups} document. Embeds home/away team and venue snapshots.
- * {@code winningTeamId} is computed server-side in later stories.
+ * {@code matchups} document. Embeds home/away team and venue snapshots, the
+ * week number, and an optional rivalry name. Those snapshots, {@code weekNumber},
+ * {@code rivalryName}, and {@code winningTeamId} are written by the service and
+ * may be omitted on input. {@code winningTeamId} is read-only: a client value is
+ * ignored and the service derives it from the scores.
  */
 public class Matchup extends AuditableDocument {
 
@@ -19,7 +21,6 @@ public class Matchup extends AuditableDocument {
     @NotBlank
     private String seasonWeekId;
 
-    @NotNull
     private Integer weekNumber;
 
     @NotBlank
@@ -31,12 +32,8 @@ public class Matchup extends AuditableDocument {
     @NotBlank
     private String awayTeamId;
 
-    @NotNull
-    @Valid
     private TeamSquadSnapshot homeTeam;
 
-    @NotNull
-    @Valid
     private TeamSquadSnapshot awayTeam;
 
     private Integer homeTeamScore;
@@ -46,8 +43,6 @@ public class Matchup extends AuditableDocument {
     @NotBlank
     private String venueId;
 
-    @NotNull
-    @Valid
     private VenueSnapshot venue;
 
     private String rivalryName;
@@ -133,6 +128,7 @@ public class Matchup extends AuditableDocument {
         this.awayTeamScore = awayTeamScore;
     }
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getWinningTeamId() {
         return winningTeamId;
     }
