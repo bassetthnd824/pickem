@@ -12,6 +12,7 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.curleesoft.pickem.backend.model.AuditableDocument;
 import com.curleesoft.pickem.backend.model.Matchup;
 import com.curleesoft.pickem.backend.model.Pick;
 import com.curleesoft.pickem.backend.model.Season;
@@ -27,8 +28,9 @@ import com.curleesoft.pickem.backend.repository.UserRepository;
  * {@code MatchupBean.getLeaderBoardForSeason}, and {@code UserScore.compareTo}.
  * Matchups and picks are joined in memory. A correct pick adds its rank only
  * when the week has begun, both scores are set, and the pick is the winner.
- * Future weeks add 0 even if scores are already stored. Refusing a save once
- * the week has begun is US-34.
+ * Future weeks add 0 even if scores are already stored. A second pick for the
+ * same user and matchup does not add again. Refusing a save once the week has
+ * begun is US-34.
  */
 @Service
 public class LeaderboardService {
@@ -59,23 +61,22 @@ public class LeaderboardService {
     public Leaderboard leaderboard(String seasonId) {
         Season season = season(seasonId);
         String id = season.getId();
-
-        if (!StringUtils.hasText(id)) {
-            throw new ResourceNotFoundException(SeasonService.NOT_FOUND);
-        }
-
-        Map<String, Matchup> matchups = matchups(id);
-        Map<String, SeasonWeek> weeks = weeks(id);
-        Map<String, List<Pick>> picks = picksByUser(id);
+        Map<String, Matchup> matchups = byId(
+                matchupRepository.query(collection -> collection.whereEqualTo("seasonId", id)));
+        Map<String, SeasonWeek> weeks = byId(
+                seasonWeekRepository.query(collection -> collection.whereEqualTo("seasonId", id)));
+        Map<String, Long> totals = scorePicks(id, matchups, weeks);
         List<Scored> scored = new ArrayList<>();
-        Set<String> seen = new HashSet<>();
 
         for (User user : userRepository.findAll()) {
-            if (user == null || !StringUtils.hasText(user.getUid()) || !seen.add(user.getUid())) {
+            String uid = user.getUid();
+
+            if (!StringUtils.hasText(uid)) {
                 continue;
             }
 
-            scored.add(new Scored(user.getUid(), user.getNickName(), score(picks.get(user.getUid()), matchups, weeks)));
+            Long total = totals.get(uid);
+            scored.add(new Scored(uid, user.getNickName(), total == null ? 0L : total.longValue()));
         }
 
         scored.sort(order());
@@ -90,80 +91,56 @@ public class LeaderboardService {
     }
 
     private Season season(String seasonId) {
-        String id = SearchText.blankToNull(seasonId);
+        String resolved = SearchText.blankToNull(seasonId);
 
-        if (id == null) {
+        if (resolved == null) {
             return seasonService.current();
         }
 
-        return seasonService.get(id);
+        return seasonService.get(resolved);
     }
 
-    private Map<String, Matchup> matchups(String seasonId) {
-        Map<String, Matchup> matchups = new HashMap<>();
+    private static <T extends AuditableDocument> Map<String, T> byId(List<T> rows) {
+        Map<String, T> indexed = new HashMap<>();
 
-        for (Matchup matchup : matchupRepository.query(collection -> collection.whereEqualTo("seasonId", seasonId))) {
-            if (matchup != null && StringUtils.hasText(matchup.getId())) {
-                matchups.put(matchup.getId(), matchup);
+        for (T row : rows) {
+            if (StringUtils.hasText(row.getId())) {
+                indexed.put(row.getId(), row);
             }
         }
 
-        return matchups;
+        return indexed;
     }
 
-    private Map<String, SeasonWeek> weeks(String seasonId) {
-        Map<String, SeasonWeek> weeks = new HashMap<>();
-
-        for (SeasonWeek week : seasonWeekRepository
-                .query(collection -> collection.whereEqualTo("seasonId", seasonId))) {
-            if (week != null && StringUtils.hasText(week.getId())) {
-                weeks.put(week.getId(), week);
-            }
-        }
-
-        return weeks;
-    }
-
-    private Map<String, List<Pick>> picksByUser(String seasonId) {
-        Map<String, List<Pick>> picks = new HashMap<>();
+    private Map<String, Long> scorePicks(String seasonId, Map<String, Matchup> matchups, Map<String, SeasonWeek> weeks) {
+        Map<String, Long> totals = new HashMap<>();
+        Map<String, Set<String>> counted = new HashMap<>();
 
         for (Pick pick : pickRepository.query(collection -> collection.whereEqualTo("seasonId", seasonId))) {
-            if (pick == null || !StringUtils.hasText(pick.getUserId())) {
+            if (!StringUtils.hasText(pick.getUserId()) || !StringUtils.hasText(pick.getMatchupId())) {
                 continue;
             }
 
-            List<Pick> rows = picks.get(pick.getUserId());
+            Set<String> matchupIds = counted.get(pick.getUserId());
 
-            if (rows == null) {
-                rows = new ArrayList<>();
-                picks.put(pick.getUserId(), rows);
+            if (matchupIds == null) {
+                matchupIds = new HashSet<>();
+                counted.put(pick.getUserId(), matchupIds);
             }
 
-            rows.add(pick);
+            if (!matchupIds.add(pick.getMatchupId())) {
+                continue;
+            }
+
+            Long current = totals.get(pick.getUserId());
+            long soFar = current == null ? 0L : current.longValue();
+            totals.put(pick.getUserId(), Long.valueOf(soFar + points(pick, matchups, weeks)));
         }
 
-        return picks;
-    }
-
-    private long score(List<Pick> picks, Map<String, Matchup> matchups, Map<String, SeasonWeek> weeks) {
-        long total = 0;
-
-        if (picks == null) {
-            return total;
-        }
-
-        for (Pick pick : picks) {
-            total += points(pick, matchups, weeks);
-        }
-
-        return total;
+        return totals;
     }
 
     private int points(Pick pick, Map<String, Matchup> matchups, Map<String, SeasonWeek> weeks) {
-        if (pick == null || !StringUtils.hasText(pick.getMatchupId())) {
-            return 0;
-        }
-
         Matchup matchup = matchups.get(pick.getMatchupId());
 
         if (matchup == null) {
@@ -182,8 +159,8 @@ public class LeaderboardService {
     }
 
     private static Comparator<Scored> order() {
-        return Comparator.comparingLong((Scored row) -> row.score()).reversed().thenComparing((Scored row) -> row.uid(),
-                Comparator.nullsLast((String left, String right) -> left.compareTo(right)));
+        return Comparator.comparingLong((Scored row) -> row.score()).reversed()
+                .thenComparing((Scored left, Scored right) -> left.uid().compareTo(right.uid()));
     }
 
     private record Scored(String uid, String nickName, long score) {
