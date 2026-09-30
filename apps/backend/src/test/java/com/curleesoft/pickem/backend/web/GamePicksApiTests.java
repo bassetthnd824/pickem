@@ -437,6 +437,30 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
                 .andExpect(status().isNotFound()).andExpect(jsonPath("$.detail").value(SeasonService.NOT_FOUND));
     }
 
+    @Test
+    void leaderboardCountsOnePickPerMatchup() throws Exception {
+        Slate slate = arrange();
+        String uid = "lb-once-" + token();
+        Cookie player = signIn(uid, "Once");
+
+        mockMvc.perform(post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON)
+                .content(picksBody(slate.currentWeekId(), pickRow(slate.correctId(), slate.correctHomeId(), 5))))
+                .andExpect(status().isOk());
+
+        Pick extra = new Pick();
+        extra.setId(uid + "__extra");
+        extra.setUserId(uid);
+        extra.setMatchupId(slate.correctId());
+        extra.setSeasonId(slate.seasonId());
+        extra.setSeasonWeekId(slate.currentWeekId());
+        extra.setPickedTeamId(slate.correctHomeId());
+        extra.setRank(Integer.valueOf(5));
+        pickRepository.save(extra);
+
+        JsonNode board = leaderboard(player, slate.seasonId());
+        assertThat(standing(board.path("standings"), uid).path("score").asLong()).isEqualTo(5);
+    }
+
     private JsonNode save(Cookie player, String weekId, String picks) throws Exception {
         MvcResult result = mockMvc
                 .perform(post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON)
