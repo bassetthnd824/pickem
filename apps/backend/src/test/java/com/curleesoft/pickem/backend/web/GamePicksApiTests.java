@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
@@ -29,7 +30,9 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import com.curleesoft.pickem.backend.model.Matchup;
 import com.curleesoft.pickem.backend.model.Pick;
 import com.curleesoft.pickem.backend.repository.MatchupRepository;
 import com.curleesoft.pickem.backend.repository.PickRepository;
@@ -37,6 +40,7 @@ import com.curleesoft.pickem.backend.repository.RivalryRepository;
 import com.curleesoft.pickem.backend.repository.SeasonRepository;
 import com.curleesoft.pickem.backend.repository.SeasonWeekRepository;
 import com.curleesoft.pickem.backend.repository.TeamRepository;
+import com.curleesoft.pickem.backend.repository.UserRepository;
 import com.curleesoft.pickem.backend.repository.VenueRepository;
 import com.curleesoft.pickem.backend.security.FakeFirebaseIdentityClient;
 import com.curleesoft.pickem.backend.security.RoleClaims;
@@ -44,6 +48,7 @@ import com.curleesoft.pickem.backend.security.SessionCookies;
 import com.curleesoft.pickem.backend.security.VerifiedIdentity;
 import com.curleesoft.pickem.backend.service.PickScoring;
 import com.curleesoft.pickem.backend.service.PickService;
+import com.curleesoft.pickem.backend.service.SeasonService;
 import com.curleesoft.pickem.backend.service.SeasonWeekService;
 import com.curleesoft.pickem.backend.support.FirestoreEmulatorSupport;
 
@@ -84,6 +89,9 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
 
     @Autowired
     private SeasonRepository seasonRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private final List<String> userIds = new ArrayList<>();
 
@@ -140,6 +148,10 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
             seasonRepository.delete(id);
         }
 
+        for (String userId : userIds) {
+            userRepository.delete(userId);
+        }
+
         userIds.clear();
         matchupIds.clear();
         rivalryIds.clear();
@@ -154,19 +166,26 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         Cookie player = player("player-" + UUID.randomUUID());
 
         mockMvc.perform(get("/api/game/main")).andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/game/leaderboard")).andExpect(status().isUnauthorized());
         mockMvc.perform(post("/api/game/picks").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isUnauthorized());
 
         int mainStatus = mockMvc.perform(get("/api/game/main").cookie(player)).andReturn().getResponse().getStatus();
         assertThat(mainStatus).isIn(200, 404);
+        int leaderboardStatus = mockMvc.perform(get("/api/game/leaderboard").cookie(player)).andReturn().getResponse()
+                .getStatus();
+        assertThat(leaderboardStatus).isIn(200, 404);
         mockMvc.perform(post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest());
         int managerStatus = mockMvc.perform(get("/api/game/main").cookie(manager)).andReturn().getResponse().getStatus();
         assertThat(managerStatus).isIn(200, 404);
+        int managerBoard = mockMvc.perform(get("/api/game/leaderboard").cookie(manager)).andReturn().getResponse()
+                .getStatus();
+        assertThat(managerBoard).isIn(200, 404);
 
         String spec = mockMvc.perform(get("/v3/api-docs")).andExpect(status().isOk()).andReturn().getResponse()
                 .getContentAsString();
-        assertThat(spec).contains("/api/game/main").contains("/api/game/picks");
+        assertThat(spec).contains("/api/game/main").contains("/api/game/picks").contains("/api/game/leaderboard");
     }
 
     @Test
@@ -339,6 +358,85 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         assertThat(pickRepository.findByUserId(userIds.get(userIds.size() - 1))).isEmpty();
     }
 
+    @Test
+    void leaderboardScoresBegunWeeksAndListsEveryUser() throws Exception {
+        Slate slate = arrange();
+        String suffix = token();
+        String adaUid = "lb-a-" + suffix;
+        String cyUid = "lb-m-" + suffix;
+        String beaUid = "lb-z-" + suffix;
+        Cookie ada = signIn(adaUid, "Ada");
+        Cookie cy = signIn(cyUid, "Cy");
+        Cookie bea = signIn(beaUid, "Bea");
+        String ghostUid = "ghost-" + UUID.randomUUID();
+        Cookie ghost = player(ghostUid);
+
+        mockMvc.perform(post("/api/game/picks").cookie(ada).contentType(MediaType.APPLICATION_JSON)
+                .content(picksBody(slate.currentWeekId(), pickRow(slate.correctId(), slate.correctHomeId(), 5))))
+                .andExpect(status().isOk());
+        mockMvc.perform(post("/api/game/picks").cookie(bea).contentType(MediaType.APPLICATION_JSON)
+                .content(picksBody(slate.currentWeekId(),
+                        pickRow(slate.correctId(), slate.correctHomeId(), 3) + ","
+                                + pickRow(slate.wrongId(), slate.wrongHomeId(), 1) + ","
+                                + pickRow(slate.alphaId(), slate.alphaHomeId(), 2))))
+                .andExpect(status().isOk());
+        mockMvc.perform(post("/api/game/picks").cookie(bea).contentType(MediaType.APPLICATION_JSON)
+                .content(picksBody(slate.futureWeekId(), pickRow(slate.futureId(), slate.futureHomeId(), 4))))
+                .andExpect(status().isOk());
+        mockMvc.perform(post("/api/game/picks").cookie(ghost).contentType(MediaType.APPLICATION_JSON)
+                .content(picksBody(slate.currentWeekId(), pickRow(slate.correctId(), slate.correctHomeId(), 6))))
+                .andExpect(status().isOk());
+
+        Matchup futureGame = matchupRepository.findById(slate.futureId()).orElseThrow();
+        assertThat(futureGame.getWinningTeamId()).isEqualTo(slate.futureHomeId());
+        assertThat(futureGame.getHomeTeamScore()).isEqualTo(21);
+        Matchup wrongGame = matchupRepository.findById(slate.wrongId()).orElseThrow();
+        assertThat(wrongGame.getWinningTeamId()).isNotEqualTo(slate.wrongHomeId());
+        Matchup alphaGame = matchupRepository.findById(slate.alphaId()).orElseThrow();
+        assertThat(alphaGame.getHomeTeamScore()).isNull();
+        assertThat(alphaGame.getAwayTeamScore()).isNull();
+
+        JsonNode current = leaderboard(ada, null);
+        assertThat(current.path("seasonId").asString()).isEqualTo(slate.seasonId());
+        assertThat(current.path("season").asString()).isEqualTo(slate.year());
+        JsonNode standings = current.path("standings");
+        assertLeaderboardOrder(standings);
+        assertThat(indexOfUid(standings, adaUid)).isLessThan(indexOfUid(standings, beaUid));
+        assertThat(indexOfUid(standings, beaUid)).isLessThan(indexOfUid(standings, cyUid));
+        assertThat(indexOfUid(standings, ghostUid)).isEqualTo(-1);
+
+        JsonNode adaRow = standing(standings, adaUid);
+        assertThat(adaRow.path("nickName").asString()).isEqualTo("Ada");
+        assertThat(adaRow.path("score").asLong()).isEqualTo(5);
+        JsonNode beaRow = standing(standings, beaUid);
+        assertThat(beaRow.path("nickName").asString()).isEqualTo("Bea");
+        assertThat(beaRow.path("score").asLong()).isEqualTo(3);
+        JsonNode cyRow = standing(standings, cyUid);
+        assertThat(cyRow.path("nickName").asString()).isEqualTo("Cy");
+        assertThat(cyRow.path("score").asLong()).isZero();
+
+        JsonNode sameSeason = leaderboard(cy, "  " + slate.seasonId() + " ");
+        assertThat(sameSeason.path("seasonId").asString()).isEqualTo(slate.seasonId());
+        assertThat(standing(sameSeason.path("standings"), adaUid).path("score").asLong()).isEqualTo(5);
+
+        int other = Integer.parseInt(slate.year()) + 1;
+        String otherYear = String.valueOf(other);
+        String emptySeasonId = createSeason(otherYear, LocalDate.of(other, 9, 1), LocalDate.of(other, 12, 20), false);
+        JsonNode empty = leaderboard(manager, emptySeasonId);
+        assertThat(empty.path("seasonId").asString()).isEqualTo(emptySeasonId);
+        assertThat(empty.path("season").asString()).isEqualTo(otherYear);
+        JsonNode zeros = empty.path("standings");
+        assertLeaderboardOrder(zeros);
+        assertThat(standing(zeros, adaUid).path("score").asLong()).isZero();
+        assertThat(standing(zeros, beaUid).path("score").asLong()).isZero();
+        assertThat(standing(zeros, cyUid).path("score").asLong()).isZero();
+        assertThat(indexOfUid(zeros, adaUid)).isLessThan(indexOfUid(zeros, cyUid));
+        assertThat(indexOfUid(zeros, cyUid)).isLessThan(indexOfUid(zeros, beaUid));
+
+        mockMvc.perform(get("/api/game/leaderboard").cookie(ada).param("seasonId", "missing-season"))
+                .andExpect(status().isNotFound()).andExpect(jsonPath("$.detail").value(SeasonService.NOT_FOUND));
+    }
+
     private JsonNode save(Cookie player, String weekId, String picks) throws Exception {
         MvcResult result = mockMvc
                 .perform(post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON)
@@ -393,7 +491,7 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
 
         return new Slate(seasonId, year, currentWeekId, futureWeekId, correctId, wrongId, alphaMatchupId, zuluMatchupId,
                 futureId, correctHomeId, correctHomeName, correctAwayId, correctAwayName, wrongHomeId, futureAwayId,
-                venueName, cityState, rivalryName);
+                venueName, cityState, rivalryName, alphaIdTeam, futureHomeId);
     }
 
     private Cookie player(String uid) {
@@ -406,10 +504,14 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
     }
 
     private String createSeason(String year, LocalDate begin, LocalDate end) throws Exception {
+        return createSeason(year, begin, end, true);
+    }
+
+    private String createSeason(String year, LocalDate begin, LocalDate end, boolean current) throws Exception {
         MvcResult result = mockMvc
                 .perform(post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                        {"season":"%s","beginDate":"%s","endDate":"%s","isCurrent":true}
-                        """.formatted(year, begin, end))).andExpect(status().isCreated()).andReturn();
+                        {"season":"%s","beginDate":"%s","endDate":"%s","isCurrent":%s}
+                        """.formatted(year, begin, end, current))).andExpect(status().isCreated()).andReturn();
         String id = idOf(result);
         seasonIds.add(id);
         return id;
@@ -539,6 +641,82 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         return String.valueOf(8100 + ThreadLocalRandom.current().nextInt(800));
     }
 
+    private JsonNode leaderboard(Cookie cookie, String seasonId) throws Exception {
+        MockHttpServletRequestBuilder request = get("/api/game/leaderboard").cookie(cookie);
+
+        if (seasonId != null) {
+            request.param("seasonId", seasonId);
+        }
+
+        MvcResult result = mockMvc.perform(request).andExpect(status().isOk()).andReturn();
+        return jsonMapper.readTree(result.getResponse().getContentAsString());
+    }
+
+    private Cookie signIn(String uid, String firstName) throws Exception {
+        userIds.add(uid);
+        String token = "token-" + uid;
+        firebase.registerIdToken(token, new VerifiedIdentity(uid, uid + "@example.com", firstName + " Player",
+                firstName, "Player", "google.com", Map.of()));
+        MvcResult result = mockMvc
+                .perform(post("/api/auth/session").contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"idToken":"%s"}
+                                """.formatted(escape(token))))
+                .andExpect(status().isNoContent()).andReturn();
+        String header = result.getResponse().getHeader("Set-Cookie");
+        assertThat(header).isNotNull();
+        int start = SessionCookies.NAME.length() + 1;
+        int end = header.indexOf(';');
+        return new Cookie(SessionCookies.NAME, header.substring(start, end));
+    }
+
+    private static void assertLeaderboardOrder(JsonNode standings) {
+        String previousUid = "";
+        long previousScore = Long.MAX_VALUE;
+        int place = 0;
+
+        for (JsonNode row : standings) {
+            place++;
+            long score = row.path("score").asLong();
+            String uid = row.path("uid").asString();
+            assertThat(row.path("rank").asInt()).isEqualTo(place);
+
+            if (place > 1) {
+                assertThat(score).isLessThanOrEqualTo(previousScore);
+
+                if (score == previousScore) {
+                    assertThat(uid.compareTo(previousUid)).isPositive();
+                }
+            }
+
+            previousScore = score;
+            previousUid = uid;
+        }
+    }
+
+    private static JsonNode standing(JsonNode standings, String uid) {
+        JsonNode found = null;
+
+        for (JsonNode node : standings) {
+            if (uid.equals(node.path("uid").asString())) {
+                found = node;
+            }
+        }
+
+        assertThat(found).isNotNull();
+        return found;
+    }
+
+    private static int indexOfUid(JsonNode standings, String uid) {
+        for (int i = 0; i < standings.size(); i++) {
+            if (uid.equals(standings.get(i).path("uid").asString())) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     private static LocalDate firstThursdayOnOrAfter(LocalDate date) {
         LocalDate cursor = date;
 
@@ -557,7 +735,7 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
     private record Slate(String seasonId, String year, String currentWeekId, String futureWeekId, String correctId,
             String wrongId, String alphaId, String zuluId, String futureId, String correctHomeId, String correctHomeName,
             String correctAwayId, String correctAwayName, String wrongHomeId, String futureAwayId, String venueName,
-            String cityState, String rivalryName) {
+            String cityState, String rivalryName, String alphaHomeId, String futureHomeId) {
     }
 
     @TestConfiguration

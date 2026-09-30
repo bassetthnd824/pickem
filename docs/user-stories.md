@@ -486,11 +486,11 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- `GET /api/game/leaderboard?seasonId=` (default current season) requires authentication.
-- A correct pick adds its rank; incorrect or unscored matchups add 0.
-- Results sort by score descending; ties break by userId ascending.
-- Response includes rank, nickname, and score (replaces `leaderBoard.jsp` columns).
-- Players who have no picks still appear with score 0 if they exist as users (legacy iterates `userBean.findAll()`).
+- [x] `GET /api/game/leaderboard?seasonId=` (default current season) requires authentication.
+- [x] A correct pick adds its rank; incorrect or unscored matchups add 0.
+- [x] Results sort by score descending; ties break by userId ascending.
+- [x] Response includes rank, nickname, and score (replaces `leaderBoard.jsp` columns).
+- [x] Players who have no picks still appear with score 0 if they exist as users (legacy iterates `userBean.findAll()`).
 
 **Predecessors:** US-07.
 
