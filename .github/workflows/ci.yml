@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: write
 
 jobs:
   build-frontend:
@@ -22,10 +23,24 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+      # Each sha gets its own entry so a restored cache can still be updated.
+      # restore-keys loads the newest entry for this job.
+      - uses: actions/cache/restore@v5
+        id: nx-cache
+        with:
+          path: .nx/cache
+          key: nx-${{ runner.os }}-${{ github.job }}-${{ github.sha }}
+          restore-keys: |
+            nx-${{ runner.os }}-${{ github.job }}-
       - run: npm ci
       - run: chmod +x mvnw
       - run: npx nx show projects
       - run: npx nx build frontend
+      - uses: actions/cache/save@v5
+        if: always() && steps.nx-cache.outputs.cache-hit != 'true'
+        with:
+          path: .nx/cache
+          key: ${{ steps.nx-cache.outputs.cache-primary-key }}
 
   test-frontend:
     name: Test frontend
@@ -40,10 +55,22 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+      - uses: actions/cache/restore@v5
+        id: nx-cache
+        with:
+          path: .nx/cache
+          key: nx-${{ runner.os }}-${{ github.job }}-${{ github.sha }}
+          restore-keys: |
+            nx-${{ runner.os }}-${{ github.job }}-
       - run: npm ci
       - run: chmod +x mvnw
       - run: npx nx show projects
       - run: npx nx test frontend
+      - uses: actions/cache/save@v5
+        if: always() && steps.nx-cache.outputs.cache-hit != 'true'
+        with:
+          path: .nx/cache
+          key: ${{ steps.nx-cache.outputs.cache-primary-key }}
 
   build-backend:
     name: Build backend
@@ -68,10 +95,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-${{ github.job }}-
             ${{ runner.os }}-maven-
+      - uses: actions/cache/restore@v5
+        id: nx-cache
+        with:
+          path: .nx/cache
+          key: nx-${{ runner.os }}-${{ github.job }}-${{ github.sha }}
+          restore-keys: |
+            nx-${{ runner.os }}-${{ github.job }}-
       - run: npm ci
       - run: chmod +x mvnw
       - run: npx nx show projects
       - run: npx nx build backend
+      - uses: actions/cache/save@v5
+        if: always() && steps.nx-cache.outputs.cache-hit != 'true'
+        with:
+          path: .nx/cache
+          key: ${{ steps.nx-cache.outputs.cache-primary-key }}
 
   test-backend:
     name: Test backend
@@ -96,10 +135,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-${{ github.job }}-
             ${{ runner.os }}-maven-
+      - uses: actions/cache/restore@v5
+        id: nx-cache
+        with:
+          path: .nx/cache
+          key: nx-${{ runner.os }}-${{ github.job }}-${{ github.sha }}
+          restore-keys: |
+            nx-${{ runner.os }}-${{ github.job }}-
       - run: npm ci
       - run: chmod +x mvnw
       - run: npx nx show projects
       - run: npx nx test backend
+      - uses: actions/cache/save@v5
+        if: always() && steps.nx-cache.outputs.cache-hit != 'true'
+        with:
+          path: .nx/cache
+          key: ${{ steps.nx-cache.outputs.cache-primary-key }}
 
   # Required check on main. strict_required_status_checks_policy is false, so a
   # skipped check would not block merging. This job always runs and fails unless
