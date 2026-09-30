@@ -126,11 +126,16 @@ class BaseRepositoryTests extends FirestoreEmulatorSupport {
         season.setCurrent(true);
 
         Season saved = seasonRepository.save(season, "tester");
-        Season loaded = seasonRepository.findById(saved.getId()).orElseThrow();
 
-        assertThat(loaded.getBeginDate()).isEqualTo("2024-08-29");
-        assertThat(loaded.getEndDate()).isEqualTo("2025-01-13");
-        assertThat(loaded.isCurrent()).isTrue();
+        try {
+            Season loaded = seasonRepository.findById(saved.getId()).orElseThrow();
+
+            assertThat(loaded.getBeginDate()).isEqualTo("2024-08-29");
+            assertThat(loaded.getEndDate()).isEqualTo("2025-01-13");
+            assertThat(loaded.isCurrent()).isTrue();
+        } finally {
+            seasonRepository.delete(saved.getId());
+        }
     }
 
     @Test

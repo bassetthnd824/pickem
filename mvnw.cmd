@@ -135,11 +135,18 @@ if ($distributionSha256Sum) {
 # unzip and move
 Expand-Archive "$TMP_DOWNLOAD_DIR/$distributionUrlName" -DestinationPath "$TMP_DOWNLOAD_DIR" | Out-Null
 Rename-Item -Path "$TMP_DOWNLOAD_DIR/$distributionUrlNameMain" -NewName $MAVEN_HOME_NAME | Out-Null
+# Windows PowerShell 5.1 Move-Item can deny the rename of a just-extracted
+# distribution ("access is denied"). cmd move completes that same rename.
+$mavenSource = Join-Path $TMP_DOWNLOAD_DIR.FullName $MAVEN_HOME_NAME
+$mavenHomeParent = [System.IO.Path]::GetFullPath(($MAVEN_HOME_PARENT -replace '/','\'))
 try {
-  Move-Item -Path "$TMP_DOWNLOAD_DIR/$MAVEN_HOME_NAME" -Destination $MAVEN_HOME_PARENT | Out-Null
+  Move-Item -LiteralPath $mavenSource -Destination $mavenHomeParent -ErrorAction Stop
 } catch {
   if (! (Test-Path -Path "$MAVEN_HOME" -PathType Container)) {
-    Write-Error "fail to move MAVEN_HOME"
+    cmd.exe /c "move /Y `"$mavenSource`" `"$mavenHomeParent`" >nul"
+    if (! (Test-Path -Path "$MAVEN_HOME" -PathType Container)) {
+      Write-Error "fail to move MAVEN_HOME: $($_.Exception.Message)"
+    }
   }
 } finally {
   try { Remove-Item $TMP_DOWNLOAD_DIR -Recurse -Force | Out-Null }

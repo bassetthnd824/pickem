@@ -38,6 +38,10 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
 
     private final Map<String, Long> revokedAfter = new ConcurrentHashMap<>();
 
+    private final Map<String, RuntimeException> claimFailures = new ConcurrentHashMap<>();
+
+    private final Map<String, RuntimeException> revokeFailures = new ConcurrentHashMap<>();
+
     private final AtomicLong sequence = new AtomicLong();
 
     public FakeFirebaseIdentityClient(Clock clock) {
@@ -71,6 +75,26 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
         return claimWrites.getOrDefault(uid, 0);
     }
 
+    public boolean refreshRevoked(String uid) {
+        return revokedAt.containsKey(uid);
+    }
+
+    /**
+     * The next {@link #setCustomUserClaims} for {@code uid} throws {@code failure}
+     * and leaves the stored claims unchanged.
+     */
+    public void failClaims(String uid, RuntimeException failure) {
+        claimFailures.put(uid, failure);
+    }
+
+    /**
+     * The next {@link #revokeRefreshTokens} for {@code uid} throws {@code failure}
+     * and does not record a revocation.
+     */
+    public void failRevoke(String uid, RuntimeException failure) {
+        revokeFailures.put(uid, failure);
+    }
+
     public void clear() {
         idTokens.clear();
         sessions.clear();
@@ -79,6 +103,8 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
         revokedAt.clear();
         idTokenIssuedAt.clear();
         revokedAfter.clear();
+        claimFailures.clear();
+        revokeFailures.clear();
     }
 
     @Override
@@ -121,6 +147,12 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
 
     @Override
     public void setCustomUserClaims(String uid, Map<String, Object> claims) {
+        RuntimeException failure = claimFailures.remove(uid);
+
+        if (failure != null) {
+            throw failure;
+        }
+
         customClaims.put(uid, Map.copyOf(claims));
         Integer count = claimWrites.get(uid);
         claimWrites.put(uid, count == null ? 1 : count + 1);
@@ -128,6 +160,12 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
 
     @Override
     public void revokeRefreshTokens(String uid) {
+        RuntimeException failure = revokeFailures.remove(uid);
+
+        if (failure != null) {
+            throw failure;
+        }
+
         revokedAt.put(uid, clock.instant());
         revokedAfter.put(uid, sequence.incrementAndGet());
     }

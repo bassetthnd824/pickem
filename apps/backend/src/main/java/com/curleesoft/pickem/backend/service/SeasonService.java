@@ -4,10 +4,8 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.curleesoft.pickem.backend.model.Season;
 import com.curleesoft.pickem.backend.repository.SeasonRepository;
@@ -35,12 +33,12 @@ public class SeasonService {
     }
 
     public List<Season> search(String season, String beginDate, String endDate, Boolean current) {
-        String seasonFilter = normalizeContains(season);
-        String begin = blankToNull(beginDate);
-        String end = blankToNull(endDate);
+        String seasonFilter = SearchText.normalizeContains(season);
+        String begin = SearchText.blankToNull(beginDate);
+        String end = SearchText.blankToNull(endDate);
 
         return seasonRepository.findAll().stream()
-                .filter(item -> seasonFilter == null || contains(item.getSeason(), seasonFilter))
+                .filter(item -> seasonFilter == null || SearchText.contains(item.getSeason(), seasonFilter))
                 .filter(item -> begin == null || begin.equals(item.getBeginDate()))
                 .filter(item -> end == null || end.equals(item.getEndDate()))
                 .filter(item -> current == null || item.isCurrent() == current.booleanValue())
@@ -79,8 +77,8 @@ public class SeasonService {
     }
 
     private void apply(Season target, Season request) {
-        ParsedSeason parsed = SeasonCalendar.parseSeason(trim(request.getSeason()), trim(request.getBeginDate()),
-                trim(request.getEndDate()));
+        ParsedSeason parsed = SeasonCalendar.parseSeason(SearchText.trim(request.getSeason()),
+                SearchText.trim(request.getBeginDate()), SearchText.trim(request.getEndDate()));
         target.setSeason(parsed.season());
         target.setBeginDate(parsed.beginDate().toString());
         target.setEndDate(parsed.endDate().toString());
@@ -95,21 +93,4 @@ public class SeasonService {
         }
     }
 
-    private static String trim(String value) {
-        return value == null ? null : value.trim();
-    }
-
-    private static String blankToNull(String value) {
-        String trimmed = trim(value);
-        return StringUtils.hasText(trimmed) ? trimmed : null;
-    }
-
-    private static String normalizeContains(String value) {
-        String trimmed = blankToNull(value);
-        return trimmed == null ? null : trimmed.toLowerCase(Locale.ROOT);
-    }
-
-    private static boolean contains(String value, String needle) {
-        return value != null && value.toLowerCase(Locale.ROOT).contains(needle);
-    }
 }

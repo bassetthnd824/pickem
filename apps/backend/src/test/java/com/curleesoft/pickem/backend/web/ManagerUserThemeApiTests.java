@@ -26,9 +26,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import com.curleesoft.pickem.backend.model.User;
 import com.curleesoft.pickem.backend.repository.ThemeRepository;
 import com.curleesoft.pickem.backend.repository.UserRepository;
 import com.curleesoft.pickem.backend.security.FakeFirebaseIdentityClient;
+import com.curleesoft.pickem.backend.security.IdentityAdminException;
 import com.curleesoft.pickem.backend.security.RoleClaims;
 import com.curleesoft.pickem.backend.security.SessionCookies;
 import com.curleesoft.pickem.backend.security.VerifiedIdentity;
@@ -251,11 +253,16 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
                 .content(userBody("other-" + token, "ada-" + token + "@example.com", "Ada", "Other", "Ada", themeKey,
                         "[\"player\"]", null)))
                 .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(UserService.EMAIL_NOT_UNIQUE));
+        assertThat(firebase.customClaims("other-" + token).get(RoleClaims.ROLES)).isEqualTo(List.of());
+        assertThat(firebase.customClaims("other-" + token)).doesNotContainKey(RoleClaims.PLAYER);
+        assertThat(firebase.claimWriteCount("other-" + token)).isEqualTo(2);
 
+        int claimWrites = firebase.claimWriteCount(adaUid);
         mockMvc.perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
                 .content(userBody(adaUid, "fresh-" + token + "@example.com", "Ada", "Lovelace", "Ada", themeKey,
                         "[\"player\"]", null)))
                 .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(UserService.ALREADY_EXISTS));
+        assertThat(firebase.claimWriteCount(adaUid)).isEqualTo(claimWrites);
 
         mockMvc.perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
                 .content(userBody("empty-" + token, "empty-" + token + "@example.com", "Empty", "Roles", "Empty",
@@ -277,6 +284,7 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
                         "[\"player\",\"manager\"]", 4L)))
                 .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(containsString("Stale version")));
         assertThat(firebase.customClaims(adaUid)).doesNotContainKey(RoleClaims.MANAGER);
+        assertThat(firebase.customClaims(adaUid).get(RoleClaims.PLAYER)).isEqualTo(Boolean.TRUE);
 
         mockMvc.perform(put("/api/manager/users/" + adaUid).cookie(manager).contentType(MediaType.APPLICATION_JSON)
                 .content(userBody(adaUid, "ada-" + token + "@example.com", "Ada", "Lovelace", "Countess", themeKey,
@@ -327,6 +335,93 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         assertThat(spec).doesNotContain("userPass");
         assertThat(spec).doesNotContain("/password");
         assertThat(spec).doesNotContain("reset-password");
+    }
+
+    @Test
+    void deleteClearsClaimsAndRevokesTheExistingSession() throws Exception {
+        String token = token();
+        String themeKey = "delete-theme-" + token;
+        createTheme("Delete " + token, themeKey, true);
+        String uid = "session-" + token;
+        String id = createUser(uid, uid + "@example.com", "Session", "User", themeKey, "[\"manager\"]");
+        Cookie session = new Cookie(SessionCookies.NAME, firebase.issueCookie(identity(uid, List.of("manager"))));
+
+        mockMvc.perform(get("/api/manager/users").cookie(session)).andExpect(status().isOk());
+
+        mockMvc.perform(delete("/api/manager/users/" + id).cookie(manager)).andExpect(status().isNoContent());
+        userIds.remove(id);
+
+        mockMvc.perform(get("/api/manager/users").cookie(session)).andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/manager/users/" + id).cookie(manager)).andExpect(status().isNotFound());
+        assertThat(firebase.refreshRevoked(uid)).isTrue();
+        assertThat(firebase.customClaims(uid).get(RoleClaims.ROLES)).isEqualTo(List.of());
+        assertThat(firebase.customClaims(uid)).doesNotContainKey(RoleClaims.MANAGER);
+    }
+
+    @Test
+    void claimAndRevokeFailuresDoNotSplitTheUserFromFirebase() throws Exception {
+        String token = token();
+        String themeKey = "claim-theme-" + token;
+        createTheme("Claims " + token, themeKey, true);
+
+        String missingUid = "missing-auth-" + token;
+        firebase.failClaims(missingUid, new IdentityAdminException(IdentityAdminException.Kind.USER_NOT_FOUND,
+                IdentityAdminException.USER_MISSING));
+        mockMvc.perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                .content(userBody(missingUid, missingUid + "@example.com", "Missing", "Auth", "Missing", themeKey,
+                        "[\"player\"]", null)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value(IdentityAdminException.USER_MISSING));
+        assertThat(userRepository.findById(missingUid)).isEmpty();
+        assertThat(firebase.claimWriteCount(missingUid)).isZero();
+
+        String downUid = "claims-down-" + token;
+        firebase.failClaims(downUid,
+                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, IdentityAdminException.CLAIMS_FAILED));
+        mockMvc.perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                .content(userBody(downUid, downUid + "@example.com", "Claims", "Down", "Claims", themeKey,
+                        "[\"player\"]", null)))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.detail").value(IdentityAdminException.CLAIMS_FAILED));
+        assertThat(userRepository.findById(downUid)).isEmpty();
+        assertThat(firebase.customClaims(downUid)).isEmpty();
+
+        String keptUid = "kept-" + token;
+        String keptId = createUser(keptUid, keptUid + "@example.com", "Kept", "Player", themeKey, "[\"player\"]");
+        firebase.failClaims(keptUid,
+                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, IdentityAdminException.CLAIMS_FAILED));
+        mockMvc.perform(put("/api/manager/users/" + keptId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                .content(userBody(keptUid, keptUid + "@example.com", "Kept", "Player", "Kept", themeKey,
+                        "[\"player\",\"manager\"]", 0L)))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.detail").value(IdentityAdminException.CLAIMS_FAILED));
+
+        User stored = userRepository.findById(keptId).orElseThrow();
+        assertThat(stored.getVersion()).isZero();
+        assertThat(stored.getRoles()).containsExactly("player");
+        assertThat(firebase.customClaims(keptUid)).doesNotContainKey(RoleClaims.MANAGER);
+        assertThat(firebase.customClaims(keptUid).get(RoleClaims.PLAYER)).isEqualTo(Boolean.TRUE);
+
+        firebase.failRevoke(keptUid,
+                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, IdentityAdminException.REVOKE_FAILED));
+        mockMvc.perform(delete("/api/manager/users/" + keptId).cookie(manager)).andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.detail").value(IdentityAdminException.REVOKE_FAILED));
+        assertThat(userRepository.findById(keptId)).isPresent();
+        assertThat(firebase.refreshRevoked(keptUid)).isFalse();
+        assertThat(firebase.customClaims(keptUid).get(RoleClaims.PLAYER)).isEqualTo(Boolean.TRUE);
+        assertThat(firebase.customClaims(keptUid)).doesNotContainKey(RoleClaims.MANAGER);
+
+        firebase.failClaims(keptUid,
+                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, IdentityAdminException.CLAIMS_FAILED));
+        mockMvc.perform(delete("/api/manager/users/" + keptId).cookie(manager)).andExpect(status().isServiceUnavailable());
+        assertThat(userRepository.findById(keptId)).isPresent();
+        assertThat(firebase.refreshRevoked(keptUid)).isFalse();
+
+        firebase.failClaims(keptUid, new IdentityAdminException(IdentityAdminException.Kind.USER_NOT_FOUND,
+                IdentityAdminException.USER_MISSING));
+        mockMvc.perform(delete("/api/manager/users/" + keptId).cookie(manager)).andExpect(status().isNoContent());
+        userIds.remove(keptId);
+        assertThat(userRepository.findById(keptId)).isEmpty();
     }
 
     private String createTheme(String name, String path, boolean active) throws Exception {

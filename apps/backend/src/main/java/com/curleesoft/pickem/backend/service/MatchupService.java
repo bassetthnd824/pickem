@@ -46,8 +46,6 @@ public class MatchupService {
 
     public static final String DATE_INVALID = "matchup date is invalid";
 
-    public static final String TEAMS_REQUIRED = "matchup teams are required";
-
     public static final String TEAMS_EQUAL = "teams cannot be equal";
 
     public static final String SEASON_MISMATCH = "season week does not belong to the season";
@@ -90,11 +88,11 @@ public class MatchupService {
      */
     public List<Matchup> search(String seasonId, String seasonWeekId, Integer weekNumber, String matchupDate,
             String teamId, String venueId, Long cfbdGameId) {
-        String season = blankToNull(seasonId);
-        String weekId = blankToNull(seasonWeekId);
-        String date = blankToNull(matchupDate);
-        String team = blankToNull(teamId);
-        String venue = blankToNull(venueId);
+        String season = SearchText.blankToNull(seasonId);
+        String weekId = SearchText.blankToNull(seasonWeekId);
+        String date = SearchText.blankToNull(matchupDate);
+        String team = SearchText.blankToNull(teamId);
+        String venue = SearchText.blankToNull(venueId);
         Map<String, String> seasonYearById = seasonYears();
 
         return matchupRepository.findAll().stream()
@@ -133,11 +131,11 @@ public class MatchupService {
     }
 
     private void apply(Matchup target, Matchup request) {
-        String seasonWeekId = trim(request.getSeasonWeekId());
+        String seasonWeekId = SearchText.trim(request.getSeasonWeekId());
         SeasonWeek week = seasonWeekRepository.findById(seasonWeekId)
                 .orElseThrow(() -> new InvalidRequestException(SeasonWeekService.NOT_FOUND));
 
-        String seasonId = trim(request.getSeasonId());
+        String seasonId = SearchText.trim(request.getSeasonId());
 
         if (!StringUtils.hasText(seasonId) || !seasonId.equals(week.getSeasonId())) {
             throw new InvalidRequestException(SEASON_MISMATCH);
@@ -147,7 +145,7 @@ public class MatchupService {
             throw new InvalidRequestException(WEEK_NUMBER_MISMATCH);
         }
 
-        LocalDate date = parseDate(trim(request.getMatchupDate()));
+        LocalDate date = parseDate(SearchText.trim(request.getMatchupDate()));
         LocalDate begin = parseDate(week.getBeginDate());
         LocalDate end = parseDate(week.getEndDate());
 
@@ -155,14 +153,10 @@ public class MatchupService {
             throw new InvalidRequestException(DATE_INVALID);
         }
 
-        String homeId = trim(request.getHomeTeamId());
-        String awayId = trim(request.getAwayTeamId());
+        String homeId = SearchText.trim(request.getHomeTeamId());
+        String awayId = SearchText.trim(request.getAwayTeamId());
 
-        if (!StringUtils.hasText(homeId) || !StringUtils.hasText(awayId)) {
-            throw new InvalidRequestException(TEAMS_REQUIRED);
-        }
-
-        if (homeId.equals(awayId)) {
+        if (homeId != null && homeId.equals(awayId)) {
             throw new InvalidRequestException(TEAMS_EQUAL);
         }
 
@@ -170,7 +164,7 @@ public class MatchupService {
                 .orElseThrow(() -> new InvalidRequestException(TeamService.NOT_FOUND));
         Team away = teamRepository.findById(awayId)
                 .orElseThrow(() -> new InvalidRequestException(TeamService.NOT_FOUND));
-        String venueId = trim(request.getVenueId());
+        String venueId = SearchText.trim(request.getVenueId());
         Venue venue = venueRepository.findById(venueId)
                 .orElseThrow(() -> new InvalidRequestException(VenueService.NOT_FOUND));
         Integer homeScore = request.getHomeTeamScore();
@@ -285,12 +279,4 @@ public class MatchupService {
         }
     }
 
-    private static String trim(String value) {
-        return value == null ? null : value.trim();
-    }
-
-    private static String blankToNull(String value) {
-        String trimmed = trim(value);
-        return StringUtils.hasText(trimmed) ? trimmed : null;
-    }
 }

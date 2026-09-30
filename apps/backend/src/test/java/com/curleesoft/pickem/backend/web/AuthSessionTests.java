@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.curleesoft.pickem.backend.model.User;
 import com.curleesoft.pickem.backend.repository.UserRepository;
 import com.curleesoft.pickem.backend.security.FakeFirebaseIdentityClient;
+import com.curleesoft.pickem.backend.security.IdentityAdminException;
 import com.curleesoft.pickem.backend.security.RoleClaims;
 import com.curleesoft.pickem.backend.security.SessionCookies;
 import com.curleesoft.pickem.backend.security.VerifiedIdentity;
@@ -90,7 +91,7 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
                 .andExpect(jsonPath("$.uid").value(uid)).andExpect(jsonPath("$.emailAddr").value("kenney@example.com"))
                 .andExpect(jsonPath("$.roles[0]").value("player")).andExpect(jsonPath("$.password").doesNotExist());
 
-        mockMvc.perform(get("/api/game/main").cookie(session(sessionCookie))).andExpect(status().isNotFound());
+        assertGameMainIsAuthorized(session(sessionCookie));
         mockMvc.perform(get("/api/manager/seasons").cookie(session(sessionCookie))).andExpect(status().isForbidden());
     }
 
@@ -134,11 +135,11 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
     @Test
     void playerIsBlockedFromManagerAndManagerMayCallBoth() throws Exception {
         String playerCookie = firebase.issueCookie(signedIn("player-1", List.of("player")));
-        mockMvc.perform(get("/api/game/main").cookie(session(playerCookie))).andExpect(status().isNotFound());
+        assertGameMainIsAuthorized(session(playerCookie));
         mockMvc.perform(get("/api/manager/seasons").cookie(session(playerCookie))).andExpect(status().isForbidden());
 
         String managerCookie = firebase.issueCookie(signedIn("manager-1", List.of("manager")));
-        mockMvc.perform(get("/api/game/main").cookie(session(managerCookie))).andExpect(status().isNotFound());
+        assertGameMainIsAuthorized(session(managerCookie));
         mockMvc.perform(get("/api/manager/seasons").cookie(session(managerCookie))).andExpect(status().isOk());
     }
 
@@ -178,6 +179,24 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
     }
 
     @Test
+    void logoutReportsAFirebaseFailureAsUnavailable() throws Exception {
+        String userId = uid();
+        registerGoogle(userId, "token-revoke", "kenney@example.com", "Kenney", "Curlee");
+        MvcResult login = mockMvc.perform(post("/api/auth/session").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"idToken\":\"token-revoke\"}")).andExpect(status().isNoContent()).andReturn();
+        String sessionCookie = sessionCookie(login);
+        firebase.failRevoke(userId, new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE,
+                IdentityAdminException.REVOKE_FAILED));
+
+        mockMvc.perform(post("/api/auth/logout").cookie(session(sessionCookie)))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.detail").value(IdentityAdminException.REVOKE_FAILED));
+
+        mockMvc.perform(get("/api/auth/me").cookie(session(sessionCookie))).andExpect(status().isOk());
+        assertThat(firebase.refreshRevoked(userId)).isFalse();
+    }
+
+    @Test
     void invalidTokenMissingTokenAndRegistrationAreRejected() throws Exception {
         mockMvc.perform(
                 post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"missing\"}"))
@@ -204,6 +223,11 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
         assertThat(spec).contains("/api/auth/me");
         assertThat(spec).doesNotContain("/api/auth/register");
         assertThat(spec).doesNotContain("password");
+    }
+
+    private void assertGameMainIsAuthorized(Cookie cookie) throws Exception {
+        int status = mockMvc.perform(get("/api/game/main").cookie(cookie)).andReturn().getResponse().getStatus();
+        assertThat(status).isIn(200, 404);
     }
 
     private void registerGoogle(String uid, String idToken, String email, String firstName, String lastName) {

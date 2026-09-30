@@ -2,10 +2,8 @@ package com.curleesoft.pickem.backend.service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.curleesoft.pickem.backend.model.Venue;
 import com.curleesoft.pickem.backend.repository.TransactionReads;
@@ -22,13 +20,7 @@ public class VenueService {
 
     public static final String NOT_FOUND = "Venue not found";
 
-    public static final String NAME_INVALID = "venue name is invalid";
-
-    public static final String CITY_STATE_INVALID = "cityState is invalid";
-
     public static final String CFBD_NOT_UNIQUE = "cfbdVenueId must be unique";
-
-    private static final int NAME_MAX = 60;
 
     private final VenueRepository venueRepository;
 
@@ -37,12 +29,12 @@ public class VenueService {
     }
 
     public List<Venue> search(String venueName, String cityState, Long cfbdVenueId) {
-        String name = normalizeContains(venueName);
-        String city = normalizeContains(cityState);
+        String name = SearchText.normalizeContains(venueName);
+        String city = SearchText.normalizeContains(cityState);
 
         return venueRepository.findAll().stream()
-                .filter(item -> name == null || contains(item.getVenueName(), name))
-                .filter(item -> city == null || contains(item.getCityState(), city))
+                .filter(item -> name == null || SearchText.contains(item.getVenueName(), name))
+                .filter(item -> city == null || SearchText.contains(item.getCityState(), city))
                 .filter(item -> cfbdVenueId == null || cfbdVenueId.equals(item.getCfbdVenueId()))
                 .sorted(Comparator.comparing((Venue item) -> item.getVenueName(),
                         Comparator.nullsLast((String left, String right) -> left.compareTo(right))))
@@ -74,19 +66,8 @@ public class VenueService {
     }
 
     private void apply(Venue target, Venue request) {
-        String name = trim(request.getVenueName());
-        String cityState = trim(request.getCityState());
-
-        if (!StringUtils.hasText(name) || name.length() > NAME_MAX) {
-            throw new InvalidRequestException(NAME_INVALID);
-        }
-
-        if (!StringUtils.hasText(cityState) || cityState.length() > NAME_MAX) {
-            throw new InvalidRequestException(CITY_STATE_INVALID);
-        }
-
-        target.setVenueName(name);
-        target.setCityState(cityState);
+        target.setVenueName(SearchText.trim(request.getVenueName()));
+        target.setCityState(SearchText.trim(request.getCityState()));
         target.setCfbdVenueId(request.getCfbdVenueId());
     }
 
@@ -104,21 +85,4 @@ public class VenueService {
         }
     }
 
-    private static String trim(String value) {
-        return value == null ? null : value.trim();
-    }
-
-    private static String blankToNull(String value) {
-        String trimmed = trim(value);
-        return StringUtils.hasText(trimmed) ? trimmed : null;
-    }
-
-    private static String normalizeContains(String value) {
-        String trimmed = blankToNull(value);
-        return trimmed == null ? null : trimmed.toLowerCase(Locale.ROOT);
-    }
-
-    private static boolean contains(String value, String needle) {
-        return value != null && value.toLowerCase(Locale.ROOT).contains(needle);
-    }
 }
