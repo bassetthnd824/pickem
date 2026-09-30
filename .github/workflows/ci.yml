@@ -22,7 +22,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-          cache: maven
       - run: npm ci
       - run: chmod +x mvnw
       - run: npx nx show projects
@@ -41,7 +40,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-          cache: maven
       - run: npm ci
       - run: chmod +x mvnw
       - run: npx nx show projects
@@ -60,7 +58,16 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-          cache: maven
+      # nx-maven writes to .m2/repository, not the ~/.m2/repository path setup-java caches.
+      - uses: actions/cache@v5
+        with:
+          path: |
+            .m2/repository
+            ~/.m2/wrapper/dists
+          key: ${{ runner.os }}-maven-${{ github.job }}-${{ hashFiles('pom.xml', 'apps/backend/pom.xml', '.mvn/wrapper/maven-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-${{ github.job }}-
+            ${{ runner.os }}-maven-
       - run: npm ci
       - run: chmod +x mvnw
       - run: npx nx show projects
@@ -79,7 +86,16 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-          cache: maven
+      # nx-maven writes to .m2/repository, not the ~/.m2/repository path setup-java caches.
+      - uses: actions/cache@v5
+        with:
+          path: |
+            .m2/repository
+            ~/.m2/wrapper/dists
+          key: ${{ runner.os }}-maven-${{ github.job }}-${{ hashFiles('pom.xml', 'apps/backend/pom.xml', '.mvn/wrapper/maven-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-${{ github.job }}-
+            ${{ runner.os }}-maven-
       - run: npm ci
       - run: chmod +x mvnw
       - run: npx nx show projects
