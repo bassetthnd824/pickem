@@ -463,12 +463,12 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- Authenticated `GET /api/game/main` returns weeks of matchups with denormalized teams, venue, rivalry, scores, existing pick/rank, and conference-team count.
-- `POST /api/game/picks` upserts one pick doc per user+matchup with `rank` and `pickedTeamId` in a batched write.
-- Empty picks (no team selected) are not persisted.
-- Picks belong to the authenticated user; a player cannot write another user’s picks.
-- Scoring icons / points follow `getScore()`: rank points only when both scores exist and `pickedTeamId == winningTeamId`.
-- Future weeks (before `weekBeginDate`) do not expose results as scored; current/past weeks do.
+- [x] Authenticated `GET /api/game/main` returns weeks of matchups with denormalized teams, venue, rivalry, scores, existing pick/rank, and conference-team count.
+- [x] `POST /api/game/picks` upserts one pick doc per user+matchup with `rank` and `pickedTeamId` in a batched write.
+- [x] Empty picks (no team selected) are not persisted.
+- [x] Picks belong to the authenticated user; a player cannot write another user’s picks.
+- [x] Scoring icons / points follow `getScore()`: rank points only when both scores exist and `pickedTeamId == winningTeamId`.
+- [x] Future weeks (before `weekBeginDate`) do not expose results as scored; current/past weeks do.
 
 **Predecessors:** US-04, US-07.
 

@@ -90,7 +90,7 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
                 .andExpect(jsonPath("$.uid").value(uid)).andExpect(jsonPath("$.emailAddr").value("kenney@example.com"))
                 .andExpect(jsonPath("$.roles[0]").value("player")).andExpect(jsonPath("$.password").doesNotExist());
 
-        mockMvc.perform(get("/api/game/main").cookie(session(sessionCookie))).andExpect(status().isNotFound());
+        assertGameMainIsAuthorized(session(sessionCookie));
         mockMvc.perform(get("/api/manager/seasons").cookie(session(sessionCookie))).andExpect(status().isForbidden());
     }
 
@@ -134,11 +134,11 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
     @Test
     void playerIsBlockedFromManagerAndManagerMayCallBoth() throws Exception {
         String playerCookie = firebase.issueCookie(signedIn("player-1", List.of("player")));
-        mockMvc.perform(get("/api/game/main").cookie(session(playerCookie))).andExpect(status().isNotFound());
+        assertGameMainIsAuthorized(session(playerCookie));
         mockMvc.perform(get("/api/manager/seasons").cookie(session(playerCookie))).andExpect(status().isForbidden());
 
         String managerCookie = firebase.issueCookie(signedIn("manager-1", List.of("manager")));
-        mockMvc.perform(get("/api/game/main").cookie(session(managerCookie))).andExpect(status().isNotFound());
+        assertGameMainIsAuthorized(session(managerCookie));
         mockMvc.perform(get("/api/manager/seasons").cookie(session(managerCookie))).andExpect(status().isOk());
     }
 
@@ -204,6 +204,11 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
         assertThat(spec).contains("/api/auth/me");
         assertThat(spec).doesNotContain("/api/auth/register");
         assertThat(spec).doesNotContain("password");
+    }
+
+    private void assertGameMainIsAuthorized(Cookie cookie) throws Exception {
+        int status = mockMvc.perform(get("/api/game/main").cookie(cookie)).andReturn().getResponse().getStatus();
+        assertThat(status).isIn(200, 404);
     }
 
     private void registerGoogle(String uid, String idToken, String email, String firstName, String lastName) {

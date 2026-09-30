@@ -227,7 +227,20 @@ public class BaseRepository<D extends AuditableDocument> {
         }
     }
 
-    private D draftOf(D source) {
+    protected Firestore firestore() {
+        return firestore;
+    }
+
+    protected Clock clock() {
+        return clock;
+    }
+
+    protected String currentActor() {
+        String actor = auditActorResolver.currentActor();
+        return StringUtils.hasText(actor) ? actor : AuditActorResolver.SYSTEM_ACTOR;
+    }
+
+    protected D draftOf(D source) {
         try {
             D draft = type.getDeclaredConstructor().newInstance();
             BeanUtils.copyProperties(source, draft);
