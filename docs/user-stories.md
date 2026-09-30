@@ -508,12 +508,12 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- `GET /api/game/team-schedule?teamId=&seasonId=` returns date, opponent label, score result, and W/L for conference teams in the current season.
-- Away games prefix opponent with `"at "`.
-- Unplayed games omit W/L and score result.
-- `GET /api/game/account` returns email, name, nickName, themeId.
-- `PUT /api/game/account` updates nickName (required, ≤40) and themeId; rejects password fields; does not change email/name.
-- Both endpoints require a signed-in player.
+- [x] `GET /api/game/team-schedule?teamId=&seasonId=` returns date, opponent label, score result, and W/L for conference teams in the current season.
+- [x] Away games prefix opponent with `"at "`.
+- [x] Unplayed games omit W/L and score result.
+- [x] `GET /api/game/account` returns email, name, nickName, themeId.
+- [x] `PUT /api/game/account` updates nickName (required, ≤40) and themeId; rejects password fields; does not change email/name.
+- [x] Both endpoints require a signed-in player.
 
 **Predecessors:** US-04, US-07, US-08.
 

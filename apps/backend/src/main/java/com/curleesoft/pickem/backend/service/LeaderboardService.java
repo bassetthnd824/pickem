@@ -59,7 +59,7 @@ public class LeaderboardService {
     }
 
     public Leaderboard leaderboard(String seasonId) {
-        Season season = season(seasonId);
+        Season season = seasonService.resolve(seasonId);
         String id = season.getId();
         Map<String, Matchup> matchups = byId(
                 matchupRepository.query(collection -> collection.whereEqualTo("seasonId", id)));
@@ -88,16 +88,6 @@ public class LeaderboardService {
         }
 
         return new Leaderboard(id, season.getSeason(), List.copyOf(standings));
-    }
-
-    private Season season(String seasonId) {
-        String resolved = SearchText.blankToNull(seasonId);
-
-        if (resolved == null) {
-            return seasonService.current();
-        }
-
-        return seasonService.get(resolved);
     }
 
     private static <T extends AuditableDocument> Map<String, T> byId(List<T> rows) {

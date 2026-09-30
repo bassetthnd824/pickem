@@ -56,6 +56,20 @@ public class SeasonService {
                 .orElseThrow(() -> new ResourceNotFoundException(NO_CURRENT));
     }
 
+    /**
+     * Blank or missing seasonId is the current season. Any other id is loaded
+     * as written, and an unknown id is 404.
+     */
+    public Season resolve(String seasonId) {
+        String resolved = SearchText.blankToNull(seasonId);
+
+        if (resolved == null) {
+            return current();
+        }
+
+        return get(resolved);
+    }
+
     public Season create(Season request) {
         Season season = new Season();
         apply(season, request);

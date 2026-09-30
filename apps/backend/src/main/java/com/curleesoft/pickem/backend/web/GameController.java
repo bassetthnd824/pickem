@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,16 +15,24 @@ import org.springframework.web.bind.annotation.RestController;
 import com.curleesoft.pickem.backend.model.Pick;
 import com.curleesoft.pickem.backend.security.InvalidCredentialException;
 import com.curleesoft.pickem.backend.security.PickemPrincipal;
+import com.curleesoft.pickem.backend.service.AccountProfile;
+import com.curleesoft.pickem.backend.service.AccountService;
+import com.curleesoft.pickem.backend.service.ConferenceTeam;
 import com.curleesoft.pickem.backend.service.GameMain;
 import com.curleesoft.pickem.backend.service.Leaderboard;
 import com.curleesoft.pickem.backend.service.LeaderboardService;
 import com.curleesoft.pickem.backend.service.PickService;
+import com.curleesoft.pickem.backend.service.TeamScheduleRow;
+import com.curleesoft.pickem.backend.service.TeamScheduleService;
+import com.curleesoft.pickem.backend.service.TeamService;
 
 import jakarta.validation.Valid;
+import tools.jackson.databind.JsonNode;
 
 /**
- * Player game surface. Replaces {@code MainAction} and {@code LeaderBoardAction}.
- * Any signed-in player or manager may call it. The Next.js BFF is the public caller.
+ * Player game surface. Replaces {@code MainAction}, {@code LeaderBoardAction},
+ * {@code TeamScheduleAction}, and {@code AccountAction}. Any signed-in player
+ * or manager may call it. The Next.js BFF is the public caller.
  */
 @RestController
 @RequestMapping("/api/game")
@@ -34,9 +43,19 @@ public class GameController {
 
     private final LeaderboardService leaderboardService;
 
-    public GameController(PickService pickService, LeaderboardService leaderboardService) {
+    private final TeamScheduleService teamScheduleService;
+
+    private final TeamService teamService;
+
+    private final AccountService accountService;
+
+    public GameController(PickService pickService, LeaderboardService leaderboardService,
+            TeamScheduleService teamScheduleService, TeamService teamService, AccountService accountService) {
         this.pickService = pickService;
         this.leaderboardService = leaderboardService;
+        this.teamScheduleService = teamScheduleService;
+        this.teamService = teamService;
+        this.accountService = accountService;
     }
 
     @GetMapping("/main")
@@ -48,6 +67,30 @@ public class GameController {
     public Leaderboard leaderboard(@RequestParam(required = false) String seasonId, Authentication authentication) {
         principal(authentication);
         return leaderboardService.leaderboard(seasonId);
+    }
+
+    @GetMapping("/team-schedule")
+    public List<TeamScheduleRow> teamSchedule(@RequestParam(required = false) String teamId,
+            @RequestParam(required = false) String seasonId, Authentication authentication) {
+        principal(authentication);
+        return teamScheduleService.schedule(teamId, seasonId);
+    }
+
+    @GetMapping("/teams")
+    public List<ConferenceTeam> teams(Authentication authentication) {
+        principal(authentication);
+        return teamService.conferenceTeams().stream()
+                .map(team -> new ConferenceTeam(team.getId(), team.getTeamName(), team.getSquadName())).toList();
+    }
+
+    @GetMapping("/account")
+    public AccountProfile account(Authentication authentication) {
+        return accountService.profile(principal(authentication).uid());
+    }
+
+    @PutMapping("/account")
+    public AccountProfile updateAccount(@RequestBody JsonNode body, Authentication authentication) {
+        return accountService.update(principal(authentication).uid(), AccountUpdateBinder.bind(body));
     }
 
     @PostMapping("/picks")
