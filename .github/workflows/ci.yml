@@ -9,8 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build and test
+  build-frontend:
+    name: Build frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -27,6 +27,84 @@ jobs:
       - run: chmod +x mvnw
       - run: npx nx show projects
       - run: npx nx build frontend
+
+  test-frontend:
+    name: Test frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - run: npm ci
+      - run: chmod +x mvnw
+      - run: npx nx show projects
       - run: npx nx test frontend
+
+  build-backend:
+    name: Build backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - run: npm ci
+      - run: chmod +x mvnw
+      - run: npx nx show projects
       - run: npx nx build backend
+
+  test-backend:
+    name: Test backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - run: npm ci
+      - run: chmod +x mvnw
+      - run: npx nx show projects
       - run: npx nx test backend
+
+  # Required check on main. strict_required_status_checks_policy is false, so a
+  # skipped check would not block merging. This job always runs and fails unless
+  # all four jobs succeeded.
+  build:
+    name: Build and test
+    needs:
+      - build-frontend
+      - test-frontend
+      - build-backend
+      - test-backend
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require frontend and backend build and test
+        run: |
+          echo "Build frontend: ${{ needs.build-frontend.result }}"
+          echo "Test frontend: ${{ needs.test-frontend.result }}"
+          echo "Build backend: ${{ needs.build-backend.result }}"
+          echo "Test backend: ${{ needs.test-backend.result }}"
+          test "${{ needs.build-frontend.result }}" = "success"
+          test "${{ needs.test-frontend.result }}" = "success"
+          test "${{ needs.build-backend.result }}" = "success"
+          test "${{ needs.test-backend.result }}" = "success"
