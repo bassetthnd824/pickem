@@ -90,9 +90,14 @@ result icons; current/past weeks show them.
 
 ### Leaderboard
 
-Correct pick adds its rank; incorrect or unscored add 0. Sort score
-descending, tie-break `userId` ascending. Users with no picks appear with
-score 0. Response columns: rank, nickname, score.
+`GET /api/game/leaderboard` returns
+`{ seasonId, season, standings: [{ rank, uid, nickName, score }] }`.
+`seasonId` defaults to the current season; a blank value does too. A correct
+pick in a week that has begun adds its confidence rank. An incorrect pick, an
+unscored matchup, and a future week (league date in `America/New_York` before
+`beginDate`) add 0. Sort score descending, tie-break `uid` ascending (legacy
+`userId`). `rank` is the 1-based place in that order. Users with no picks
+appear with score 0.
 
 ### Team schedule
 
