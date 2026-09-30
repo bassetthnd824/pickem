@@ -16,6 +16,7 @@ import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.AuthErrorCode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
@@ -74,7 +75,7 @@ public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
         try {
             auth().setCustomUserClaims(uid, claims);
         } catch (FirebaseAuthException ex) {
-            throw new InvalidCredentialException("Could not set custom user claims", ex);
+            throw adminFailure(ex, IdentityAdminException.CLAIMS_FAILED);
         }
     }
 
@@ -83,8 +84,16 @@ public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
         try {
             auth().revokeRefreshTokens(uid);
         } catch (FirebaseAuthException ex) {
-            throw new InvalidCredentialException("Could not revoke the session", ex);
+            throw adminFailure(ex, IdentityAdminException.REVOKE_FAILED);
         }
+    }
+
+    private static IdentityAdminException adminFailure(FirebaseAuthException ex, String message) {
+        if (ex.getAuthErrorCode() == AuthErrorCode.USER_NOT_FOUND) {
+            return new IdentityAdminException(IdentityAdminException.Kind.USER_NOT_FOUND,
+                    IdentityAdminException.USER_MISSING, ex);
+        }
+        return new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, message, ex);
     }
 
     private FirebaseAuth auth() {

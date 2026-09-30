@@ -66,7 +66,8 @@ public class AuthService {
     }
 
     private void provision(String uid, GoogleProfile profile) {
-        identityClient.setCustomUserClaims(uid, RoleClaims.forRoles(List.of(RoleClaims.PLAYER)));
+        List<String> player = List.of(RoleClaims.PLAYER);
+        RoleClaimSync.publish(identityClient, uid, player);
         User user = new User();
         user.setId(uid);
         user.setUid(uid);
@@ -75,13 +76,21 @@ public class AuthService {
         user.setLastName(profile.lastName());
         user.setNickName(nickName(profile.firstName()));
         user.setThemeId(DEFAULT_THEME_ID);
-        user.setRoles(List.of(RoleClaims.PLAYER));
+        user.setRoles(player);
         try {
             userRepository.save(user, uid);
         } catch (StaleDocumentVersionException ex) {
             User winner = userRepository.findById(uid)
                     .orElseThrow(() -> new InvalidCredentialException("Could not provision the user", ex));
             refresh(winner, profile);
+            RoleClaimSync.align(identityClient, userRepository, uid, player);
+        } catch (RuntimeException ex) {
+            try {
+                RoleClaimSync.align(identityClient, userRepository, uid, List.of());
+            } catch (RuntimeException restore) {
+                ex.addSuppressed(restore);
+            }
+            throw ex;
         }
     }
 

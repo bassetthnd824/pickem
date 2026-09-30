@@ -2,10 +2,8 @@ package com.curleesoft.pickem.backend.service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.curleesoft.pickem.backend.model.Rivalry;
 import com.curleesoft.pickem.backend.model.Team;
@@ -23,13 +21,7 @@ public class RivalryService {
 
     public static final String NOT_FOUND = "Rivalry not found";
 
-    public static final String NAME_INVALID = "rivalry name is invalid";
-
-    public static final String TEAMS_REQUIRED = "rivalry teams are required";
-
     public static final String TEAMS_EQUAL = "teams cannot be equal";
-
-    private static final int NAME_MAX = 60;
 
     private final RivalryRepository rivalryRepository;
 
@@ -41,12 +33,12 @@ public class RivalryService {
     }
 
     public List<Rivalry> search(String rivalryName, String team1Id, String team2Id) {
-        String name = normalizeContains(rivalryName);
-        String first = blankToNull(team1Id);
-        String second = blankToNull(team2Id);
+        String name = SearchText.normalizeContains(rivalryName);
+        String first = SearchText.blankToNull(team1Id);
+        String second = SearchText.blankToNull(team2Id);
 
         return rivalryRepository.findAll().stream()
-                .filter(item -> name == null || contains(item.getRivalryName(), name))
+                .filter(item -> name == null || SearchText.contains(item.getRivalryName(), name))
                 .filter(item -> first == null || first.equals(item.getTeam1Id()) || first.equals(item.getTeam2Id()))
                 .filter(item -> second == null || second.equals(item.getTeam2Id()))
                 .sorted(Comparator.comparing((Rivalry item) -> item.getRivalryName(),
@@ -77,20 +69,11 @@ public class RivalryService {
     }
 
     private void apply(Rivalry target, Rivalry request) {
-        String name = trim(request.getRivalryName());
+        String name = SearchText.trim(request.getRivalryName());
+        String firstId = SearchText.trim(request.getTeam1Id());
+        String secondId = SearchText.trim(request.getTeam2Id());
 
-        if (!StringUtils.hasText(name) || name.length() > NAME_MAX) {
-            throw new InvalidRequestException(NAME_INVALID);
-        }
-
-        String firstId = trim(request.getTeam1Id());
-        String secondId = trim(request.getTeam2Id());
-
-        if (!StringUtils.hasText(firstId) || !StringUtils.hasText(secondId)) {
-            throw new InvalidRequestException(TEAMS_REQUIRED);
-        }
-
-        if (firstId.equals(secondId)) {
+        if (firstId != null && firstId.equals(secondId)) {
             throw new InvalidRequestException(TEAMS_EQUAL);
         }
 
@@ -106,21 +89,4 @@ public class RivalryService {
         target.setTeam2(new TeamNameSnapshot(second.getId(), second.getTeamName()));
     }
 
-    private static String trim(String value) {
-        return value == null ? null : value.trim();
-    }
-
-    private static String blankToNull(String value) {
-        String trimmed = trim(value);
-        return StringUtils.hasText(trimmed) ? trimmed : null;
-    }
-
-    private static String normalizeContains(String value) {
-        String trimmed = blankToNull(value);
-        return trimmed == null ? null : trimmed.toLowerCase(Locale.ROOT);
-    }
-
-    private static boolean contains(String value, String needle) {
-        return value != null && value.toLowerCase(Locale.ROOT).contains(needle);
-    }
 }

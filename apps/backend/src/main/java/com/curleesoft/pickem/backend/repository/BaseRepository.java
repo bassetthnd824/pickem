@@ -117,114 +117,133 @@ public class BaseRepository<D extends AuditableDocument> {
         Objects.requireNonNull(document, "document");
         String resolvedActor = StringUtils.hasText(actor) ? actor : AuditActorResolver.SYSTEM_ACTOR;
         SaveConstraint[] checks = constraints == null ? new SaveConstraint[0] : constraints;
-
-        try {
-            D committed = firestore.<D>runTransaction(transaction -> attempt(transaction, document, resolvedActor, checks))
-                    .get();
-            BeanUtils.copyProperties(committed, document);
-            return document;
-
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-            throw new FirestoreAccessException("Interrupted saving " + collectionName, ex);
-
-        } catch (ExecutionException ex) {
-            Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
-
-            if (cause instanceof StaleDocumentVersionException stale) {
-                throw stale;
-            }
-
-            if (cause instanceof RuntimeException runtime) {
-                throw runtime;
-            }
-
-            throw new FirestoreAccessException("Failed to save " + collectionName, cause);
-        }
+        D committed = inTransaction(
+                transaction -> write(transaction, document, resolvedActor, checks));
+        BeanUtils.copyProperties(committed, document);
+        return document;
     }
 
     public D save(D document, SaveConstraint... constraints) {
         return save(document, auditActorResolver.currentActor(), constraints);
     }
 
-    private D attempt(Transaction transaction, D source, String actor, SaveConstraint[] checks) {
-        try {
-            D draft = draftOf(source);
-            Instant now = clock.instant();
-            DocumentReference ref;
-            boolean insert;
-            D existing = null;
-            String documentId = draft.getId();
+    /**
+     * Version-checks and audit-stamps {@code source} inside an open transaction.
+     * The caller writes the returned draft. A retry of the transaction sees the
+     * original {@code source} version because this method copies it first.
+     */
+    protected D stage(Transaction transaction, D source, String actor, SaveConstraint... checks) {
+        D draft = draftOf(source);
+        Instant now = clock.instant();
+        String documentId = draft.getId();
+        boolean insert;
+        D existing = null;
 
-            if (documentId == null || documentId.isBlank()) {
-                ref = collection().document();
-                documentId = ref.getId();
-                draft.setId(documentId);
-                insert = true;
+        if (documentId == null || documentId.isBlank()) {
+            documentId = collection().document().getId();
+            draft.setId(documentId);
+            insert = true;
 
-            } else {
-                ref = collection().document(documentId);
-                DocumentSnapshot snapshot = transaction.get(ref).get();
+        } else {
+            Optional<D> loaded = readInTransaction(transaction, documentId);
+            insert = loaded.isEmpty();
+            existing = loaded.orElse(null);
+        }
 
-                if (!snapshot.exists()) {
-                    insert = true;
-                } else {
-                    insert = false;
-                    existing = toDocument(snapshot);
-                }
+        SaveConstraint[] constraints = checks == null ? new SaveConstraint[0] : checks;
+
+        for (SaveConstraint check : constraints) {
+            if (check != null) {
+                check.check(transaction, collection(), documentId);
             }
+        }
 
-            for (SaveConstraint check : checks) {
-                if (check != null) {
-                    check.check(transaction, collection(), documentId);
-                }
-            }
-
-            if (insert) {
-                draft.setCreateDate(now);
-                draft.setCreateUser(actor);
-                draft.setLastUpdateDate(now);
-                draft.setLastUpdateUser(actor);
-                draft.setVersion(0L);
-
-            } else {
-                if (existing == null) {
-                    throw new FirestoreAccessException("Failed to map " + collectionName + "/" + documentId, null);
-                }
-
-                Long storedVersion = existing.getVersion();
-
-                if (storedVersion == null) {
-                    storedVersion = 0L;
-                }
-
-                if (draft.getVersion() == null || !storedVersion.equals(draft.getVersion())) {
-                    throw new StaleDocumentVersionException(collectionName, documentId, storedVersion, draft.getVersion());
-                }
-
-                draft.setCreateDate(existing.getCreateDate());
-                draft.setCreateUser(existing.getCreateUser());
-                draft.setLastUpdateDate(now);
-                draft.setLastUpdateUser(actor);
-                draft.setVersion(storedVersion + 1);
-            }
-
-            transaction.set(ref, draft);
+        if (insert) {
+            draft.setCreateDate(now);
+            draft.setCreateUser(actor);
+            draft.setLastUpdateDate(now);
+            draft.setLastUpdateUser(actor);
+            draft.setVersion(0L);
             return draft;
+        }
+
+        D stored = Objects.requireNonNull(existing, "existing");
+        assertVersion(stored, draft.getVersion(), documentId);
+        draft.setCreateDate(stored.getCreateDate());
+        draft.setCreateUser(stored.getCreateUser());
+        draft.setLastUpdateDate(now);
+        draft.setLastUpdateUser(actor);
+        draft.setVersion((stored.getVersion() == null ? 0L : stored.getVersion()) + 1);
+        return draft;
+    }
+
+    protected Optional<D> readInTransaction(Transaction transaction, String documentId) {
+        String id = Objects.requireNonNull(documentId, "documentId");
+
+        try {
+            DocumentReference reference = Objects.requireNonNull(collection().document(id), "document");
+            DocumentSnapshot snapshot = transaction.get(reference).get();
+
+            if (!snapshot.exists()) {
+                return Optional.empty();
+            }
+
+            D mapped = toDocument(snapshot);
+
+            if (mapped == null) {
+                throw new FirestoreAccessException("Failed to map " + collectionName + "/" + id, null);
+            }
+
+            return Optional.of(mapped);
+
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new FirestoreAccessException("Interrupted reading " + collectionName + "/" + id, ex);
+
+        } catch (ExecutionException ex) {
+            throw propagate("Failed to read " + collectionName + "/" + id, ex);
+        }
+    }
+
+    protected void assertVersion(D stored, Long submittedVersion, String documentId) {
+        Long storedVersion = stored.getVersion() == null ? 0L : stored.getVersion();
+
+        if (submittedVersion == null || !storedVersion.equals(submittedVersion)) {
+            throw new StaleDocumentVersionException(collectionName, documentId, storedVersion, submittedVersion);
+        }
+    }
+
+    protected <T> T inTransaction(Function<Transaction, T> work) {
+        Objects.requireNonNull(work, "work");
+
+        try {
+            return firestore.<T>runTransaction(work::apply).get();
 
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new FirestoreAccessException("Interrupted saving " + collectionName, ex);
 
         } catch (ExecutionException ex) {
-            Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
-
-            if (cause instanceof RuntimeException runtime) {
-                throw runtime;
-            }
-
-            throw new FirestoreAccessException("Failed to save " + collectionName, cause);
+            throw propagate("Failed to save " + collectionName, ex);
         }
+    }
+
+    private D write(Transaction transaction, D source, String actor, SaveConstraint[] checks) {
+        D draft = stage(transaction, source, actor, checks);
+        String id = Objects.requireNonNull(draft.getId(), "id");
+        DocumentReference reference = Objects.requireNonNull(collection().document(id), "document");
+        transaction.set(reference, draft);
+        return draft;
+    }
+
+    private RuntimeException propagate(String message, ExecutionException ex) {
+        Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+
+        if (cause instanceof RuntimeException runtime) {
+            return runtime;
+        }
+
+        return new FirestoreAccessException(message, cause);
     }
 
     protected Firestore firestore() {

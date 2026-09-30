@@ -1,18 +1,22 @@
 package com.curleesoft.pickem.backend.repository;
 
 import java.time.Clock;
-import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import com.curleesoft.pickem.backend.config.AuditActorResolver;
 import com.curleesoft.pickem.backend.model.Pick;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.WriteBatch;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.Transaction;
 
 @Repository
 public class PickRepository extends BaseRepository<Pick> {
@@ -44,80 +48,97 @@ public class PickRepository extends BaseRepository<Pick> {
     }
 
     /**
-     * Inserts, updates, and deletes one user's week of picks in a single Firestore
-     * batched write. A document with no create date is an insert (version 0),
-     * including one whose id was chosen with {@link #documentId}. An update keeps
-     * that id and the create audit, and increments {@code version}.
+     * Inserts, updates, and deletes one user's week of picks in one transaction.
+     * {@code guard} sees the week reread inside that transaction and runs before
+     * any write, so a concurrent save cannot commit a second copy of a rank.
+     * Versions follow {@link BaseRepository#stage}. A stale submitted version is
+     * rejected. The caller's objects stay as submitted; the returned drafts carry
+     * the committed versions.
      */
-    public List<Pick> commitWeek(List<Pick> upserts, List<String> deleteIds) {
-        List<Pick> sources = upserts == null ? List.of() : upserts;
-        List<String> removals = new ArrayList<>();
-
-        if (deleteIds != null) {
-            for (String id : deleteIds) {
-                if (StringUtils.hasText(id)) {
-                    removals.add(id);
-                }
-            }
-        }
+    public List<Pick> commitWeek(String userId, String seasonWeekId, List<Pick> upserts, List<Pick> deletes,
+            WeekGuard guard) {
+        List<Pick> sources = upserts == null ? List.of() : List.copyOf(upserts);
+        List<Pick> removals = deletes == null ? List.of() : deletes.stream()
+                .filter(pick -> pick != null && StringUtils.hasText(pick.getId())).toList();
 
         if (sources.isEmpty() && removals.isEmpty()) {
             return List.of();
         }
 
         String actor = currentActor();
-        Instant now = clock().instant();
+        return inTransaction(transaction -> writeWeek(transaction, userId, seasonWeekId, sources, removals, actor,
+                guard));
+    }
+
+    private List<Pick> writeWeek(Transaction transaction, String userId, String seasonWeekId, List<Pick> sources,
+            List<Pick> removals, String actor, WeekGuard guard) {
+        Map<String, Pick> stored = readWeek(transaction, userId, seasonWeekId);
+
+        if (guard != null) {
+            guard.check(stored);
+        }
+
         List<Pick> drafts = new ArrayList<>(sources.size());
 
         for (Pick source : sources) {
-            drafts.add(stamp(source, actor, now));
+            drafts.add(stage(transaction, source, actor));
         }
 
-        WriteBatch batch = firestore().batch();
+        List<DocumentReference> deleted = new ArrayList<>();
+
+        for (Pick removal : removals) {
+            Optional<Pick> current = readInTransaction(transaction, removal.getId());
+
+            if (current.isEmpty()) {
+                continue;
+            }
+
+            String removalId = Objects.requireNonNull(removal.getId(), "id");
+            assertVersion(current.get(), removal.getVersion(), removalId);
+            deleted.add(Objects.requireNonNull(collection().document(removalId), "document"));
+        }
 
         for (Pick draft : drafts) {
-            batch.set(collection().document(draft.getId()), draft);
+            String id = Objects.requireNonNull(draft.getId(), "id");
+            DocumentReference reference = Objects.requireNonNull(collection().document(id), "document");
+            transaction.set(reference, draft);
         }
 
-        for (String id : removals) {
-            batch.delete(collection().document(id));
-        }
-
-        try {
-            batch.commit().get();
-
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-            throw new FirestoreAccessException("Interrupted saving " + COLLECTION, ex);
-
-        } catch (ExecutionException ex) {
-            Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
-            throw new FirestoreAccessException("Failed to save " + COLLECTION, cause);
+        for (DocumentReference ref : deleted) {
+            transaction.delete(Objects.requireNonNull(ref, "document"));
         }
 
         return drafts;
     }
 
-    private Pick stamp(Pick source, String actor, Instant now) {
-        Pick draft = draftOf(source);
+    private Map<String, Pick> readWeek(Transaction transaction, String userId, String seasonWeekId) {
+        Map<String, Pick> stored = new HashMap<>();
 
-        if (draft.getCreateDate() == null) {
-            if (!StringUtils.hasText(draft.getId())) {
-                draft.setId(collection().document().getId());
-            }
-
-            draft.setCreateDate(now);
-            draft.setCreateUser(actor);
-            draft.setVersion(0L);
-
-        } else {
-            long stored = draft.getVersion() == null ? 0L : draft.getVersion();
-            draft.setVersion(stored + 1);
+        if (!StringUtils.hasText(userId)) {
+            return stored;
         }
 
-        draft.setLastUpdateDate(now);
-        draft.setLastUpdateUser(actor);
-        return draft;
+        for (QueryDocumentSnapshot document : TransactionReads.get(transaction, collection().whereEqualTo("userId", userId))
+                .getDocuments()) {
+            Pick pick = document.toObject(Pick.class);
+
+            if (pick == null || !seasonWeekId.equals(pick.getSeasonWeekId()) || !StringUtils.hasText(pick.getMatchupId())) {
+                continue;
+            }
+
+            stored.putIfAbsent(pick.getMatchupId(), pick);
+        }
+
+        return stored;
+    }
+
+    /**
+     * Rank check for one week. Throw to abort the commit. The map is the user's
+     * stored picks for that week, including rows this commit will replace or delete.
+     */
+    @FunctionalInterface
+    public interface WeekGuard {
+        void check(Map<String, Pick> storedByMatchupId);
     }
 
     private static String sanitize(String value) {

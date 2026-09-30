@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.curleesoft.pickem.backend.security.AuthUnavailableException;
+import com.curleesoft.pickem.backend.security.IdentityAdminException;
 import com.curleesoft.pickem.backend.security.InvalidCredentialException;
 
 @RestControllerAdvice
@@ -19,5 +20,12 @@ public class AuthExceptionHandler {
     @ExceptionHandler(AuthUnavailableException.class)
     public ProblemDetail unavailable(AuthUnavailableException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+    }
+
+    @ExceptionHandler(IdentityAdminException.class)
+    public ProblemDetail adminWrite(IdentityAdminException ex) {
+        HttpStatus status = ex.getKind() == IdentityAdminException.Kind.USER_NOT_FOUND ? HttpStatus.CONFLICT
+                : HttpStatus.SERVICE_UNAVAILABLE;
+        return ProblemDetail.forStatusAndDetail(status, ex.getMessage());
     }
 }

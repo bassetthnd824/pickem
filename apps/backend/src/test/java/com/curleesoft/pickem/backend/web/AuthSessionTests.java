@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.curleesoft.pickem.backend.model.User;
 import com.curleesoft.pickem.backend.repository.UserRepository;
 import com.curleesoft.pickem.backend.security.FakeFirebaseIdentityClient;
+import com.curleesoft.pickem.backend.security.IdentityAdminException;
 import com.curleesoft.pickem.backend.security.RoleClaims;
 import com.curleesoft.pickem.backend.security.SessionCookies;
 import com.curleesoft.pickem.backend.security.VerifiedIdentity;
@@ -175,6 +176,24 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
         registerGoogle(uid, "token-2", "kenney@example.com", "Kenney", "Curlee");
         mockMvc.perform(post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-2\"}"))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void logoutReportsAFirebaseFailureAsUnavailable() throws Exception {
+        String userId = uid();
+        registerGoogle(userId, "token-revoke", "kenney@example.com", "Kenney", "Curlee");
+        MvcResult login = mockMvc.perform(post("/api/auth/session").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"idToken\":\"token-revoke\"}")).andExpect(status().isNoContent()).andReturn();
+        String sessionCookie = sessionCookie(login);
+        firebase.failRevoke(userId, new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE,
+                IdentityAdminException.REVOKE_FAILED));
+
+        mockMvc.perform(post("/api/auth/logout").cookie(session(sessionCookie)))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.detail").value(IdentityAdminException.REVOKE_FAILED));
+
+        mockMvc.perform(get("/api/auth/me").cookie(session(sessionCookie))).andExpect(status().isOk());
+        assertThat(firebase.refreshRevoked(userId)).isFalse();
     }
 
     @Test

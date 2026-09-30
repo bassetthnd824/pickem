@@ -2,10 +2,8 @@ package com.curleesoft.pickem.backend.service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.curleesoft.pickem.backend.model.Team;
 import com.curleesoft.pickem.backend.model.Venue;
@@ -27,17 +25,9 @@ public class TeamService {
 
     public static final String NOT_FOUND = "Team not found";
 
-    public static final String NAME_INVALID = "team name is invalid";
-
-    public static final String SQUAD_INVALID = "squad name is invalid";
-
-    public static final String CONFERENCE_REQUIRED = "conferenceMember is required";
-
     public static final String NAME_NOT_UNIQUE = "team name must be unique";
 
     public static final String CFBD_NOT_UNIQUE = "cfbdTeamId must be unique";
-
-    private static final int NAME_MAX = 40;
 
     private final TeamRepository teamRepository;
 
@@ -50,13 +40,13 @@ public class TeamService {
 
     public List<Team> search(String teamName, String squadName, Boolean conferenceMember, String homeVenueId,
             Long cfbdTeamId) {
-        String name = normalizeContains(teamName);
-        String squad = normalizeContains(squadName);
-        String venueId = blankToNull(homeVenueId);
+        String name = SearchText.normalizeContains(teamName);
+        String squad = SearchText.normalizeContains(squadName);
+        String venueId = SearchText.blankToNull(homeVenueId);
 
         return teamRepository.findAll().stream()
-                .filter(item -> name == null || contains(item.getTeamName(), name))
-                .filter(item -> squad == null || contains(item.getSquadName(), squad))
+                .filter(item -> name == null || SearchText.contains(item.getTeamName(), name))
+                .filter(item -> squad == null || SearchText.contains(item.getSquadName(), squad))
                 .filter(item -> conferenceMember == null || conferenceMember.equals(item.getConferenceMember()))
                 .filter(item -> venueId == null || venueId.equals(item.getHomeVenueId()))
                 .filter(item -> cfbdTeamId == null || cfbdTeamId.equals(item.getCfbdTeamId()))
@@ -90,27 +80,12 @@ public class TeamService {
     }
 
     private void apply(Team target, Team request) {
-        String name = trim(request.getTeamName());
-        String squad = trim(request.getSquadName());
-
-        if (!StringUtils.hasText(name) || name.length() > NAME_MAX) {
-            throw new InvalidRequestException(NAME_INVALID);
-        }
-
-        if (!StringUtils.hasText(squad) || squad.length() > NAME_MAX) {
-            throw new InvalidRequestException(SQUAD_INVALID);
-        }
-
-        if (request.getConferenceMember() == null) {
-            throw new InvalidRequestException(CONFERENCE_REQUIRED);
-        }
-
-        String venueId = trim(request.getHomeVenueId());
+        String venueId = SearchText.trim(request.getHomeVenueId());
         Venue venue = venueRepository.findById(venueId)
                 .orElseThrow(() -> new InvalidRequestException(VenueService.NOT_FOUND));
 
-        target.setTeamName(name);
-        target.setSquadName(squad);
+        target.setTeamName(SearchText.trim(request.getTeamName()));
+        target.setSquadName(SearchText.trim(request.getSquadName()));
         target.setConferenceMember(request.getConferenceMember());
         target.setHomeVenueId(venue.getId());
         target.setHomeVenue(new VenueSnapshot(venue.getId(), venue.getVenueName(), venue.getCityState()));
@@ -136,21 +111,4 @@ public class TeamService {
         }
     }
 
-    private static String trim(String value) {
-        return value == null ? null : value.trim();
-    }
-
-    private static String blankToNull(String value) {
-        String trimmed = trim(value);
-        return StringUtils.hasText(trimmed) ? trimmed : null;
-    }
-
-    private static String normalizeContains(String value) {
-        String trimmed = blankToNull(value);
-        return trimmed == null ? null : trimmed.toLowerCase(Locale.ROOT);
-    }
-
-    private static boolean contains(String value, String needle) {
-        return value != null && value.toLowerCase(Locale.ROOT).contains(needle);
-    }
 }

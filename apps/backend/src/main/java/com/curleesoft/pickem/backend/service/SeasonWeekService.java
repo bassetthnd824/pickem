@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.curleesoft.pickem.backend.model.Season;
 import com.curleesoft.pickem.backend.model.SeasonWeek;
@@ -41,9 +40,9 @@ public class SeasonWeekService {
     }
 
     public List<SeasonWeek> search(String seasonId, Integer weekNumber, String beginDate, String endDate) {
-        String season = blankToNull(seasonId);
-        String begin = blankToNull(beginDate);
-        String end = blankToNull(endDate);
+        String season = SearchText.blankToNull(seasonId);
+        String begin = SearchText.blankToNull(beginDate);
+        String end = SearchText.blankToNull(endDate);
         List<SeasonWeek> candidates = season == null ? seasonWeekRepository.findAll()
                 : seasonWeekRepository.query(collection -> collection.whereEqualTo("seasonId", season));
 
@@ -83,7 +82,7 @@ public class SeasonWeekService {
     }
 
     private void apply(SeasonWeek target, SeasonWeek request) {
-        String seasonId = trim(request.getSeasonId());
+        String seasonId = SearchText.trim(request.getSeasonId());
         Season season = seasonRepository.findById(seasonId)
                 .orElseThrow(() -> new InvalidRequestException(SEASON_NOT_FOUND));
 
@@ -92,7 +91,7 @@ public class SeasonWeekService {
         }
 
         ParsedWeek parsed = SeasonCalendar.parseManualWeek(season.getBeginDate(), request.getWeekNumber(),
-                trim(request.getBeginDate()), trim(request.getEndDate()));
+                SearchText.trim(request.getBeginDate()), SearchText.trim(request.getEndDate()));
         target.setSeasonId(season.getId());
         target.setWeekNumber(request.getWeekNumber());
         target.setBeginDate(parsed.beginDate().toString());
@@ -117,12 +116,4 @@ public class SeasonWeekService {
         }
     }
 
-    private static String trim(String value) {
-        return value == null ? null : value.trim();
-    }
-
-    private static String blankToNull(String value) {
-        String trimmed = trim(value);
-        return StringUtils.hasText(trimmed) ? trimmed : null;
-    }
 }
