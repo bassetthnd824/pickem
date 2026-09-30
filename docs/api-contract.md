@@ -73,7 +73,7 @@ All endpoints require a signed-in user (`player` or `manager`).
 | `GET`  | `/api/game/team-schedule` | session | Conference team W/L schedule. Query: `teamId`, `seasonId`                             |
 | `GET`  | `/api/game/account`       | session | Profile: email, name, `nickName`, `themeId`                                           |
 | `PUT`  | `/api/game/account`       | session | Update `nickName` (required, ≤ 40) and `themeId` only                                 |
-| `GET`  | `/api/game/teams`         | session | Conference-member list for the team-schedule dropdown. Query: `conferenceMember=true` |
+| `GET`  | `/api/game/teams`         | session | Conference members for the schedule dropdown: `{ id, teamName, squadName }`          |
 
 ### Picks
 
@@ -101,12 +101,31 @@ appear with score 0.
 
 ### Team schedule
 
-Away games prefix the opponent with `"at "`. Unplayed games omit W/L and
-score result.
+`GET /api/game/team-schedule` returns
+`[{ matchupDate, opponentName, scoreResult, winLoss }]`.
+`teamId` is required and must be a conference member. `seasonId` defaults to
+the current season; a blank value does too. An unknown team or season is 404.
+Away games prefix `opponentName` with `"at "`. `scoreResult` is
+`"{homeScore} - {awayScore}"`. `winLoss` is `W` or `L` from the selected
+team's perspective. Unplayed games (either score empty, or equal scores)
+omit `winLoss` and `scoreResult`. Order is week number, date, then home team
+name.
+
+`GET /api/game/teams` returns `[{ id, teamName, squadName }]`, conference
+members ordered by team name. There is no `conferenceMember` query.
 
 ### Account
 
-Email and name are read-only (Google). Password fields are rejected.
+`GET /api/game/account` returns
+`{ emailAddr, firstName, lastName, nickName, themeId, version }`.
+Email and name are read-only (Google).
+
+`PUT /api/game/account` accepts `{ nickName, themeId, version }`. `nickName`
+is required, trimmed, and at most 40 characters. `themeId` must be an existing
+theme path. `version` is the user document's optimistic-lock value. The names
+`password`, `oldPass`, `userPass`, and `confirmPass` (any letter case) are 400
+and do not write. Other fields in the body are ignored. A stale or missing
+`version` is 409.
 
 ---
 

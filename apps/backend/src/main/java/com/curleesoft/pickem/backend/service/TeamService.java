@@ -55,6 +55,15 @@ public class TeamService {
                 .toList();
     }
 
+    /**
+     * Conference members ordered by team name. Replaces
+     * {@code TeamBean.getConferenceTeams}. The player schedule dropdown uses
+     * this list; {@link #search} remains the manager filter.
+     */
+    public List<Team> conferenceTeams() {
+        return search(null, null, Boolean.TRUE, null, null);
+    }
+
     public Team get(String id) {
         return teamRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
     }
