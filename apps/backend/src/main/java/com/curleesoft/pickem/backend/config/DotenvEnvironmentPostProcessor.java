@@ -15,7 +15,7 @@ import com.curleesoft.pickem.backend.config.DotenvFileLoader.LoadedDotenv;
 /**
  * Loads {@code .env} into the Spring Environment before application.yml is
  * processed. OS environment variables take precedence over the file. Google
- * Secret Manager ({@code sm://}) is a separate, optional config-data source.
+ * Secret Manager ({@code sm@}) is a separate, optional config-data source.
  */
 public class DotenvEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
