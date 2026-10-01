@@ -533,13 +533,13 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- `tools/seed` runs against the Firestore emulator and can run once against a real project.
-- Seeds venues, teams (conference members + home venues), rivalries, seasons, season weeks, sample matchups, and 18 theme docs (light, dark, 16 SEC keys).
-- Each of the 16 SEC teams is seeded with the CFBD school `cfbdTeamId` (and a name that matches CFBD `homeTeam` / `awayTeam` strings) so schedule import can resolve conference teams.
-- Home venues for those teams carry `cfbdVenueId` when known.
-- Bootstrap manager email receives Firebase custom claims `manager` + `player`.
-- No pick documents and no password hashes are written.
-- Script is idempotent enough to re-run in the emulator without manual cleanup, or documents a reset step.
+- [x] `tools/seed` runs against the Firestore emulator and can run once against a real project.
+- [x] Seeds venues, teams (conference members + home venues), rivalries, seasons, season weeks, sample matchups, and 18 theme docs (light, dark, 16 SEC keys).
+- [x] Each of the 16 SEC teams is seeded with the CFBD school `cfbdTeamId` (and a name that matches CFBD `homeTeam` / `awayTeam` strings) so schedule import can resolve conference teams.
+- [x] Home venues for those teams carry `cfbdVenueId` when known.
+- [x] Bootstrap manager email receives Firebase custom claims `manager` + `player`.
+- [x] No pick documents and no password hashes are written.
+- [x] Script is idempotent enough to re-run in the emulator without manual cleanup, or documents a reset step.
 
 **Predecessors:** US-02, US-05, US-06, US-08.
 

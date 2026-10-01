@@ -73,3 +73,5 @@ out
 
 # Vitest
 vitest.config.*.timestamp*
+
+.nx/polygraph
