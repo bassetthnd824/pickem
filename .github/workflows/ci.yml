@@ -10,8 +10,93 @@ permissions:
   actions: write
 
 jobs:
+  # Pull requests compare the merge commit (github.sha) with the base branch
+  # tip, which is the set of files this PR changes. Pushes to main compare
+  # github.event.before with github.sha. Nx also marks dependents affected:
+  # the root Maven project pickem owns files outside apps/*, and backend
+  # depends on pickem, so a root file such as pom.xml selects backend too.
+  affected:
+    name: Affected projects
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.affected.outputs.frontend }}
+      backend: ${{ steps.affected.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: List projects affected by this change
+        id: affected
+        env:
+          NX_DAEMON: "false"
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            BASE_SHA="${PR_BASE_SHA}"
+          else
+            BASE_SHA="${PUSH_BEFORE}"
+          fi
+          HEAD_SHA="${GITHUB_SHA}"
+          echo "Event: ${GITHUB_EVENT_NAME}"
+          echo "Base: ${BASE_SHA}"
+          echo "Head: ${HEAD_SHA}"
+
+          if [ -z "${BASE_SHA}" ] || [ "${BASE_SHA}" = "0000000000000000000000000000000000000000" ]; then
+            echo "No base commit. Treating every project as affected."
+            npx nx show projects --json > "${RUNNER_TEMP}/affected.json"
+          else
+            git cat-file -e "${BASE_SHA}^{commit}"
+            git cat-file -e "${HEAD_SHA}^{commit}"
+            npx nx show projects --affected --base="${BASE_SHA}" --head="${HEAD_SHA}" --json > "${RUNNER_TEMP}/affected.json"
+          fi
+
+          node <<'NODE'
+          const fs = require('fs');
+          const text = fs.readFileSync(process.env.RUNNER_TEMP + '/affected.json', 'utf8').trim();
+          let projects;
+          try {
+            projects = JSON.parse(text);
+          } catch {
+            const line = text
+              .split(/\r?\n/)
+              .map((item) => item.trim())
+              .filter(Boolean)
+              .reverse()
+              .find((item) => item.startsWith('['));
+            if (!line) {
+              console.error('nx show projects did not print a JSON array');
+              console.error(text);
+              process.exit(1);
+            }
+            projects = JSON.parse(line);
+          }
+          if (!Array.isArray(projects) || projects.some((name) => typeof name !== 'string')) {
+            console.error('Unexpected project list');
+            process.exit(1);
+          }
+          console.log(
+            projects.length === 0
+              ? 'Affected projects: none'
+              : `Affected projects: ${projects.join(', ')}`
+          );
+          const output =
+            ['frontend', 'backend']
+              .map((name) => `${name}=${projects.includes(name)}`)
+              .join('\n') + '\n';
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, output);
+          NODE
+
   build-frontend:
     name: Build frontend
+    needs: affected
+    if: needs.affected.result == 'success' && needs.affected.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -44,6 +129,8 @@ jobs:
 
   test-frontend:
     name: Test frontend
+    needs: affected
+    if: needs.affected.result == 'success' && needs.affected.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -74,6 +161,8 @@ jobs:
 
   build-backend:
     name: Build backend
+    needs: affected
+    if: needs.affected.result == 'success' && needs.affected.outputs.backend == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -114,6 +203,8 @@ jobs:
 
   test-backend:
     name: Test backend
+    needs: affected
+    if: needs.affected.result == 'success' && needs.affected.outputs.backend == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -153,11 +244,12 @@ jobs:
           key: ${{ steps.nx-cache.outputs.cache-primary-key }}
 
   # Required check on main. strict_required_status_checks_policy is false, so a
-  # skipped check would not block merging. This job always runs and fails unless
-  # all four jobs succeeded.
+  # skipped check would not block merging. This job always runs. A project job
+  # must succeed when that project is affected, and must be skipped otherwise.
   build:
     name: Build and test
     needs:
+      - affected
       - build-frontend
       - test-frontend
       - build-backend
@@ -165,13 +257,41 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Require frontend and backend build and test
+      - name: Require successful or skipped project jobs
+        env:
+          AFFECTED_RESULT: ${{ needs.affected.result }}
+          FRONTEND: ${{ needs.affected.outputs.frontend }}
+          BACKEND: ${{ needs.affected.outputs.backend }}
+          BUILD_FRONTEND: ${{ needs.build-frontend.result }}
+          TEST_FRONTEND: ${{ needs.test-frontend.result }}
+          BUILD_BACKEND: ${{ needs.build-backend.result }}
+          TEST_BACKEND: ${{ needs.test-backend.result }}
         run: |
-          echo "Build frontend: ${{ needs.build-frontend.result }}"
-          echo "Test frontend: ${{ needs.test-frontend.result }}"
-          echo "Build backend: ${{ needs.build-backend.result }}"
-          echo "Test backend: ${{ needs.test-backend.result }}"
-          test "${{ needs.build-frontend.result }}" = "success"
-          test "${{ needs.test-frontend.result }}" = "success"
-          test "${{ needs.build-backend.result }}" = "success"
-          test "${{ needs.test-backend.result }}" = "success"
+          set -euo pipefail
+          echo "Affected projects job: ${AFFECTED_RESULT}"
+          echo "Frontend affected: ${FRONTEND}"
+          echo "Build frontend: ${BUILD_FRONTEND}"
+          echo "Test frontend: ${TEST_FRONTEND}"
+          echo "Backend affected: ${BACKEND}"
+          echo "Build backend: ${BUILD_BACKEND}"
+          echo "Test backend: ${TEST_BACKEND}"
+          if [ "${AFFECTED_RESULT}" != "success" ]; then
+            echo "Affected projects job must succeed."
+            exit 1
+          fi
+          require() {
+            affected="$1"
+            build_result="$2"
+            test_result="$3"
+            if [ "${affected}" = "true" ]; then
+              if [ "${build_result}" != "success" ] || [ "${test_result}" != "success" ]; then
+                echo "Affected project jobs must succeed."
+                exit 1
+              fi
+            elif [ "${build_result}" != "skipped" ] || [ "${test_result}" != "skipped" ]; then
+              echo "Unaffected project jobs must be skipped."
+              exit 1
+            fi
+          }
+          require "${FRONTEND}" "${BUILD_FRONTEND}" "${TEST_FRONTEND}"
+          require "${BACKEND}" "${BUILD_BACKEND}" "${TEST_BACKEND}"
