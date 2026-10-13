@@ -49,7 +49,7 @@ Read that story's user story, description, acceptance criteria, and source. Open
 
 Implement only this story's acceptance criteria. Do not pull a successor's behavior out of a shared doc. Obey `AGENTS.md`, including the legacy `src/` freeze until the story being implemented is US-26, and the Java null-analysis rules when the story touches backend Java.
 
-Do not set this story's index **Status** to `Done` in the PR. That cell flips only after the work is on `main`.
+Do not set this story's index **Status** to `Done` in the PR. After the pull request merges to `main`, `.github/workflows/mark-story-done.yml` sets that cell and the section **Status:** line when the pull request names exactly one story. Do not open a follow-up pull request to mark it done.
 
 ## 4. Branch from main
 
@@ -103,4 +103,4 @@ If `gh` is not authenticated or the push or PR creation fails, stop and report t
 
 On a predecessor block, the report is only the open-predecessor list.
 
-Otherwise report the branch name, the commit subject, the PR URL, and that the index status stays unchanged until the PR is on `main`.
+Otherwise report the branch name, the commit subject, the PR URL, and that the index status stays unchanged until the merge workflow marks the story done on `main`.

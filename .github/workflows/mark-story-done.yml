@@ -1,0 +1,125 @@
+# After a pull request merges to main, mark its user story done in
+# docs/user-stories.md.
+#
+# A pull request specifies a story when exactly one id is named by its head
+# branch (US-NN-slug or dir/US-NN-slug), its title (a US-NN token), or a line
+# that is only US-NN in the body or a commit message. Ids mentioned inside a
+# sentence do not count. Zero ids or several ids leave the file unchanged.
+#
+# pull_request_target runs the workflow from the default branch, not from the
+# pull request head. The job runs the script from the pre-merge main commit
+# (pull_request.base.sha) and commits onto current main. A pull request cannot
+# replace the script that edits main in the same run. Script changes on main
+# apply to the next merge.
+
+name: Mark user story done
+
+on:
+  pull_request_target:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: mark-story-done-main
+  cancel-in-progress: false
+
+jobs:
+  mark-story-done:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Load the pre-merge story script
+        id: script
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/marker"
+          if git cat-file -e "${BASE_SHA}:.github/scripts/mark-story-done.mjs" \
+            && git cat-file -e "${BASE_SHA}:.github/scripts/mark-story-done.test.mjs"; then
+            git show "${BASE_SHA}:.github/scripts/mark-story-done.mjs" > "${RUNNER_TEMP}/marker/mark-story-done.mjs"
+            git show "${BASE_SHA}:.github/scripts/mark-story-done.test.mjs" > "${RUNNER_TEMP}/marker/mark-story-done.test.mjs"
+            echo "ready=true" >> "${GITHUB_OUTPUT}"
+          elif git cat-file -e "${BASE_SHA}:.github/workflows/mark-story-done.yml"; then
+            echo "The story workflow is on the pre-merge commit, but its script is missing." >&2
+            exit 1
+          else
+            echo "This merge adds the story-status workflow. It marks stories starting with the next merge to main."
+            echo "ready=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Test the story script
+        if: steps.script.outputs.ready == 'true'
+        run: node --test "${RUNNER_TEMP}/marker/mark-story-done.test.mjs"
+
+      - name: Resolve the user story
+        id: story
+        if: steps.script.outputs.ready == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node "${RUNNER_TEMP}/marker/mark-story-done.mjs" --resolve
+
+      - name: Leave the index unchanged
+        if: steps.script.outputs.ready == 'true' && steps.story.outputs.reason == 'none'
+        run: echo "This pull request does not specify a user story. docs/user-stories.md was left unchanged."
+
+      - name: Leave the index unchanged when several stories are named
+        if: steps.script.outputs.ready == 'true' && steps.story.outputs.reason == 'conflict'
+        run: |
+          echo "::warning title=Story status not updated::This pull request names more than one user story (${{ steps.story.outputs.story_ids }}). docs/user-stories.md was left unchanged."
+
+      - name: Commit the story status on main
+        if: steps.script.outputs.ready == 'true' && steps.story.outputs.reason == 'unique'
+        env:
+          STORY_ID: ${{ steps.story.outputs.story_id }}
+          PR_NUMBER: ${{ steps.story.outputs.pr_number }}
+          PR_URL: ${{ steps.story.outputs.pr_url }}
+        run: |
+          set -euo pipefail
+          case "${STORY_ID}" in
+            US-[0-9][0-9]|US-[0-9][0-9][0-9]) ;;
+            *) echo "Refusing unexpected story id: ${STORY_ID}" >&2; exit 1 ;;
+          esac
+          case "${PR_NUMBER}" in
+            ''|*[!0-9]*) echo "Refusing unexpected pull request number" >&2; exit 1 ;;
+          esac
+          case "${PR_URL}" in
+            https://*/pull/"${PR_NUMBER}") ;;
+            *) echo "Refusing unexpected pull request URL" >&2; exit 1 ;;
+          esac
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          script="${RUNNER_TEMP}/marker/mark-story-done.mjs"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git checkout --detach origin/main
+            node "${script}" --apply --story "${STORY_ID}" --pr "${PR_NUMBER}" --url "${PR_URL}" --file docs/user-stories.md
+            if git diff --quiet -- docs/user-stories.md; then
+              echo "${STORY_ID} is already marked done."
+              exit 0
+            fi
+            git add docs/user-stories.md
+            git commit -m "docs(stories): mark ${STORY_ID} done" -m "${STORY_ID}"
+            if git push origin HEAD:main; then
+              echo "Marked ${STORY_ID} done on main."
+              exit 0
+            fi
+            echo "Push was rejected on attempt ${attempt}. Retrying on the latest main."
+          done
+          echo "Could not push the story status update." >&2
+          exit 1
