@@ -4,6 +4,10 @@ on:
   pull_request:
   push:
     branches: [main]
+  # The story-status workflow dispatches CI on its commit before pushing that
+  # commit to main. The ruleset requires the "Build and test" check on the
+  # commit, and a push from GITHUB_TOKEN does not start this workflow by itself.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -12,7 +16,8 @@ permissions:
 jobs:
   # Pull requests compare the merge commit (github.sha) with the base branch
   # tip, which is the set of files this PR changes. Pushes to main compare
-  # github.event.before with github.sha. Nx also marks dependents affected:
+  # github.event.before with github.sha. A workflow_dispatch run compares the
+  # dispatched ref with merge-base against origin/main. Nx also marks dependents affected:
   # the root Maven project pickem owns files outside apps/*, and backend
   # depends on pickem, so a root file such as pom.xml selects backend too.
   affected:
@@ -40,6 +45,9 @@ jobs:
           set -euo pipefail
           if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
             BASE_SHA="${PR_BASE_SHA}"
+          elif [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            git fetch origin main
+            BASE_SHA="$(git merge-base HEAD origin/main)"
           else
             BASE_SHA="${PUSH_BEFORE}"
           fi

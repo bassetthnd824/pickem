@@ -346,10 +346,15 @@ test(
         before.indexOf(before.find((line) => line.startsWith("### US-31 "))) + 2
       ],
     );
-    const us15 = after.indexOf(
-      before.find((line) => line.startsWith("### US-15 ")),
+    const us15Heading = before.find((line) => line.startsWith("### US-15 "));
+    const us15Before = before.indexOf(us15Heading);
+    const us15After = after.indexOf(us15Heading);
+    const nextHeading = (lines, from) =>
+      lines.findIndex((line, index) => index > from && line.startsWith("### "));
+    assert.deepEqual(
+      after.slice(us15After, nextHeading(after, us15After)),
+      before.slice(us15Before, nextHeading(before, us15Before)),
     );
-    assert.equal(after[us15 + 2].startsWith("**Status:**"), false);
     const again = markStoryDone(source, {
       storyId: "US-01",
       prNumber: 99,
