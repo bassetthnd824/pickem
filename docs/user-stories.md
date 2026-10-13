@@ -45,19 +45,19 @@ College Football Data (CFBD) is new product scope (not in the legacy app):
 | ID    | Title                                                    | Epic                  | Status | Predecessors                                 | Successors                                             |
 | ----- | -------------------------------------------------------- | --------------------- | ------ | -------------------------------------------- | ------------------------------------------------------ |
 | US-01 | Bootstrap the Nx monorepo                                | A Foundation          | Done   | —                                            | US-03, US-13                                           |
-| US-02 | Publish architecture docs and Firestore rules            | A Foundation          | —      | —                                            | US-03, US-12, US-14, US-27, US-39                      |
-| US-03 | Stand up the Spring Boot API with Firestore persistence  | B Backend platform    | —      | US-01, US-02                                 | US-04, US-05, US-06, US-27, US-40                      |
-| US-04 | Authenticate with Google via an HttpOnly session cookie  | B Backend platform    | —      | US-03                                        | US-05, US-06, US-08, US-09, US-11, US-31, US-32        |
-| US-05 | Manage seasons and season weeks via REST                 | C Manager APIs        | —      | US-03, US-04                                 | US-07, US-12, US-20, US-22, US-38                      |
-| US-06 | Manage venues, teams, and rivalries via REST             | C Manager APIs        | —      | US-03, US-04                                 | US-07, US-12, US-20, US-22, US-27, US-35               |
-| US-07 | Manage matchups via REST                                 | C Manager APIs        | —      | US-05, US-06                                 | US-09, US-10, US-11, US-21, US-22, US-28, US-34, US-35 |
-| US-08 | Manage users and themes via REST                         | C Manager APIs        | —      | US-04                                        | US-11, US-12, US-21, US-22, US-36                      |
-| US-09 | Load and save a player’s weekly confidence picks         | D Game APIs           | —      | US-04, US-07                                 | US-16, US-22, US-24, US-34                             |
-| US-10 | Rank players on the season leaderboard                   | D Game APIs           | —      | US-07                                        | US-17, US-24                                           |
-| US-11 | Show a team schedule and let a player edit their profile | D Game APIs           | —      | US-04, US-07, US-08                          | US-18, US-19, US-24                                    |
-| US-12 | Seed Firestore with reference data and themes            | E Seed                | —      | US-02, US-05, US-06, US-08                   | US-16, US-24, US-27                                    |
-| US-13 | Scaffold the Next.js app and API client                  | F Frontend shell      | —      | US-01                                        | US-14, US-15, US-31                                    |
-| US-14 | Apply switchable Light, Dark, and SEC school themes      | F Frontend shell      | —      | US-02, US-13                                 | US-15, US-23, US-36                                    |
+| US-02 | Publish architecture docs and Firestore rules            | A Foundation          | Done   | —                                            | US-03, US-12, US-14, US-27, US-39                      |
+| US-03 | Stand up the Spring Boot API with Firestore persistence  | B Backend platform    | Done   | US-01, US-02                                 | US-04, US-05, US-06, US-27, US-40                      |
+| US-04 | Authenticate with Google via an HttpOnly session cookie  | B Backend platform    | Done   | US-03                                        | US-05, US-06, US-08, US-09, US-11, US-31, US-32        |
+| US-05 | Manage seasons and season weeks via REST                 | C Manager APIs        | Done   | US-03, US-04                                 | US-07, US-12, US-20, US-22, US-38                      |
+| US-06 | Manage venues, teams, and rivalries via REST             | C Manager APIs        | Done   | US-03, US-04                                 | US-07, US-12, US-20, US-22, US-27, US-35               |
+| US-07 | Manage matchups via REST                                 | C Manager APIs        | Done   | US-05, US-06                                 | US-09, US-10, US-11, US-21, US-22, US-28, US-34, US-35 |
+| US-08 | Manage users and themes via REST                         | C Manager APIs        | Done   | US-04                                        | US-11, US-12, US-21, US-22, US-36                      |
+| US-09 | Load and save a player’s weekly confidence picks         | D Game APIs           | Done   | US-04, US-07                                 | US-16, US-22, US-24, US-34                             |
+| US-10 | Rank players on the season leaderboard                   | D Game APIs           | Done   | US-07                                        | US-17, US-24                                           |
+| US-11 | Show a team schedule and let a player edit their profile | D Game APIs           | Done   | US-04, US-07, US-08                          | US-18, US-19, US-24                                    |
+| US-12 | Seed Firestore with reference data and themes            | E Seed                | Done   | US-02, US-05, US-06, US-08                   | US-16, US-24, US-27                                    |
+| US-13 | Scaffold the Next.js app and API client                  | F Frontend shell      | Done   | US-01                                        | US-14, US-15, US-31                                    |
+| US-14 | Apply switchable Light, Dark, and SEC school themes      | F Frontend shell      | Done   | US-02, US-13                                 | US-15, US-23, US-36                                    |
 | US-15 | Sign in with Google and protect game and manager routes  | F Frontend shell      | —      | US-04, US-13, US-14, US-31, US-32, US-33     | US-16, US-17, US-18, US-19, US-20, US-37               |
 | US-31 | Proxy browser API calls through Next.js with Axios       | F Frontend shell      | —      | US-04, US-13                                 | US-15, US-25, US-33                                    |
 | US-32 | Verify the session cookie in Next.js middleware          | F Frontend shell      | —      | US-04, US-13                                 | US-15                                                  |
@@ -287,6 +287,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 ### US-02 — Publish architecture docs and Firestore rules
 
+**Status:** Done ([PR #6](https://github.com/bassetthnd824/pickem/pull/6)).
+
 **User story.** As a developer, I want the Firestore data model, REST contract, SEC theme colors, and security rules written down so that backend, frontend, and seed work share one source of truth.
 
 **Description.** Expand the modernization plan’s collections table, REST surface, and SEC color table into dedicated docs. Include a parity checklist derived from the legacy screen inventory (`tiles.xml` + `struts.xml`).
@@ -312,6 +314,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 ### US-03 — Stand up the Spring Boot API with Firestore persistence
 
+**Status:** Done ([PR #8](https://github.com/bassetthnd824/pickem/pull/8)).
+
 **User story.** As a developer, I want a Spring Boot REST API that talks to Firestore with a shared repository and DTOs so that domain services can persist denormalized documents instead of JPA entities.
 
 **Description.** Ports `GenericHibernateBean` + `AbstractBaseEntity` into `BaseRepository<T>` (`findById` / `findAll` / `query` / `save` / `delete`, audit stamps, `version` checked in a transaction). Layering: `config/`, `repository/`, `service/`, `web/`. Use `spring-cloud-gcp-starter-firestore` or the Firestore SDK, `spring-boot-starter-web/security/validation`, Springdoc. Dates are `java.time` ISO-8601 (replaces `DateConverter` / `DateSerializerDeserializer`).
@@ -334,6 +338,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 ---
 
 ### US-04 — Authenticate with Google via an HttpOnly session cookie
+
+**Status:** Done ([PR #10](https://github.com/bassetthnd824/pickem/pull/10)).
 
 **User story.** As a player, I want to sign in with Google and stay signed in via a server session cookie so that I never manage a password and API calls are authenticated automatically.
 
@@ -361,6 +367,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 ### US-05 — Manage seasons and season weeks via REST
 
+**Status:** Done ([PR #11](https://github.com/bassetthnd824/pickem/pull/11)).
+
 **User story.** As a manager, I want to CRUD seasons and weeks so that the schedule calendar exists before matchups and picks.
 
 **Description.** Ports `SeasonAction` / `SeasonBean` and `SeasonWeekAction` / `SeasonWeekBean`. Current season uses `isCurrent` and/or a date window (replaces the Derby `getCurrentSeason` native query). Helpers: GET season by id, GET weeks by season. Week begin date must be Thursday; end date Wednesday = begin + 6 days; week 1 begin equals season begin; later weeks begin = season begin + `(weekNumber - 1) * 7`.
@@ -384,6 +392,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 ---
 
 ### US-06 — Manage venues, teams, and rivalries via REST
+
+**Status:** Done ([PR #14](https://github.com/bassetthnd824/pickem/pull/14)).
 
 **User story.** As a manager, I want to CRUD venues, teams, and rivalries so that matchups have teams, home stadiums, and named rivalries.
 
@@ -409,6 +419,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 ### US-07 — Manage matchups via REST
 
+**Status:** Done ([PR #15](https://github.com/bassetthnd824/pickem/pull/15)).
+
 **User story.** As a manager, I want to CRUD weekly matchups including scores so that players have games to pick and the leaderboard can score them.
 
 **Description.** Ports `MatchupAction`. Documents denormalize season/week, home/away team+squad, venue, and optional rivalry name. `winningTeamId` is computed server-side from scores (home wins if `homeScore > awayScore`; else away — same as `MatchupUserPick.getWinningTeamId()`; unplayed → no winner / `-1` equivalent). Matchup date must fall in the week’s `[beginDate, endDate]`. Home team ≠ away team.
@@ -431,6 +443,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 ---
 
 ### US-08 — Manage users and themes via REST
+
+**Status:** Done ([PR #17](https://github.com/bassetthnd824/pickem/pull/17)).
 
 **User story.** As a manager, I want to list/edit users and CRUD themes and to grant the manager role so that I can elevate admins and control the selectable theme list.
 
@@ -457,6 +471,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 ### US-09 — Load and save a player’s weekly confidence picks
 
+**Status:** Done ([PR #18](https://github.com/bassetthnd824/pickem/pull/18)).
+
 **User story.** As a player, I want the current season’s matchups joined with my picks and to save a week’s ranks in one request so that I can play the confidence pool.
 
 **Description.** Ports `MainAction` + `MatchupBean.getMatchupUserPicksByUserSeason` + `UserPickBean.persistList`. Join matchups and picks in code (no SQL). `GET /api/game/main` returns current-season weeks, the user’s matchup/pick grid, and `numberOfConferenceTeams`. `POST /api/game/picks` bulk-upserts; rows with no `pickedTeamId` are dropped. Rank is 1..N where N = conference team count. Preserve `isCurrentOrPastWeek()`: scores/results are hidden or picks locked until the week is current or past.
@@ -480,6 +496,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 ### US-10 — Rank players on the season leaderboard
 
+**Status:** Done ([PR #20](https://github.com/bassetthnd824/pickem/pull/20)).
+
 **User story.** As a player, I want a season leaderboard of total confidence points so that I can see who is winning.
 
 **Description.** Ports `LeaderBoardAction` / `MatchupBean.getLeaderBoardForSeason` / `UserScore.compareTo`. Load season matchups (derive winner) and all picks; sum `rank` where the pick matches the winner; sort score descending, tie-break by userId (legacy `User.compareTo` on userId). Display nickname. Preserve week-lock scoring rules.
@@ -501,6 +519,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 ---
 
 ### US-11 — Show a team schedule and let a player edit their profile
+
+**Status:** Done ([PR #22](https://github.com/bassetthnd824/pickem/pull/22)).
 
 **User story.** As a player, I want a conference team’s W/L schedule and to update my nickname and theme so that I can follow teams and personalize my account without touching credentials.
 
@@ -526,6 +546,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 ## Epic E — Seed data
 
 ### US-12 — Seed Firestore with reference data and themes
+
+**Status:** Done ([PR #23](https://github.com/bassetthnd824/pickem/pull/23)).
 
 **User story.** As a developer, I want a seed script that loads SEC teams, venues, rivalries, a sample season/weeks/matchups, 18 themes, and one bootstrap manager so that local emulator and first production bootstrap have playable data.
 
@@ -553,6 +575,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 ### US-13 — Scaffold the Next.js app and API client
 
+**Status:** Done ([PR #24](https://github.com/bassetthnd824/pickem/pull/24)).
+
 **User story.** As a player, I want a Next.js App Router UI with a typed API client so that screens can fetch JSON instead of rendering JSPs.
 
 **Description.** Replaces Tiles `template.jsp`, jQuery, Underscore, and Bootstrap 3. Stack: Next.js App Router, TypeScript, Tailwind, TanStack Query, TanStack Form, Valibot (schemas filled in US-22), `credentials: 'include'`. Optional `libs/shared-schemas` is owned here if created. Browser API calls are same-origin `/api` on Next.js; US-31 adds the Axios BFF that forwards them to Spring.
@@ -573,6 +597,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 ---
 
 ### US-14 — Apply switchable Light, Dark, and SEC school themes
+
+**Status:** Done ([PR #25](https://github.com/bassetthnd824/pickem/pull/25)).
 
 **User story.** As a player, I want the UI to follow semantic color tokens and 18 named themes so that choosing a school theme restyles the whole app without hard-coded hex in components.
 
