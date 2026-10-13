@@ -25,7 +25,7 @@ export function DateField({
 
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm font-medium">
+      <label htmlFor={id} className="text-sm font-medium text-text">
         {label}
       </label>
       <input
@@ -41,10 +41,10 @@ export function DateField({
         onChange={(event) => {
           onChange(event.currentTarget.value);
         }}
-        className="rounded border border-neutral-300 px-2 py-1"
+        className="rounded border border-border bg-surface px-2 py-1 text-text"
       />
       {error ? (
-        <p id={errorId} className="text-sm text-red-700">
+        <p id={errorId} className="text-sm text-danger">
           {error}
         </p>
       ) : null}

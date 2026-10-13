@@ -1,2 +1,299 @@
 /* Pin class detection to this app so a monorepo working directory cannot scan the legacy tree. */
 @import "tailwindcss" source("..");
+
+/*
+  Utilities such as bg-surface and text-primary read these variables.
+  @theme inline keeps the utility pointed at the attribute value so a
+  data-theme change restyles the page without a rebuild.
+*/
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-text: var(--color-text);
+  --color-muted: var(--color-muted);
+  --color-border: var(--color-border);
+  --color-primary: var(--color-primary);
+  --color-primary-fg: var(--color-primary-fg);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
+  --color-success: var(--color-success);
+  --color-danger: var(--color-danger);
+}
+
+/*
+  School themes use a light neutral page. Primary is nav, headers, and buttons.
+  Accent is the secondary brand color, except when that secondary is white,
+  black, or Oklahoma cream. Those themes use the primary as the accent.
+  Tennessee orange uses dark text on the primary. :root is Light.
+*/
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #1f2937;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #2563eb;
+  --color-accent: #2563eb;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #020617;
+  --color-surface: #1e293b;
+  --color-text: #f8fafc;
+  --color-muted: #cbd5e1;
+  --color-border: #334155;
+  --color-primary: #0f172a;
+  --color-primary-fg: #f8fafc;
+  --color-secondary: #38bdf8;
+  --color-accent: #38bdf8;
+  --color-success: #4ade80;
+  --color-danger: #f87171;
+}
+
+[data-theme="alabama"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #9e1b32;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #828a8f;
+  --color-accent: #828a8f;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="arkansas"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #9d2235;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #ffffff;
+  --color-accent: #9d2235;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="auburn"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #0c2340;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #e87722;
+  --color-accent: #e87722;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="florida"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #0021a5;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #fa4616;
+  --color-accent: #fa4616;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="georgia"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #ba0c2f;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #000000;
+  --color-accent: #ba0c2f;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="kentucky"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #0033a0;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #000000;
+  --color-accent: #0033a0;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="lsu"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #461d7c;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #fdd023;
+  --color-accent: #fdd023;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="mississippi-state"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #660000;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #75787b;
+  --color-accent: #75787b;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="missouri"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #000000;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #f1b82d;
+  --color-accent: #f1b82d;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="oklahoma"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #841617;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #fdf9d8;
+  --color-accent: #841617;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="ole-miss"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #ce1126;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #14213d;
+  --color-accent: #14213d;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="south-carolina"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #73000a;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #000000;
+  --color-accent: #73000a;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="tennessee"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #ff8200;
+  --color-primary-fg: #1a1a1a;
+  --color-secondary: #58595b;
+  --color-accent: #58595b;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="texas"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #bf5700;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #333f48;
+  --color-accent: #333f48;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="texas-am"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #500000;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #ffffff;
+  --color-accent: #500000;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
+
+[data-theme="vanderbilt"] {
+  color-scheme: light;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #4b5563;
+  --color-border: #e5e7eb;
+  --color-primary: #000000;
+  --color-primary-fg: #ffffff;
+  --color-secondary: #866d4b;
+  --color-accent: #866d4b;
+  --color-success: #157347;
+  --color-danger: #b42318;
+}
