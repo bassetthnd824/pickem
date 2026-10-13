@@ -580,11 +580,11 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- All 18 theme keys exist as `data-theme` blocks using the documented hex values.
-- Components use semantic utilities only (`bg-surface`, `text-primary`, etc.).
-- Root layout can set `data-theme` from the user’s `themeId` without a flash of the wrong theme when the cookie/profile is known at SSR.
-- First visit with no user theme uses Light.
-- Correct/incorrect pick icons use success/danger tokens.
+- [x] All 18 theme keys exist as `data-theme` blocks using the documented hex values.
+- [x] Components use semantic utilities only (`bg-surface`, `text-primary`, etc.).
+- [x] Root layout can set `data-theme` from the user’s `themeId` without a flash of the wrong theme when the cookie/profile is known at SSR.
+- [x] First visit with no user theme uses Light.
+- [x] Correct/incorrect pick icons use success/danger tokens.
 
 **Predecessors:** US-02, US-13.
 
