@@ -1,10 +1,16 @@
-import React from "react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import { QueryProvider } from "../components/query-provider";
 import Page from "../app/page";
 
 describe("Page", () => {
-  it("should render successfully", () => {
-    const { baseElement } = render(<Page />);
-    expect(baseElement).toBeTruthy();
+  it("renders the pickem shell", () => {
+    render(
+      <QueryProvider>
+        <Page />
+      </QueryProvider>,
+    );
+    expect(
+      screen.getByRole("heading", { name: "Kenney's Pickem" }),
+    ).toBeTruthy();
   });
 });

@@ -29,5 +29,6 @@
     "app/**/*.test.tsx",
     "app/**/*.spec.tsx",
     "src/**/*.d.ts"
-  ]
+  ],
+  "exclude": ["node_modules"]
 }

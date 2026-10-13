@@ -1,12 +1,11 @@
-import styles from "./page.module.css";
-
-export default function Index() {
+export default function HomePage() {
   return (
-    <main className={styles.page}>
-      <h1>Kenney&apos;s Pickem</h1>
-      <p>
-        Nx workspace is up. Frontend lives in <code>apps/frontend</code>.
-        Backend lives in <code>apps/backend</code>.
+    <main className="mx-auto flex max-w-3xl flex-col gap-3 px-6 py-16">
+      <h1 className="text-3xl font-semibold tracking-tight">
+        Kenney&apos;s Pickem
+      </h1>
+      <p className="text-base text-neutral-700">
+        Season-long college football confidence pick&apos;em.
       </p>
     </main>
   );
