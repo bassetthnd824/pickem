@@ -58,7 +58,7 @@ College Football Data (CFBD) is new product scope (not in the legacy app):
 | US-12 | Seed Firestore with reference data and themes            | E Seed                | Done   | US-02, US-05, US-06, US-08                   | US-16, US-24, US-27                                    |
 | US-13 | Scaffold the Next.js app and API client                  | F Frontend shell      | Done   | US-01                                        | US-14, US-15, US-31                                    |
 | US-14 | Apply switchable Light, Dark, and SEC school themes      | F Frontend shell      | Done   | US-02, US-13                                 | US-15, US-23, US-36                                    |
-| US-15 | Sign in with Google and protect game and manager routes  | F Frontend shell      | —      | US-04, US-13, US-14, US-31, US-32, US-33     | US-16, US-17, US-18, US-19, US-20, US-37               |
+| US-15 | Sign in with Google and protect game and manager routes  | F Frontend shell      | Done   | US-04, US-13, US-14, US-31, US-32, US-33     | US-16, US-17, US-18, US-19, US-20, US-37               |
 | US-31 | Proxy browser API calls through Next.js with Axios       | F Frontend shell      | —      | US-04, US-13                                 | US-15, US-25, US-33                                    |
 | US-32 | Verify the session cookie in Next.js middleware          | F Frontend shell      | —      | US-04, US-13                                 | US-15                                                  |
 | US-33 | Lock down the BFF allowlist and internal jobs            | F Frontend shell      | —      | US-31                                        | US-15, US-25, US-29, US-38                             |
@@ -621,6 +621,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 ---
 
 ### US-15 — Sign in with Google and protect game and manager routes
+
+**Status:** Done ([PR #26](https://github.com/bassetthnd824/pickem/pull/26)).
 
 **User story.** As a player, I want a “Sign in with Google” page and a shared navbar so that I can reach game screens and managers can reach Admin.
 

@@ -8,9 +8,12 @@
 #
 # pull_request_target runs the workflow from the default branch, not from the
 # pull request head. The job runs the script from the pre-merge main commit
-# (pull_request.base.sha) and commits onto current main. A pull request cannot
-# replace the script that edits main in the same run. Script changes on main
-# apply to the next merge.
+# (pull_request.base.sha). A pull request cannot replace the script that edits
+# main in the same run. Script changes on main apply to the next merge.
+#
+# main requires the "Build and test" check before a push is accepted. The job
+# pushes the status commit to automation/story-status/*, dispatches CI there,
+# and fast-forwards main only after that check succeeds.
 
 name: Mark user story done
 
@@ -22,6 +25,7 @@ on:
 permissions:
   contents: write
   pull-requests: read
+  actions: write
 
 concurrency:
   group: mark-story-done-main
@@ -31,7 +35,7 @@ jobs:
   mark-story-done:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v5
         with:
@@ -89,6 +93,7 @@ jobs:
           STORY_ID: ${{ steps.story.outputs.story_id }}
           PR_NUMBER: ${{ steps.story.outputs.pr_number }}
           PR_URL: ${{ steps.story.outputs.pr_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           case "${STORY_ID}" in
@@ -105,7 +110,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           script="${RUNNER_TEMP}/marker/mark-story-done.mjs"
-          for attempt in 1 2 3 4 5; do
+          for attempt in 1 2 3; do
             git fetch origin main
             git checkout --detach origin/main
             node "${script}" --apply --story "${STORY_ID}" --pr "${PR_NUMBER}" --url "${PR_URL}" --file docs/user-stories.md
@@ -115,11 +120,56 @@ jobs:
             fi
             git add docs/user-stories.md
             git commit -m "docs(stories): mark ${STORY_ID} done" -m "${STORY_ID}"
-            if git push origin HEAD:main; then
+            sha="$(git rev-parse HEAD)"
+            branch="automation/story-status/${STORY_ID}/${GITHUB_RUN_ID}-${attempt}"
+            git push origin "HEAD:refs/heads/${branch}"
+            gh workflow run ci.yml --ref "${branch}"
+            run_id=""
+            for _ in $(seq 1 30); do
+              run_id="$(gh run list --workflow ci.yml --commit "${sha}" --event workflow_dispatch --limit 5 --json databaseId --jq ".[0].databaseId // empty")"
+              if [ -n "${run_id}" ]; then
+                break
+              fi
+              sleep 5
+            done
+            if [ -z "${run_id}" ]; then
+              echo "CI did not start for ${sha}." >&2
+              exit 1
+            fi
+            echo "Waiting for Build and test on ${branch} (run ${run_id})."
+            if ! gh run watch "${run_id}" --exit-status; then
+              echo "Build and test failed: $(gh run view "${run_id}" --json url --jq .url)" >&2
+              exit 1
+            fi
+            push_log="${RUNNER_TEMP}/push-${attempt}.log"
+            pushed=0
+            for push_try in 1 2 3 4 5 6; do
+              if git push origin "${sha}:refs/heads/main" >"${push_log}" 2>&1; then
+                pushed=1
+                break
+              fi
+              cat "${push_log}" >&2
+              if grep -Eq "non-fast-forward|fetch first|behind its remote" "${push_log}"; then
+                echo "main moved while CI ran. Retrying the status commit."
+                break
+              fi
+              if ! grep -Eq "GH013|Required status check|repository rule violations" "${push_log}"; then
+                echo "Push to main failed." >&2
+                exit 1
+              fi
+              echo "Waiting for the ruleset to see Build and test (${push_try}/6)."
+              sleep 10
+            done
+            if [ "${pushed}" -eq 1 ]; then
+              git push origin --delete "${branch}" || echo "Could not delete ${branch}."
               echo "Marked ${STORY_ID} done on main."
               exit 0
             fi
-            echo "Push was rejected on attempt ${attempt}. Retrying on the latest main."
+            git push origin --delete "${branch}" || echo "Could not delete ${branch}."
+            if ! grep -Eq "non-fast-forward|fetch first|behind its remote" "${push_log}"; then
+              echo "Could not push the story status update." >&2
+              exit 1
+            fi
           done
           echo "Could not push the story status update." >&2
           exit 1
