@@ -559,10 +559,10 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- `apps/frontend` has root layout, Tailwind, and a TanStack Query provider.
-- Browser API client uses relative `/api` paths with `credentials: 'include'` and never takes a Spring/Cloud Run API origin as a public base URL.
-- Dates use native `<input type="date">` (no Bootstrap datetimepicker / moment).
-- `nx serve frontend` runs locally.
+- [x] `apps/frontend` has root layout, Tailwind, and a TanStack Query provider.
+- [x] Browser API client uses relative `/api` paths with `credentials: 'include'` and never takes a Spring/Cloud Run API origin as a public base URL.
+- [x] Dates use native `<input type="date">` (no Bootstrap datetimepicker / moment).
+- [x] `nx serve frontend` runs locally.
 
 **Predecessors:** US-01.
 
