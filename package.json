@@ -47,6 +47,7 @@
     "@tailwindcss/postcss": "^4.3.3",
     "@tanstack/react-form": "^1.33.5",
     "@tanstack/react-query": "^5.104.2",
+    "firebase": "^13.0.0",
     "next": "~16.1.6",
     "postcss": "^8.5.30",
     "react": "^19.0.0",

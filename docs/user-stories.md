@@ -602,12 +602,12 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- `/login` shows a single Google button; unauthenticated visits to game/manager routes redirect here.
-- Successful Google popup/redirect POSTs the ID token to `/api/auth/session` then lands on `/main`.
-- Navbar: Home, Leader Board, Team Schedule, My Account, Logout; Admin dropdown only if `isManager`.
-- Admin dropdown links: Users, Themes, Teams, Venues, Rivalries, Seasons, Season Weeks, Matchups.
-- Logout calls `POST /api/auth/logout` and returns to login.
-- Players who hit a manager URL see a forbidden/restricted state (not the admin screens).
+- [x] `/login` shows a single Google button; unauthenticated visits to game/manager routes redirect here.
+- [x] Successful Google popup/redirect POSTs the ID token to `/api/auth/session` then lands on `/main`.
+- [x] Navbar: Home, Leader Board, Team Schedule, My Account, Logout; Admin dropdown only if `isManager`.
+- [x] Admin dropdown links: Users, Themes, Teams, Venues, Rivalries, Seasons, Season Weeks, Matchups.
+- [x] Logout calls `POST /api/auth/logout` and returns to login.
+- [x] Players who hit a manager URL see a forbidden/restricted state (not the admin screens).
 
 **Predecessors:** US-04, US-13, US-14, US-31, US-32, US-33.
 

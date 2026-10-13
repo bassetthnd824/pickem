@@ -58,10 +58,13 @@ The legacy `src/` Maven WAR is **not** in the Nx graph (`skipProjectWithoutProje
 ```bash
 npm install
 cp apps/backend/.env.example apps/backend/.env
-npx --yes firebase emulators:start --only firestore
+cp apps/frontend/.env.example apps/frontend/.env.local
+npx --yes firebase emulators:start --only firestore,auth --project pickem-local
 npx nx serve frontend
 npx nx serve backend
 ```
+
+Google sign-in uses the Auth emulator on `127.0.0.1:9099`. The placeholder web config in `apps/frontend/.env.example` is enough for that emulator. `SPRING_API_BASE_URL` stays on the server. The browser calls same-origin `/api` only.
 
 The Spring API talks to the **Firestore emulator** locally (`FIRESTORE_EMULATOR_HOST=127.0.0.1:8085` in `apps/backend/.env.example`). Port 8085 is used so the emulator does not collide with Spring on 8080. Backend tests start the emulator with Testcontainers.
 

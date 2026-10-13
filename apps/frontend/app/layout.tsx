@@ -1,6 +1,9 @@
 import { cookies } from "next/headers";
 import type { ReactNode } from "react";
+import { AuthProvider } from "../components/auth-provider";
 import { QueryProvider } from "../components/query-provider";
+import { fetchAuthProfile } from "../lib/server/spring-auth";
+import { readSessionClaims, SESSION_COOKIE_NAME } from "../lib/session-gate";
 import { resolveThemeId, THEME_COOKIE_NAME } from "../lib/theme";
 import "./global.css";
 
@@ -15,17 +18,28 @@ export default async function RootLayout({
   children: ReactNode;
 }) {
   const cookieStore = await cookies();
-  // Profile themeId is passed as the first argument once the session user is
-  // known during SSR. Until then the theme cookie is the request-time source.
+  const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  const sessionIsManager = readSessionClaims(sessionCookie).isManager;
+  const profile = await fetchAuthProfile(sessionCookie);
+  // A known profile theme wins. Otherwise the theme cookie is used.
+  // A first visit, with neither, stays Light.
   const themeId = resolveThemeId(
-    undefined,
+    profile?.themeId,
     cookieStore.get(THEME_COOKIE_NAME)?.value,
   );
 
   return (
     <html lang="en" data-theme={themeId}>
       <body className="min-h-dvh bg-bg text-text antialiased">
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <AuthProvider
+            initialProfile={profile}
+            sessionPresent={Boolean(sessionCookie)}
+            sessionIsManager={sessionIsManager}
+          >
+            {children}
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );
