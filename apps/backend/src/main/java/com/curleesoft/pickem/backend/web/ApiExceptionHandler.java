@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import com.curleesoft.pickem.backend.cfbd.CfbdClientException;
 import com.curleesoft.pickem.backend.repository.StaleDocumentVersionException;
 import com.curleesoft.pickem.backend.service.ConflictException;
 import com.curleesoft.pickem.backend.service.InvalidRequestException;
@@ -55,6 +56,11 @@ public class ApiExceptionHandler {
     @ExceptionHandler(StaleDocumentVersionException.class)
     public ProblemDetail staleVersion(StaleDocumentVersionException ex) {
         return problem(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(CfbdClientException.class)
+    public ProblemDetail cfbd(CfbdClientException ex) {
+        return problem(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
     }
 
     private static ProblemDetail problem(HttpStatus status, String detail) {
