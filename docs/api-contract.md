@@ -187,13 +187,34 @@ The catch-all BFF does not expose the worker.
 
 ## Internal jobs (not browser-callable)
 
-These paths are **outside** the BFF allowlist. Invoked with Cloud Scheduler
-OIDC or a shared secret (loopback locally). Not the `__session` cookie.
+These paths are **outside** the BFF allowlist. The browser `__session` cookie
+is not a credential. Next.js admits a call only when it has one of:
 
-| Method | Path                               | Auth                 | Purpose                                                                          |
-| ------ | ---------------------------------- | -------------------- | -------------------------------------------------------------------------------- |
-| `POST` | `/api/internal/jobs/cfbd-scores`   | OIDC / shared secret | Game-day score sync. Preferred production entry: Next.js forwards this to Spring |
-| `POST` | `/api/internal/jobs/cfbd-matchups` | OIDC / shared secret | Import worker. Not started by the browser                                        |
+- `Authorization: Bearer` — a Google OIDC ID token from Cloud Scheduler.
+  OIDC is off unless both `PICKEM_INTERNAL_JOB_AUDIENCE` and
+  `PICKEM_INTERNAL_JOB_OIDC_EMAILS` are set. The token `aud` must equal the
+  audience (the public job URL, with no query string). The token `email`
+  must be one of the comma-separated allowlist, and `email_verified` must
+  be true. Next.js does not take `aud` from the request URL or `Host`.
+- `X-Pickem-Job-Secret` — the shared secret in `PICKEM_INTERNAL_JOB_SECRET`
+  (the same value on Next.js and Spring).
+
+A cookie-only `fetch` of these paths is **403** at Next.js and is not
+forwarded. Any other path outside `/api/auth`, `/api/game`, and
+`/api/manager` is not proxied.
+
+Next.js Axios-forwards an admitted call to Spring **without** the session
+cookie. On Cloud Run (`K_SERVICE`) it also sends a metadata identity token.
+Locally it does not. Spring accepts `X-Pickem-Job-Secret` when it matches
+`PICKEM_INTERNAL_JOB_SECRET`. It also accepts a loopback caller when
+`PICKEM_INTERNAL_ALLOW_LOOPBACK` is true (the default) and Spring is not
+itself running on Cloud Run (`K_SERVICE` unset). Set the flag to false to
+require the secret on any host. Do not trust `X-Forwarded-For` for loopback.
+
+| Method | Path                               | Auth                              | Purpose                                                                          |
+| ------ | ---------------------------------- | --------------------------------- | -------------------------------------------------------------------------------- |
+| `POST` | `/api/internal/jobs/cfbd-scores`   | OIDC or `X-Pickem-Job-Secret`     | Game-day score sync. Preferred production entry: Next.js forwards this to Spring |
+| `POST` | `/api/internal/jobs/cfbd-matchups` | OIDC or `X-Pickem-Job-Secret`     | Import worker. Not started by the browser                                        |
 
 Score job: current-season matchups whose `matchupDate` is today in
 `America/New_York` (or whose CFBD game is still not completed after a kickoff

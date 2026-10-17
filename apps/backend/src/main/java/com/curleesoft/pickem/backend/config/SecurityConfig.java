@@ -1,6 +1,7 @@
 package com.curleesoft.pickem.backend.config;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,8 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 
 import com.curleesoft.pickem.backend.repository.UserRepository;
 import com.curleesoft.pickem.backend.security.FirebaseIdentityClient;
+import com.curleesoft.pickem.backend.security.InternalJobAuthentication;
+import com.curleesoft.pickem.backend.security.InternalJobFilter;
 import com.curleesoft.pickem.backend.security.SessionCookieFilter;
 import com.curleesoft.pickem.backend.security.SessionCookies;
 
@@ -28,6 +31,8 @@ import tools.jackson.databind.json.JsonMapper;
  * Spring is not browser-facing: the Next.js BFF is the only caller, so CORS is
  * disabled and browser CSRF against this API is N/A. The BFF forwards the
  * host-only {@code __session} cookie; {@link SessionCookieFilter} verifies it.
+ * {@code /api/internal/**} ignores that cookie and requires
+ * {@link InternalJobFilter}.
  */
 @Configuration
 @EnableWebSecurity
@@ -54,22 +59,42 @@ public class SecurityConfig {
     }
 
     @Bean
+    public InternalJobFilter internalJobFilter(PickemInternalProperties properties, JsonMapper jsonMapper) {
+        return new InternalJobFilter(properties, jsonMapper);
+    }
+
+    /**
+     * Registering a {@link jakarta.servlet.Filter} bean also installs it on the
+     * servlet container. It must run only inside the security chain.
+     */
+    @Bean
+    public FilterRegistrationBean<InternalJobFilter> internalJobFilterRegistration(InternalJobFilter internalJobFilter) {
+        InternalJobFilter filter = Objects.requireNonNull(internalJobFilter, "internalJobFilter");
+        FilterRegistrationBean<InternalJobFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, SessionCookieFilter sessionCookieFilter,
-            JsonMapper jsonMapper) throws Exception {
+            InternalJobFilter internalJobFilter, JsonMapper jsonMapper) throws Exception {
         http.cors(cors -> cors.disable()).csrf(csrf -> csrf.disable()).httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(formLogin -> formLogin.disable()).logout(logout -> logout.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/api/auth/session").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/logout").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/auth/me").authenticated()
-                        .requestMatchers("/api/manager/**").hasRole("MANAGER").requestMatchers("/api/game/**")
-                        .hasAnyRole("PLAYER", "MANAGER").anyRequest().permitAll())
+                        .requestMatchers("/api/internal", "/api/internal/**")
+                        .hasAuthority(InternalJobAuthentication.AUTHORITY).requestMatchers("/api/manager/**")
+                        .hasRole("MANAGER").requestMatchers("/api/game/**").hasAnyRole("PLAYER", "MANAGER").anyRequest()
+                        .permitAll())
                 .exceptionHandling(
                         ex -> ex.authenticationEntryPoint((request, response, authException) -> writeProblem(jsonMapper,
                                 response, HttpStatus.UNAUTHORIZED, "Authentication is required")).accessDeniedHandler(
                                         (request, response, accessDeniedException) -> writeProblem(jsonMapper, response,
                                                 HttpStatus.FORBIDDEN, "Manager role is required")))
-                .addFilterBefore(sessionCookieFilter, AnonymousAuthenticationFilter.class);
+                .addFilterBefore(sessionCookieFilter, AnonymousAuthenticationFilter.class)
+                .addFilterBefore(internalJobFilter, SessionCookieFilter.class);
         return http.build();
     }
 

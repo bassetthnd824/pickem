@@ -36,6 +36,14 @@ export type SpringCall =
     }
   | { ok: false; reason: "unconfigured" | "unavailable" };
 
+/** Browser BFF roots. Internal jobs are a separate gate. */
+export const BROWSER_API_ROOTS = new Set(["auth", "game", "manager"]);
+
+export type SpringForward = {
+  forwardCookie?: boolean;
+  jobSecret?: string;
+};
+
 /**
  * Shared server client. `proxy: false` keeps the metadata call and the
  * Spring call off any ambient HTTP proxy.
@@ -267,10 +275,7 @@ function headerString(
   return null;
 }
 
-function headerList(
-  headers: AxiosResponse["headers"],
-  name: string,
-): string[] {
+function headerList(headers: AxiosResponse["headers"], name: string): string[] {
   if (
     name.toLowerCase() === "set-cookie" &&
     typeof headers.getSetCookie === "function"
@@ -362,9 +367,28 @@ export function apiProxyPath(
   return `/api/${encoded.join("/")}${search}`;
 }
 
+/**
+ * `auth`, `game`, and `manager` are the browser allowlist. `internal` is
+ * refused here so a catch-all caller cannot treat it as a session proxy.
+ * The internal route admits jobs before it calls Spring.
+ */
+export function browserApiDecision(
+  segments: readonly string[],
+): "allow" | "internal" | "reject" {
+  const root = segments[0];
+  if (root === "internal") {
+    return "internal";
+  }
+  if (root !== undefined && BROWSER_API_ROOTS.has(root)) {
+    return "allow";
+  }
+  return "reject";
+}
+
 export async function callSpring(
   request: Request,
   pathAndQuery: string,
+  forward: SpringForward = {},
 ): Promise<SpringCall> {
   let base: string;
   try {
@@ -402,11 +426,15 @@ export async function callSpring(
 
   const headers: Record<string, string> = {};
   const accept = request.headers.get("accept");
-  headers.accept =
-    accept && accept.trim() !== "" ? accept : "application/json";
-  const cookie = request.headers.get("cookie");
-  if (cookie) {
-    headers.cookie = cookie;
+  headers.accept = accept && accept.trim() !== "" ? accept : "application/json";
+  if (forward.forwardCookie !== false) {
+    const cookie = request.headers.get("cookie");
+    if (cookie) {
+      headers.cookie = cookie;
+    }
+  }
+  if (forward.jobSecret !== undefined && forward.jobSecret !== "") {
+    headers["x-pickem-job-secret"] = forward.jobSecret;
   }
   if (authorization) {
     headers.authorization = authorization;
@@ -447,8 +475,9 @@ export async function proxyToSpring(
   request: Request,
   pathAndQuery: string,
   messages: ProxyErrorMessages,
+  forward: SpringForward = {},
 ): Promise<NextResponse> {
-  const result = await callSpring(request, pathAndQuery);
+  const result = await callSpring(request, pathAndQuery, forward);
   if (!result.ok) {
     const status = result.reason === "unconfigured" ? 500 : 503;
     const detail =
@@ -465,12 +494,39 @@ export async function proxyToSpring(
   );
 }
 
+export function proxyInternalJobCall(
+  request: Request,
+  job: string,
+  jobSecret: string,
+): Promise<NextResponse> {
+  const path = apiProxyPath(
+    ["internal", "jobs", job],
+    new URL(request.url).search,
+  );
+  if (!path) {
+    return Promise.resolve(authError(404, "Not found"));
+  }
+  return proxyToSpring(request, path, API_ERRORS, {
+    forwardCookie: false,
+    jobSecret: jobSecret === "" ? undefined : jobSecret,
+  });
+}
+
 export function proxyApiRequest(
   request: Request,
   segments: readonly string[],
 ): Promise<NextResponse> {
   const path = apiProxyPath(segments, new URL(request.url).search);
   if (!path) {
+    return Promise.resolve(authError(404, "Not found"));
+  }
+  const decision = browserApiDecision(segments);
+  if (decision === "internal") {
+    return Promise.resolve(
+      authError(403, "Internal jobs are not browser-callable"),
+    );
+  }
+  if (decision !== "allow") {
     return Promise.resolve(authError(404, "Not found"));
   }
   return proxyToSpring(request, path, API_ERRORS);
