@@ -19,3 +19,5 @@ pickem:
   secrets:
     secret-manager-enabled: false
     cfbd-api-key: test-cfbd-api-key
+  cfbd:
+    base-url: https://api.collegefootballdata.com

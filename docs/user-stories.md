@@ -810,13 +810,13 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- `CFBD_API_KEY` is read from the environment (or Secret Manager in deploy); a missing key fails fast at startup or on first call with a clear error.
-- Client sends `Authorization: Bearer …` and never logs the key.
-- `GET /games?year=&conference=SEC` (optional `week`, `seasonType`) returns typed game records (`id`, `season`, `week`, `startDate`, `completed`, `venue` / `venueId`, home/away names/ids/points).
-- `GET /calendar?year=` returns CFBD weeks (`week`, `seasonType`, `startDate`, `endDate`).
-- `GET /scoreboard?classification=fbs&conference=SEC` is callable for current-day status.
-- A 401 / 429 / 5xx from CFBD is surfaced as a controlled backend error, not a stack dump to the client.
-- No frontend bundle contains the CFBD key or calls `api.collegefootballdata.com`.
+- [x] `CFBD_API_KEY` is read from the environment (or Secret Manager in deploy); a missing key fails fast at startup or on first call with a clear error.
+- [x] Client sends `Authorization: Bearer …` and never logs the key.
+- [x] `GET /games?year=&conference=SEC` (optional `week`, `seasonType`) returns typed game records (`id`, `season`, `week`, `startDate`, `completed`, `venue` / `venueId`, home/away names/ids/points).
+- [x] `GET /calendar?year=` returns CFBD weeks (`week`, `seasonType`, `startDate`, `endDate`).
+- [x] `GET /scoreboard?classification=fbs&conference=SEC` is callable for current-day status.
+- [x] A 401 / 429 / 5xx from CFBD is surfaced as a controlled backend error, not a stack dump to the client.
+- [x] No frontend bundle contains the CFBD key or calls `api.collegefootballdata.com`.
 
 **Predecessors:** US-02, US-03, US-06, US-12.
 

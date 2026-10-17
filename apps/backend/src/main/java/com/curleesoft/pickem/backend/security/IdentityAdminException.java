@@ -1,9 +1,12 @@
 package com.curleesoft.pickem.backend.security;
 
+import lombok.Getter;
+
 /**
  * A Firebase Admin write failed. This is not a rejected ID token or session
  * cookie; those stay {@link InvalidCredentialException}.
  */
+@Getter
 public class IdentityAdminException extends RuntimeException {
 
     public static final String USER_MISSING = "Firebase user does not exist";
@@ -31,9 +34,5 @@ public class IdentityAdminException extends RuntimeException {
     public IdentityAdminException(Kind kind, String message, Throwable cause) {
         super(message, cause);
         this.kind = kind;
-    }
-
-    public Kind getKind() {
-        return kind;
     }
 }
