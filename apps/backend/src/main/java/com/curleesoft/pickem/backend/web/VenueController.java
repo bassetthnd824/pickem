@@ -21,19 +21,18 @@ import com.curleesoft.pickem.backend.service.VenueService;
 
 import jakarta.validation.Valid;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Manager CRUD for venues. Replaces {@code VenueAction}.
  */
 @RestController
 @RequestMapping("/api/manager/venues")
 @PreAuthorize("hasRole('MANAGER')")
+@RequiredArgsConstructor
 public class VenueController {
 
     private final VenueService venueService;
-
-    public VenueController(VenueService venueService) {
-        this.venueService = venueService;
-    }
 
     @GetMapping
     public List<Venue> list(@RequestParam(required = false) String venueName,

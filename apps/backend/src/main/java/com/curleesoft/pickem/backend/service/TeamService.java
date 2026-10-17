@@ -14,6 +14,8 @@ import com.curleesoft.pickem.backend.repository.VenueRepository;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Transaction;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Manager CRUD for teams. The home-venue snapshot is copied from the venue
  * document on each save of this team. Refreshing other documents is US-35.
@@ -21,6 +23,7 @@ import com.google.cloud.firestore.Transaction;
  * and {@code getNumberOfConferenceTeams} (the list length is the count).
  */
 @Service
+@RequiredArgsConstructor
 public class TeamService {
 
     public static final String NOT_FOUND = "Team not found";
@@ -32,11 +35,6 @@ public class TeamService {
     private final TeamRepository teamRepository;
 
     private final VenueRepository venueRepository;
-
-    public TeamService(TeamRepository teamRepository, VenueRepository venueRepository) {
-        this.teamRepository = teamRepository;
-        this.venueRepository = venueRepository;
-    }
 
     public List<Team> search(String teamName, String squadName, Boolean conferenceMember, String homeVenueId,
             Long cfbdTeamId) {

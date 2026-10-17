@@ -3,9 +3,14 @@ package com.curleesoft.pickem.backend.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * {@code venues} document.
  */
+@Getter
+@Setter
 public class Venue extends AuditableDocument {
 
     @NotBlank
@@ -17,28 +22,4 @@ public class Venue extends AuditableDocument {
     private String cityState;
 
     private Long cfbdVenueId;
-
-    public String getVenueName() {
-        return venueName;
-    }
-
-    public void setVenueName(String venueName) {
-        this.venueName = venueName;
-    }
-
-    public String getCityState() {
-        return cityState;
-    }
-
-    public void setCityState(String cityState) {
-        this.cityState = cityState;
-    }
-
-    public Long getCfbdVenueId() {
-        return cfbdVenueId;
-    }
-
-    public void setCfbdVenueId(Long cfbdVenueId) {
-        this.cfbdVenueId = cfbdVenueId;
-    }
 }

@@ -1,9 +1,12 @@
 package com.curleesoft.pickem.backend.repository;
 
+import lombok.Getter;
+
 /**
  * Thrown when {@link BaseRepository#save} sees a {@code version} that does not
  * match the document currently in Firestore.
  */
+@Getter
 public class StaleDocumentVersionException extends RuntimeException {
 
     private final String collectionName;
@@ -19,21 +22,5 @@ public class StaleDocumentVersionException extends RuntimeException {
         this.documentId = documentId;
         this.expectedVersion = expectedVersion;
         this.actualVersion = actualVersion;
-    }
-
-    public String getCollectionName() {
-        return collectionName;
-    }
-
-    public String getDocumentId() {
-        return documentId;
-    }
-
-    public Long getExpectedVersion() {
-        return expectedVersion;
-    }
-
-    public Long getActualVersion() {
-        return actualVersion;
     }
 }

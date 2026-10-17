@@ -16,12 +16,15 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.Transaction;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Manual week CRUD. Thursday begin and Wednesday end (begin + 6 days) are
  * enforced here. CFBD import (US-38) writes season weeks through the repository
  * and is not subject to that day-of-week rule.
  */
 @Service
+@RequiredArgsConstructor
 public class SeasonWeekService {
 
     public static final String NOT_FOUND = "Season week not found";
@@ -33,11 +36,6 @@ public class SeasonWeekService {
     private final SeasonWeekRepository seasonWeekRepository;
 
     private final SeasonRepository seasonRepository;
-
-    public SeasonWeekService(SeasonWeekRepository seasonWeekRepository, SeasonRepository seasonRepository) {
-        this.seasonWeekRepository = seasonWeekRepository;
-        this.seasonRepository = seasonRepository;
-    }
 
     public List<SeasonWeek> search(String seasonId, Integer weekNumber, String beginDate, String endDate) {
         String season = SearchText.blankToNull(seasonId);

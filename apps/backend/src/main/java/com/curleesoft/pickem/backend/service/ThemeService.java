@@ -12,12 +12,15 @@ import com.curleesoft.pickem.backend.repository.TransactionReads;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Transaction;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Manager CRUD for themes. Replaces {@code ThemeAction}. A key outside the
  * compiled catalog of 18 is still accepted here; US-36 rejects those creates.
  * Deletes are not reference-checked; that block is US-35.
  */
 @Service
+@RequiredArgsConstructor
 public class ThemeService {
 
     public static final String NOT_FOUND = "Theme not found";
@@ -29,10 +32,6 @@ public class ThemeService {
     public static final String PATH_NOT_UNIQUE = "theme path must be unique";
 
     private final ThemeRepository themeRepository;
-
-    public ThemeService(ThemeRepository themeRepository) {
-        this.themeRepository = themeRepository;
-    }
 
     public List<Theme> search(String themeName, String themePath, Boolean active) {
         String name = SearchText.normalizeContains(themeName);

@@ -2,6 +2,8 @@ package com.curleesoft.pickem.backend.web;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +39,7 @@ import tools.jackson.databind.JsonNode;
 @RestController
 @RequestMapping("/api/game")
 @PreAuthorize("hasAnyRole('PLAYER', 'MANAGER')")
+@RequiredArgsConstructor
 public class GameController {
 
     private final PickService pickService;
@@ -48,15 +51,6 @@ public class GameController {
     private final TeamService teamService;
 
     private final AccountService accountService;
-
-    public GameController(PickService pickService, LeaderboardService leaderboardService,
-            TeamScheduleService teamScheduleService, TeamService teamService, AccountService accountService) {
-        this.pickService = pickService;
-        this.leaderboardService = leaderboardService;
-        this.teamScheduleService = teamScheduleService;
-        this.teamService = teamService;
-        this.accountService = accountService;
-    }
 
     @GetMapping("/main")
     public GameMain main(Authentication authentication) {

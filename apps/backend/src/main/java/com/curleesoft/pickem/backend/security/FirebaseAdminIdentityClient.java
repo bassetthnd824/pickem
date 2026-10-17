@@ -22,12 +22,15 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.SessionCookieOptions;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Production {@link FirebaseIdentityClient}. Firebase is initialized on the
  * first auth call so the API can boot before credentials are present.
  */
 @Component
 @ConditionalOnProperty(prefix = "pickem.auth", name = "provider", havingValue = "firebase", matchIfMissing = true)
+@RequiredArgsConstructor
 public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
 
     private final PickemAuthProperties authProperties;
@@ -35,12 +38,6 @@ public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
     private final PickemFirestoreProperties firestoreProperties;
 
     private volatile FirebaseAuth firebaseAuth;
-
-    public FirebaseAdminIdentityClient(PickemAuthProperties authProperties,
-            PickemFirestoreProperties firestoreProperties) {
-        this.authProperties = authProperties;
-        this.firestoreProperties = firestoreProperties;
-    }
 
     @Override
     public VerifiedIdentity verifyIdToken(String idToken) {

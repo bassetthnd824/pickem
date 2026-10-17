@@ -21,6 +21,8 @@ import com.curleesoft.pickem.backend.service.RivalryService;
 
 import jakarta.validation.Valid;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Manager CRUD for rivalries. Replaces {@code RivalryAction}. The two teams
  * must differ; snapshots are filled from the team documents.
@@ -28,13 +30,10 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/manager/rivalries")
 @PreAuthorize("hasRole('MANAGER')")
+@RequiredArgsConstructor
 public class RivalryController {
 
     private final RivalryService rivalryService;
-
-    public RivalryController(RivalryService rivalryService) {
-        this.rivalryService = rivalryService;
-    }
 
     @GetMapping
     public List<Rivalry> list(@RequestParam(required = false) String rivalryName,

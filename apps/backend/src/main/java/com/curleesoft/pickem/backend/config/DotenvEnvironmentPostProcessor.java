@@ -2,8 +2,6 @@ package com.curleesoft.pickem.backend.config;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.EnvironmentPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.core.Ordered;
@@ -12,16 +10,17 @@ import org.springframework.core.env.MapPropertySource;
 
 import com.curleesoft.pickem.backend.config.DotenvFileLoader.LoadedDotenv;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Loads {@code .env} into the Spring Environment before application.yml is
  * processed. OS environment variables take precedence over the file. Google
  * Secret Manager ({@code sm@}) is a separate, optional config-data source.
  */
+@Slf4j
 public class DotenvEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
     static final String PROPERTY_SOURCE_NAME = "pickemDotenv";
-
-    private static final Logger log = LoggerFactory.getLogger(DotenvEnvironmentPostProcessor.class);
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {

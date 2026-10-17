@@ -11,12 +11,15 @@ import com.curleesoft.pickem.backend.model.snapshot.TeamNameSnapshot;
 import com.curleesoft.pickem.backend.repository.RivalryRepository;
 import com.curleesoft.pickem.backend.repository.TeamRepository;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Manager CRUD for rivalries. Team snapshots are copied from the team
  * documents on each save of this rivalry. A search {@code team1Id} matches
  * either side, which is how the legacy rivalry search form looks up one team.
  */
 @Service
+@RequiredArgsConstructor
 public class RivalryService {
 
     public static final String NOT_FOUND = "Rivalry not found";
@@ -26,11 +29,6 @@ public class RivalryService {
     private final RivalryRepository rivalryRepository;
 
     private final TeamRepository teamRepository;
-
-    public RivalryService(RivalryRepository rivalryRepository, TeamRepository teamRepository) {
-        this.rivalryRepository = rivalryRepository;
-        this.teamRepository = teamRepository;
-    }
 
     public List<Rivalry> search(String rivalryName, String team1Id, String team2Id) {
         String name = SearchText.normalizeContains(rivalryName);

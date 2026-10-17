@@ -4,10 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * {@code themes} document. Managers edit the name, key, colors, and active
  * flag. Rejecting a key outside the closed catalog of 18 is US-36.
  */
+@Getter
+@Setter
 public class Theme extends AuditableDocument {
 
     @NotBlank
@@ -26,44 +31,4 @@ public class Theme extends AuditableDocument {
 
     @NotBlank
     private String secondary;
-
-    public String getThemeName() {
-        return themeName;
-    }
-
-    public void setThemeName(String themeName) {
-        this.themeName = themeName;
-    }
-
-    public String getThemePath() {
-        return themePath;
-    }
-
-    public void setThemePath(String themePath) {
-        this.themePath = themePath;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public String getPrimary() {
-        return primary;
-    }
-
-    public void setPrimary(String primary) {
-        this.primary = primary;
-    }
-
-    public String getSecondary() {
-        return secondary;
-    }
-
-    public void setSecondary(String secondary) {
-        this.secondary = secondary;
-    }
 }

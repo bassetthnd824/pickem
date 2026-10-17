@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -20,15 +18,19 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Verifies the forwarded {@code __session} cookie with revocation checking and
  * loads roles from its custom claims.
  */
+@Slf4j
+@RequiredArgsConstructor
 public class SessionCookieFilter extends OncePerRequestFilter {
-
-    private static final Logger log = LoggerFactory.getLogger(SessionCookieFilter.class);
 
     private final FirebaseIdentityClient identityClient;
 
@@ -37,14 +39,6 @@ public class SessionCookieFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     private final JsonMapper jsonMapper;
-
-    public SessionCookieFilter(FirebaseIdentityClient identityClient, SessionCookies sessionCookies,
-            UserRepository userRepository, JsonMapper jsonMapper) {
-        this.identityClient = identityClient;
-        this.sessionCookies = sessionCookies;
-        this.userRepository = userRepository;
-        this.jsonMapper = jsonMapper;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

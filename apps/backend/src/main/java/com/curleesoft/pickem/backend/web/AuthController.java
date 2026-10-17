@@ -16,22 +16,20 @@ import com.curleesoft.pickem.backend.service.AuthService;
 
 import jakarta.validation.Valid;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Session login for the Next.js BFF. The browser never calls Spring; the BFF
  * forwards the ID token and copies {@code Set-Cookie}.
  */
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
     private final SessionCookies sessionCookies;
-
-    public AuthController(AuthService authService, SessionCookies sessionCookies) {
-        this.authService = authService;
-        this.sessionCookies = sessionCookies;
-    }
 
     @PostMapping("/session")
     public ResponseEntity<Void> createSession(@Valid @RequestBody SessionRequest request) {

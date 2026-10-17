@@ -6,12 +6,15 @@ import org.springframework.util.StringUtils;
 import com.curleesoft.pickem.backend.model.User;
 import com.curleesoft.pickem.backend.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Player profile. Ports {@code AccountAction} without passwords. Email, first
  * name, and last name stay on the Google profile. {@code themeId} is an
  * existing theme path; the closed catalog of 18 keys is US-36.
  */
 @Service
+@RequiredArgsConstructor
 public class AccountService {
 
     public static final String PASSWORD_REJECTED = "password fields are not accepted";
@@ -29,11 +32,6 @@ public class AccountService {
     private final UserRepository userRepository;
 
     private final ThemeService themeService;
-
-    public AccountService(UserRepository userRepository, ThemeService themeService) {
-        this.userRepository = userRepository;
-        this.themeService = themeService;
-    }
 
     public AccountProfile profile(String uid) {
         return toProfile(user(uid));

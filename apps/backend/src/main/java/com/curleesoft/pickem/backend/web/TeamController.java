@@ -21,6 +21,8 @@ import com.curleesoft.pickem.backend.service.TeamService;
 
 import jakarta.validation.Valid;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Manager CRUD for teams. {@code GET /{id}} includes the home-venue snapshot
  * (replaces {@code teams_getTeamById}). {@code conferenceMember=true} replaces
@@ -29,13 +31,10 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/manager/teams")
 @PreAuthorize("hasRole('MANAGER')")
+@RequiredArgsConstructor
 public class TeamController {
 
     private final TeamService teamService;
-
-    public TeamController(TeamService teamService) {
-        this.teamService = teamService;
-    }
 
     @GetMapping
     public List<Team> list(@RequestParam(required = false) String teamName,
