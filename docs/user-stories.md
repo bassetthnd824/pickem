@@ -61,7 +61,7 @@ College Football Data (CFBD) is new product scope (not in the legacy app):
 | US-15 | Sign in with Google and protect game and manager routes  | F Frontend shell      | Done   | US-04, US-13, US-14, US-31, US-32, US-33     | US-16, US-17, US-18, US-19, US-20, US-37               |
 | US-31 | Proxy browser API calls through Next.js with Axios       | F Frontend shell      | Done   | US-04, US-13                                 | US-15, US-25, US-33                                    |
 | US-32 | Verify the session cookie in Next.js middleware          | F Frontend shell      | Done   | US-04, US-13                                 | US-15                                                  |
-| US-33 | Lock down the BFF allowlist and internal jobs            | F Frontend shell      | —      | US-31                                        | US-15, US-25, US-29, US-38                             |
+| US-33 | Lock down the BFF allowlist and internal jobs            | F Frontend shell      | Done   | US-31                                        | US-15, US-25, US-29, US-38                             |
 | US-16 | Make and reorder weekly confidence picks                 | G Player / manager UI | —      | US-09, US-12, US-15, US-34                   | US-22, US-24                                           |
 | US-17 | View the season leaderboard                              | G Player / manager UI | —      | US-10, US-15                                 | US-24                                                  |
 | US-18 | Browse a conference team’s schedule                      | G Player / manager UI | —      | US-11, US-15                                 | US-24                                                  |
@@ -1050,6 +1050,8 @@ Rules to port:
 ---
 
 ### US-33 — Lock down the BFF allowlist and internal jobs
+
+**Status:** Done ([PR #33](https://github.com/bassetthnd824/pickem/pull/33)).
 
 **User story.** As a developer, I want the Next.js Axios proxy to forward only game, manager, and auth APIs so that browsers cannot invoke Spring internal jobs or arbitrary paths.
 
