@@ -14,6 +14,10 @@
 # main requires the "Build and test" check before a push is accepted. The job
 # pushes the status commit to automation/story-status/*, dispatches CI there,
 # and fast-forwards main only after that check succeeds.
+#
+# A workflow_dispatch job check does not satisfy the ruleset, even when the
+# job succeeds. After CI passes, the job publishes a commit status with the
+# context "Build and test". The ruleset accepts that status from GitHub Actions.
 
 name: Mark user story done
 
@@ -26,6 +30,7 @@ permissions:
   contents: write
   pull-requests: read
   actions: write
+  statuses: write
 
 concurrency:
   group: mark-story-done-main
@@ -141,6 +146,16 @@ jobs:
               echo "Build and test failed: $(gh run view "${run_id}" --json url --jq .url)" >&2
               exit 1
             fi
+            # The workflow_dispatch check is ignored by the ruleset. Publish the
+            # same context as a commit status so the fast-forward is accepted.
+            ci_url="$(gh run view "${run_id}" --json url --jq .url)"
+            gh api \
+              --method POST \
+              "repos/${GITHUB_REPOSITORY}/statuses/${sha}" \
+              -f state=success \
+              -f context="Build and test" \
+              -f description="CI passed for the story status commit" \
+              -f target_url="${ci_url}"
             push_log="${RUNNER_TEMP}/push-${attempt}.log"
             pushed=0
             for push_try in 1 2 3 4 5 6; do
