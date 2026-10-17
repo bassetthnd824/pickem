@@ -1,5 +1,7 @@
 /// <reference types="@nx/next/typings/style.d.ts" />
 /* eslint-disable @typescript-eslint/no-explicit-any */
+declare module "server-only";
+
 declare module "*.svg" {
   const content: any;
   export const ReactComponent: any;

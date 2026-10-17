@@ -653,12 +653,12 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- Browser network traces for game and manager flows show requests only to the Next.js origin (`/api/...`); none go to a Spring or `*.run.app` host.
-- Axios runs only in Route Handlers / server code, with `SPRING_API_BASE_URL` from the server environment (local default `http://localhost:8080`).
-- Forwarded requests include the browser’s `__session` cookie when present; session login copies Spring `Set-Cookie` onto the Next.js response without a `Domain=` attribute and with `Path=/`.
-- GET/POST/PUT/DELETE, query params, and JSON bodies round-trip with the same status codes Spring returns.
-- Local `nx serve` still proxies through Next.js (the browser does not call Spring on another port).
-- A missing Spring base URL fails clearly on the server; the client never receives the Spring URL.
+- [x] Browser network traces for game and manager flows show requests only to the Next.js origin (`/api/...`); none go to a Spring or `*.run.app` host.
+- [x] Axios runs only in Route Handlers / server code, with `SPRING_API_BASE_URL` from the server environment (local default `http://localhost:8080`).
+- [x] Forwarded requests include the browser’s `__session` cookie when present; session login copies Spring `Set-Cookie` onto the Next.js response without a `Domain=` attribute and with `Path=/`.
+- [x] GET/POST/PUT/DELETE, query params, and JSON bodies round-trip with the same status codes Spring returns.
+- [x] Local `nx serve` still proxies through Next.js (the browser does not call Spring on another port).
+- [x] A missing Spring base URL fails clearly on the server; the client never receives the Spring URL.
 
 **Predecessors:** US-04, US-13.
 

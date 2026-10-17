@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { NextResponse } from "next/server";
 import {
   AUTH_PATHS,
@@ -8,8 +9,10 @@ import {
   parseSetCookie,
   springApiBaseUrl,
 } from "../lib/server/spring-auth";
+import { springHttp } from "../lib/server/spring-proxy";
 
 const ORIGINAL_BASE = process.env.SPRING_API_BASE_URL;
+const requestMock = vi.spyOn(springHttp, "request");
 
 afterEach(() => {
   if (ORIGINAL_BASE === undefined) {
@@ -17,7 +20,12 @@ afterEach(() => {
   } else {
     process.env.SPRING_API_BASE_URL = ORIGINAL_BASE;
   }
+  requestMock.mockReset();
   vi.unstubAllGlobals();
+});
+
+afterAll(() => {
+  requestMock.mockRestore();
 });
 
 describe("springApiBaseUrl", () => {
@@ -69,13 +77,17 @@ describe("hostOnlySetCookie", () => {
 describe("forwardAuth", () => {
   it("forwards the session post and copies a host-only cookie", async () => {
     process.env.SPRING_API_BASE_URL = "http://spring.internal:8080";
-    const fetchMock = vi.fn<typeof fetch>();
-    const upstream = new Response(null, { status: 204 });
-    vi.spyOn(upstream.headers, "getSetCookie").mockReturnValue([
-      "__session=session-value; Path=/api; Domain=spring.internal; Max-Age=1209600; HttpOnly; Secure; SameSite=Lax",
-    ]);
-    fetchMock.mockResolvedValue(upstream);
-    vi.stubGlobal("fetch", fetchMock);
+    requestMock.mockResolvedValue({
+      status: 204,
+      data: new ArrayBuffer(0),
+      headers: {
+        "set-cookie": [
+          "__session=session-value; Path=/api; Domain=spring.internal; Max-Age=1209600; HttpOnly; Secure; SameSite=Lax",
+        ],
+      },
+      statusText: "No Content",
+      config: {},
+    });
 
     const response = await forwardAuth(
       new Request("http://pickem.local/api/auth/session", {
@@ -89,14 +101,15 @@ describe("forwardAuth", () => {
       AUTH_PATHS.session,
     );
 
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [url, init] = fetchMock.mock.calls[0] ?? [];
-    expect(String(url)).toBe("http://spring.internal:8080/api/auth/session");
-    expect(init).toMatchObject({
-      method: "POST",
-      body: JSON.stringify({ idToken: "id-token" }),
-    });
-    expect(new Headers(init?.headers).get("cookie")).toBe("__session=old");
+    expect(requestMock).toHaveBeenCalledTimes(1);
+    const config = requestMock.mock.calls[0]?.[0];
+    expect(config?.url).toBe("http://spring.internal:8080/api/auth/session");
+    expect(config?.method).toBe("POST");
+    expect(Buffer.from(config?.data as Buffer).toString("utf8")).toBe(
+      JSON.stringify({ idToken: "id-token" }),
+    );
+    expect(config?.headers).toMatchObject({ cookie: "__session=old" });
+    expect(config?.headers).not.toHaveProperty("authorization");
 
     expect(response.status).toBe(204);
     const setCookie = response.headers.getSetCookie().join(";");
@@ -109,11 +122,12 @@ describe("forwardAuth", () => {
 
   it("does not reveal the Spring URL when the upstream call fails", async () => {
     process.env.SPRING_API_BASE_URL = "http://spring.internal:8080";
-    vi.stubGlobal(
-      "fetch",
-      vi.fn<typeof fetch>(async () => {
-        throw new Error("connect ECONNREFUSED spring.internal:8080");
-      }),
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    requestMock.mockRejectedValue(
+      new AxiosError(
+        "connect ECONNREFUSED spring.internal:8080",
+        "ECONNREFUSED",
+      ),
     );
 
     const response = await forwardAuth(
@@ -125,6 +139,10 @@ describe("forwardAuth", () => {
     expect(text).toContain("Sign-in service is unavailable");
     expect(text).not.toContain("spring.internal");
     expect(text).not.toContain("localhost:8080");
+    expect(errorSpy.mock.calls.flat().join(" ")).not.toContain(
+      "spring.internal",
+    );
+    errorSpy.mockRestore();
   });
 });
 
@@ -156,38 +174,46 @@ describe("finishLogout", () => {
 describe("fetchAuthProfile", () => {
   it("returns the profile for a session cookie", async () => {
     process.env.SPRING_API_BASE_URL = "http://spring.internal:8080";
-    const fetchMock = vi.fn<typeof fetch>(async () =>
-      Response.json({
-        uid: "uid-1",
-        emailAddr: "a@example.com",
-        firstName: "Ada",
-        lastName: "Lovelace",
-        nickName: "Ada",
-        themeId: "georgia",
-        roles: ["player", "manager"],
-      }),
-    );
-    vi.stubGlobal("fetch", fetchMock);
+    const payload = {
+      uid: "uid-1",
+      emailAddr: "a@example.com",
+      firstName: "Ada",
+      lastName: "Lovelace",
+      nickName: "Ada",
+      themeId: "georgia",
+      roles: ["player", "manager"],
+    };
+    requestMock.mockResolvedValue({
+      status: 200,
+      data: new TextEncoder().encode(JSON.stringify(payload)).buffer,
+      headers: { "content-type": "application/json" },
+      statusText: "OK",
+      config: {},
+    });
 
     await expect(fetchAuthProfile("session-value")).resolves.toMatchObject({
       uid: "uid-1",
       themeId: "georgia",
       roles: ["player", "manager"],
     });
-    const [url, init] = fetchMock.mock.calls[0] ?? [];
-    expect(String(url)).toBe("http://spring.internal:8080/api/auth/me");
-    expect(new Headers(init?.headers).get("cookie")).toBe(
-      "__session=session-value",
-    );
+    const config = requestMock.mock.calls[0]?.[0];
+    expect(config?.url).toBe("http://spring.internal:8080/api/auth/me");
+    expect(config?.headers).toMatchObject({
+      cookie: "__session=session-value",
+    });
   });
 
   it("returns null when the cookie is unsafe or the profile is missing", async () => {
-    const fetchMock = vi.fn<typeof fetch>();
-    vi.stubGlobal("fetch", fetchMock);
     await expect(fetchAuthProfile("bad;cookie")).resolves.toBeNull();
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(requestMock).not.toHaveBeenCalled();
 
-    fetchMock.mockResolvedValue(new Response(null, { status: 401 }));
+    requestMock.mockResolvedValue({
+      status: 401,
+      data: new ArrayBuffer(0),
+      headers: {},
+      statusText: "Unauthorized",
+      config: {},
+    });
     await expect(fetchAuthProfile("session-value")).resolves.toBeNull();
   });
 });
