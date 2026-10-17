@@ -4,7 +4,7 @@
 const nextConfig = {
   // Load from node_modules in the server build. This list does not keep
   // the package out of the client bundle; the import graph does.
-  serverExternalPackages: ["firebase-admin"],
+  serverExternalPackages: ["firebase-admin", "google-auth-library"],
 };
 
 module.exports = nextConfig;

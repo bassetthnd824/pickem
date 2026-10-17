@@ -1057,11 +1057,11 @@ Rules to port:
 
 **Acceptance criteria.**
 
-- A browser `fetch('/api/internal/jobs/cfbd-scores')` with only the session cookie is rejected (401/403) and does not reach Spring.
-- Paths outside `/api/auth`, `/api/game`, and `/api/manager` are not proxied to Spring.
-- Cloud Scheduler can still invoke the documented internal job route with OIDC or the shared secret.
-- Local BFF→Spring works without a GCP identity token (documented secret or loopback policy).
-- Session cookies sent to the browser have `Path=/` (not Spring’s `/api`).
+- [x] A browser `fetch('/api/internal/jobs/cfbd-scores')` with only the session cookie is rejected (401/403) and does not reach Spring.
+- [x] Paths outside `/api/auth`, `/api/game`, and `/api/manager` are not proxied to Spring.
+- [x] Cloud Scheduler can still invoke the documented internal job route with OIDC or the shared secret.
+- [x] Local BFF→Spring works without a GCP identity token (documented secret or loopback policy).
+- [x] Session cookies sent to the browser have `Path=/` (not Spring’s `/api`).
 
 **Predecessors:** US-31.
 

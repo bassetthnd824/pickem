@@ -38,6 +38,14 @@ pickem:
     cfbd-api-key: ${CFBD_API_KEY:${sm@cfbd-api-key:}}
   cfbd:
     base-url: https://api.collegefootballdata.com
+  internal:
+    # Shared with the Next.js BFF. Not a session cookie. Blank disables the
+    # secret and leaves loopback (below) as the local admission path.
+    job-secret: ${PICKEM_INTERNAL_JOB_SECRET:${sm@pickem-internal-job-secret:}}
+    # Local stand-in for a Cloud Run identity token. Cloud Run sets K_SERVICE,
+    # which turns loopback off even when this flag stays true. Set the flag
+    # false to require the secret on a non-Cloud-Run host.
+    allow-loopback: ${PICKEM_INTERNAL_ALLOW_LOOPBACK:true}
 
 ---
 spring:

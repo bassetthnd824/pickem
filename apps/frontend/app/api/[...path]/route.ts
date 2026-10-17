@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { proxyApiRequest } from "../../../lib/server/spring-proxy";
+import { dispatchCaughtApi } from "../../../lib/server/internal-job";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -13,7 +13,7 @@ function forward(
   context: RouteContext,
 ): Promise<Response> {
   return context.params.then((params) =>
-    proxyApiRequest(request, params.path),
+    dispatchCaughtApi(request, params.path),
   );
 }
 

@@ -126,9 +126,7 @@ describe("proxyApiRequest", () => {
           method: item.method,
           headers: {
             cookie: "__session=session-value",
-            ...(item.body
-              ? { "content-type": "application/json" }
-              : {}),
+            ...(item.body ? { "content-type": "application/json" } : {}),
           },
           body: item.body ? JSON.stringify(item.body) : undefined,
         }),
@@ -201,7 +199,9 @@ describe("proxyApiRequest", () => {
     expect(text).not.toContain("secret");
     expect(text).not.toContain("localhost");
     expect(requestMock).not.toHaveBeenCalled();
-    expect(errorSpy).toHaveBeenCalledWith("SPRING_API_BASE_URL is not configured");
+    expect(errorSpy).toHaveBeenCalledWith(
+      "SPRING_API_BASE_URL is not configured",
+    );
     errorSpy.mockRestore();
   });
 
@@ -286,6 +286,24 @@ describe("proxyApiRequest", () => {
     errorSpy.mockRestore();
   });
 
+  it("does not proxy a path outside auth, game, and manager", async () => {
+    process.env.SPRING_API_BASE_URL = "http://spring.internal:8080";
+    const health = await proxyApiRequest(
+      new Request("http://pickem.local/api/health"),
+      ["health"],
+    );
+    const internal = await proxyApiRequest(
+      new Request("http://pickem.local/api/internal/jobs/cfbd-scores", {
+        method: "POST",
+        headers: { cookie: "__session=session-value" },
+      }),
+      ["internal", "jobs", "cfbd-scores"],
+    );
+    expect(health.status).toBe(404);
+    expect(internal.status).toBe(403);
+    expect(requestMock).not.toHaveBeenCalled();
+  });
+
   it("does not call Spring for a path that could escape the API prefix", async () => {
     process.env.SPRING_API_BASE_URL = "http://spring.internal:8080";
     const response = await proxyApiRequest(
@@ -362,7 +380,10 @@ describe("axios stays on the server", () => {
       }
     }
     expect(axiosImporters).toEqual(["lib/server/spring-proxy.ts"]);
-    const proxy = readFileSync(join(root, "lib/server/spring-proxy.ts"), "utf8");
+    const proxy = readFileSync(
+      join(root, "lib/server/spring-proxy.ts"),
+      "utf8",
+    );
     expect(proxy).toContain('import "server-only"');
   });
 });
