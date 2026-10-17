@@ -2,8 +2,8 @@ package com.curleesoft.pickem.backend.config;
 
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverters;
@@ -20,10 +20,9 @@ import tools.jackson.databind.json.JsonMapper;
  * {@code CFBD_API_KEY} or Secret Manager ({@code sm@cfbd-api-key}). A blank key
  * does not stop startup; {@link CfbdClient} fails the first call.
  */
+@Slf4j
 @Configuration
 public class CfbdConfig {
-
-    private static final Logger log = LoggerFactory.getLogger(CfbdConfig.class);
 
     @Bean
     public CfbdClient cfbdClient(JsonMapper jsonMapper, PickemCfbdProperties cfbd, PickemSecretsProperties secrets) {

@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
@@ -23,13 +23,12 @@ import org.springframework.web.util.UriBuilder;
  * {@code Authorization: Bearer} and does not log the API key. A missing key
  * fails on the first call so the rest of the API can still start.
  */
+@Slf4j
 public final class CfbdClient {
 
     static final String SEC = "SEC";
 
     static final String FBS = "fbs";
-
-    private static final Logger log = LoggerFactory.getLogger(CfbdClient.class);
 
     private static final ParameterizedTypeReference<List<CfbdGame>> GAMES = new ParameterizedTypeReference<>() {
     };
