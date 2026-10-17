@@ -1,73 +1,52 @@
-import { config } from "../middleware";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import {
-  GAME_ROUTE_PREFIXES,
-  MANAGER_ROUTE_PREFIXES,
+  claimsFromVerifiedToken,
   gateDecision,
-  readSessionClaims,
   type SessionClaims,
 } from "../lib/session-gate";
-
-const NOW = 1_700_000_000_000;
-
-function sessionToken(payload: Record<string, unknown>): string {
-  const encode = (value: unknown) =>
-    Buffer.from(JSON.stringify(value)).toString("base64url");
-  return `${encode({ alg: "none", typ: "JWT" })}.${encode(payload)}.sig`;
-}
-
-function playerToken(extra: Record<string, unknown> = {}): string {
-  return sessionToken({
-    sub: "player-1",
-    exp: Math.floor(NOW / 1000) + 3600,
-    player: true,
-    roles: ["player"],
-    ...extra,
-  });
-}
 
 const player: SessionClaims = { signedIn: true, isManager: false };
 const manager: SessionClaims = { signedIn: true, isManager: true };
 const signedOut: SessionClaims = { signedIn: false, isManager: false };
 
-describe("readSessionClaims", () => {
-  it("reads a manager claim from the session cookie payload", () => {
+describe("claimsFromVerifiedToken", () => {
+  it("reads a manager claim from a verified session", () => {
     expect(
-      readSessionClaims(
-        playerToken({ manager: true, roles: ["manager"] }),
-        NOW,
-      ),
+      claimsFromVerifiedToken({
+        uid: "manager-1",
+        manager: true,
+        roles: ["manager"],
+      }),
     ).toEqual(manager);
   });
 
   it("treats a roles entry of manager as the manager claim", () => {
     expect(
-      readSessionClaims(playerToken({ roles: ["player", "manager"] }), NOW),
+      claimsFromVerifiedToken({
+        uid: "manager-1",
+        roles: ["player", "manager"],
+      }),
     ).toEqual(manager);
   });
 
   it("signs in a player without the manager claim", () => {
-    expect(readSessionClaims(playerToken(), NOW)).toEqual(player);
+    expect(
+      claimsFromVerifiedToken({
+        uid: "player-1",
+        roles: ["player"],
+      }),
+    ).toEqual(player);
   });
 
-  it("rejects a missing, malformed, or expired cookie", () => {
-    expect(readSessionClaims(undefined, NOW)).toEqual(signedOut);
-    expect(readSessionClaims("not-a-jwt", NOW)).toEqual(signedOut);
-    expect(
-      readSessionClaims(
-        sessionToken({
-          sub: "player-1",
-          exp: Math.floor(NOW / 1000) - 10,
-          manager: true,
-        }),
-        NOW,
-      ),
-    ).toEqual(signedOut);
-    expect(
-      readSessionClaims(
-        sessionToken({ exp: Math.floor(NOW / 1000) + 10 }),
-        NOW,
-      ),
-    ).toEqual(signedOut);
+  it("rejects a missing token or a token without a uid", () => {
+    expect(claimsFromVerifiedToken(undefined)).toEqual(signedOut);
+    expect(claimsFromVerifiedToken(null)).toEqual(signedOut);
+    expect(claimsFromVerifiedToken({ manager: true })).toEqual(signedOut);
+    expect(claimsFromVerifiedToken({ uid: "  ", manager: true })).toEqual(
+      signedOut,
+    );
   });
 });
 
@@ -103,19 +82,13 @@ describe("gateDecision", () => {
   });
 });
 
-describe("middleware matcher", () => {
-  it("includes every game and manager route", () => {
-    expect(Array.isArray(config.matcher)).toBe(true);
-    if (!Array.isArray(config.matcher)) {
-      return;
-    }
-    for (const prefix of [
-      "/",
-      "/login",
-      ...GAME_ROUTE_PREFIXES,
-      ...MANAGER_ROUTE_PREFIXES,
-    ]) {
-      expect(config.matcher).toContain(prefix);
-    }
+describe("session gate source", () => {
+  it("does not decode an unverified cookie payload", () => {
+    const source = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), "../lib/session-gate.ts"),
+      "utf8",
+    );
+    expect(source).not.toContain("atob");
+    expect(source).not.toContain("readSessionClaims");
   });
 });
