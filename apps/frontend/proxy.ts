@@ -1,14 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { RESTRICTED_PATH } from "./lib/nav-links";
-import {
-  SESSION_COOKIE_NAME,
-  gateDecision,
-  readSessionClaims,
-} from "./lib/session-gate";
+import { verifySessionClaims } from "./lib/server/firebase-session";
+import { SESSION_COOKIE_NAME, gateDecision } from "./lib/session-gate";
 
-export function middleware(request: NextRequest) {
-  const claims = readSessionClaims(
+export async function proxy(request: NextRequest) {
+  const claims = await verifySessionClaims(
     request.cookies.get(SESSION_COOKIE_NAME)?.value,
   );
   const decision = gateDecision(request.nextUrl.pathname, claims);

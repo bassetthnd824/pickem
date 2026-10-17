@@ -1034,10 +1034,10 @@ Rules to port:
 
 **Acceptance criteria.**
 
-- Middleware rejects missing, expired, or invalid session cookies and redirects to `/login`.
-- A player session cannot render `(manager)` routes (forbidden/restricted), even if they guess the URL.
-- Claims used for the manager check come from a verified session cookie (or a verified `/api/auth/me`), not from an unverified cookie value.
-- Firebase Admin runs only on the server; no Admin credentials in the client bundle.
+- [x] Middleware rejects missing, expired, or invalid session cookies and redirects to `/login`.
+- [x] A player session cannot render `(manager)` routes (forbidden/restricted), even if they guess the URL.
+- [x] Claims used for the manager check come from a verified session cookie (or a verified `/api/auth/me`), not from an unverified cookie value.
+- [x] Firebase Admin runs only on the server; no Admin credentials in the client bundle.
 
 **Predecessors:** US-04, US-13.
 

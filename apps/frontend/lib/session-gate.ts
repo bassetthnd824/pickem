@@ -22,28 +22,22 @@ export type GateDecision = "allow" | "login" | "main" | "restricted";
 const SIGNED_OUT: SessionClaims = { signedIn: false, isManager: false };
 
 /**
- * HTML route gate only. The payload is decoded for expiry and claims.
- * It is not signature-checked.
+ * Claims taken from a session cookie Firebase Admin has already verified.
+ * A missing uid is signed out. Expiry and revocation are Admin's job.
  */
-export function readSessionClaims(
-  token: string | undefined,
-  nowMs = Date.now(),
+export type VerifiedSessionToken = {
+  uid?: unknown;
+  manager?: unknown;
+  roles?: unknown;
+};
+
+export function claimsFromVerifiedToken(
+  token: VerifiedSessionToken | null | undefined,
 ): SessionClaims {
-  const payload = readPayload(token);
-  if (!payload) {
+  if (!token || typeof token.uid !== "string" || token.uid.trim() === "") {
     return SIGNED_OUT;
   }
-  if (typeof payload.sub !== "string" || payload.sub.trim() === "") {
-    return SIGNED_OUT;
-  }
-  if (
-    typeof payload.exp !== "number" ||
-    !Number.isFinite(payload.exp) ||
-    payload.exp * 1000 <= nowMs
-  ) {
-    return SIGNED_OUT;
-  }
-  return { signedIn: true, isManager: payloadIsManager(payload) };
+  return { signedIn: true, isManager: tokenIsManager(token) };
 }
 
 export function gateDecision(
@@ -79,44 +73,14 @@ function matchesAny(path: string, prefixes: readonly string[]): boolean {
   );
 }
 
-function readPayload(
-  token: string | undefined,
-): Record<string, unknown> | null {
-  if (!token || token.trim() === "") {
-    return null;
-  }
-  const parts = token.split(".");
-  if (parts.length !== 3 || !parts[1]) {
-    return null;
-  }
-  try {
-    const parsed: unknown = JSON.parse(decodeBase64Url(parts[1]));
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      return null;
-    }
-    return parsed as Record<string, unknown>;
-  } catch {
-    return null;
-  }
-}
-
-function payloadIsManager(payload: Record<string, unknown>): boolean {
-  if (payload.manager === true) {
+function tokenIsManager(token: VerifiedSessionToken): boolean {
+  if (token.manager === true) {
     return true;
   }
   return (
-    Array.isArray(payload.roles) &&
-    payload.roles.some(
+    Array.isArray(token.roles) &&
+    token.roles.some(
       (role) => typeof role === "string" && role.toLowerCase() === "manager",
     )
   );
-}
-
-function decodeBase64Url(segment: string): string {
-  const normalized = segment.replace(/-/g, "+").replace(/_/g, "/");
-  const pad = (4 - (normalized.length % 4)) % 4;
-  const padded = normalized + "=".repeat(pad);
-  const binary = atob(padded);
-  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
 }

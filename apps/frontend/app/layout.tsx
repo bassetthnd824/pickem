@@ -2,8 +2,9 @@ import { cookies } from "next/headers";
 import type { ReactNode } from "react";
 import { AuthProvider } from "../components/auth-provider";
 import { QueryProvider } from "../components/query-provider";
+import { verifySessionClaims } from "../lib/server/firebase-session";
 import { fetchAuthProfile } from "../lib/server/spring-auth";
-import { readSessionClaims, SESSION_COOKIE_NAME } from "../lib/session-gate";
+import { SESSION_COOKIE_NAME } from "../lib/session-gate";
 import { resolveThemeId, THEME_COOKIE_NAME } from "../lib/theme";
 import "./global.css";
 
@@ -19,8 +20,10 @@ export default async function RootLayout({
 }) {
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  const sessionIsManager = readSessionClaims(sessionCookie).isManager;
-  const profile = await fetchAuthProfile(sessionCookie);
+  const claims = await verifySessionClaims(sessionCookie);
+  const profile = claims.signedIn
+    ? await fetchAuthProfile(sessionCookie)
+    : null;
   // A known profile theme wins. Otherwise the theme cookie is used.
   // A first visit, with neither, stays Light.
   const themeId = resolveThemeId(
@@ -34,8 +37,8 @@ export default async function RootLayout({
         <QueryProvider>
           <AuthProvider
             initialProfile={profile}
-            sessionPresent={Boolean(sessionCookie)}
-            sessionIsManager={sessionIsManager}
+            sessionPresent={claims.signedIn}
+            sessionIsManager={claims.isManager}
           >
             {children}
           </AuthProvider>
