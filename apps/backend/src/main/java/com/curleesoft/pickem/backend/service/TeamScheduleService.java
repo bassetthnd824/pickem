@@ -13,8 +13,6 @@ import com.curleesoft.pickem.backend.model.snapshot.TeamSquadSnapshot;
 import com.curleesoft.pickem.backend.repository.MatchupRepository;
 import com.curleesoft.pickem.backend.repository.TeamRepository;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Conference-team schedule. Ports {@code TeamScheduleAction} and
  * {@code MatchupBean.getMatchupsBySeasonTeam}. The opponent label is the other
@@ -23,7 +21,6 @@ import lombok.RequiredArgsConstructor;
  * away score. Unplayed games (either score empty, or equal scores) omit both.
  */
 @Service
-@RequiredArgsConstructor
 public class TeamScheduleService {
 
     public static final String TEAM_REQUIRED = "teamId is required";
@@ -37,6 +34,13 @@ public class TeamScheduleService {
     private final TeamRepository teamRepository;
 
     private final SeasonService seasonService;
+
+    public TeamScheduleService(MatchupRepository matchupRepository, TeamRepository teamRepository,
+            SeasonService seasonService) {
+        this.matchupRepository = matchupRepository;
+        this.teamRepository = teamRepository;
+        this.seasonService = seasonService;
+    }
 
     public List<TeamScheduleRow> schedule(String teamId, String seasonId) {
         String team = SearchText.blankToNull(teamId);

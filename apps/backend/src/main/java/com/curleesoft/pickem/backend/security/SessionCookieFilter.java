@@ -19,7 +19,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import tools.jackson.databind.json.JsonMapper;
@@ -29,7 +28,6 @@ import tools.jackson.databind.json.JsonMapper;
  * loads roles from its custom claims.
  */
 @Slf4j
-@RequiredArgsConstructor
 public class SessionCookieFilter extends OncePerRequestFilter {
 
     private final FirebaseIdentityClient identityClient;
@@ -39,6 +37,14 @@ public class SessionCookieFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     private final JsonMapper jsonMapper;
+
+    public SessionCookieFilter(FirebaseIdentityClient identityClient, SessionCookies sessionCookies,
+            UserRepository userRepository, JsonMapper jsonMapper) {
+        this.identityClient = identityClient;
+        this.sessionCookies = sessionCookies;
+        this.userRepository = userRepository;
+        this.jsonMapper = jsonMapper;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

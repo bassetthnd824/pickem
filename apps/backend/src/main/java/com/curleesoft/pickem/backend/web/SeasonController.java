@@ -21,8 +21,6 @@ import com.curleesoft.pickem.backend.service.SeasonService;
 
 import jakarta.validation.Valid;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Manager CRUD for seasons. Replaces {@code SeasonAction} and
  * {@code seasons_getSeasonById}.
@@ -30,10 +28,13 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/manager/seasons")
 @PreAuthorize("hasRole('MANAGER')")
-@RequiredArgsConstructor
 public class SeasonController {
 
     private final SeasonService seasonService;
+
+    public SeasonController(SeasonService seasonService) {
+        this.seasonService = seasonService;
+    }
 
     @GetMapping
     public List<Season> list(@RequestParam(required = false) String season,

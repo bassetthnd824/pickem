@@ -21,8 +21,6 @@ import com.curleesoft.pickem.backend.service.MatchupService;
 
 import jakarta.validation.Valid;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Manager CRUD for matchups. Replaces {@code MatchupAction}.
  * {@code winningTeamId} is derived from the scores. A client that needs the
@@ -32,10 +30,13 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/manager/matchups")
 @PreAuthorize("hasRole('MANAGER')")
-@RequiredArgsConstructor
 public class MatchupController {
 
     private final MatchupService matchupService;
+
+    public MatchupController(MatchupService matchupService) {
+        this.matchupService = matchupService;
+    }
 
     @GetMapping
     public List<Matchup> list(@RequestParam(required = false) String seasonId,

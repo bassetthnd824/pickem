@@ -11,14 +11,11 @@ import com.curleesoft.pickem.backend.repository.VenueRepository;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Transaction;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Manager CRUD for venues. Optional {@code cfbdVenueId} is unique when present.
  * Deletes are not reference-checked here; that block is US-35.
  */
 @Service
-@RequiredArgsConstructor
 public class VenueService {
 
     public static final String NOT_FOUND = "Venue not found";
@@ -26,6 +23,10 @@ public class VenueService {
     public static final String CFBD_NOT_UNIQUE = "cfbdVenueId must be unique";
 
     private final VenueRepository venueRepository;
+
+    public VenueService(VenueRepository venueRepository) {
+        this.venueRepository = venueRepository;
+    }
 
     public List<Venue> search(String venueName, String cityState, Long cfbdVenueId) {
         String name = SearchText.normalizeContains(venueName);

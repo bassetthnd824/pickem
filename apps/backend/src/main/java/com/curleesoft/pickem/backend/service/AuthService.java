@@ -17,14 +17,11 @@ import com.curleesoft.pickem.backend.security.RoleClaims;
 import com.curleesoft.pickem.backend.security.VerifiedIdentity;
 import com.curleesoft.pickem.backend.web.AuthProfileResponse;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Verifies a Google ID token, provisions {@code users/{uid}}, and mints the
  * Firebase session cookie exchanged for {@code __session}.
  */
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     static final String DEFAULT_THEME_ID = "light";
@@ -36,6 +33,13 @@ public class AuthService {
     private final UserRepository userRepository;
 
     private final PickemAuthProperties authProperties;
+
+    public AuthService(FirebaseIdentityClient identityClient, UserRepository userRepository,
+            PickemAuthProperties authProperties) {
+        this.identityClient = identityClient;
+        this.userRepository = userRepository;
+        this.authProperties = authProperties;
+    }
 
     public String establishSession(String idToken) {
         VerifiedIdentity identity = identityClient.verifyIdToken(idToken);

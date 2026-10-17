@@ -14,10 +14,7 @@ import com.curleesoft.pickem.backend.service.SeasonCalendar.ParsedSeason;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Transaction;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class SeasonService {
 
     public static final String NOT_FOUND = "Season not found";
@@ -29,6 +26,11 @@ public class SeasonService {
     private final SeasonRepository seasonRepository;
 
     private final Clock clock;
+
+    public SeasonService(SeasonRepository seasonRepository, Clock clock) {
+        this.seasonRepository = seasonRepository;
+        this.clock = clock;
+    }
 
     public List<Season> search(String season, String beginDate, String endDate, Boolean current) {
         String seasonFilter = SearchText.normalizeContains(season);

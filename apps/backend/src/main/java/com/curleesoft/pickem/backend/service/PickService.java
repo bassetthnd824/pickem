@@ -22,8 +22,6 @@ import com.curleesoft.pickem.backend.repository.PickRepository;
 import com.curleesoft.pickem.backend.repository.SeasonWeekRepository;
 import com.curleesoft.pickem.backend.repository.TeamRepository;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Weekly confidence picks. Ports {@code MainAction},
  * {@code MatchupBean.getMatchupUserPicksByUserSeason}, and
@@ -32,7 +30,6 @@ import lombok.RequiredArgsConstructor;
  * week has begun is US-34.
  */
 @Service
-@RequiredArgsConstructor
 public class PickService {
 
     public static final String WEEK_REQUIRED = "season week is required";
@@ -60,6 +57,17 @@ public class PickService {
     private final SeasonService seasonService;
 
     private final Clock clock;
+
+    public PickService(PickRepository pickRepository, MatchupRepository matchupRepository,
+            SeasonWeekRepository seasonWeekRepository, TeamRepository teamRepository, SeasonService seasonService,
+            Clock clock) {
+        this.pickRepository = pickRepository;
+        this.matchupRepository = matchupRepository;
+        this.seasonWeekRepository = seasonWeekRepository;
+        this.teamRepository = teamRepository;
+        this.seasonService = seasonService;
+        this.clock = clock;
+    }
 
     public GameMain main(String userId) {
         Season season = seasonService.current();

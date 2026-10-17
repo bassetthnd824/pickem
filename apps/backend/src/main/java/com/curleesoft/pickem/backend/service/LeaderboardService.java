@@ -23,8 +23,6 @@ import com.curleesoft.pickem.backend.repository.PickRepository;
 import com.curleesoft.pickem.backend.repository.SeasonWeekRepository;
 import com.curleesoft.pickem.backend.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Season leaderboard. Ports {@code LeaderBoardAction},
  * {@code MatchupBean.getLeaderBoardForSeason}, and {@code UserScore.compareTo}.
@@ -35,7 +33,6 @@ import lombok.RequiredArgsConstructor;
  * begun is US-34.
  */
 @Service
-@RequiredArgsConstructor
 public class LeaderboardService {
 
     private final UserRepository userRepository;
@@ -49,6 +46,17 @@ public class LeaderboardService {
     private final SeasonService seasonService;
 
     private final Clock clock;
+
+    public LeaderboardService(UserRepository userRepository, PickRepository pickRepository,
+            MatchupRepository matchupRepository, SeasonWeekRepository seasonWeekRepository, SeasonService seasonService,
+            Clock clock) {
+        this.userRepository = userRepository;
+        this.pickRepository = pickRepository;
+        this.matchupRepository = matchupRepository;
+        this.seasonWeekRepository = seasonWeekRepository;
+        this.seasonService = seasonService;
+        this.clock = clock;
+    }
 
     public Leaderboard leaderboard(String seasonId) {
         Season season = seasonService.resolve(seasonId);

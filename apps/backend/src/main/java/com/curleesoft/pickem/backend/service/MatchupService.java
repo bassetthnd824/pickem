@@ -28,8 +28,6 @@ import com.curleesoft.pickem.backend.repository.VenueRepository;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Transaction;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Manager CRUD for matchups. Ports {@code MatchupAction}. Snapshots, the week
  * number, and the rivalry name are copied onto this document at save time.
@@ -42,7 +40,6 @@ import lombok.RequiredArgsConstructor;
  * team. Equal scores are rejected: college football has no ties.
  */
 @Service
-@RequiredArgsConstructor
 public class MatchupService {
 
     public static final String NOT_FOUND = "Matchup not found";
@@ -72,6 +69,17 @@ public class MatchupService {
     private final VenueRepository venueRepository;
 
     private final RivalryRepository rivalryRepository;
+
+    public MatchupService(MatchupRepository matchupRepository, SeasonRepository seasonRepository,
+            SeasonWeekRepository seasonWeekRepository, TeamRepository teamRepository, VenueRepository venueRepository,
+            RivalryRepository rivalryRepository) {
+        this.matchupRepository = matchupRepository;
+        this.seasonRepository = seasonRepository;
+        this.seasonWeekRepository = seasonWeekRepository;
+        this.teamRepository = teamRepository;
+        this.venueRepository = venueRepository;
+        this.rivalryRepository = rivalryRepository;
+    }
 
     /**
      * Search-by-example. {@code teamId} matches either side, which is how the

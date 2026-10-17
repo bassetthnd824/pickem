@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
@@ -102,7 +101,8 @@ public final class CfbdClient {
         try {
             List<T> body = Objects.requireNonNull(restClient.get(), "request").uri(uriFunction)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + credential).retrieve()
-                    .onStatus(HttpStatusCode::isError, (request, response) -> fail(path, request, response))
+                    .onStatus(status -> Objects.requireNonNull(status, "status").isError(),
+                            (request, response) -> fail(path, request, response))
                     .body(bodyType);
             if (body == null) {
                 log.warn("CFBD {} returned no body", path);

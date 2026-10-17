@@ -18,14 +18,11 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.internal.FirebaseProcessEnvironment;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Firebase Admin lookup used by {@link SeedMain}. Initialized on the first
  * call so a reference-data seed does not need credentials when no bootstrap
  * email is set.
  */
-@RequiredArgsConstructor
 public final class FirebaseBootstrapIdentity implements BootstrapIdentity {
 
     private static final String APP_NAME = "pickem-seed";
@@ -33,6 +30,10 @@ public final class FirebaseBootstrapIdentity implements BootstrapIdentity {
     private final SeedEnvironment environment;
 
     private volatile FirebaseAuth firebaseAuth;
+
+    public FirebaseBootstrapIdentity(SeedEnvironment environment) {
+        this.environment = environment;
+    }
 
     @Override
     public Optional<BootstrapAccount> findByEmail(String email) {

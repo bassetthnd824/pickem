@@ -21,8 +21,6 @@ import com.curleesoft.pickem.backend.service.UserService;
 
 import jakarta.validation.Valid;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Manager CRUD for users. Replaces {@code UserAction}. Role changes are copied
  * to Firebase custom claims. Password create and reset are not exposed.
@@ -30,10 +28,13 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/manager/users")
 @PreAuthorize("hasRole('MANAGER')")
-@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
     public List<User> list(@RequestParam(required = false) String emailAddr,

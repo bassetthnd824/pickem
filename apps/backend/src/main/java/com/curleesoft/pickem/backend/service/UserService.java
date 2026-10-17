@@ -20,8 +20,6 @@ import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Transaction;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Manager CRUD for users. Replaces {@code UserAction}. Roles are written to
  * Firebase before the user document. {@code setCustomUserClaims} replaces the
@@ -32,7 +30,6 @@ import lombok.RequiredArgsConstructor;
  * Deletes are not reference-checked; that block is US-35.
  */
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
     public static final String NOT_FOUND = "User not found";
@@ -58,6 +55,13 @@ public class UserService {
     private final ThemeService themeService;
 
     private final FirebaseIdentityClient identityClient;
+
+    public UserService(UserRepository userRepository, ThemeService themeService,
+            FirebaseIdentityClient identityClient) {
+        this.userRepository = userRepository;
+        this.themeService = themeService;
+        this.identityClient = identityClient;
+    }
 
     public List<User> search(String emailAddr, String firstName, String lastName) {
         String email = SearchText.normalizeContains(emailAddr);

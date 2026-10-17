@@ -21,8 +21,6 @@ import com.curleesoft.pickem.backend.service.ThemeService;
 
 import jakarta.validation.Valid;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Manager CRUD for themes. Replaces {@code ThemeAction}. {@code themePath} is
  * the theme key and must not begin with {@code /}.
@@ -30,10 +28,13 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/manager/themes")
 @PreAuthorize("hasRole('MANAGER')")
-@RequiredArgsConstructor
 public class ThemeController {
 
     private final ThemeService themeService;
+
+    public ThemeController(ThemeService themeService) {
+        this.themeService = themeService;
+    }
 
     @GetMapping
     public List<Theme> list(@RequestParam(required = false) String themeName,
