@@ -1168,12 +1168,12 @@ Rules to port:
 
 **Acceptance criteria.**
 
-- Starting import returns quickly (202) with a job id; the browser is not held for the whole CFBD walk.
-- After success, `seasonWeeks` exist for the CFBD calendar weeks of that season year.
-- Every imported game has home and away teams that satisfy Team validation (including home venue).
-- Re-running the job is idempotent for weeks, teams, venues, and matchups (`cfbd*` ids).
-- Transient CFBD 429/5xx are retried; a final failure marks the job failed with an error the UI can show.
-- Job status endpoint requires `MANAGER`; the worker endpoint is internal (US-33).
+- [x] Starting import returns quickly (202) with a job id; the browser is not held for the whole CFBD walk.
+- [x] After success, `seasonWeeks` exist for the CFBD calendar weeks of that season year.
+- [x] Every imported game has home and away teams that satisfy Team validation (including home venue).
+- [x] Re-running the job is idempotent for weeks, teams, venues, and matchups (`cfbd*` ids).
+- [x] Transient CFBD 429/5xx are retried; a final failure marks the job failed with an error the UI can show.
+- [x] Job status endpoint requires `MANAGER`; the worker endpoint is internal (US-33).
 
 **Predecessors:** US-05, US-06, US-27, US-31, US-33.
 
