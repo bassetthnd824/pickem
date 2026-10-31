@@ -12,6 +12,7 @@ import {
   isRedirectFallback,
 } from "../lib/google-auth-error";
 import { establishSession } from "../lib/session-client";
+import { Button } from "./ui/button";
 
 export function GoogleSignIn() {
   const router = useRouter();
@@ -67,17 +68,17 @@ export function GoogleSignIn() {
 
   return (
     <div className="flex flex-col gap-3">
-      <button
+      <Button
         type="button"
-        className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-fg focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
         onClick={() => {
           void onClick();
         }}
         disabled={pending}
+        focusableWhenDisabled
         aria-busy={pending}
       >
         Sign in with Google
-      </button>
+      </Button>
       {error ? (
         <p role="alert" className="text-sm text-danger">
           {error}

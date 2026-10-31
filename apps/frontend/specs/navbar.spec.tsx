@@ -90,10 +90,30 @@ describe("Navbar", () => {
     fireEvent.click(screen.getByRole("button", { name: "Admin" }));
 
     for (const link of MANAGER_LINKS) {
+      const item = screen.getByRole("menuitem", { name: link.label });
+      expect(item.getAttribute("href")).toBe(link.href);
+      expect(item.closest("[class*='data-anchor-hidden:hidden']")).toBeTruthy();
+      expect(item.closest("[class*='overflow-y-auto']")).toBeTruthy();
       expect(
-        screen.getByRole("menuitem", { name: link.label }).getAttribute("href"),
-      ).toBe(link.href);
+        item.closest("[class*='max-h-[var(--available-height)]']"),
+      ).toBeTruthy();
     }
+  });
+
+  it("closes the admin menu when the mobile menu closes", () => {
+    const firstManagerLink = MANAGER_LINKS[0];
+    renderNavbar(manager, true);
+    fireEvent.click(screen.getByRole("button", { name: "Menu" }));
+    fireEvent.click(screen.getByRole("button", { name: "Admin" }));
+    expect(
+      screen.getByRole("menuitem", { name: firstManagerLink.label }),
+    ).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Menu" }));
+
+    expect(
+      screen.queryByRole("menuitem", { name: firstManagerLink.label }),
+    ).toBeNull();
   });
 
   it("logs out through the session endpoint and returns to login", async () => {
