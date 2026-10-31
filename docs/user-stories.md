@@ -83,7 +83,7 @@ College Football Data (CFBD) is new product scope (not in the legacy app):
 | US-28 | Import a season’s SEC-team matchups from CFBD            | I CFBD                | —      | US-07, US-27, US-38                          | US-29, US-30                                           |
 | US-29 | Automatically import scores on game days                 | I CFBD                | —      | US-28, US-33                                 | US-24, US-25                                           |
 | US-30 | Trigger and review CFBD imports from the admin UI        | I CFBD                | —      | US-21, US-28, US-31, US-38                   | US-24                                                  |
-| US-38 | Harden CFBD import (calendar weeks, opponents, job)      | I CFBD                | —      | US-05, US-06, US-27, US-31, US-33            | US-28, US-30, US-24                                    |
+| US-38 | Harden CFBD import (calendar weeks, opponents, job)      | I CFBD                | Done   | US-05, US-06, US-27, US-31, US-33            | US-28, US-30, US-24                                    |
 
 ---
 
@@ -1161,6 +1161,8 @@ Rules to port:
 ---
 
 ### US-38 — Harden CFBD import (calendar weeks, opponents, job)
+
+**Status:** Done ([PR #34](https://github.com/bassetthnd824/pickem/pull/34)).
 
 **User story.** As a manager, I want Import to create the season’s weeks, valid opponent teams, and matchups in the background so that a full SEC slate cannot time out in the browser.
 
