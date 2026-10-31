@@ -28,6 +28,24 @@ describe("DateField", () => {
     fireEvent.change(input, { target: { value: "2026-10-12" } });
     expect(onChange).toHaveBeenCalledWith("2026-10-12");
   });
+
+  it("keeps aria-invalid when the field is disabled and has an error", () => {
+    render(
+      <DateField
+        id="game-date"
+        name="gameDate"
+        label="Game date"
+        value=""
+        disabled
+        error="Enter a date as YYYY-MM-DD"
+        onChange={() => undefined}
+      />,
+    );
+
+    expect(
+      screen.getByLabelText("Game date").getAttribute("aria-invalid"),
+    ).toBe("true");
+  });
 });
 
 describe("isoDateSchema", () => {

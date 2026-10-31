@@ -1,3 +1,8 @@
+"use client";
+
+import { Field } from "@base-ui/react/field";
+import { Input } from "@base-ui/react/input";
+
 type DateFieldProps = {
   id: string;
   name: string;
@@ -21,33 +26,33 @@ export function DateField({
   disabled = false,
   required = false,
 }: DateFieldProps) {
-  const errorId = `${id}-error`;
-
   return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm font-medium text-text">
+    <Field.Root
+      name={name}
+      disabled={disabled}
+      invalid={Boolean(error)}
+      className="flex flex-col gap-1"
+    >
+      <Field.Label className="text-sm font-medium text-text">
         {label}
-      </label>
-      <input
+      </Field.Label>
+      <Input
         id={id}
-        name={name}
         type="date"
         value={value}
-        disabled={disabled}
         required={required}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? errorId : undefined}
         onBlur={onBlur}
-        onChange={(event) => {
-          onChange(event.currentTarget.value);
+        onValueChange={(nextValue) => {
+          onChange(nextValue);
         }}
         className="rounded border border-border bg-surface px-2 py-1 text-text"
       />
       {error ? (
-        <p id={errorId} className="text-sm text-danger">
+        <Field.Error className="text-sm text-danger" match>
           {error}
-        </p>
+        </Field.Error>
       ) : null}
-    </div>
+    </Field.Root>
   );
 }
