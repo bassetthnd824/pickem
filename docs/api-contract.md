@@ -177,7 +177,10 @@ not one of the compiled 18 is 400.
 
 `POST /api/manager/imports/matchups` must return quickly. The worker (not the
 BFF request) calls CFBD `GET /games?year={season}&conference=SEC` (default
-`seasonType=regular`) and upserts weeks from `GET /calendar`.
+`seasonType=regular`) and upserts weeks from `GET /calendar`. When a game's venue id is new, or the stored city and state are still
+unknown, the worker also calls `GET /venues` and uses city and state when
+that payload has them. A failed catalog call still imports the venue with
+city and state `Unknown`.
 `conference=SEC` includes every game with an SEC team on either side
 (non-conference opponents too), not only SEC-vs-SEC.
 

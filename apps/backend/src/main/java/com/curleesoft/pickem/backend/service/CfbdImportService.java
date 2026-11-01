@@ -20,6 +20,7 @@ import com.curleesoft.pickem.backend.cfbd.CfbdCalendarWeek;
 import com.curleesoft.pickem.backend.cfbd.CfbdClient;
 import com.curleesoft.pickem.backend.cfbd.CfbdClientException;
 import com.curleesoft.pickem.backend.cfbd.CfbdGame;
+import com.curleesoft.pickem.backend.cfbd.CfbdVenue;
 import com.curleesoft.pickem.backend.model.ImportJob;
 import com.curleesoft.pickem.backend.model.ImportJobSkip;
 import com.curleesoft.pickem.backend.model.Matchup;
@@ -49,7 +50,10 @@ import com.google.cloud.firestore.Transaction;
  * calendar dates. They are not forced onto Thursday–Wednesday. Manual week
  * CRUD stays on {@link SeasonWeekService}.
  * <p>
- * Scores are left untouched. A re-run updates the same {@code cfbd*} rows.
+ * One CFBD game id becomes one matchup. A re-run updates that row's date,
+ * venue, and teams. Conference-team ids that are not already stored are
+ * skipped. Stored scores stay with the same teams. A completed game with both
+ * point totals and a winner replaces them. The import does not write picks.
  */
 @Slf4j
 @Service
@@ -70,6 +74,12 @@ public class CfbdImportService {
      * per season, so postseason week 1 is 101 and does not replace regular week 1.
      */
     static final int POSTSEASON_WEEK_BASE = 100;
+
+    static final String MISSING_CONFERENCE_TEAM = "missing conference team";
+
+    static final String MISSING_TEAM_ID = "missing team id";
+
+    static final String NEUTRAL_VENUE = "neutral site has no CFBD venue";
 
     private static final int MAX_ATTEMPTS = 3;
 
@@ -218,9 +228,10 @@ public class CfbdImportService {
         }
         Map<Long, Team> teams = teamsByExternalId();
         Map<Long, Venue> venues = venuesByExternalId();
+        Map<Long, String> places = venuePlaces(listed, venues);
         Venue unknown = ensureUnknownVenue();
         for (CfbdGame game : deduped(listed).values()) {
-            importGame(job, seasonId, seasonType, year, weeks, teams, venues, unknown, game);
+            importGame(job, seasonId, seasonType, year, weeks, teams, venues, places, unknown, game);
         }
     }
 
@@ -308,7 +319,7 @@ public class CfbdImportService {
     }
 
     private void importGame(ImportJob job, String seasonId, String seasonType, int year, Map<Integer, SeasonWeek> weeks,
-            Map<Long, Team> teams, Map<Long, Venue> venues, Venue unknown, CfbdGame game) {
+            Map<Long, Team> teams, Map<Long, Venue> venues, Map<Long, String> places, Venue unknown, CfbdGame game) {
         CfbdGame row = Objects.requireNonNull(game, "game");
         Long gameId = Long.valueOf(row.id());
         if (row.season() != year || !seasonType.equals(row.seasonType())) {
@@ -333,26 +344,60 @@ public class CfbdImportService {
             skip(job, gameId, "game date is invalid");
             return;
         }
+        if (missingConferenceTeam(row.homeCfbdTeamId(), row.homeConference(), teams)
+                || missingConferenceTeam(row.awayCfbdTeamId(), row.awayConference(), teams)) {
+            skip(job, gameId, MISSING_CONFERENCE_TEAM);
+            return;
+        }
+        if (row.homeCfbdTeamId() <= 0 || row.awayCfbdTeamId() <= 0) {
+            skip(job, gameId, MISSING_TEAM_ID);
+            return;
+        }
         if (row.homeCfbdTeamId() == row.awayCfbdTeamId()) {
             skip(job, gameId, MatchupService.TEAMS_EQUAL);
             return;
         }
+        if (Boolean.TRUE.equals(row.neutralSite()) && row.cfbdVenueId() == null) {
+            skip(job, gameId, NEUTRAL_VENUE);
+            return;
+        }
         try {
-            Team home = resolveTeam(teams, row.homeCfbdTeamId(), row.homeTeam(), true, row, venues, unknown, job);
-            Team away = resolveTeam(teams, row.awayCfbdTeamId(), row.awayTeam(), false, row, venues, unknown, job);
-            Venue venue = matchupVenue(row, venues, home, job);
-            upsertMatchup(job, seasonId, week, date, home, away, venue, gameId);
+            Team home = resolveTeam(teams, row.homeCfbdTeamId(), row.homeTeam(), true, row, venues, places, unknown,
+                    job);
+            Team away = resolveTeam(teams, row.awayCfbdTeamId(), row.awayTeam(), false, row, venues, places, unknown,
+                    job);
+            Venue venue = matchupVenue(row, venues, places, home, job);
+            upsertMatchup(job, seasonId, week, date, home, away, venue, row);
         } catch (InvalidRequestException | ConflictException | StaleDocumentVersionException ex) {
             skip(job, gameId, ex.getMessage());
         }
     }
 
+    /**
+     * A side that is one of the 16 conference schools, or that CFBD labels SEC,
+     * must already exist. Opponents are created later.
+     */
+    static boolean missingConferenceTeam(long externalId, String conference, Map<Long, Team> teams) {
+        Map<Long, Team> known = Objects.requireNonNull(teams, "teams");
+        if (externalId > 0 && known.containsKey(Long.valueOf(externalId))) {
+            return false;
+        }
+        return isSec(conference) || (externalId > 0 && SeedCatalog.isConferenceTeamId(externalId));
+    }
+
+    private static boolean isSec(String conference) {
+        if (conference == null) {
+            return false;
+        }
+        return "SEC".equalsIgnoreCase(conference.trim());
+    }
+
     private Team resolveTeam(Map<Long, Team> teams, long externalId, String cfbdName, boolean homeSide, CfbdGame game,
-            Map<Long, Venue> venues, Venue unknown, ImportJob job) {
+            Map<Long, Venue> venues, Map<Long, String> places, Venue unknown, ImportJob job) {
         Long id = Long.valueOf(externalId);
         Team existing = teams.get(id);
         if (existing != null) {
-            return refreshUnknownHomeVenue(existing, id, homeSide, game, venues, job, teams);
+            return refreshUnknownHomeVenue(existing, id, homeSide, game, venues, places, job, teams);
         }
         String name = clip(cfbdName, NAME_LIMIT, "Team " + id);
         Team draft = new Team();
@@ -360,8 +405,8 @@ public class CfbdImportService {
         draft.setSquadName(name);
         draft.setConferenceMember(Boolean.FALSE);
         draft.setCfbdTeamId(id);
-        if (homeSide && game.cfbdVenueId() != null) {
-            draft.setHomeVenueId(resolveVenue(game, venues, job).getId());
+        if (homeSide && game.cfbdVenueId() != null && !Boolean.TRUE.equals(game.neutralSite())) {
+            draft.setHomeVenueId(resolveVenue(game, venues, places, job).getId());
         } else {
             draft.setHomeVenueId(Objects.requireNonNull(unknown.getId(), "unknownVenue"));
         }
@@ -381,39 +426,129 @@ public class CfbdImportService {
     }
 
     private Team refreshUnknownHomeVenue(Team existing, Long externalId, boolean homeSide, CfbdGame game,
-            Map<Long, Venue> venues, ImportJob job, Map<Long, Team> teams) {
-        if (!homeSide || game.cfbdVenueId() == null || !SeedCatalog.UNKNOWN_VENUE_ID.equals(existing.getHomeVenueId())) {
+            Map<Long, Venue> venues, Map<Long, String> places, ImportJob job, Map<Long, Team> teams) {
+        if (!homeSide || game.cfbdVenueId() == null || Boolean.TRUE.equals(game.neutralSite())
+                || !SeedCatalog.UNKNOWN_VENUE_ID.equals(existing.getHomeVenueId())) {
             return existing;
         }
         String teamId = Objects.requireNonNull(existing.getId(), "teamId");
-        existing.setHomeVenueId(resolveVenue(game, venues, job).getId());
+        existing.setHomeVenueId(resolveVenue(game, venues, places, job).getId());
         Team updated = teamService.update(teamId, existing);
         teams.put(externalId, updated);
         return updated;
     }
 
-    private Venue matchupVenue(CfbdGame game, Map<Long, Venue> venues, Team home, ImportJob job) {
-        if (game.cfbdVenueId() != null) {
-            return resolveVenue(game, venues, job);
+    private Venue matchupVenue(CfbdGame game, Map<Long, Venue> venues, Map<Long, String> places, Team home,
+            ImportJob job) {
+        if (Boolean.TRUE.equals(game.neutralSite()) || game.cfbdVenueId() != null) {
+            return resolveVenue(game, venues, places, job);
         }
         String venueId = Objects.requireNonNull(home.getHomeVenueId(), "homeVenueId");
         return venueRepository.findById(venueId).orElseThrow(() -> new InvalidRequestException(VenueService.NOT_FOUND));
     }
 
-    private Venue resolveVenue(CfbdGame game, Map<Long, Venue> venues, ImportJob job) {
+    private Venue resolveVenue(CfbdGame game, Map<Long, Venue> venues, Map<Long, String> places, ImportJob job) {
         Long externalId = Objects.requireNonNull(game.cfbdVenueId(), "cfbdVenueId");
         Venue existing = venues.get(externalId);
         if (existing != null) {
-            return existing;
+            return refreshUnknownPlace(existing, externalId, places, venues);
         }
         Venue draft = new Venue();
         draft.setVenueName(clip(game.venue(), VENUE_LIMIT, "Venue " + externalId));
-        draft.setCityState("Unknown");
+        draft.setCityState(placeFor(externalId, places));
         draft.setCfbdVenueId(externalId);
         Venue saved = venueService.create(draft);
         venues.put(externalId, saved);
         job.setVenuesCreated(count(job.getVenuesCreated()) + 1);
         return saved;
+    }
+
+    private Venue refreshUnknownPlace(Venue existing, Long externalId, Map<Long, String> places,
+            Map<Long, Venue> venues) {
+        String place = placeFor(externalId, places);
+        String current = existing.getCityState();
+        if ("Unknown".equals(place) || Objects.equals(place, current) || !unknownPlace(current)) {
+            return existing;
+        }
+        String venueId = Objects.requireNonNull(existing.getId(), "venueId");
+        existing.setCityState(place);
+        Venue updated = venueService.update(venueId, existing);
+        venues.put(externalId, updated);
+        return updated;
+    }
+
+    /**
+     * Looks up city and state only for venue ids we do not already store with a
+     * real city. A catalog failure still leaves those venues importable.
+     */
+    private Map<Long, String> venuePlaces(List<CfbdGame> games, Map<Long, Venue> venues) {
+        List<CfbdGame> rows = Objects.requireNonNull(games, "games");
+        Map<Long, Venue> stored = Objects.requireNonNull(venues, "venues");
+        boolean needsVenue = false;
+        for (CfbdGame found : rows) {
+            if (found == null || found.cfbdVenueId() == null) {
+                continue;
+            }
+            Venue known = stored.get(found.cfbdVenueId());
+            if (known == null || unknownPlace(known.getCityState())) {
+                needsVenue = true;
+                break;
+            }
+        }
+        if (!needsVenue) {
+            return new HashMap<>();
+        }
+        CfbdClient client = Objects.requireNonNull(cfbdClient, "cfbdClient");
+        List<CfbdVenue> listed;
+        try {
+            listed = callCfbd(() -> client.venues());
+        } catch (CfbdClientException ex) {
+            log.warn("CFBD venue catalog unavailable; new venues keep an unknown city and state: {}",
+                    ex.getMessage());
+            return new HashMap<>();
+        }
+        if (listed == null) {
+            log.warn("CFBD venue catalog was empty; new venues keep an unknown city and state");
+            return new HashMap<>();
+        }
+        Map<Long, String> places = new HashMap<>();
+        for (CfbdVenue found : listed) {
+            if (found == null) {
+                continue;
+            }
+            places.put(Long.valueOf(found.id()), cityState(found.city(), found.state()));
+        }
+        return places;
+    }
+
+    private static boolean unknownPlace(String cityState) {
+        return cityState == null || cityState.isBlank() || "Unknown".equals(cityState);
+    }
+
+    private static String placeFor(Long externalId, Map<Long, String> places) {
+        Map<Long, String> known = Objects.requireNonNull(places, "places");
+        Long id = Objects.requireNonNull(externalId, "cfbdVenueId");
+        String found = known.get(id);
+        if (found == null || found.isBlank()) {
+            return "Unknown";
+        }
+        return found;
+    }
+
+    static String cityState(String city, String state) {
+        String town = city == null ? "" : city.trim();
+        String region = state == null ? "" : state.trim();
+        String combined;
+        if (!town.isEmpty() && !region.isEmpty()) {
+            combined = town + ", " + region;
+        } else if (!town.isEmpty()) {
+            combined = town;
+        } else if (!region.isEmpty()) {
+            combined = region;
+        } else {
+            combined = "Unknown";
+        }
+        return clip(combined, VENUE_LIMIT, "Unknown");
     }
 
     private Venue ensureUnknownVenue() {
@@ -429,8 +564,9 @@ public class CfbdImportService {
     }
 
     private void upsertMatchup(ImportJob job, String seasonId, SeasonWeek week, LocalDate date, Team home, Team away,
-            Venue venue, Long gameId) {
-        Long externalId = Objects.requireNonNull(gameId, "cfbdGameId");
+            Venue venue, CfbdGame game) {
+        CfbdGame row = Objects.requireNonNull(game, "game");
+        Long externalId = Long.valueOf(row.id());
         Matchup existing = matchupByGameId(externalId);
         Matchup request = new Matchup();
         request.setSeasonId(seasonId);
@@ -441,16 +577,47 @@ public class CfbdImportService {
         request.setAwayTeamId(Objects.requireNonNull(away.getId(), "awayTeamId"));
         request.setVenueId(Objects.requireNonNull(venue.getId(), "venueId"));
         request.setCfbdGameId(externalId);
+        applyScores(request, existing, row);
         if (existing == null) {
             matchupService.create(request);
             job.setMatchupsCreated(count(job.getMatchupsCreated()) + 1);
             return;
         }
-        request.setHomeTeamScore(existing.getHomeTeamScore());
-        request.setAwayTeamScore(existing.getAwayTeamScore());
         request.setVersion(existing.getVersion());
         matchupService.update(Objects.requireNonNull(existing.getId(), "matchupId"), request);
         job.setMatchupsUpdated(count(job.getMatchupsUpdated()) + 1);
+    }
+
+    /**
+     * Scores stay with the team that earned them. A completed non-tie replaces
+     * them. Otherwise the same pairing keeps the stored totals, a pure swap
+     * moves each total with its team, and any other change clears both so a
+     * leftover total is not awarded to a new opponent. A tie is left unset
+     * because matchup validation would reject the row.
+     */
+    private static void applyScores(Matchup request, Matchup existing, CfbdGame game) {
+        Integer homePoints = game.homePoints();
+        Integer awayPoints = game.awayPoints();
+        if (game.completed() && homePoints != null && awayPoints != null && !homePoints.equals(awayPoints)) {
+            request.setHomeTeamScore(homePoints);
+            request.setAwayTeamScore(awayPoints);
+            return;
+        }
+        if (existing != null && Objects.equals(request.getHomeTeamId(), existing.getHomeTeamId())
+                && Objects.equals(request.getAwayTeamId(), existing.getAwayTeamId())) {
+            request.setHomeTeamScore(existing.getHomeTeamScore());
+            request.setAwayTeamScore(existing.getAwayTeamScore());
+            return;
+        }
+        if (existing != null && Objects.equals(request.getHomeTeamId(), existing.getAwayTeamId())
+                && Objects.equals(request.getAwayTeamId(), existing.getHomeTeamId())
+                && existing.getHomeTeamScore() != null && existing.getAwayTeamScore() != null) {
+            request.setHomeTeamScore(existing.getAwayTeamScore());
+            request.setAwayTeamScore(existing.getHomeTeamScore());
+            return;
+        }
+        request.setHomeTeamScore(null);
+        request.setAwayTeamScore(null);
     }
 
     private Matchup matchupByGameId(Long gameId) {

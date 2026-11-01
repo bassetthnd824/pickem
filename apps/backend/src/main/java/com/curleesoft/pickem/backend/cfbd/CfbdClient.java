@@ -38,6 +38,9 @@ public final class CfbdClient {
     private static final ParameterizedTypeReference<List<CfbdScoreboardGame>> SCOREBOARD = new ParameterizedTypeReference<>() {
     };
 
+    private static final ParameterizedTypeReference<List<CfbdVenue>> VENUES = new ParameterizedTypeReference<>() {
+    };
+
     private final RestClient restClient;
 
     private final String apiKey;
@@ -75,6 +78,17 @@ public final class CfbdClient {
             URI uri = Objects.requireNonNull(builder, "uriBuilder").path("/calendar").queryParam("year", year).build();
             return Objects.requireNonNull(uri, "uri");
         }, WEEKS);
+    }
+
+    /**
+     * {@code GET /venues}. Used to fill city and state when import creates a venue.
+     * A venue missing from this list still imports; its city and state stay unknown.
+     */
+    public List<CfbdVenue> venues() {
+        return get("venues", builder -> {
+            URI uri = Objects.requireNonNull(builder, "uriBuilder").path("/venues").build();
+            return Objects.requireNonNull(uri, "uri");
+        }, VENUES);
     }
 
     /**

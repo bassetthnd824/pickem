@@ -3,6 +3,7 @@ package com.curleesoft.pickem.backend.seed;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Reference data for {@code tools/seed}. Team names and {@code cfbdTeamId}
@@ -140,6 +141,16 @@ public final class SeedCatalog {
 
     public static List<TeamSeed> teams() {
         return TEAMS;
+    }
+
+    public static boolean isConferenceTeamId(long cfbdTeamId) {
+        for (TeamSeed found : TEAMS) {
+            TeamSeed team = Objects.requireNonNull(found, "team");
+            if (team.cfbdTeamId() == cfbdTeamId) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static List<RivalrySeed> rivalries() {
