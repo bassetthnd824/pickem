@@ -60,7 +60,9 @@ public record SeedEnvironment(String projectId, String firestoreEmulatorHost, St
                 .ignoreIfMalformed().ignoreIfMissing().load();
         Map<String, String> values = new LinkedHashMap<>();
 
-        for (DotenvEntry entry : dotenv.entries()) {
+        // entries() also returns the process environment and lets those values
+        // replace the file. The map passed in is the OS view for this call.
+        for (DotenvEntry entry : dotenv.entries(Dotenv.Filter.DECLARED_IN_ENV_FILE)) {
             if (entry.getKey() == null || entry.getKey().isBlank() || entry.getValue() == null) {
                 continue;
             }

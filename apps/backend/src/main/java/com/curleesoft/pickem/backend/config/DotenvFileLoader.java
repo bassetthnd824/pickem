@@ -31,7 +31,9 @@ final class DotenvFileLoader {
                 .filename(file.getFileName().toString()).ignoreIfMalformed().ignoreIfMissing().load();
 
         Map<String, String> values = new LinkedHashMap<>();
-        for (DotenvEntry entry : dotenv.entries()) {
+        // entries() also returns the process environment and lets those values
+        // replace the file. OS precedence is applied below, per key.
+        for (DotenvEntry entry : dotenv.entries(Dotenv.Filter.DECLARED_IN_ENV_FILE)) {
             if (entry.getKey() == null || entry.getKey().isBlank()) {
                 continue;
             }
