@@ -81,7 +81,7 @@ College Football Data (CFBD) is new product scope (not in the legacy app):
 | US-26 | Remove the legacy Struts application                     | H Quality / deploy    | —      | US-25                                        | —                                                      |
 | US-27 | Integrate the College Football Data API client           | I CFBD                | Done   | US-02, US-03, US-06, US-12                   | US-28                                                  |
 | US-28 | Import a season’s SEC-team matchups from CFBD            | I CFBD                | Done   | US-07, US-27, US-38                          | US-29, US-30                                           |
-| US-29 | Automatically import scores on game days                 | I CFBD                | —      | US-28, US-33                                 | US-24, US-25                                           |
+| US-29 | Automatically import scores on game days                 | I CFBD                | Done   | US-28, US-33                                 | US-24, US-25                                           |
 | US-30 | Trigger and review CFBD imports from the admin UI        | I CFBD                | —      | US-21, US-28, US-31, US-38                   | US-24                                                  |
 | US-38 | Harden CFBD import (calendar weeks, opponents, job)      | I CFBD                | Done   | US-05, US-06, US-27, US-31, US-33            | US-28, US-30, US-24                                    |
 
@@ -857,6 +857,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 ---
 
 ### US-29 — Automatically import scores on game days
+
+**Status:** Done ([PR #39](https://github.com/bassetthnd824/pickem/pull/39)).
 
 **User story.** As a manager, I want final scores pulled from CFBD on days that have games so that the picks grid and leaderboard update without manual score entry.
 
