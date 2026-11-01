@@ -10,6 +10,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.lenient;
+
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -19,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -26,6 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
+import com.curleesoft.pickem.backend.cfbd.CfbdClient;
 import com.curleesoft.pickem.backend.security.FakeFirebaseIdentityClient;
 import com.curleesoft.pickem.backend.security.InternalJobFilter;
 import com.curleesoft.pickem.backend.security.SessionCookies;
@@ -48,6 +56,13 @@ class InternalJobApiTests extends FirestoreEmulatorSupport {
     @Autowired
     private FakeFirebaseIdentityClient firebase;
 
+    /**
+     * Auth tests must not call College Football Data when the shared emulator
+     * already holds a current-season game for today.
+     */
+    @MockitoBean
+    private CfbdClient cfbdClient;
+
     @DynamicPropertySource
     static void jobSecret(DynamicPropertyRegistry registry) {
         registry.add("pickem.internal.job-secret", () -> SECRET);
@@ -56,6 +71,7 @@ class InternalJobApiTests extends FirestoreEmulatorSupport {
     @BeforeEach
     void resetFirebase() {
         firebase.clear();
+        lenient().when(cfbdClient.games(anyInt(), isNull(), any())).thenReturn(List.of());
     }
 
     @Test
@@ -84,7 +100,7 @@ class InternalJobApiTests extends FirestoreEmulatorSupport {
     @Test
     void sharedSecretAdmitsBothJobsFromOutsideLoopback() throws Exception {
         mockMvc.perform(post("/api/internal/jobs/cfbd-scores").header(InternalJobFilter.SECRET_HEADER, SECRET)
-                .cookie(sessionCookie("ignored")).with(from(OUTSIDE))).andExpect(status().isAccepted())
+                .cookie(sessionCookie("ignored")).with(from(OUTSIDE))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.job").value("cfbd-scores"))
                 .andExpect(header().doesNotExist("Access-Control-Allow-Origin"));
 
@@ -94,7 +110,7 @@ class InternalJobApiTests extends FirestoreEmulatorSupport {
 
     @Test
     void loopbackAdmitsTheJobWithoutASecretOrIdentityToken() throws Exception {
-        mockMvc.perform(post("/api/internal/jobs/cfbd-scores").with(from("127.0.0.1"))).andExpect(status().isAccepted())
+        mockMvc.perform(post("/api/internal/jobs/cfbd-scores").with(from("127.0.0.1"))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.job").value("cfbd-scores"));
 
         mockMvc.perform(post("/api/internal/jobs/cfbd-matchups").with(from("::1"))).andExpect(status().isAccepted());

@@ -840,13 +840,13 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- Import is started as a job (US-38) by a manager; season must exist; its `season` year is the CFBD `year`.
-- One CFBD game produces at most one matchup; re-running the import updates schedule fields (date, venue, teams) in place and does not duplicate rows.
-- All 16 conference members’ games for that year are present after a successful import (union of games where home or away is a conference member).
-- Unknown FCS/FBS opponents are created with `conferenceMember=false` and the CFBD team name/id; unknown venues are created from the CFBD venue name (city/state best-effort).
-- Games that cannot be mapped (no matching week, missing conference team id) are listed in the import report as skipped with a reason; mapped games are counted created vs updated.
-- Import does not write picks and does not set scores for uncompleted games.
-- SEC-vs-SEC games appear once.
+- [x] Import is started as a job (US-38) by a manager; season must exist; its `season` year is the CFBD `year`.
+- [x] One CFBD game produces at most one matchup; re-running the import updates schedule fields (date, venue, teams) in place and does not duplicate rows.
+- [x] All 16 conference members’ games for that year are present after a successful import (union of games where home or away is a conference member).
+- [x] Unknown FCS/FBS opponents are created with `conferenceMember=false` and the CFBD team name/id; unknown venues are created from the CFBD venue name (city/state best-effort).
+- [x] Games that cannot be mapped (no matching week, missing conference team id) are listed in the import report as skipped with a reason; mapped games are counted created vs updated.
+- [x] Import does not write picks and does not set scores for uncompleted games.
+- [x] SEC-vs-SEC games appear once.
 
 **Predecessors:** US-07, US-27, US-38.
 
@@ -864,13 +864,13 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- Given a matchup for today with `cfbdGameId` and CFBD `completed=true` with points, the job sets both scores to those points and the winner matches `MatchupUserPick.getWinningTeamId()` rules.
-- Given `completed=false` or null points, existing scores stay null (or unchanged if a manager already saved them — the job only writes when CFBD completed values differ).
-- Days with zero current-season matchups perform no CFBD writes and exit successfully.
-- Re-running the job is idempotent (same scores → no-op).
-- Job failures (CFBD down, missing key) are logged and return non-zero / 5xx so Scheduler retries; they do not corrupt matchups.
-- Players see updated scores on `/api/game/main` and the leaderboard after the job, with no extra player action.
-- Locally the job can be triggered with a documented `POST` (for example `/api/internal/jobs/cfbd-scores` or `/api/manager/imports/scores`) against the emulator.
+- [x] Given a matchup for today with `cfbdGameId` and CFBD `completed=true` with points, the job sets both scores to those points and the winner matches `MatchupUserPick.getWinningTeamId()` rules.
+- [x] Given `completed=false` or null points, existing scores stay null (or unchanged if a manager already saved them — the job only writes when CFBD completed values differ).
+- [x] Days with zero current-season matchups perform no CFBD writes and exit successfully.
+- [x] Re-running the job is idempotent (same scores → no-op).
+- [x] Job failures (CFBD down, missing key) are logged and return non-zero / 5xx so Scheduler retries; they do not corrupt matchups.
+- [x] Players see updated scores on `/api/game/main` and the leaderboard after the job, with no extra player action.
+- [x] Locally the job can be triggered with a documented `POST` (for example `/api/internal/jobs/cfbd-scores` or `/api/manager/imports/scores`) against the emulator.
 
 **Predecessors:** US-28, US-33.
 

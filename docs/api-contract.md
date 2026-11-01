@@ -216,15 +216,40 @@ require the secret on any host. Do not trust `X-Forwarded-For` for loopback.
 
 | Method | Path                               | Auth                              | Purpose                                                                          |
 | ------ | ---------------------------------- | --------------------------------- | -------------------------------------------------------------------------------- |
-| `POST` | `/api/internal/jobs/cfbd-scores`   | OIDC or `X-Pickem-Job-Secret`     | Game-day score sync. Preferred production entry: Next.js forwards this to Spring |
+| `POST` | `/api/internal/jobs/cfbd-scores`   | OIDC or `X-Pickem-Job-Secret`     | Game-day score sync. Runs in the request. Preferred production entry: Next.js forwards this to Spring |
 | `POST` | `/api/internal/jobs/cfbd-matchups` | OIDC or `X-Pickem-Job-Secret`     | Import worker. Not started by the browser                                        |
 
 Score job: current-season matchups whose `matchupDate` is today in
-`America/New_York` (or whose CFBD game is still not completed after a kickoff
-that spilled past midnight). Writes scores only when CFBD `completed=true`
-with both `homePoints` and `awayPoints`. No-op on days with no matchups.
-Idempotent. Cloud Scheduler: hourly Thursday–Monday 12:00–23:00 ET during the
-current season; can be disabled out of season.
+`America/New_York`, plus yesterday's matchups that still have no scores (a
+kickoff that spilled past midnight). Rows without `cfbdGameId` are skipped.
+The job calls `GET /games?year={season}&conference=SEC` (`seasonType=regular`,
+and `postseason` when a due matchup's stored week number is above 100). It
+writes `homeTeamScore` / `awayTeamScore` and derives `winningTeamId` only when
+CFBD `completed=true` with both `homePoints` and `awayPoints` and the totals
+are not equal. Home wins when `homePoints > awayPoints`; otherwise away (the
+same rule as `MatchupUserPick.getWinningTeamId()`). Uncompleted games, null
+totals, and ties leave stored scores unchanged, including scores a manager
+already saved. The same totals and winner are not written again. A day with
+no due matchups, and a clock with no current season, return success and do
+not call CFBD.
+
+Success is **200** `{ "job": "cfbd-scores", "updated": <count> }`. `updated`
+is how many matchups changed. CFBD failures (missing key, 401, 429, 5xx,
+unreachable) are logged and returned as **503**. Matchups the job had not
+written yet stay as they were so Scheduler can retry.
+
+Local emulator, from the Spring machine (`PICKEM_INTERNAL_ALLOW_LOOPBACK=true`):
+
+```bash
+curl -X POST http://127.0.0.1:8080/api/internal/jobs/cfbd-scores
+```
+
+Send `X-Pickem-Job-Secret` when loopback is off. The browser session cookie
+is not a credential. Cloud Scheduler (the GCP resource is created at deploy)
+uses cron `0 12-23 * * 4,5,6,0,1` in `America/New_York`, hourly Thursday
+through Monday from 12:00 through 23:00, aimed at the Next.js
+`POST /api/internal/jobs/cfbd-scores` URL with OIDC. Disable that schedule
+out of season.
 
 ---
 
