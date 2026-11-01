@@ -25,9 +25,10 @@
       "dependsOn": ["^build"]
     },
     "test": {
-      "executor": "@jnxplus/nx-maven:run-task",
+      "executor": "nx:run-commands",
       "options": {
-        "task": "test"
+        "command": "node scripts/run-tests.cjs",
+        "cwd": "apps/backend"
       },
       "dependsOn": ["^build"]
     }

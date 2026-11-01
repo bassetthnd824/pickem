@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.curleesoft.pickem.backend.service.CfbdImportService;
+import com.curleesoft.pickem.backend.service.CfbdScoreService;
+import com.curleesoft.pickem.backend.service.CfbdScoreService.ScoreSyncResult;
 
 /**
  * Scheduler and local entry for internal jobs. The caller is authenticated by
- * {@code InternalJobFilter}. A matchup import with a {@code jobId} runs that
- * job here. Score sync is still a later story. The browser session cookie is
- * not a credential for these paths.
+ * {@code InternalJobFilter}. Score sync runs in this request. A matchup import
+ * with a {@code jobId} runs that job here. The browser session cookie is not a
+ * credential for these paths.
  */
 @RestController
 @RequestMapping("/api/internal/jobs")
@@ -24,13 +26,21 @@ public class InternalJobController {
 
     private final CfbdImportService cfbdImportService;
 
-    public InternalJobController(CfbdImportService cfbdImportService) {
+    private final CfbdScoreService cfbdScoreService;
+
+    public InternalJobController(CfbdImportService cfbdImportService, CfbdScoreService cfbdScoreService) {
         this.cfbdImportService = cfbdImportService;
+        this.cfbdScoreService = cfbdScoreService;
     }
 
+    /**
+     * Local loopback or {@code X-Pickem-Job-Secret}. See the API contract for
+     * the emulator curl and the Cloud Scheduler cron.
+     */
     @PostMapping("/cfbd-scores")
-    public ResponseEntity<InternalJobAccepted> scores() {
-        return accepted("cfbd-scores");
+    public ResponseEntity<ScoreJobResponse> scores() {
+        ScoreSyncResult result = Objects.requireNonNull(cfbdScoreService.syncToday(), "result");
+        return ResponseEntity.ok(new ScoreJobResponse("cfbd-scores", result.updated()));
     }
 
     /**
