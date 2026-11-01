@@ -9,7 +9,7 @@ No pick documents are written. No password field is written. The script does not
 ## Emulator
 
 1. Copy `apps/backend/.env.example` to `apps/backend/.env`.
-2. Start the Firestore and Auth emulators (`npx firebase emulators:start --only firestore,auth`). Firestore is `127.0.0.1:8085`. Auth is `127.0.0.1:9099`.
+2. Start the Firestore and Auth emulators (`npx --yes firebase emulators:start --only firestore,auth --project pickem-local`). There is no `.firebaserc`, so the Auth emulator needs `--project`. Use `pickem-local`, the same id as `GOOGLE_CLOUD_PROJECT` in `apps/backend/.env.example`. Firestore is `127.0.0.1:8085`. Auth is `127.0.0.1:9099`. The Emulator UI is `http://127.0.0.1:4000`.
 3. Sign in once with the Google account that should be the bootstrap manager, or create that user in the Auth emulator, and set `PICKEM_BOOTSTRAP_MANAGER_EMAIL`.
 4. Run `tools\seed\seed.cmd` or `./tools/seed/seed`.
 
