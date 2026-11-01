@@ -49,13 +49,16 @@ class CfbdClientTests {
                 "seasonType": "regular",
                 "startDate": "2024-10-12T16:00:00.000Z",
                 "completed": true,
+                "neutralSite": true,
                 "venueId": 3854,
                 "venue": "Neyland Stadium",
                 "homeId": 2633,
                 "homeTeam": "Tennessee",
+                "homeConference": "SEC",
                 "homePoints": 24,
                 "awayId": 333,
                 "awayTeam": "Alabama",
+                "awayConference": "SEC",
                 "awayPoints": 17,
                 "homePregameElo": 1800,
                 "notes": "cfbd-secret-do-not-log"
@@ -122,9 +125,15 @@ class CfbdClientTests {
         assertThat(finished.awayCfbdTeamId()).isEqualTo(333L);
         assertThat(finished.awayTeam()).isEqualTo("Alabama");
         assertThat(finished.awayPoints()).isEqualTo(17);
+        assertThat(finished.neutralSite()).isTrue();
+        assertThat(finished.homeConference()).isEqualTo("SEC");
+        assertThat(finished.awayConference()).isEqualTo("SEC");
 
         CfbdGame upcoming = games.get(1);
         assertThat(upcoming.completed()).isFalse();
+        assertThat(upcoming.neutralSite()).isNull();
+        assertThat(upcoming.homeConference()).isNull();
+        assertThat(upcoming.awayConference()).isNull();
         assertThat(upcoming.cfbdVenueId()).isNull();
         assertThat(upcoming.homePoints()).isNull();
         assertThat(upcoming.awayPoints()).isNull();
@@ -166,6 +175,41 @@ class CfbdClientTests {
         assertThat(week.seasonType()).isEqualTo("regular");
         assertThat(week.startDate()).isEqualTo("2024-08-24T00:00:00.000Z");
         assertThat(week.endDate()).isEqualTo("2024-09-02T23:59:59.000Z");
+        server.verify();
+        assertKeyWasNotLogged();
+    }
+
+    @Test
+    void venuesReadsCityAndState() {
+        expect(BASE + "/venues", """
+                [
+                  {
+                    "id": 3854,
+                    "name": "Neyland Stadium",
+                    "city": "Knoxville",
+                    "state": "TN",
+                    "capacity": 102455,
+                    "grass": true
+                  },
+                  {
+                    "id": 1,
+                    "name": "Unknown Bowl",
+                    "city": null,
+                    "state": null
+                  }
+                ]
+                """);
+
+        List<CfbdVenue> venues = client.venues();
+
+        assertThat(venues).hasSize(2);
+        CfbdVenue neyland = venues.get(0);
+        assertThat(neyland.id()).isEqualTo(3854L);
+        assertThat(neyland.name()).isEqualTo("Neyland Stadium");
+        assertThat(neyland.city()).isEqualTo("Knoxville");
+        assertThat(neyland.state()).isEqualTo("TN");
+        assertThat(venues.get(1).city()).isNull();
+        assertThat(venues.get(1).state()).isNull();
         server.verify();
         assertKeyWasNotLogged();
     }
@@ -213,6 +257,8 @@ class CfbdClientTests {
         assertThatThrownBy(() -> unconfigured.games(2024, null, null)).isInstanceOf(CfbdClientException.class)
                 .hasMessage(CfbdClientException.MISSING_KEY);
         assertThatThrownBy(() -> clientWith(null).calendar(2024)).isInstanceOf(CfbdClientException.class)
+                .hasMessage(CfbdClientException.MISSING_KEY);
+        assertThatThrownBy(() -> clientWith(null).venues()).isInstanceOf(CfbdClientException.class)
                 .hasMessage(CfbdClientException.MISSING_KEY);
         server.verify();
     }

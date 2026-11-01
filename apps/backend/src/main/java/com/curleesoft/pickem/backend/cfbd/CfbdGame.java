@@ -7,10 +7,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * One row from CFBD {@code GET /games}. {@code homeCfbdTeamId} and
  * {@code awayCfbdTeamId} are CFBD {@code homeId} and {@code awayId}, stored on
  * teams as {@code cfbdTeamId}. {@code cfbdVenueId} is CFBD {@code venueId}.
+ * {@code neutralSite} is null when omitted. Only JSON true is a neutral site,
+ * because a primitive boolean cannot accept null.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record CfbdGame(long id, int season, int week, String seasonType, String startDate, boolean completed,
         String venue, @JsonProperty("venueId") Long cfbdVenueId, @JsonProperty("homeId") long homeCfbdTeamId,
         @JsonProperty("homeTeam") String homeTeam, Integer homePoints, @JsonProperty("awayId") long awayCfbdTeamId,
-        @JsonProperty("awayTeam") String awayTeam, Integer awayPoints) {
+        @JsonProperty("awayTeam") String awayTeam, Integer awayPoints, Boolean neutralSite, String homeConference,
+        String awayConference) {
 }
