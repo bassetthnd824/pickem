@@ -38,3 +38,4 @@ file.
 | Google profile | Each sign-in refreshes email and name; `nickName` and `themeId` stay user-owned.                                         |
 | Hosting        | Next.js is the only public origin. Spring is internal. An Application Load Balancer is not required.                     |
 | Auth cookie    | `__session` HttpOnly session cookie via Firebase Admin `createSessionCookie`. Not a per-request Bearer token.            |
+| UI controls    | Interactive controls use Base UI (`@base-ui/react`): buttons, menus, radios, fields, and inputs. Compose links with the `render` prop. Tables, headings, and plain text stay semantic HTML. |

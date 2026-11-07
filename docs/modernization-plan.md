@@ -17,7 +17,7 @@ Today it is a single Maven WAR: **Struts 2 (2.3.24)** actions + Apache Tiles 3 J
 
 The goal is a modern, cloud-native rebuild with the same feature set:
 
-- **Frontend:** Next.js (App Router) + React, TanStack Form, Valibot validation, Tailwind CSS,
+- **Frontend:** Next.js (App Router) + React, Base UI controls, TanStack Form, Valibot validation, Tailwind CSS,
   with a switchable **theming system** (Light, Dark, + one per SEC school).
 - **Backend:** Spring Boot REST API persisting to **Firestore** (native mode).
 - **Auth:** Firebase Authentication with the **Google** provider (OAuth sign-in), roles via custom claims, replacing JAAS. No email/password, no self-managed passwords. Sessions are held in an **HttpOnly session cookie** (Firebase Admin `createSessionCookie`), not a per-request Bearer token.
@@ -44,7 +44,7 @@ delegate to Maven and the backend joins the Nx project graph.
 ```
 pickem/                      # Nx workspace root (nx.json, package.json, tsconfig.base.json)
   apps/
-    frontend/                # Next.js App Router (@nx/next) — TS, Tailwind, TanStack Form, Valibot
+    frontend/                # Next.js App Router (@nx/next) — TS, Tailwind, Base UI, TanStack Form, Valibot
     backend/                 # Spring Boot REST API (Maven, @jnxplus/nx-maven) + Firestore
   libs/
     shared-schemas/          # (optional) shared Valibot schemas / TS DTO types for the frontend
@@ -178,10 +178,17 @@ SameSite`, host-only on the Next.js hostname). Replaces `RegisterAction` + clien
 
 ## Frontend — Next.js App Router (`apps/frontend/`)
 
-**Stack:** Next.js (App Router) + TypeScript, Tailwind CSS, TanStack Form, Valibot,
+**Stack:** Next.js (App Router) + TypeScript, Tailwind CSS, **Base UI**
+(`@base-ui/react`) for interactive controls, TanStack Form, Valibot,
 TanStack Query (server-state/data fetching), Firebase JS SDK (auth), **Axios on the
 server** (BFF proxy only — not in client bundles). This replaces JSP, Tiles, jQuery,
 Underscore templates, Bootstrap, and the datetimepicker.
+
+**Controls:** buttons, links that act as controls, menus, radios, fields, and inputs
+use Base UI. Shared wrappers live in `apps/frontend/components/ui` and keep the theme
+tokens (`bg-primary`, `text-primary-fg`, and the rest). Compose Base UI with Next.js
+`Link` through the `render` prop so navigation stays client-side. Tables, headings,
+and plain text stay semantic HTML. Base UI does not provide those elements.
 
 **Routing / layout** (Tiles `template.jsp` → root layout; navbar → shared component):
 

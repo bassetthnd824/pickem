@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu } from "@base-ui/react/menu";
+import { NavigationMenu } from "@base-ui/react/navigation-menu";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -59,9 +60,15 @@ export function Navbar() {
   return (
     <nav aria-label="Primary" className="border-b border-border bg-primary">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-2 px-4 py-3">
-        <Link href="/main" className={`${linkClass} text-base font-semibold`}>
-          Kenney&apos;s Pickem
-        </Link>
+        <NavigationMenu.Root className="flex w-full flex-wrap items-center gap-2 md:w-auto md:flex-1">
+          <NavigationMenu.List className="flex">
+            <NavigationMenu.Item>
+              <NavigationMenu.Link
+                className={`${linkClass} text-base font-semibold`}
+                render={<Link href="/main">Kenney&apos;s Pickem</Link>}
+              />
+            </NavigationMenu.Item>
+          </NavigationMenu.List>
         <Button
           variant="nav"
           className="ml-auto md:hidden"
@@ -71,23 +78,24 @@ export function Navbar() {
         >
           Menu
         </Button>
-        <ul
-          id={menuId}
-          className={`${menuOpen ? "flex" : "hidden"} w-full flex-col gap-1 md:ml-auto md:flex md:w-auto md:flex-row md:items-center`}
-        >
+          <NavigationMenu.List
+            id={menuId}
+            className={`${menuOpen ? "flex" : "hidden"} w-full flex-col gap-1 md:ml-auto md:flex md:w-auto md:flex-row md:items-center`}
+          >
           {GAME_LINKS.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
+            <NavigationMenu.Item key={link.href}>
+              <NavigationMenu.Link
                 className={linkClass}
-                onClick={closeNavigation}
-              >
-                {link.label}
-              </Link>
-            </li>
+                render={
+                  <Link href={link.href} onClick={closeNavigation}>
+                    {link.label}
+                  </Link>
+                }
+              />
+            </NavigationMenu.Item>
           ))}
           {isManager ? (
-            <li>
+            <NavigationMenu.Item>
               <Menu.Root
                 modal={false}
                 open={adminOpen}
@@ -121,9 +129,9 @@ export function Navbar() {
                   </Menu.Positioner>
                 </Menu.Portal>
               </Menu.Root>
-            </li>
+            </NavigationMenu.Item>
           ) : null}
-          <li>
+          <NavigationMenu.Item>
             <Button
               variant="nav"
               onClick={() => {
@@ -134,8 +142,9 @@ export function Navbar() {
             >
               Logout
             </Button>
-          </li>
-        </ul>
+          </NavigationMenu.Item>
+          </NavigationMenu.List>
+        </NavigationMenu.Root>
         {logoutError ? (
           <p
             role="alert"
