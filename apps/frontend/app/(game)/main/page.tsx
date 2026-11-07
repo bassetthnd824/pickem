@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Home · Kenney's Pickem" };
 
 export default function MainPage() {
   return (
-    <TitledPage title="Home">
+    <TitledPage title="Home" wide>
       <PicksGrid />
     </TitledPage>
   );
