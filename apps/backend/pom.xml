@@ -5,9 +5,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
 >
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.curleesoft.pickem</groupId>
   <artifactId>backend</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <name>backend</name>
   <description>This project was generated with nx-maven</description>
 
@@ -86,6 +84,19 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <!-- CVE-2026-110974 has no fixed android-json release. jsonassert only needs an org.json parser. -->
+        <exclusion>
+          <groupId>com.vaadin.external.google</groupId>
+          <artifactId>android-json</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20260814</version>
       <scope>test</scope>
     </dependency>
     <dependency>
