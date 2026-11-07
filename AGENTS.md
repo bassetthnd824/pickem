@@ -124,6 +124,16 @@ See [`docs/open-decisions.md`](docs/open-decisions.md).
 - Team/venue edits refresh denormalized snapshots; deletes block if referenced.
 - Interactive UI uses Base UI (`@base-ui/react`): buttons, menus, radios, fields, and inputs. Compose Next.js `Link` with the `render` prop. Tables, headings, and plain text stay semantic HTML. Shared wrappers live in `apps/frontend/components/ui`.
 
+## Frontend style
+
+The Next.js app (`apps/frontend`) is formatted with oxfmt and linted with oxlint. Prettier remains for Java and XML only. Do not run Prettier on `apps/frontend`.
+
+- Single quotes in JavaScript, TypeScript, and JSX. A string may use the other quote when it avoids escaping.
+- No semicolons.
+- Import app modules with the `@/` alias (`tsconfig.json` `paths`: `@/*` → `./*`). Do not use relative imports (`./` or `../`).
+- Sort imports. Keep Node built-ins and third-party packages in one group. Put a blank line between that group and internal `@/` imports (including styles).
+- Format with `npx nx format frontend`. Check with `npx nx format-check frontend` and `npx nx lint frontend`. Config: `apps/frontend/.oxfmtrc.json` and `.oxlintrc.json`.
+
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
 

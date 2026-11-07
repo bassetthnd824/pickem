@@ -27,9 +27,14 @@
     "**/target/**",
     "**/coverage/**",
     "**/.nx/**",
+    "**/next-env.d.ts",
     "**/vitest.config.*.timestamp*"
   ],
-  "jsPlugins": ["@nx/oxlint/boundaries-plugin"],
+  "jsPlugins": [
+    "@nx/oxlint/boundaries-plugin",
+    "@stylistic/eslint-plugin",
+    "eslint-plugin-perfectionist"
+  ],
   "settings": {
     "next": {
       "rootDir": "apps/frontend/"
@@ -49,10 +54,7 @@
       "error",
       {
         "enforceBuildableLibDependency": true,
-        "allow": [
-          "^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$",
-          "^.*/oxlint\\.config\\.[cm]?ts$"
-        ],
+        "allow": ["^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$", "^.*/oxlint\\.config\\.[cm]?ts$"],
         "depConstraints": [
           {
             "sourceTag": "*",
@@ -82,6 +84,75 @@
     ]
   },
   "overrides": [
+    {
+      "files": ["apps/frontend/**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}"],
+      "rules": {
+        "@stylistic/quotes": [
+          "error",
+          "single",
+          {
+            "avoidEscape": true,
+            "allowTemplateLiterals": true
+          }
+        ],
+        "@stylistic/jsx-quotes": ["error", "prefer-single"],
+        "@stylistic/semi": ["error", "never"],
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["./*", "../*", "./**", "../**"],
+                "message": "Import from @/ instead of a relative path."
+              }
+            ]
+          }
+        ],
+        "perfectionist/sort-imports": [
+          "error",
+          {
+            "type": "alphabetical",
+            "order": "asc",
+            "ignoreCase": true,
+            "sortSideEffects": true,
+            "internalPattern": ["^@/.+"],
+            "newlinesBetween": 0,
+            "groups": [
+              [
+                "type-builtin",
+                "type-external",
+                "value-builtin",
+                "value-external",
+                "side-effect",
+                "type-side-effect",
+                "value-side-effect"
+              ],
+              {
+                "newlinesBetween": 1
+              },
+              [
+                "type-internal",
+                "value-internal",
+                "type-parent",
+                "value-parent",
+                "type-sibling",
+                "value-sibling",
+                "type-index",
+                "value-index",
+                "type-subpath",
+                "value-subpath",
+                "type-style",
+                "value-style",
+                "side-effect-style",
+                "type-side-effect-style",
+                "value-side-effect-style"
+              ],
+              "unknown"
+            ]
+          }
+        ]
+      }
+    },
     {
       "files": ["**/*.{spec,test}.{ts,tsx,js,jsx}"],
       "rules": {

@@ -1,11 +1,12 @@
-import type { ReactNode } from "react";
-import { Navbar } from "./navbar";
+import type { ReactNode } from 'react'
+
+import { Navbar } from '@/components/navbar'
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-dvh bg-bg text-text">
+    <div className='min-h-dvh bg-bg text-text'>
       <Navbar />
       {children}
     </div>
-  );
+  )
 }

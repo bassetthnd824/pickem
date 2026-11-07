@@ -1,7 +1,7 @@
-import "server-only";
-import { OAuth2Client } from "google-auth-library";
+import { OAuth2Client } from 'google-auth-library'
+import 'server-only'
 
-const client = new OAuth2Client();
+const client = new OAuth2Client()
 
 /**
  * Verifies a Cloud Scheduler OIDC token for an allowlisted account.
@@ -15,25 +15,25 @@ export async function verifySchedulerOidc(
   allowedEmails: readonly string[],
 ): Promise<boolean> {
   if (
-    audience.trim() === "" ||
+    audience.trim() === '' ||
     allowedEmails.length === 0 ||
-    idToken.split(".").length !== 3
+    idToken.split('.').length !== 3
   ) {
-    return false;
+    return false
   }
   try {
-    const ticket = await client.verifyIdToken({ idToken, audience });
-    const payload = ticket.getPayload();
-    const email = payload?.email;
+    const ticket = await client.verifyIdToken({ idToken, audience })
+    const payload = ticket.getPayload()
+    const email = payload?.email
     if (
       !payload ||
       payload.email_verified !== true ||
-      typeof email !== "string"
+      typeof email !== 'string'
     ) {
-      return false;
+      return false
     }
-    return allowedEmails.includes(email);
+    return allowedEmails.includes(email)
   } catch {
-    return false;
+    return false
   }
 }

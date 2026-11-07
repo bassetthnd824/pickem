@@ -1,5 +1,5 @@
 /* Pin class detection to this app so a monorepo working directory cannot scan the legacy tree. */
-@import "tailwindcss" source("..");
+@import 'tailwindcss' source("..");
 
 /*
   Utilities such as bg-surface and text-primary read these variables.
@@ -28,7 +28,7 @@
 */
 
 :root,
-[data-theme="light"] {
+[data-theme='light'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -43,7 +43,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   color-scheme: dark;
   --color-bg: #020617;
   --color-surface: #1e293b;
@@ -58,7 +58,7 @@
   --color-danger: #f87171;
 }
 
-[data-theme="alabama"] {
+[data-theme='alabama'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -73,7 +73,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="arkansas"] {
+[data-theme='arkansas'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -88,7 +88,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="auburn"] {
+[data-theme='auburn'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -103,7 +103,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="florida"] {
+[data-theme='florida'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -118,7 +118,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="georgia"] {
+[data-theme='georgia'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -133,7 +133,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="kentucky"] {
+[data-theme='kentucky'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -148,7 +148,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="lsu"] {
+[data-theme='lsu'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -163,7 +163,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="mississippi-state"] {
+[data-theme='mississippi-state'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -178,7 +178,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="missouri"] {
+[data-theme='missouri'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -193,7 +193,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="oklahoma"] {
+[data-theme='oklahoma'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -208,7 +208,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="ole-miss"] {
+[data-theme='ole-miss'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -223,7 +223,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="south-carolina"] {
+[data-theme='south-carolina'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -238,7 +238,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="tennessee"] {
+[data-theme='tennessee'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -253,7 +253,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="texas"] {
+[data-theme='texas'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -268,7 +268,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="texas-am"] {
+[data-theme='texas-am'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
@@ -283,7 +283,7 @@
   --color-danger: #b42318;
 }
 
-[data-theme="vanderbilt"] {
+[data-theme='vanderbilt'] {
   color-scheme: light;
   --color-bg: #f8fafc;
   --color-surface: #ffffff;

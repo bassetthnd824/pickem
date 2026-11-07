@@ -1,13 +1,14 @@
-import { NextResponse } from "next/server";
-import { parseAuthProfile, type AuthProfile } from "../auth-profile";
-import { SESSION_COOKIE_NAME } from "../session-gate";
-import { callSpring, proxyToSpring } from "./spring-proxy";
+import { NextResponse } from 'next/server'
+
+import { parseAuthProfile, type AuthProfile } from '@/lib/auth-profile'
+import { callSpring, proxyToSpring } from '@/lib/server/spring-proxy'
+import { SESSION_COOKIE_NAME } from '@/lib/session-gate'
 
 export {
   hostOnlySetCookie,
   parseSetCookie,
   springApiBaseUrl,
-} from "./spring-proxy";
+} from '@/lib/server/spring-proxy'
 
 /**
  * Sign-in, logout, and the current profile. Game and manager calls use the
@@ -15,31 +16,31 @@ export {
  */
 
 export const AUTH_PATHS = {
-  session: "/api/auth/session",
-  logout: "/api/auth/logout",
-  me: "/api/auth/me",
-} as const;
+  session: '/api/auth/session',
+  logout: '/api/auth/logout',
+  me: '/api/auth/me',
+} as const
 
-export type AuthPath = (typeof AUTH_PATHS)[keyof typeof AUTH_PATHS];
+export type AuthPath = (typeof AUTH_PATHS)[keyof typeof AUTH_PATHS]
 
 const SIGN_IN_ERRORS = {
-  unconfigured: "Sign-in service is not configured",
-  unavailable: "Sign-in service is unavailable",
-} as const;
+  unconfigured: 'Sign-in service is not configured',
+  unavailable: 'Sign-in service is unavailable',
+} as const
 
 /** Host-only clear. Used when Spring rejects logout and does not clear `__session`. */
 export function clearSessionResponse(): NextResponse {
-  const response = new NextResponse(null, { status: 204 });
+  const response = new NextResponse(null, { status: 204 })
   response.cookies.set({
     name: SESSION_COOKIE_NAME,
-    value: "",
-    path: "/",
+    value: '',
+    path: '/',
     httpOnly: true,
     secure: true,
-    sameSite: "lax",
+    sameSite: 'lax',
     maxAge: 0,
-  });
-  return response;
+  })
+  return response
 }
 
 /**
@@ -48,39 +49,39 @@ export function clearSessionResponse(): NextResponse {
  */
 export function finishLogout(upstream: NextResponse): NextResponse {
   if (upstream.status === 401 || upstream.status === 403) {
-    return clearSessionResponse();
+    return clearSessionResponse()
   }
-  return upstream;
+  return upstream
 }
 
 export function forwardAuth(
   request: Request,
   path: AuthPath,
 ): Promise<NextResponse> {
-  const search = new URL(request.url).search;
-  return proxyToSpring(request, `${path}${search}`, SIGN_IN_ERRORS);
+  const search = new URL(request.url).search
+  return proxyToSpring(request, `${path}${search}`, SIGN_IN_ERRORS)
 }
 
 export async function fetchAuthProfile(
   sessionCookie: string | undefined,
 ): Promise<AuthProfile | null> {
   if (!sessionCookie || /[;\s,]/.test(sessionCookie)) {
-    return null;
+    return null
   }
-  const request = new Request("http://localhost/api/auth/me", {
-    method: "GET",
+  const request = new Request('http://localhost/api/auth/me', {
+    method: 'GET',
     headers: {
-      accept: "application/json",
+      accept: 'application/json',
       cookie: `${SESSION_COOKIE_NAME}=${sessionCookie}`,
     },
-  });
-  const result = await callSpring(request, AUTH_PATHS.me);
+  })
+  const result = await callSpring(request, AUTH_PATHS.me)
   if (!result.ok || result.status < 200 || result.status >= 300) {
-    return null;
+    return null
   }
   try {
-    return parseAuthProfile(JSON.parse(new TextDecoder().decode(result.body)));
+    return parseAuthProfile(JSON.parse(new TextDecoder().decode(result.body)))
   } catch {
-    return null;
+    return null
   }
 }

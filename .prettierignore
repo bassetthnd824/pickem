@@ -10,6 +10,9 @@ coverage/
 tmp/
 out-tsc/
 
+# Next.js source is formatted by oxfmt (apps/frontend/.oxfmtrc.json).
+apps/frontend/
+
 # Next.js
 .next/
 out/

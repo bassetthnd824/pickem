@@ -4,39 +4,39 @@
  */
 
 export const THEME_KEYS = [
-  "light",
-  "dark",
-  "alabama",
-  "arkansas",
-  "auburn",
-  "florida",
-  "georgia",
-  "kentucky",
-  "lsu",
-  "mississippi-state",
-  "missouri",
-  "oklahoma",
-  "ole-miss",
-  "south-carolina",
-  "tennessee",
-  "texas",
-  "texas-am",
-  "vanderbilt",
-] as const;
+  'light',
+  'dark',
+  'alabama',
+  'arkansas',
+  'auburn',
+  'florida',
+  'georgia',
+  'kentucky',
+  'lsu',
+  'mississippi-state',
+  'missouri',
+  'oklahoma',
+  'ole-miss',
+  'south-carolina',
+  'tennessee',
+  'texas',
+  'texas-am',
+  'vanderbilt',
+] as const
 
-export type ThemeKey = (typeof THEME_KEYS)[number];
+export type ThemeKey = (typeof THEME_KEYS)[number]
 
-export const DEFAULT_THEME: ThemeKey = "light";
+export const DEFAULT_THEME: ThemeKey = 'light'
 
 /** Mirrors `users.themeId` so the root layout can paint it during SSR. */
-export const THEME_COOKIE_NAME = "themeId";
+export const THEME_COOKIE_NAME = 'themeId'
 
-const THEME_KEY_SET: ReadonlySet<string> = new Set(THEME_KEYS);
+const THEME_KEY_SET: ReadonlySet<string> = new Set(THEME_KEYS)
 
 export function isThemeKey(
   value: string | null | undefined,
 ): value is ThemeKey {
-  return typeof value === "string" && THEME_KEY_SET.has(value);
+  return typeof value === 'string' && THEME_KEY_SET.has(value)
 }
 
 /**
@@ -48,10 +48,10 @@ export function resolveThemeId(
   cookieThemeId?: string | null,
 ): ThemeKey {
   if (isThemeKey(profileThemeId)) {
-    return profileThemeId;
+    return profileThemeId
   }
   if (isThemeKey(cookieThemeId)) {
-    return cookieThemeId;
+    return cookieThemeId
   }
-  return DEFAULT_THEME;
+  return DEFAULT_THEME
 }
