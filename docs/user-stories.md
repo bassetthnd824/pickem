@@ -579,7 +579,7 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **User story.** As a player, I want a Next.js App Router UI with a typed API client so that screens can fetch JSON instead of rendering JSPs.
 
-**Description.** Replaces Tiles `template.jsp`, jQuery, Underscore, and Bootstrap 3. Stack: Next.js App Router, TypeScript, Tailwind, TanStack Query, TanStack Form, Valibot (schemas filled in US-22), `credentials: 'include'`. Optional `libs/shared-schemas` is owned here if created. Browser API calls are same-origin `/api` on Next.js; US-31 adds the Axios BFF that forwards them to Spring.
+**Description.** Replaces Tiles `template.jsp`, jQuery, Underscore, and Bootstrap 3. Stack: Next.js App Router, TypeScript, Tailwind, Base UI (`@base-ui/react`) for interactive controls, TanStack Query, TanStack Form, Valibot (schemas filled in US-22), `credentials: 'include'`. Optional `libs/shared-schemas` is owned here if created. Browser API calls are same-origin `/api` on Next.js; US-31 adds the Axios BFF that forwards them to Spring. Tables, headings, and plain text stay semantic HTML.
 
 **Acceptance criteria.**
 

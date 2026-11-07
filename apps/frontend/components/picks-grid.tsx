@@ -1,5 +1,6 @@
 "use client";
 
+import { Toolbar } from "@base-ui/react/toolbar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { ApiError, api } from "../lib/api-client";
@@ -18,6 +19,7 @@ import {
 import { useAuth } from "./auth-provider";
 import { PickResultIcon } from "./pick-result-icon";
 import { Button } from "./ui/button";
+import { Radio, RadioGroup } from "./ui/radio";
 
 const MAIN_KEY = ["game", "main"] as const;
 
@@ -205,7 +207,24 @@ function WeekPicks({
               const rank = draft.rank[matchup.matchupId];
               const matchupLabel = `${matchup.awayTeam.name} at ${matchup.homeTeam.name}`;
               return (
-                <tr key={matchup.matchupId} className="border-b border-border">
+                <RadioGroup
+                  key={matchup.matchupId}
+                  render={<tr />}
+                  className="border-b border-border"
+                  aria-label={matchupLabel}
+                  name={`${matchup.matchupId}-week-${week.weekNumber}`}
+                  value={pickedTeamId}
+                  disabled={frozen}
+                  onValueChange={(teamId) =>
+                    onChange({
+                      ...draft,
+                      pickedTeamId: {
+                        ...draft.pickedTeamId,
+                        [matchup.matchupId]: String(teamId),
+                      },
+                    })
+                  }
+                >
                   {locked ? (
                     <td className="px-2 py-2">
                       <ResultCell matchup={matchup} />
@@ -215,22 +234,7 @@ function WeekPicks({
                   <td className="hidden px-2 py-2 lg:table-cell">
                     {matchup.rivalryName ?? ""}
                   </td>
-                  <TeamCell
-                    weekNumber={week.weekNumber}
-                    team={matchup.awayTeam}
-                    selected={pickedTeamId}
-                    locked={frozen}
-                    group={matchup.matchupId}
-                    onSelect={(teamId) =>
-                      onChange({
-                        ...draft,
-                        pickedTeamId: {
-                          ...draft.pickedTeamId,
-                          [matchup.matchupId]: teamId,
-                        },
-                      })
-                    }
-                  />
+                  <TeamCell weekNumber={week.weekNumber} team={matchup.awayTeam} />
                   {locked ? (
                     <td className="px-2 py-2">{scoreText(matchup.awayTeamScore)}</td>
                   ) : null}
@@ -242,31 +246,18 @@ function WeekPicks({
                   {locked ? (
                     <td className="px-2 py-2">{scoreText(matchup.homeTeamScore)}</td>
                   ) : null}
-                  <TeamCell
-                    weekNumber={week.weekNumber}
-                    team={matchup.homeTeam}
-                    selected={pickedTeamId}
-                    locked={frozen}
-                    group={matchup.matchupId}
-                    onSelect={(teamId) =>
-                      onChange({
-                        ...draft,
-                        pickedTeamId: {
-                          ...draft.pickedTeamId,
-                          [matchup.matchupId]: teamId,
-                        },
-                      })
-                    }
-                  />
+                  <TeamCell weekNumber={week.weekNumber} team={matchup.homeTeam} />
                   <td className="hidden px-2 py-2 md:table-cell">
                     {venueLabel(matchup.venue)}
                   </td>
                   <td className="px-2 py-2">
-                    <div className="flex gap-2">
-                      <Button
-                        type="button"
-                        variant="nav"
-                        className="bg-primary"
+                    <Toolbar.Root
+                      aria-label={`Reorder ${matchupLabel}`}
+                      className="flex gap-2"
+                    >
+                      <Toolbar.Button
+                        render={<Button variant="nav" className="bg-primary" />}
+                        focusableWhenDisabled={false}
                         disabled={frozen || index === 0}
                         aria-label={`Move ${matchupLabel} up`}
                         onClick={() =>
@@ -276,11 +267,10 @@ function WeekPicks({
                         }
                       >
                         Up
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="nav"
-                        className="bg-primary"
+                      </Toolbar.Button>
+                      <Toolbar.Button
+                        render={<Button variant="nav" className="bg-primary" />}
+                        focusableWhenDisabled={false}
                         disabled={frozen || index === draft.order.length - 1}
                         aria-label={`Move ${matchupLabel} down`}
                         onClick={() =>
@@ -290,10 +280,10 @@ function WeekPicks({
                         }
                       >
                         Down
-                      </Button>
-                    </div>
+                      </Toolbar.Button>
+                    </Toolbar.Root>
                   </td>
-                </tr>
+                </RadioGroup>
               );
             })}
           </tbody>
@@ -314,29 +304,16 @@ function Column({ label, className }: { label: string; className?: string }) {
 function TeamCell({
   weekNumber,
   team,
-  selected,
-  locked,
-  group,
-  onSelect,
 }: {
   weekNumber: number;
   team: GridMatchup["homeTeam"];
-  selected: string;
-  locked: boolean;
-  group: string;
-  onSelect: (teamId: string) => void;
 }) {
   return (
     <td className="px-2 py-2">
       <label className="inline-flex items-center gap-2">
-        <input
-          type="radio"
-          name={`${group}-week-${weekNumber}`}
+        <Radio
           value={team.id}
-          checked={selected === team.id}
-          disabled={locked}
           aria-label={`Pick ${team.name} in week ${weekNumber}`}
-          onChange={() => onSelect(team.id)}
         />
         <span>{team.name}</span>
         {team.squad !== "" ? (
