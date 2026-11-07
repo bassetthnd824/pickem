@@ -26,8 +26,8 @@ import com.curleesoft.pickem.backend.repository.TeamRepository;
  * Weekly confidence picks. Ports {@code MainAction},
  * {@code MatchupBean.getMatchupUserPicksByUserSeason}, and
  * {@code UserPickBean.persistList}. Matchups and picks are joined in memory.
- * The authenticated user owns every written document. Refusing a save once the
- * week has begun is US-34.
+ * The authenticated user owns every written document. A week whose begin date
+ * is today or earlier in {@link PickScoring#LEAGUE_ZONE} cannot be saved.
  */
 @Service
 public class PickService {
@@ -45,6 +45,8 @@ public class PickService {
     public static final String RANK_INVALID = "rank is invalid";
 
     public static final String RANK_NOT_UNIQUE = "ranks must be unique";
+
+    public static final String WEEK_LOCKED = "picks are locked";
 
     private final PickRepository pickRepository;
 
@@ -95,6 +97,7 @@ public class PickService {
 
         SeasonWeek week = seasonWeekRepository.findById(seasonWeekId.trim())
                 .orElseThrow(() -> new InvalidRequestException(SeasonWeekService.NOT_FOUND));
+        rejectLocked(week);
         int maxRank = conferenceTeamCount();
         Map<String, Matchup> matchups = matchupsById(week.getId());
         WeekPlan plan = plan(userId, week, maxRank, matchups, picksForWeek(userId, week), selections);
@@ -104,6 +107,7 @@ public class PickService {
 
     private WeekPlan plan(String userId, SeasonWeek week, int maxRank, Map<String, Matchup> matchups,
             Map<String, Pick> existing, List<PickSelection> selections) {
+        rejectLocked(week);
         Map<String, Pick> remaining = new HashMap<>(existing);
         List<PickSelection> rows = selections == null ? List.of() : selections;
         Set<String> seen = new HashSet<>();
@@ -174,6 +178,12 @@ public class PickService {
         }
 
         return new WeekPlan(upserts, deletes);
+    }
+
+    private void rejectLocked(SeasonWeek week) {
+        if (PickScoring.currentOrPast(week.getBeginDate(), clock)) {
+            throw new ConflictException(WEEK_LOCKED);
+        }
     }
 
     private void clear(String matchupId, Map<String, Pick> remaining, Set<String> seen, List<Pick> deletes) {

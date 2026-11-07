@@ -8,9 +8,10 @@ import java.time.format.DateTimeParseException;
 
 /**
  * Ports {@code MatchupUserPick.getScore} and {@code isCurrentOrPastWeek}. A
- * correct pick earns its rank only when both scores exist and the pick is the
- * winner. College-football ties have no winner, so they score 0. Week currency
- * uses the league calendar date in {@link #LEAGUE_ZONE}, not the JVM zone.
+ * correct pick earns its rank only when both scores exist, they are not equal,
+ * and the pick is the winner. Equal scores score 0 even if a winner id is
+ * stored. Week currency uses the league calendar date in {@link #LEAGUE_ZONE},
+ * not the JVM zone.
  */
 public final class PickScoring {
 
@@ -45,7 +46,7 @@ public final class PickScoring {
 
     public static int points(Integer homeScore, Integer awayScore, String winningTeamId, String pickedTeamId,
             Integer rank) {
-        if (homeScore == null || awayScore == null || rank == null) {
+        if (homeScore == null || awayScore == null || rank == null || homeScore.equals(awayScore)) {
             return 0;
         }
 
