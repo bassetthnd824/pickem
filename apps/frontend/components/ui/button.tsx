@@ -21,6 +21,12 @@ export function Button({
   className,
   ...props
 }: ButtonProps) {
-  const classes = [variantClass[variant], className].filter(Boolean).join(" ");
+  const classes = [
+    variantClass[variant],
+    "cursor-pointer disabled:cursor-not-allowed data-disabled:cursor-not-allowed",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
   return <BaseButton {...props} className={classes} />;
 }
