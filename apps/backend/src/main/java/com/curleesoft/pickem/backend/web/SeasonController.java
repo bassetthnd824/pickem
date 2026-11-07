@@ -37,9 +37,12 @@ public class SeasonController {
     }
 
     @GetMapping
-    public List<Season> list(@RequestParam(required = false) String season,
-            @RequestParam(required = false) String beginDate, @RequestParam(required = false) String endDate,
-            @RequestParam(name = "isCurrent", required = false) Boolean current) {
+    public List<Season> list(
+            @RequestParam(required = false) String season,
+            @RequestParam(required = false) String beginDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(name = "isCurrent", required = false) Boolean current
+    ) {
         return seasonService.search(season, beginDate, endDate, current);
     }
 

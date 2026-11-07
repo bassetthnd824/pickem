@@ -20,14 +20,19 @@ final class CfbdDates {
 
     static LocalDate calendarDate(String timestamp) {
         String value = required(timestamp);
+
         if (value.length() >= 10) {
+
             try {
                 return LocalDate.parse(value.substring(0, 10));
-            }
-            catch (DateTimeParseException ex) {
+
+            } catch (DateTimeParseException ex) {
                 return LocalDate.ofInstant(instant(value), EASTERN);
+
             }
+
         }
+
         return LocalDate.ofInstant(instant(value), EASTERN);
     }
 
@@ -41,16 +46,22 @@ final class CfbdDates {
 
     static LocalDate kickoffDate(String timestamp) {
         String value = required(timestamp);
+
         if (value.length() == 10) {
             return LocalDate.parse(value);
+
         }
+
         return LocalDate.ofInstant(instant(value), EASTERN);
     }
 
     private static String required(String timestamp) {
+
         if (timestamp == null || timestamp.isBlank()) {
             throw new InvalidRequestException("CFBD date is invalid");
+
         }
+
         return timestamp.trim();
     }
 
@@ -63,11 +74,14 @@ final class CfbdDates {
     }
 
     private static Instant instant(String value) {
+
         try {
             return Instant.parse(value);
-        }
-        catch (DateTimeParseException ex) {
+
+        } catch (DateTimeParseException ex) {
             throw new InvalidRequestException("CFBD date is invalid");
+
         }
+
     }
 }

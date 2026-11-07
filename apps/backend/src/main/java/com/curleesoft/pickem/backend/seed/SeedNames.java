@@ -18,6 +18,7 @@ final class SeedNames {
 
         if (displayName == null || displayName.isBlank()) {
             return new Name(truncate(local), FALLBACK_LAST_NAME);
+
         }
 
         String trimmed = displayName.trim();
@@ -26,6 +27,7 @@ final class SeedNames {
         if (space < 0) {
             String only = truncate(trimmed);
             return new Name(only.isBlank() ? truncate(local) : only, FALLBACK_LAST_NAME);
+
         }
 
         String first = truncate(trimmed.substring(0, space).trim());
@@ -33,6 +35,7 @@ final class SeedNames {
 
         if (first.isBlank()) {
             first = truncate(local);
+
         }
 
         String last = rest.isBlank() ? FALLBACK_LAST_NAME : truncate(rest);
@@ -40,8 +43,10 @@ final class SeedNames {
     }
 
     private static String localPart(String email) {
+
         if (email == null || email.isBlank()) {
             return FALLBACK_LAST_NAME;
+
         }
 
         int at = email.indexOf('@');
@@ -50,8 +55,10 @@ final class SeedNames {
     }
 
     private static String truncate(String value) {
+
         if (value.length() <= MAX_LENGTH) {
             return value;
+
         }
 
         return value.substring(0, MAX_LENGTH);

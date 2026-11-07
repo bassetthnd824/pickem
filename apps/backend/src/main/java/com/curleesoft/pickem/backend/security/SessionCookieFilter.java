@@ -18,9 +18,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import lombok.extern.slf4j.Slf4j;
-
 import tools.jackson.databind.json.JsonMapper;
 
 /**
@@ -38,8 +36,12 @@ public class SessionCookieFilter extends OncePerRequestFilter {
 
     private final JsonMapper jsonMapper;
 
-    public SessionCookieFilter(FirebaseIdentityClient identityClient, SessionCookies sessionCookies,
-            UserRepository userRepository, JsonMapper jsonMapper) {
+    public SessionCookieFilter(
+            FirebaseIdentityClient identityClient,
+            SessionCookies sessionCookies,
+            UserRepository userRepository,
+            JsonMapper jsonMapper
+    ) {
         this.identityClient = identityClient;
         this.sessionCookies = sessionCookies;
         this.userRepository = userRepository;
@@ -49,9 +51,12 @@ public class SessionCookieFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String uri = request.getRequestURI();
+
         if (uri == null) {
             return false;
+
         }
+
         return InternalJobFilter.isInternal(uri);
     }
 
@@ -59,26 +64,32 @@ public class SessionCookieFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         Optional<String> cookie = sessionCookies.read(request);
+
         if (cookie.isPresent()) {
+
             try {
                 authenticate(cookie.get());
-            }
-            catch (AuthUnavailableException ex) {
+
+            } catch (AuthUnavailableException ex) {
                 // Controller advice does not run for a filter.
                 log.warn("Firebase Admin credentials are not available");
                 writeProblem(response, HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
                 return;
-            }
-            catch (FirestoreAccessException ex) {
+
+            } catch (FirestoreAccessException ex) {
                 log.warn("Could not resolve roles for a session cookie", ex);
                 writeProblem(response, HttpStatus.SERVICE_UNAVAILABLE, "Authentication is temporarily unavailable");
                 return;
+
             }
+
         }
+
         filterChain.doFilter(request, response);
     }
 
     private void authenticate(String sessionCookie) {
+
         try {
             VerifiedIdentity identity = identityClient.verifySessionCookie(sessionCookie);
             List<String> roles = rolesFor(identity);
@@ -86,11 +97,13 @@ public class SessionCookieFilter extends OncePerRequestFilter {
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(new SessionAuthentication(principal, RoleClaims.authorities(roles)));
             SecurityContextHolder.setContext(context);
-        }
-        catch (InvalidCredentialException ex) {
+
+        } catch (InvalidCredentialException ex) {
             SecurityContextHolder.clearContext();
             log.debug("Rejected session cookie");
+
         }
+
     }
 
     /**
@@ -102,9 +115,12 @@ public class SessionCookieFilter extends OncePerRequestFilter {
      */
     private List<String> rolesFor(VerifiedIdentity identity) {
         List<String> roles = RoleClaims.read(identity.claims());
+
         if (!roles.isEmpty()) {
             return roles;
+
         }
+
         return userRepository.findById(identity.uid()).map(user -> user.getRoles()).map(RoleClaims::normalize)
                 .orElse(List.of());
     }

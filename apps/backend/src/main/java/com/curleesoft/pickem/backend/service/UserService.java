@@ -56,8 +56,11 @@ public class UserService {
 
     private final FirebaseIdentityClient identityClient;
 
-    public UserService(UserRepository userRepository, ThemeService themeService,
-            FirebaseIdentityClient identityClient) {
+    public UserService(
+            UserRepository userRepository,
+            ThemeService themeService,
+            FirebaseIdentityClient identityClient
+    ) {
         this.userRepository = userRepository;
         this.themeService = themeService;
         this.identityClient = identityClient;
@@ -72,8 +75,12 @@ public class UserService {
                 .filter(item -> email == null || SearchText.contains(item.getEmailAddr(), email))
                 .filter(item -> first == null || SearchText.contains(item.getFirstName(), first))
                 .filter(item -> last == null || SearchText.contains(item.getLastName(), last))
-                .sorted(Comparator.comparing((User item) -> item.getEmailAddr(),
-                        Comparator.nullsLast((String left, String right) -> left.compareTo(right))))
+                .sorted(
+                        Comparator.comparing(
+                                (User item) -> item.getEmailAddr(),
+                                Comparator.nullsLast((String left, String right) -> left.compareTo(right))
+                        )
+                )
                 .toList();
     }
 
@@ -83,18 +90,27 @@ public class UserService {
 
     public User create(User request) {
         String uid = requireUid(request.getUid(), request.getId());
+
         if (userRepository.findById(uid).isPresent()) {
             throw new ConflictException(ALREADY_EXISTS);
+
         }
 
         User user = new User();
         user.setId(uid);
         user.setUid(uid);
         apply(user, request);
-        return commit(user, List.of(),
+        return commit(
+                user,
+                List.of(),
                 (transaction, collection, documentId) -> rejectExisting(transaction, collection, documentId),
-                (transaction, collection, documentId) -> rejectDuplicateEmail(transaction, collection, documentId,
-                        user));
+                (transaction, collection, documentId) -> rejectDuplicateEmail(
+                        transaction,
+                        collection,
+                        documentId,
+                        user
+                )
+        );
     }
 
     public User update(String id, User request) {
@@ -103,13 +119,22 @@ public class UserService {
 
         if (submitted != null && !existing.getUid().equals(submitted)) {
             throw new InvalidRequestException(UID_MISMATCH);
+
         }
 
         List<String> previousRoles = existing.getRoles() == null ? List.of() : List.copyOf(existing.getRoles());
         apply(existing, request);
         existing.setVersion(request.getVersion());
-        return commit(existing, previousRoles, (transaction, collection, documentId) -> rejectDuplicateEmail(
-                transaction, collection, documentId, existing));
+        return commit(
+                existing,
+                previousRoles,
+                (transaction, collection, documentId) -> rejectDuplicateEmail(
+                        transaction,
+                        collection,
+                        documentId,
+                        existing
+                )
+        );
     }
 
     public void delete(String id) {
@@ -118,50 +143,65 @@ public class UserService {
 
         try {
             RoleClaimSync.publish(identityClient, uid, List.of());
-        }
-        catch (IdentityAdminException ex) {
+
+        } catch (IdentityAdminException ex) {
+
             if (ex.getKind() != IdentityAdminException.Kind.USER_NOT_FOUND) {
                 throw ex;
+
             }
 
             userRepository.delete(id);
             return;
+
         }
 
         try {
             identityClient.revokeRefreshTokens(uid);
-        }
-        catch (IdentityAdminException ex) {
+
+        } catch (IdentityAdminException ex) {
+
             if (ex.getKind() != IdentityAdminException.Kind.USER_NOT_FOUND) {
                 RoleClaimSync.align(identityClient, userRepository, uid, existing.getRoles());
                 throw ex;
+
             }
+
         }
 
         userRepository.delete(id);
     }
 
-    private User commit(User user, List<String> claimsIfMissing,
-            BaseRepository.SaveConstraint... constraints) {
+    private User commit(
+            User user,
+            List<String> claimsIfMissing,
+            BaseRepository.SaveConstraint... constraints
+    ) {
         RoleClaimSync.publish(identityClient, user.getUid(), user.getRoles());
 
         try {
             return userRepository.save(user, constraints);
 
-        }
-        catch (RuntimeException ex) {
+        } catch (RuntimeException ex) {
+
             try {
                 RoleClaimSync.align(identityClient, userRepository, user.getUid(), claimsIfMissing);
-            }
-            catch (RuntimeException restore) {
-                IdentityAdminException failure = new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE,
-                        IdentityAdminException.CLAIMS_NOT_RESTORED, restore);
+
+            } catch (RuntimeException restore) {
+                IdentityAdminException failure = new IdentityAdminException(
+                        IdentityAdminException.Kind.UNAVAILABLE,
+                        IdentityAdminException.CLAIMS_NOT_RESTORED,
+                        restore
+                );
                 failure.addSuppressed(ex);
                 throw failure;
+
             }
 
             throw ex;
+
         }
+
     }
 
     private void apply(User target, User request) {
@@ -169,6 +209,7 @@ public class UserService {
 
         if (!themeService.pathExists(themeId)) {
             throw new InvalidRequestException(ThemeService.NOT_FOUND);
+
         }
 
         target.setEmailAddr(SearchText.trim(request.getEmailAddr()));
@@ -186,15 +227,27 @@ public class UserService {
 
         if (TransactionReads.documentExists(transaction, reference)) {
             throw new ConflictException(ALREADY_EXISTS);
+
         }
+
     }
 
-    private static void rejectDuplicateEmail(Transaction transaction, CollectionReference collection,
-            String documentId, User user) {
-        if (TransactionReads.anotherDocumentMatches(transaction,
-                collection.whereEqualTo("emailAddr", user.getEmailAddr()), documentId)) {
+    private static void rejectDuplicateEmail(
+            Transaction transaction,
+            CollectionReference collection,
+            String documentId,
+            User user
+    ) {
+
+        if (TransactionReads.anotherDocumentMatches(
+                transaction,
+                collection.whereEqualTo("emailAddr", user.getEmailAddr()),
+                documentId
+        )) {
             throw new ConflictException(EMAIL_NOT_UNIQUE);
+
         }
+
     }
 
     private static String requireUid(String uid, String id) {
@@ -202,41 +255,50 @@ public class UserService {
 
         if (resolved == null) {
             throw new InvalidRequestException(UID_REQUIRED);
+
         }
 
         if (resolved.length() > UID_MAX || resolved.indexOf('/') >= 0 || ".".equals(resolved)
                 || "..".equals(resolved)) {
             throw new InvalidRequestException(UID_INVALID);
+
         }
 
         return resolved;
     }
 
     private static List<String> requireRoles(List<String> roles) {
+
         if (roles == null || roles.isEmpty()) {
             throw new InvalidRequestException(ROLES_REQUIRED);
+
         }
 
         List<String> submitted = new ArrayList<>();
 
         for (String role : roles) {
+
             if (!StringUtils.hasText(role)) {
                 continue;
+
             }
 
             String normalized = role.trim().toLowerCase(Locale.ROOT);
 
             if (!RoleClaims.PLAYER.equals(normalized) && !RoleClaims.MANAGER.equals(normalized)) {
                 throw new InvalidRequestException(ROLE_INVALID);
+
             }
 
             submitted.add(normalized);
+
         }
 
         List<String> ordered = RoleClaims.normalize(submitted);
 
         if (ordered.isEmpty()) {
             throw new InvalidRequestException(ROLES_REQUIRED);
+
         }
 
         return ordered;
@@ -244,9 +306,12 @@ public class UserService {
 
     private static String firstText(String primary, String fallback) {
         String trimmed = SearchText.trim(primary);
+
         if (StringUtils.hasText(trimmed)) {
             return trimmed;
+
         }
+
         trimmed = SearchText.trim(fallback);
         return StringUtils.hasText(trimmed) ? trimmed : null;
     }

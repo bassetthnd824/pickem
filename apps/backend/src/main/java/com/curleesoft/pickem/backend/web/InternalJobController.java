@@ -49,10 +49,13 @@ public class InternalJobController {
      */
     @PostMapping("/cfbd-matchups")
     public ResponseEntity<InternalJobAccepted> matchups(@RequestBody(required = false) ImportWorkerRequest request) {
+
         if (request != null && StringUtils.hasText(request.jobId())) {
             String jobId = Objects.requireNonNull(request.jobId(), "jobId").trim();
             cfbdImportService.execute(jobId);
+
         }
+
         return accepted("cfbd-matchups");
     }
 

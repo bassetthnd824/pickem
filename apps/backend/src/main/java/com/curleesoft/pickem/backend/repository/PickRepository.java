@@ -40,8 +40,10 @@ public class PickRepository extends BaseRepository<Pick> {
      * US-39. Callers filter season and week in memory.
      */
     public List<Pick> findByUserId(String userId) {
+
         if (!StringUtils.hasText(userId)) {
             return List.of();
+
         }
 
         return query(collection -> collection.whereEqualTo("userId", userId));
@@ -55,8 +57,13 @@ public class PickRepository extends BaseRepository<Pick> {
      * rejected. The caller's objects stay as submitted; the returned drafts carry
      * the committed versions.
      */
-    public List<Pick> commitWeek(String userId, String seasonWeekId, List<Pick> upserts, List<Pick> deletes,
-            WeekGuard guard) {
+    public List<Pick> commitWeek(
+            String userId,
+            String seasonWeekId,
+            List<Pick> upserts,
+            List<Pick> deletes,
+            WeekGuard guard
+    ) {
         List<Pick> sources = upserts == null ? List.of() : List.copyOf(upserts);
         List<Pick> removals = deletes == null
                 ? List.of()
@@ -65,25 +72,44 @@ public class PickRepository extends BaseRepository<Pick> {
 
         if (sources.isEmpty() && removals.isEmpty()) {
             return List.of();
+
         }
 
         String actor = currentActor();
-        return inTransaction(transaction -> writeWeek(transaction, userId, seasonWeekId, sources, removals, actor,
-                guard));
+        return inTransaction(
+                transaction -> writeWeek(
+                        transaction,
+                        userId,
+                        seasonWeekId,
+                        sources,
+                        removals,
+                        actor,
+                        guard
+                )
+        );
     }
 
-    private List<Pick> writeWeek(Transaction transaction, String userId, String seasonWeekId, List<Pick> sources,
-            List<Pick> removals, String actor, WeekGuard guard) {
+    private List<Pick> writeWeek(
+            Transaction transaction,
+            String userId,
+            String seasonWeekId,
+            List<Pick> sources,
+            List<Pick> removals,
+            String actor,
+            WeekGuard guard
+    ) {
         Map<String, Pick> stored = readWeek(transaction, userId, seasonWeekId);
 
         if (guard != null) {
             guard.check(stored);
+
         }
 
         List<Pick> drafts = new ArrayList<>(sources.size());
 
         for (Pick source : sources) {
             drafts.add(stage(transaction, source, actor));
+
         }
 
         List<DocumentReference> deleted = new ArrayList<>();
@@ -93,21 +119,25 @@ public class PickRepository extends BaseRepository<Pick> {
 
             if (current.isEmpty()) {
                 continue;
+
             }
 
             String removalId = Objects.requireNonNull(removal.getId(), "id");
             assertVersion(current.get(), removal.getVersion(), removalId);
             deleted.add(Objects.requireNonNull(collection().document(removalId), "document"));
+
         }
 
         for (Pick draft : drafts) {
             String id = Objects.requireNonNull(draft.getId(), "id");
             DocumentReference reference = Objects.requireNonNull(collection().document(id), "document");
             transaction.set(reference, draft);
+
         }
 
         for (DocumentReference ref : deleted) {
             transaction.delete(Objects.requireNonNull(ref, "document"));
+
         }
 
         return drafts;
@@ -118,6 +148,7 @@ public class PickRepository extends BaseRepository<Pick> {
 
         if (!StringUtils.hasText(userId)) {
             return stored;
+
         }
 
         for (QueryDocumentSnapshot document : TransactionReads
@@ -128,9 +159,11 @@ public class PickRepository extends BaseRepository<Pick> {
             if (pick == null || !seasonWeekId.equals(pick.getSeasonWeekId())
                     || !StringUtils.hasText(pick.getMatchupId())) {
                 continue;
+
             }
 
             stored.putIfAbsent(pick.getMatchupId(), pick);
+
         }
 
         return stored;

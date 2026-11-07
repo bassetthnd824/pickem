@@ -36,8 +36,13 @@ public class BaseRepository<D extends AuditableDocument> {
     private final Class<D> type;
     private final String collectionName;
 
-    public BaseRepository(Firestore firestore, Clock clock, AuditActorResolver auditActorResolver, Class<D> type,
-            String collectionName) {
+    public BaseRepository(
+            Firestore firestore,
+            Clock clock,
+            AuditActorResolver auditActorResolver,
+            Class<D> type,
+            String collectionName
+    ) {
         this.firestore = firestore;
         this.clock = clock;
         this.auditActorResolver = auditActorResolver;
@@ -46,8 +51,10 @@ public class BaseRepository<D extends AuditableDocument> {
     }
 
     public Optional<D> findById(String id) {
+
         if (id == null || id.isBlank()) {
             return Optional.empty();
+
         }
 
         try {
@@ -55,19 +62,20 @@ public class BaseRepository<D extends AuditableDocument> {
 
             if (!snapshot.exists()) {
                 return Optional.empty();
+
             }
 
             return Optional.ofNullable(toDocument(snapshot));
 
-        }
-        catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new FirestoreAccessException("Interrupted reading " + collectionName + "/" + id, ex);
 
-        }
-        catch (ExecutionException ex) {
+        } catch (ExecutionException ex) {
             throw wrap("Failed to read " + collectionName + "/" + id, ex);
+
         }
+
     }
 
     public List<D> findAll() {
@@ -88,20 +96,22 @@ public class BaseRepository<D extends AuditableDocument> {
 
                 if (mapped != null) {
                     results.add(mapped);
+
                 }
+
             }
 
             return results;
 
-        }
-        catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new FirestoreAccessException("Interrupted querying " + collectionName, ex);
 
-        }
-        catch (ExecutionException ex) {
+        } catch (ExecutionException ex) {
             throw wrap("Failed to query " + collectionName, ex);
+
         }
+
     }
 
     public D save(D document) {
@@ -122,7 +132,8 @@ public class BaseRepository<D extends AuditableDocument> {
         String resolvedActor = StringUtils.hasText(actor) ? actor : AuditActorResolver.SYSTEM_ACTOR;
         SaveConstraint[] checks = constraints == null ? new SaveConstraint[0] : constraints;
         D committed = inTransaction(
-                transaction -> write(transaction, document, resolvedActor, checks));
+                transaction -> write(transaction, document, resolvedActor, checks)
+        );
         BeanUtils.copyProperties(committed, document);
         return document;
     }
@@ -152,14 +163,18 @@ public class BaseRepository<D extends AuditableDocument> {
             Optional<D> loaded = readInTransaction(transaction, documentId);
             insert = loaded.isEmpty();
             existing = loaded.orElse(null);
+
         }
 
         SaveConstraint[] constraints = checks == null ? new SaveConstraint[0] : checks;
 
         for (SaveConstraint check : constraints) {
+
             if (check != null) {
                 check.check(transaction, collection(), documentId);
+
             }
+
         }
 
         if (insert) {
@@ -169,6 +184,7 @@ public class BaseRepository<D extends AuditableDocument> {
             draft.setLastUpdateUser(actor);
             draft.setVersion(0L);
             return draft;
+
         }
 
         D stored = Objects.requireNonNull(existing, "existing");
@@ -190,25 +206,27 @@ public class BaseRepository<D extends AuditableDocument> {
 
             if (!snapshot.exists()) {
                 return Optional.empty();
+
             }
 
             D mapped = toDocument(snapshot);
 
             if (mapped == null) {
                 throw new FirestoreAccessException("Failed to map " + collectionName + "/" + id, null);
+
             }
 
             return Optional.of(mapped);
 
-        }
-        catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new FirestoreAccessException("Interrupted reading " + collectionName + "/" + id, ex);
 
-        }
-        catch (ExecutionException ex) {
+        } catch (ExecutionException ex) {
             throw propagate("Failed to read " + collectionName + "/" + id, ex);
+
         }
+
     }
 
     protected void assertVersion(D stored, Long submittedVersion, String documentId) {
@@ -216,7 +234,9 @@ public class BaseRepository<D extends AuditableDocument> {
 
         if (submittedVersion == null || !storedVersion.equals(submittedVersion)) {
             throw new StaleDocumentVersionException(collectionName, documentId, storedVersion, submittedVersion);
+
         }
+
     }
 
     protected <T> T inTransaction(Function<Transaction, T> work) {
@@ -225,15 +245,15 @@ public class BaseRepository<D extends AuditableDocument> {
         try {
             return firestore.<T>runTransaction(work::apply).get();
 
-        }
-        catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new FirestoreAccessException("Interrupted saving " + collectionName, ex);
 
-        }
-        catch (ExecutionException ex) {
+        } catch (ExecutionException ex) {
             throw propagate("Failed to save " + collectionName, ex);
+
         }
+
     }
 
     private D write(Transaction transaction, D source, String actor, SaveConstraint[] checks) {
@@ -249,6 +269,7 @@ public class BaseRepository<D extends AuditableDocument> {
 
         if (cause instanceof RuntimeException runtime) {
             return runtime;
+
         }
 
         return new FirestoreAccessException(message, cause);
@@ -268,34 +289,38 @@ public class BaseRepository<D extends AuditableDocument> {
     }
 
     protected D draftOf(D source) {
+
         try {
             D draft = type.getDeclaredConstructor().newInstance();
             BeanUtils.copyProperties(source, draft);
             return draft;
 
-        }
-        catch (ReflectiveOperationException ex) {
+        } catch (ReflectiveOperationException ex) {
             throw new FirestoreAccessException("Failed to copy " + collectionName, ex);
+
         }
+
     }
 
     public void delete(String id) {
+
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("id is required");
+
         }
 
         try {
             collection().document(id).delete().get();
 
-        }
-        catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new FirestoreAccessException("Interrupted deleting " + collectionName + "/" + id, ex);
 
-        }
-        catch (ExecutionException ex) {
+        } catch (ExecutionException ex) {
             throw wrap("Failed to delete " + collectionName + "/" + id, ex);
+
         }
+
     }
 
     protected CollectionReference collection() {
@@ -303,6 +328,7 @@ public class BaseRepository<D extends AuditableDocument> {
 
         if (name == null) {
             throw new IllegalStateException("collection name is required");
+
         }
 
         return firestore.collection(name);
@@ -313,6 +339,7 @@ public class BaseRepository<D extends AuditableDocument> {
 
         if (documentType == null) {
             throw new IllegalStateException("document type is required");
+
         }
 
         return snapshot.toObject(documentType);

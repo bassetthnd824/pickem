@@ -5,7 +5,6 @@ import com.curleesoft.pickem.backend.model.snapshot.VenueSnapshot;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.NotBlank;
-
 import lombok.Getter;
 import lombok.Setter;
 

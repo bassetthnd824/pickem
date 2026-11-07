@@ -40,8 +40,12 @@ import tools.jackson.databind.json.JsonMapper;
 public class SecurityConfig {
 
     @Bean
-    public SessionCookieFilter sessionCookieFilter(FirebaseIdentityClient identityClient, SessionCookies sessionCookies,
-            UserRepository userRepository, JsonMapper jsonMapper) {
+    public SessionCookieFilter sessionCookieFilter(
+            FirebaseIdentityClient identityClient,
+            SessionCookies sessionCookies,
+            UserRepository userRepository,
+            JsonMapper jsonMapper
+    ) {
         return new SessionCookieFilter(identityClient, sessionCookies, userRepository, jsonMapper);
     }
 
@@ -52,7 +56,8 @@ public class SecurityConfig {
      */
     @Bean
     public FilterRegistrationBean<SessionCookieFilter> sessionCookieFilterRegistration(
-            SessionCookieFilter sessionCookieFilter) {
+            SessionCookieFilter sessionCookieFilter
+    ) {
         FilterRegistrationBean<SessionCookieFilter> registration = new FilterRegistrationBean<>(sessionCookieFilter);
         registration.setEnabled(false);
         return registration;
@@ -69,7 +74,8 @@ public class SecurityConfig {
      */
     @Bean
     public FilterRegistrationBean<InternalJobFilter> internalJobFilterRegistration(
-            InternalJobFilter internalJobFilter) {
+            InternalJobFilter internalJobFilter
+    ) {
         InternalJobFilter filter = Objects.requireNonNull(internalJobFilter, "internalJobFilter");
         FilterRegistrationBean<InternalJobFilter> registration = new FilterRegistrationBean<>(filter);
         registration.setEnabled(false);
@@ -77,30 +83,53 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, SessionCookieFilter sessionCookieFilter,
-            InternalJobFilter internalJobFilter, JsonMapper jsonMapper) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            SessionCookieFilter sessionCookieFilter,
+            InternalJobFilter internalJobFilter,
+            JsonMapper jsonMapper
+    ) throws Exception {
         http.cors(cors -> cors.disable()).csrf(csrf -> csrf.disable()).httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(formLogin -> formLogin.disable()).logout(logout -> logout.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/api/auth/session").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/logout").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/auth/me").authenticated()
-                        .requestMatchers("/api/internal", "/api/internal/**")
-                        .hasAuthority(InternalJobAuthentication.AUTHORITY).requestMatchers("/api/manager/**")
-                        .hasRole("MANAGER").requestMatchers("/api/game/**").hasAnyRole("PLAYER", "MANAGER").anyRequest()
-                        .permitAll())
+                .authorizeHttpRequests(
+                        auth -> auth.requestMatchers(HttpMethod.POST, "/api/auth/session").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/auth/logout").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/api/auth/me").authenticated()
+                                .requestMatchers("/api/internal", "/api/internal/**")
+                                .hasAuthority(InternalJobAuthentication.AUTHORITY).requestMatchers("/api/manager/**")
+                                .hasRole("MANAGER").requestMatchers("/api/game/**").hasAnyRole("PLAYER", "MANAGER")
+                                .anyRequest()
+                                .permitAll()
+                )
                 .exceptionHandling(
-                        ex -> ex.authenticationEntryPoint((request, response, authException) -> writeProblem(jsonMapper,
-                                response, HttpStatus.UNAUTHORIZED, "Authentication is required")).accessDeniedHandler(
-                                        (request, response, accessDeniedException) -> writeProblem(jsonMapper, response,
-                                                HttpStatus.FORBIDDEN, "Manager role is required")))
+                        ex -> ex.authenticationEntryPoint(
+                                (request, response, authException) -> writeProblem(
+                                        jsonMapper,
+                                        response,
+                                        HttpStatus.UNAUTHORIZED,
+                                        "Authentication is required"
+                                )
+                        ).accessDeniedHandler(
+                                (request, response, accessDeniedException) -> writeProblem(
+                                        jsonMapper,
+                                        response,
+                                        HttpStatus.FORBIDDEN,
+                                        "Manager role is required"
+                                )
+                        )
+                )
                 .addFilterBefore(sessionCookieFilter, AnonymousAuthenticationFilter.class)
                 .addFilterBefore(internalJobFilter, SessionCookieFilter.class);
         return http.build();
     }
 
-    private static void writeProblem(JsonMapper jsonMapper, HttpServletResponse response, HttpStatus status,
-            String detail) throws IOException {
+    private static void writeProblem(
+            JsonMapper jsonMapper,
+            HttpServletResponse response,
+            HttpStatus status,
+            String detail
+    ) throws IOException {
         response.setStatus(status.value());
         response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
         jsonMapper.writeValue(response.getWriter(), ProblemDetail.forStatusAndDetail(status, detail));

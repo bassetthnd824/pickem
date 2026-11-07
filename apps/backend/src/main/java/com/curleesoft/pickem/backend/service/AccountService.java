@@ -44,20 +44,24 @@ public class AccountService {
 
         if (!StringUtils.hasText(nickName)) {
             throw new InvalidRequestException(NICK_REQUIRED);
+
         }
 
         if (nickName.length() > NICK_NAME_MAX) {
             throw new InvalidRequestException(NICK_TOO_LONG);
+
         }
 
         String themeId = SearchText.trim(request.themeId());
 
         if (!StringUtils.hasText(themeId)) {
             throw new InvalidRequestException(THEME_REQUIRED);
+
         }
 
         if (!themeService.pathExists(themeId)) {
             throw new InvalidRequestException(ThemeService.NOT_FOUND);
+
         }
 
         User existing = user(uid);
@@ -72,7 +76,13 @@ public class AccountService {
     }
 
     private static AccountProfile toProfile(User user) {
-        return new AccountProfile(user.getEmailAddr(), user.getFirstName(), user.getLastName(), user.getNickName(),
-                user.getThemeId(), user.getVersion());
+        return new AccountProfile(
+                user.getEmailAddr(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getNickName(),
+                user.getThemeId(),
+                user.getVersion()
+        );
     }
 }

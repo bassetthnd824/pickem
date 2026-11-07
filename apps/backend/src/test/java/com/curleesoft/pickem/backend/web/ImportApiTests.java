@@ -114,26 +114,45 @@ class ImportApiTests extends FirestoreEmulatorSupport {
     @BeforeEach
     void signIn() {
         firebase.clear();
-        manager = new Cookie(SessionCookies.NAME, firebase.issueCookie(identity("manager-" + UUID.randomUUID(),
-                List.of("manager"))));
-        player = new Cookie(SessionCookies.NAME,
-                firebase.issueCookie(identity("player-" + UUID.randomUUID(), List.of("player"))));
+        manager = new Cookie(
+                SessionCookies.NAME,
+                firebase.issueCookie(
+                        identity(
+                                "manager-" + UUID.randomUUID(),
+                                List.of("manager")
+                        )
+                )
+        );
+        player = new Cookie(
+                SessionCookies.NAME,
+                firebase.issueCookie(identity("player-" + UUID.randomUUID(), List.of("player")))
+        );
     }
 
     @AfterEach
     void deleteFixtures() {
+
         for (String jobId : jobIds) {
             importJobRepository.delete(jobId);
+
         }
+
         for (String seasonId : seasonIds) {
             String parentId = Objects.requireNonNull(seasonId, "seasonId");
+
             for (SeasonWeek week : seasonWeekRepository.findAll()) {
+
                 if (parentId.equals(week.getSeasonId()) && week.getId() != null) {
                     seasonWeekRepository.delete(week.getId());
+
                 }
+
             }
+
             seasonRepository.delete(parentId);
+
         }
+
         jobIds.clear();
         seasonIds.clear();
     }
@@ -143,25 +162,39 @@ class ImportApiTests extends FirestoreEmulatorSupport {
         int year = uniqueYear();
         String seasonId = createSeason(year);
         LocalDate monday = LocalDate.of(year, 8, 1);
+
         while (monday.getDayOfWeek() != DayOfWeek.MONDAY) {
             monday = monday.plusDays(1);
+
         }
+
         LocalDate sunday = monday.plusDays(6);
-        CfbdCalendarWeek week = new CfbdCalendarWeek(year, 1, "regular", monday + "T00:00:00.000Z",
-                sunday + "T23:59:59.000Z");
+        CfbdCalendarWeek week = new CfbdCalendarWeek(
+                year,
+                1,
+                "regular",
+                monday + "T00:00:00.000Z",
+                sunday + "T23:59:59.000Z"
+        );
         CountDownLatch inCfbd = new CountDownLatch(1);
         CountDownLatch requestFinished = new CountDownLatch(1);
         when(cfbdClient.calendar(year)).thenAnswer(invocation -> {
             inCfbd.countDown();
             assertThat(requestFinished.await(10, TimeUnit.SECONDS)).isTrue();
             return List.of(week);
+
         });
         when(cfbdClient.games(eq(year), isNull(), eq("regular"))).thenReturn(List.of());
 
         ExecutorService callers = Executors.newSingleThreadExecutor();
-        Future<MvcResult> future = callers.submit(() -> mockMvc.perform(post("/api/manager/imports/matchups")
-                .cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content("{\"seasonId\":\"" + seasonId + "\"}")).andReturn());
+        Future<MvcResult> future = callers.submit(
+                () -> mockMvc.perform(
+                        post("/api/manager/imports/matchups")
+                                .cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"seasonId\":\"" + seasonId + "\"}")
+                ).andReturn()
+        );
+
         try {
             assertThat(inCfbd.await(10, TimeUnit.SECONDS)).isTrue();
             MvcResult result = future.get(2, TimeUnit.SECONDS);
@@ -171,22 +204,28 @@ class ImportApiTests extends FirestoreEmulatorSupport {
             jobIds.add(jobId);
             ImportJob running = importJobRepository.findById(jobId).orElseThrow();
             assertThat(running.getStatus()).isEqualTo(ImportJob.RUNNING);
-        }
-        finally {
+
+        } finally {
             requestFinished.countDown();
             future.get(10, TimeUnit.SECONDS);
             callers.shutdownNow();
+
         }
 
         String jobId = jobIds.get(jobIds.size() - 1);
         ImportJob done = awaitJob(jobId);
         assertThat(done.getStatus()).isEqualTo(ImportJob.SUCCEEDED);
         SeasonWeek stored = null;
+
         for (SeasonWeek found : seasonWeekRepository.findAll()) {
+
             if (seasonId.equals(found.getSeasonId())) {
                 stored = found;
+
             }
+
         }
+
         SeasonWeek storedWeek = Objects.requireNonNull(stored, "week");
         assertThat(storedWeek.getBeginDate()).isEqualTo(monday.minusDays(1).toString());
         assertThat(LocalDate.parse(storedWeek.getBeginDate()).getDayOfWeek()).isEqualTo(DayOfWeek.SUNDAY);
@@ -198,17 +237,25 @@ class ImportApiTests extends FirestoreEmulatorSupport {
         String seasonId = createSeason(year);
         when(cfbdClient.calendar(anyInt())).thenThrow(new CfbdClientException(429, CfbdClientException.RATE_LIMITED));
 
-        mockMvc.perform(post("/api/manager/imports/matchups").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"seasonId\":\"" + seasonId + "\"}")).andExpect(status().isUnauthorized());
+        mockMvc.perform(
+                post("/api/manager/imports/matchups").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"seasonId\":\"" + seasonId + "\"}")
+        ).andExpect(status().isUnauthorized());
         mockMvc.perform(get("/api/manager/imports/missing")).andExpect(status().isUnauthorized());
-        mockMvc.perform(post("/api/manager/imports/matchups").cookie(player).contentType(MediaType.APPLICATION_JSON)
-                .content("{\"seasonId\":\"" + seasonId + "\"}")).andExpect(status().isForbidden());
+        mockMvc.perform(
+                post("/api/manager/imports/matchups").cookie(player).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"seasonId\":\"" + seasonId + "\"}")
+        ).andExpect(status().isForbidden());
         mockMvc.perform(get("/api/manager/imports/missing").cookie(player)).andExpect(status().isForbidden());
-        mockMvc.perform(post("/api/manager/imports/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content("{\"seasonId\":\"missing-season\"}")).andExpect(status().isNotFound())
+        mockMvc.perform(
+                post("/api/manager/imports/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"seasonId\":\"missing-season\"}")
+        ).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.detail").value(SeasonService.NOT_FOUND));
-        mockMvc.perform(post("/api/manager/imports/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content("{\"seasonId\":\"" + seasonId + "\",\"seasonType\":\"bowls\"}"))
+        mockMvc.perform(
+                post("/api/manager/imports/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"seasonId\":\"" + seasonId + "\",\"seasonType\":\"bowls\"}")
+        )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.detail").value(CfbdImportService.SEASON_TYPE_INVALID));
 
@@ -216,14 +263,18 @@ class ImportApiTests extends FirestoreEmulatorSupport {
         String jobId = Objects.requireNonNull(queued.getId(), "jobId");
         jobIds.add(jobId);
 
-        mockMvc.perform(post("/api/internal/jobs/cfbd-matchups").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"jobId\":\"" + jobId + "\"}").cookie(manager).with(from(OUTSIDE)))
+        mockMvc.perform(
+                post("/api/internal/jobs/cfbd-matchups").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"jobId\":\"" + jobId + "\"}").cookie(manager).with(from(OUTSIDE))
+        )
                 .andExpect(status().isForbidden());
         verifyNoInteractions(cfbdClient);
 
-        mockMvc.perform(post("/api/internal/jobs/cfbd-matchups").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"jobId\":\"" + jobId + "\"}").header(InternalJobFilter.SECRET_HEADER, SECRET)
-                .with(from(OUTSIDE)))
+        mockMvc.perform(
+                post("/api/internal/jobs/cfbd-matchups").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"jobId\":\"" + jobId + "\"}").header(InternalJobFilter.SECRET_HEADER, SECRET)
+                        .with(from(OUTSIDE))
+        )
                 .andExpect(status().isServiceUnavailable())
                 .andExpect(jsonPath("$.detail").value(CfbdClientException.RATE_LIMITED));
         verify(cfbdClient, times(3)).calendar(year);
@@ -234,8 +285,10 @@ class ImportApiTests extends FirestoreEmulatorSupport {
                 .andExpect(jsonPath("$.error").value(CfbdClientException.RATE_LIMITED));
 
         clearInvocations(cfbdClient);
-        mockMvc.perform(post("/api/internal/jobs/cfbd-matchups").header(InternalJobFilter.SECRET_HEADER, SECRET)
-                .with(from(OUTSIDE))).andExpect(status().isAccepted())
+        mockMvc.perform(
+                post("/api/internal/jobs/cfbd-matchups").header(InternalJobFilter.SECRET_HEADER, SECRET)
+                        .with(from(OUTSIDE))
+        ).andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.job").value("cfbd-matchups"));
         verify(cfbdClient, never()).calendar(anyInt());
 
@@ -248,13 +301,19 @@ class ImportApiTests extends FirestoreEmulatorSupport {
 
     private ImportJob awaitJob(String jobId) throws InterruptedException {
         String id = Objects.requireNonNull(jobId, "jobId");
+
         for (int attempt = 0; attempt < 50; attempt++) {
             ImportJob job = importJobRepository.findById(id).orElseThrow();
+
             if (ImportJob.SUCCEEDED.equals(job.getStatus()) || ImportJob.FAILED.equals(job.getStatus())) {
                 return job;
+
             }
+
             Thread.sleep(50);
+
         }
+
         throw new AssertionError("import did not finish");
     }
 
@@ -263,7 +322,8 @@ class ImportApiTests extends FirestoreEmulatorSupport {
                 .perform(
                         post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
                                 {"season":"%s","beginDate":"%s-08-01","endDate":"%s-12-31","isCurrent":false}
-                                """.formatted(year, year, year)))
+                                """.formatted(year, year, year))
+                )
                 .andExpect(status().isCreated()).andReturn();
         String id = jsonMapper.readTree(result.getResponse().getContentAsString()).path("id").asString();
         seasonIds.add(id);
@@ -271,8 +331,15 @@ class ImportApiTests extends FirestoreEmulatorSupport {
     }
 
     private static VerifiedIdentity identity(String uid, List<String> roles) {
-        return new VerifiedIdentity(uid, uid + "@example.com", "Test User", "Test", "User", "google.com",
-                RoleClaims.forRoles(roles));
+        return new VerifiedIdentity(
+                uid,
+                uid + "@example.com",
+                "Test User",
+                "Test",
+                "User",
+                "google.com",
+                RoleClaims.forRoles(roles)
+        );
     }
 
     private static RequestPostProcessor from(String remoteAddress) {
@@ -280,6 +347,7 @@ class ImportApiTests extends FirestoreEmulatorSupport {
         return request -> {
             request.setRemoteAddr(address);
             return request;
+
         };
     }
 

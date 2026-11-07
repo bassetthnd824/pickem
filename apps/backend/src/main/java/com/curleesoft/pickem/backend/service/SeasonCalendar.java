@@ -39,16 +39,19 @@ public final class SeasonCalendar {
 
         if (begin.getYear() != year) {
             throw new InvalidRequestException(BEGIN_DATE_INVALID);
+
         }
 
         LocalDate end = parseDate(endDate, END_DATE_INVALID);
 
         if (end.getYear() != year && end.getYear() != year + 1) {
             throw new InvalidRequestException(END_DATE_INVALID);
+
         }
 
         if (end.isBefore(begin)) {
             throw new InvalidRequestException(END_DATE_INVALID);
+
         }
 
         return new ParsedSeason(season, begin, end);
@@ -60,8 +63,10 @@ public final class SeasonCalendar {
      * the following Wednesday.
      */
     public static ParsedWeek parseManualWeek(String seasonBeginDate, int weekNumber, String beginDate, String endDate) {
+
         if (weekNumber < 1) {
             throw new InvalidRequestException(WEEK_NUMBER_INVALID);
+
         }
 
         LocalDate seasonBegin = parseDate(seasonBeginDate, WEEK_BEGIN_ALIGNMENT_INVALID);
@@ -69,16 +74,19 @@ public final class SeasonCalendar {
 
         if (begin.getDayOfWeek() != DayOfWeek.THURSDAY) {
             throw new InvalidRequestException(WEEK_BEGIN_DATE_INVALID);
+
         }
 
         LocalDate end = parseDate(endDate, WEEK_END_DATE_INVALID);
 
         if (end.getDayOfWeek() != DayOfWeek.WEDNESDAY || !end.equals(begin.plusDays(6))) {
             throw new InvalidRequestException(WEEK_END_DATE_INVALID);
+
         }
 
         if (!begin.equals(expectedBegin(seasonBegin, weekNumber))) {
             throw new InvalidRequestException(WEEK_BEGIN_ALIGNMENT_INVALID);
+
         }
 
         return new ParsedWeek(begin, end);
@@ -90,14 +98,17 @@ public final class SeasonCalendar {
      * month, inclusive. Several matches resolve to the latest season year.
      */
     public static Optional<Season> selectCurrent(List<Season> seasons, LocalDate today) {
+
         if (seasons == null || seasons.isEmpty() || today == null) {
             return Optional.empty();
+
         }
 
         List<Season> flagged = seasons.stream().filter(season -> season.isCurrent()).toList();
 
         if (!flagged.isEmpty()) {
             return Optional.of(preferFlagged(flagged, today));
+
         }
 
         return latest(seasons.stream().filter(season -> inCurrentWindow(season, today)).toList());
@@ -114,61 +125,80 @@ public final class SeasonCalendar {
 
         if (inWindow.size() == 1) {
             return inWindow.get(0);
+
         }
 
         if (!inWindow.isEmpty()) {
             return latest(inWindow).orElseThrow();
+
         }
 
         return latest(flagged).orElseThrow();
     }
 
     private static boolean inCurrentWindow(Season season, LocalDate today) {
+
         if (season.getBeginDate() == null || season.getEndDate() == null) {
             return false;
+
         }
 
         try {
             return inCurrentWindow(LocalDate.parse(season.getBeginDate()), LocalDate.parse(season.getEndDate()), today);
-        }
-        catch (DateTimeParseException ex) {
+
+        } catch (DateTimeParseException ex) {
             return false;
+
         }
+
     }
 
     private static Optional<Season> latest(List<Season> seasons) {
-        return seasons.stream().max(Comparator.comparing((Season season) -> season.getSeason(),
-                Comparator.nullsLast((String left, String right) -> left.compareTo(right))));
+        return seasons.stream().max(
+                Comparator.comparing(
+                        (Season season) -> season.getSeason(),
+                        Comparator.nullsLast((String left, String right) -> left.compareTo(right))
+                )
+        );
     }
 
     private static LocalDate expectedBegin(LocalDate seasonBegin, int weekNumber) {
+
         try {
             return seasonBegin.plusDays((weekNumber - 1L) * 7L);
-        }
-        catch (DateTimeException ex) {
+
+        } catch (DateTimeException ex) {
             throw new InvalidRequestException(WEEK_BEGIN_ALIGNMENT_INVALID);
+
         }
+
     }
 
     private static int seasonYear(String season) {
+
         if (season == null || !season.matches("\\d{4}")) {
             throw new InvalidRequestException(BEGIN_DATE_INVALID);
+
         }
 
         return Integer.parseInt(season);
     }
 
     private static LocalDate parseDate(String value, String message) {
+
         if (value == null || value.isBlank()) {
             throw new InvalidRequestException(message);
+
         }
 
         try {
             return LocalDate.parse(value);
-        }
-        catch (DateTimeParseException ex) {
+
+        } catch (DateTimeParseException ex) {
             throw new InvalidRequestException(message);
+
         }
+
     }
 
     public record ParsedSeason(String season, LocalDate beginDate, LocalDate endDate) {

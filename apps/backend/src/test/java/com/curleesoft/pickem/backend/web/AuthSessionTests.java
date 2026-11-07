@@ -63,10 +63,12 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
         registerGoogle(uid, "token-1", "kenney@example.com", "Kenney", "Curlee");
 
         MvcResult result = mockMvc
-                .perform(post("/api/auth/session").contentType(MediaType.APPLICATION_JSON)
-                        .header("Origin", "http://localhost:3000").content("""
-                                {"idToken":"token-1","password":"secret","userPass":"hash"}
-                                """))
+                .perform(
+                        post("/api/auth/session").contentType(MediaType.APPLICATION_JSON)
+                                .header("Origin", "http://localhost:3000").content("""
+                                        {"idToken":"token-1","password":"secret","userPass":"hash"}
+                                        """)
+                )
                 .andExpect(status().isNoContent()).andExpect(header().doesNotExist("Access-Control-Allow-Origin"))
                 .andExpect(header().string(headerName(), hostOnlySessionCookie())).andReturn();
 
@@ -100,7 +102,8 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
         String uid = uid();
         registerGoogle(uid, "token-1", "old@example.com", "Old", "Name");
         mockMvc.perform(
-                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-1\"}"))
+                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-1\"}")
+        )
                 .andExpect(status().isNoContent());
 
         User existing = userRepository.findById(uid).orElseThrow();
@@ -110,7 +113,8 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
 
         registerGoogle(uid, "token-2", "new@example.com", "New", "Person");
         mockMvc.perform(
-                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-2\"}"))
+                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-2\"}")
+        )
                 .andExpect(status().isNoContent());
 
         User updated = userRepository.findById(uid).orElseThrow();
@@ -148,7 +152,8 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
         String uid = uid();
         registerGoogle(uid, "token-1", "kenney@example.com", "Kenney", "Curlee");
         MvcResult login = mockMvc.perform(
-                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-1\"}"))
+                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-1\"}")
+        )
                 .andExpect(status().isNoContent()).andReturn();
         String sessionCookie = sessionCookie(login);
 
@@ -165,19 +170,22 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
         String uid = uid();
         registerGoogle(uid, "token-1", "kenney@example.com", "Kenney", "Curlee");
         MvcResult login = mockMvc.perform(
-                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-1\"}"))
+                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-1\"}")
+        )
                 .andExpect(status().isNoContent()).andReturn();
 
         mockMvc.perform(post("/api/auth/logout").cookie(session(sessionCookie(login))))
                 .andExpect(status().isNoContent());
 
         mockMvc.perform(
-                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-1\"}"))
+                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-1\"}")
+        )
                 .andExpect(status().isUnauthorized());
 
         registerGoogle(uid, "token-2", "kenney@example.com", "Kenney", "Curlee");
         mockMvc.perform(
-                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-2\"}"))
+                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-2\"}")
+        )
                 .andExpect(status().isNoContent());
     }
 
@@ -185,11 +193,18 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
     void logoutReportsAFirebaseFailureAsUnavailable() throws Exception {
         String userId = uid();
         registerGoogle(userId, "token-revoke", "kenney@example.com", "Kenney", "Curlee");
-        MvcResult login = mockMvc.perform(post("/api/auth/session").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"idToken\":\"token-revoke\"}")).andExpect(status().isNoContent()).andReturn();
+        MvcResult login = mockMvc.perform(
+                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"idToken\":\"token-revoke\"}")
+        ).andExpect(status().isNoContent()).andReturn();
         String sessionCookie = sessionCookie(login);
-        firebase.failRevoke(userId, new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE,
-                IdentityAdminException.REVOKE_FAILED));
+        firebase.failRevoke(
+                userId,
+                new IdentityAdminException(
+                        IdentityAdminException.Kind.UNAVAILABLE,
+                        IdentityAdminException.REVOKE_FAILED
+                )
+        );
 
         mockMvc.perform(post("/api/auth/logout").cookie(session(sessionCookie)))
                 .andExpect(status().isServiceUnavailable())
@@ -202,18 +217,23 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
     @Test
     void invalidTokenMissingTokenAndRegistrationAreRejected() throws Exception {
         mockMvc.perform(
-                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"missing\"}"))
+                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"missing\"}")
+        )
                 .andExpect(status().isUnauthorized());
 
         mockMvc.perform(post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest());
 
         registerGoogle(uid(), "password-token", "a@b.com", "A", "B", "password");
-        mockMvc.perform(post("/api/auth/session").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"idToken\":\"password-token\"}")).andExpect(status().isUnauthorized());
+        mockMvc.perform(
+                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"idToken\":\"password-token\"}")
+        ).andExpect(status().isUnauthorized());
 
-        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"emailAddr\":\"a@b.com\",\"password\":\"secret\"}")).andExpect(status().isNotFound());
+        mockMvc.perform(
+                post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"emailAddr\":\"a@b.com\",\"password\":\"secret\"}")
+        ).andExpect(status().isNotFound());
     }
 
     @Test
@@ -237,15 +257,30 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
         registerGoogle(uid, idToken, email, firstName, lastName, "google.com");
     }
 
-    private void registerGoogle(String uid, String idToken, String email, String firstName, String lastName,
-            String provider) {
-        firebase.registerIdToken(idToken,
-                new VerifiedIdentity(uid, email, firstName + " " + lastName, firstName, lastName, provider, Map.of()));
+    private void registerGoogle(
+            String uid,
+            String idToken,
+            String email,
+            String firstName,
+            String lastName,
+            String provider
+    ) {
+        firebase.registerIdToken(
+                idToken,
+                new VerifiedIdentity(uid, email, firstName + " " + lastName, firstName, lastName, provider, Map.of())
+        );
     }
 
     private static VerifiedIdentity signedIn(String uid, List<String> roles) {
-        return new VerifiedIdentity(uid, uid + "@example.com", "Test User", "Test", "User", "google.com",
-                RoleClaims.forRoles(roles));
+        return new VerifiedIdentity(
+                uid,
+                uid + "@example.com",
+                "Test User",
+                "Test",
+                "User",
+                "google.com",
+                RoleClaims.forRoles(roles)
+        );
     }
 
     private static Cookie session(String value) {
@@ -261,15 +296,27 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
     }
 
     private static org.hamcrest.Matcher<String> hostOnlySessionCookie() {
-        return org.hamcrest.Matchers.allOf(containsString(SessionCookies.NAME + "="), containsString("Path=/"),
-                containsString("Max-Age=" + FOURTEEN_DAYS_SECONDS), containsString("Secure"),
-                containsString("HttpOnly"), containsString("SameSite=Lax"), not(containsString("Domain=")));
+        return org.hamcrest.Matchers.allOf(
+                containsString(SessionCookies.NAME + "="),
+                containsString("Path=/"),
+                containsString("Max-Age=" + FOURTEEN_DAYS_SECONDS),
+                containsString("Secure"),
+                containsString("HttpOnly"),
+                containsString("SameSite=Lax"),
+                not(containsString("Domain="))
+        );
     }
 
     private static org.hamcrest.Matcher<String> clearedSessionCookie() {
-        return org.hamcrest.Matchers.allOf(containsString(SessionCookies.NAME + "="), containsString("Max-Age=0"),
-                containsString("Path=/"), containsString("Secure"), containsString("HttpOnly"),
-                containsString("SameSite=Lax"), not(containsString("Domain=")));
+        return org.hamcrest.Matchers.allOf(
+                containsString(SessionCookies.NAME + "="),
+                containsString("Max-Age=0"),
+                containsString("Path=/"),
+                containsString("Secure"),
+                containsString("HttpOnly"),
+                containsString("SameSite=Lax"),
+                not(containsString("Domain="))
+        );
     }
 
     private static String headerName() {

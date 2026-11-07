@@ -47,9 +47,14 @@ public class LeaderboardService {
 
     private final Clock clock;
 
-    public LeaderboardService(UserRepository userRepository, PickRepository pickRepository,
-            MatchupRepository matchupRepository, SeasonWeekRepository seasonWeekRepository, SeasonService seasonService,
-            Clock clock) {
+    public LeaderboardService(
+            UserRepository userRepository,
+            PickRepository pickRepository,
+            MatchupRepository matchupRepository,
+            SeasonWeekRepository seasonWeekRepository,
+            SeasonService seasonService,
+            Clock clock
+    ) {
         this.userRepository = userRepository;
         this.pickRepository = pickRepository;
         this.matchupRepository = matchupRepository;
@@ -62,9 +67,11 @@ public class LeaderboardService {
         Season season = seasonService.resolve(seasonId);
         String id = season.getId();
         Map<String, Matchup> matchups = byId(
-                matchupRepository.query(collection -> collection.whereEqualTo("seasonId", id)));
+                matchupRepository.query(collection -> collection.whereEqualTo("seasonId", id))
+        );
         Map<String, SeasonWeek> weeks = byId(
-                seasonWeekRepository.query(collection -> collection.whereEqualTo("seasonId", id)));
+                seasonWeekRepository.query(collection -> collection.whereEqualTo("seasonId", id))
+        );
         Map<String, Long> totals = scorePicks(id, matchups, weeks);
         List<Scored> scored = new ArrayList<>();
 
@@ -73,10 +80,12 @@ public class LeaderboardService {
 
             if (!StringUtils.hasText(uid)) {
                 continue;
+
             }
 
             Long total = totals.get(uid);
             scored.add(new Scored(uid, user.getNickName(), total == null ? 0L : total.longValue()));
+
         }
 
         scored.sort(order());
@@ -85,6 +94,7 @@ public class LeaderboardService {
         for (int place = 0; place < scored.size(); place++) {
             Scored row = scored.get(place);
             standings.add(new Leaderboard.Standing(place + 1, row.uid(), row.nickName(), row.score()));
+
         }
 
         return new Leaderboard(id, season.getSeason(), List.copyOf(standings));
@@ -94,22 +104,30 @@ public class LeaderboardService {
         Map<String, T> indexed = new HashMap<>();
 
         for (T row : rows) {
+
             if (StringUtils.hasText(row.getId())) {
                 indexed.put(row.getId(), row);
+
             }
+
         }
 
         return indexed;
     }
 
-    private Map<String, Long> scorePicks(String seasonId, Map<String, Matchup> matchups,
-            Map<String, SeasonWeek> weeks) {
+    private Map<String, Long> scorePicks(
+            String seasonId,
+            Map<String, Matchup> matchups,
+            Map<String, SeasonWeek> weeks
+    ) {
         Map<String, Long> totals = new HashMap<>();
         Map<String, Set<String>> counted = new HashMap<>();
 
         for (Pick pick : pickRepository.query(collection -> collection.whereEqualTo("seasonId", seasonId))) {
+
             if (!StringUtils.hasText(pick.getUserId()) || !StringUtils.hasText(pick.getMatchupId())) {
                 continue;
+
             }
 
             Set<String> matchupIds = counted.get(pick.getUserId());
@@ -117,15 +135,18 @@ public class LeaderboardService {
             if (matchupIds == null) {
                 matchupIds = new HashSet<>();
                 counted.put(pick.getUserId(), matchupIds);
+
             }
 
             if (!matchupIds.add(pick.getMatchupId())) {
                 continue;
+
             }
 
             Long current = totals.get(pick.getUserId());
             long soFar = current == null ? 0L : current.longValue();
             totals.put(pick.getUserId(), Long.valueOf(soFar + points(pick, matchups, weeks)));
+
         }
 
         return totals;
@@ -136,6 +157,7 @@ public class LeaderboardService {
 
         if (matchup == null) {
             return 0;
+
         }
 
         SeasonWeek week = weeks.get(matchup.getSeasonWeekId());
@@ -143,10 +165,16 @@ public class LeaderboardService {
 
         if (!PickScoring.currentOrPast(begin, clock)) {
             return 0;
+
         }
 
-        return PickScoring.points(matchup.getHomeTeamScore(), matchup.getAwayTeamScore(), matchup.getWinningTeamId(),
-                pick.getPickedTeamId(), pick.getRank());
+        return PickScoring.points(
+                matchup.getHomeTeamScore(),
+                matchup.getAwayTeamScore(),
+                matchup.getWinningTeamId(),
+                pick.getPickedTeamId(),
+                pick.getRank()
+        );
     }
 
     private static Comparator<Scored> order() {

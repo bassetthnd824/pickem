@@ -14,12 +14,15 @@ class SleepingCfbdPause implements CfbdPause {
     @Override
     public void pause(int failedAttempt) {
         long delay = 250L << Math.max(0, failedAttempt - 1);
+
         try {
             Thread.sleep(delay);
-        }
-        catch (InterruptedException ex) {
+
+        } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new CfbdClientException("CFBD import interrupted");
+
         }
+
     }
 }

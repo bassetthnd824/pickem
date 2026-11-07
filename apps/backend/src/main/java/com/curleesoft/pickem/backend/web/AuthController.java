@@ -52,9 +52,12 @@ public class AuthController {
     }
 
     private static PickemPrincipal principal(Authentication authentication) {
+
         if (authentication != null && authentication.getPrincipal() instanceof PickemPrincipal principal) {
             return principal;
+
         }
+
         throw new InvalidCredentialException("Authentication is required");
     }
 }

@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<profiles version="12">
-  <profile kind="CodeFormatterProfile" name="Custom Java Rules" version="12">
-    <!-- Retain your manual breaks -->
+<profiles version="21">
+  <profile kind="CodeFormatterProfile" name="Custom Java Rules" version="21">
+    <!-- Indent with 4 spaces. Wrapped lines use a hanging indent. -->
+    <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="space" />
+    <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4" />
+    <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4" />
+
+    <!--
+      Keep at most one blank line. A negative blank-line count means exactly
+      that many (~n): -2 is one blank line, and any further blank line is removed.
+    -->
     <setting
       id="org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve"
       value="1"
@@ -10,37 +18,201 @@
       id="org.eclipse.jdt.core.formatter.join_wrapped_lines"
       value="false"
     />
-
-    <!-- Force a blank line before standard statement body entries -->
-    <setting
-      id="org.eclipse.jdt.core.formatter.blank_lines_before_first_class_body_declaration"
-      value="1"
-    />
-
-    <!-- Controls blank lines for blocks and returns -->
-    <setting
-      id="org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve"
-      value="1"
-    />
-
-    <setting
-      id="org.eclipse.jdt.core.formatter.insert_new_line_before_catch_in_try_statement"
-      value="insert"
-    />
-    <setting
-      id="org.eclipse.jdt.core.formatter.insert_new_line_before_finally_in_try_statement"
-      value="insert"
-    />
     <setting
       id="org.eclipse.jdt.core.formatter.insert_new_line_at_end_of_file_if_missing"
       value="insert"
     />
 
-    <!-- Code alignment formatting -->
+    <!--
+      Hanging parentheses. When a list wraps, the opening parenthesis ends its
+      line and the closing parenthesis is on its own line.
+    -->
     <setting
-      id="org.eclipse.jdt.core.formatter.tabulation.char"
-      value="space"
+      id="org.eclipse.jdt.core.formatter.parentheses_positions_in_method_delcaration"
+      value="separate_lines_if_wrapped"
     />
-    <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4" />
+    <setting
+      id="org.eclipse.jdt.core.formatter.parentheses_positions_in_method_invocation"
+      value="separate_lines_if_wrapped"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.parentheses_positions_in_lambda_declaration"
+      value="separate_lines_if_wrapped"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.parentheses_positions_in_enum_constant_declaration"
+      value="separate_lines_if_wrapped"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.parentheses_positions_in_record_declaration"
+      value="separate_lines_if_wrapped"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.parentheses_positions_in_annotation"
+      value="separate_lines_if_wrapped"
+    />
+    <!--
+      When a parenthesized list wraps, put one parameter or argument on each line.
+      48 is one-per-line wrapping without forcing a wrap that still fits.
+    -->
+    <setting
+      id="org.eclipse.jdt.core.formatter.alignment_for_parameters_in_method_declaration"
+      value="48"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.alignment_for_parameters_in_constructor_declaration"
+      value="48"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_method_invocation"
+      value="48"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_explicit_constructor_call"
+      value="48"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_allocation_expression"
+      value="48"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_qualified_allocation_expression"
+      value="48"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_enum_constant"
+      value="48"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_annotation"
+      value="48"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.alignment_for_record_components"
+      value="48"
+    />
+
+    <!-- Opening braces stay at the end of the line. -->
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_annotation_type_declaration"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_anonymous_type_declaration"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_array_initializer"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_block"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_block_in_case"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_block_in_case_after_arrow"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_constructor_declaration"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_enum_constant"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_enum_declaration"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_lambda_body"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_method_declaration"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_record_constructor"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_record_declaration"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_switch"
+      value="end_of_line"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.brace_position_for_type_declaration"
+      value="end_of_line"
+    />
+
+    <!-- Exactly one blank line before and after a statement that opens a block. -->
+    <setting
+      id="org.eclipse.jdt.core.formatter.number_of_blank_lines_before_code_block"
+      value="-2"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.number_of_blank_lines_after_code_block"
+      value="-2"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.blank_lines_before_first_class_body_declaration"
+      value="-2"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.blank_lines_before_method"
+      value="-2"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.blank_lines_before_abstract_method"
+      value="-2"
+    />
+
+    <!--
+      Blank line before else, catch, and finally. The closing brace stays on
+      that same line: "} else {", "} catch {", "} finally {".
+    -->
+    <setting
+      id="org.eclipse.jdt.core.formatter.insert_new_line_before_else_in_if_statement"
+      value="do not insert"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.insert_new_line_before_catch_in_try_statement"
+      value="do not insert"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.insert_new_line_before_finally_in_try_statement"
+      value="do not insert"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.number_of_blank_lines_at_end_of_code_block"
+      value="-2"
+    />
+
+    <!-- Field annotations sit above the field. Parameter annotations stay with the parameter. -->
+    <setting
+      id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_field"
+      value="insert"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_parameter"
+      value="do not insert"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_record_parameter"
+      value="do not insert"
+    />
+    <setting
+      id="org.eclipse.jdt.core.formatter.wrap_non_simple_parameter_annotation"
+      value="false"
+    />
   </profile>
 </profiles>

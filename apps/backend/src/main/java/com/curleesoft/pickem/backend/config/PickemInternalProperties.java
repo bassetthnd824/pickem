@@ -9,21 +9,30 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
  * token and is off when this process is itself on Cloud Run.
  */
 @ConfigurationProperties(prefix = "pickem.internal")
-public record PickemInternalProperties(@DefaultValue("") String jobSecret,
-        @DefaultValue("true") boolean allowLoopback) {
+public record PickemInternalProperties(
+        @DefaultValue("") String jobSecret,
+        @DefaultValue("true") boolean allowLoopback
+) {
 
     public PickemInternalProperties {
+
         if (jobSecret == null) {
             jobSecret = "";
+
         } else {
             jobSecret = jobSecret.trim();
+
         }
+
     }
 
     public boolean allowsLoopback(String cloudRunService) {
+
         if (!allowLoopback) {
             return false;
+
         }
+
         return cloudRunService == null || cloudRunService.isBlank();
     }
 }

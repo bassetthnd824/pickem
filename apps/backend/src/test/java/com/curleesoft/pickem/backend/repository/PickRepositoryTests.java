@@ -29,11 +29,16 @@ class PickRepositoryTests extends FirestoreEmulatorSupport {
 
     @AfterEach
     void deleteFixtures() {
+
         for (String userId : userIds) {
+
             for (Pick pick : pickRepository.findByUserId(userId)) {
                 pickRepository.delete(pick.getId());
+
             }
+
         }
+
         userIds.clear();
     }
 
@@ -89,8 +94,13 @@ class PickRepositoryTests extends FirestoreEmulatorSupport {
     void commitWeekRereadsTheWeekBeforeAcceptingARank() {
         String userId = userId();
         String weekId = "week-" + UUID.randomUUID();
-        pickRepository.commitWeek(userId, weekId, List.of(pick(userId, weekId, "matchup-a", "team-home", 1)), List.of(),
-                null);
+        pickRepository.commitWeek(
+                userId,
+                weekId,
+                List.of(pick(userId, weekId, "matchup-a", "team-home", 1)),
+                List.of(),
+                null
+        );
 
         Pick second = pick(userId, weekId, "matchup-b", "team-away", 1);
 
@@ -98,18 +108,24 @@ class PickRepositoryTests extends FirestoreEmulatorSupport {
             Set<Integer> ranks = new HashSet<>();
 
             for (Pick existing : stored.values()) {
+
                 if (second.getMatchupId().equals(existing.getMatchupId()) || existing.getRank() == null) {
                     continue;
+
                 }
 
                 if (!ranks.add(existing.getRank())) {
                     throw new InvalidRequestException(PickService.RANK_NOT_UNIQUE);
+
                 }
+
             }
 
             if (second.getRank() != null && !ranks.add(second.getRank())) {
                 throw new InvalidRequestException(PickService.RANK_NOT_UNIQUE);
+
             }
+
         })).isInstanceOf(InvalidRequestException.class).hasMessage(PickService.RANK_NOT_UNIQUE);
 
         assertThat(pickRepository.findByUserId(userId)).hasSize(1);
@@ -122,6 +138,7 @@ class PickRepositoryTests extends FirestoreEmulatorSupport {
     void anEmptyCommitDoesNotRunTheGuard() {
         assertThat(pickRepository.commitWeek(userId(), "week", List.of(), List.of(), stored -> {
             throw new IllegalStateException("guard");
+
         })).isEmpty();
     }
 

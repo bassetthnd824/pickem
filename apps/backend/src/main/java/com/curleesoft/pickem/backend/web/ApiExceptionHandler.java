@@ -33,6 +33,7 @@ public class ApiExceptionHandler {
 
         if (!StringUtils.hasText(detail)) {
             detail = "Request is invalid";
+
         }
 
         return problem(HttpStatus.BAD_REQUEST, detail);

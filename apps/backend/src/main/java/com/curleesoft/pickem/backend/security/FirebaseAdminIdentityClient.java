@@ -37,32 +37,40 @@ public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
 
     private volatile FirebaseAuth firebaseAuth;
 
-    public FirebaseAdminIdentityClient(PickemAuthProperties authProperties,
-            PickemFirestoreProperties firestoreProperties) {
+    public FirebaseAdminIdentityClient(
+            PickemAuthProperties authProperties,
+            PickemFirestoreProperties firestoreProperties
+    ) {
         this.authProperties = authProperties;
         this.firestoreProperties = firestoreProperties;
     }
 
     @Override
     public VerifiedIdentity verifyIdToken(String idToken) {
+
         try {
             return toIdentity(auth().verifyIdToken(idToken, true));
-        }
-        catch (FirebaseAuthException ex) {
+
+        } catch (FirebaseAuthException ex) {
             throw new InvalidCredentialException("Invalid Google ID token", ex);
+
         }
+
     }
 
     @Override
     public String createSessionCookie(String idToken, Duration expiresIn) {
+
         try {
             SessionCookieOptions options = SessionCookieOptions.builder()
                     .setExpiresIn(expiresInMillis(expiresIn)).build();
             return auth().createSessionCookie(idToken, options);
-        }
-        catch (FirebaseAuthException ex) {
+
+        } catch (FirebaseAuthException ex) {
             throw new InvalidCredentialException("Could not create a session cookie", ex);
+
         }
+
     }
 
     /**
@@ -74,142 +82,214 @@ public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
         long millis = expiresIn.toMillis();
         long minimum = TimeUnit.MINUTES.toMillis(5) + 1;
         long maximum = TimeUnit.DAYS.toMillis(14) - 1;
+
         if (millis < minimum) {
             return minimum;
+
         }
+
         if (millis > maximum) {
             return maximum;
+
         }
+
         return millis;
     }
 
     @Override
     public VerifiedIdentity verifySessionCookie(String sessionCookie) {
+
         try {
             return toIdentity(auth().verifySessionCookie(sessionCookie, true));
-        }
-        catch (FirebaseAuthException ex) {
+
+        } catch (FirebaseAuthException ex) {
             throw new InvalidCredentialException("Invalid or revoked session cookie", ex);
+
         }
+
     }
 
     @Override
     public void setCustomUserClaims(String uid, Map<String, Object> claims) {
+
         try {
             auth().setCustomUserClaims(uid, claims);
-        }
-        catch (FirebaseAuthException ex) {
+
+        } catch (FirebaseAuthException ex) {
             throw adminFailure(ex, IdentityAdminException.CLAIMS_FAILED);
+
         }
+
     }
 
     @Override
     public void revokeRefreshTokens(String uid) {
+
         try {
             auth().revokeRefreshTokens(uid);
-        }
-        catch (FirebaseAuthException ex) {
+
+        } catch (FirebaseAuthException ex) {
             throw adminFailure(ex, IdentityAdminException.REVOKE_FAILED);
+
         }
+
     }
 
     private static IdentityAdminException adminFailure(FirebaseAuthException ex, String message) {
+
         if (ex.getAuthErrorCode() == AuthErrorCode.USER_NOT_FOUND) {
-            return new IdentityAdminException(IdentityAdminException.Kind.USER_NOT_FOUND,
-                    IdentityAdminException.USER_MISSING, ex);
+            return new IdentityAdminException(
+                    IdentityAdminException.Kind.USER_NOT_FOUND,
+                    IdentityAdminException.USER_MISSING,
+                    ex
+            );
+
         }
+
         return new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, message, ex);
     }
 
     private FirebaseAuth auth() {
         FirebaseAuth current = firebaseAuth;
+
         if (current != null) {
             return current;
+
         }
+
         synchronized (this) {
+
             if (firebaseAuth == null) {
                 firebaseAuth = initialize();
+
             }
+
             return firebaseAuth;
+
         }
+
     }
 
     private FirebaseAuth initialize() {
         FirebaseEmulatorEnvironment.publish(authProperties.emulatorHost());
         String projectId = firestoreProperties.projectId();
+
         if (projectId == null || projectId.isBlank()) {
             projectId = "pickem-local";
+
         }
+
         boolean emulator = emulatorConfigured();
+
         try {
             FirebaseOptions.Builder builder = FirebaseOptions.builder().setProjectId(projectId);
+
             if (emulator) {
-                builder.setCredentials(GoogleCredentials
-                        .create(new AccessToken("owner", Date.from(Instant.now().plus(Duration.ofHours(1))))));
+                builder.setCredentials(
+                        GoogleCredentials
+                                .create(new AccessToken("owner", Date.from(Instant.now().plus(Duration.ofHours(1)))))
+                );
+
             } else {
                 builder.setCredentials(GoogleCredentials.getApplicationDefault());
+
             }
+
             FirebaseApp app = firebaseApp(builder.build());
             return FirebaseAuth.getInstance(app);
-        }
-        catch (IOException ex) {
+
+        } catch (IOException ex) {
             throw new AuthUnavailableException("Firebase Admin credentials are not configured", ex);
+
         }
+
     }
 
     private boolean emulatorConfigured() {
         String fromEnv = System.getenv("FIREBASE_AUTH_EMULATOR_HOST");
+
         if (fromEnv != null && !fromEnv.isBlank()) {
             return true;
+
         }
+
         String configured = authProperties.emulatorHost();
         return configured != null && !configured.isBlank();
     }
 
     private static FirebaseApp firebaseApp(FirebaseOptions options) {
+
         synchronized (FirebaseApp.class) {
+
             if (FirebaseApp.getApps().isEmpty()) {
                 return FirebaseApp.initializeApp(options);
+
             }
+
             return FirebaseApp.getInstance();
+
         }
+
     }
 
     private static VerifiedIdentity toIdentity(FirebaseToken token) {
         Map<String, Object> claims = copyClaims(token.getClaims());
-        return new VerifiedIdentity(token.getUid(), token.getEmail(), token.getName(),
-                stringClaim(claims, "given_name"), stringClaim(claims, "family_name"), signInProvider(claims), claims);
+        return new VerifiedIdentity(
+                token.getUid(),
+                token.getEmail(),
+                token.getName(),
+                stringClaim(claims, "given_name"),
+                stringClaim(claims, "family_name"),
+                signInProvider(claims),
+                claims
+        );
     }
 
     private static Map<String, Object> copyClaims(Map<String, Object> claims) {
+
         if (claims == null || claims.isEmpty()) {
             return Map.of();
+
         }
+
         Map<String, Object> copy = new LinkedHashMap<>();
+
         for (Map.Entry<String, Object> entry : claims.entrySet()) {
+
             if (entry.getKey() != null && entry.getValue() != null) {
                 copy.put(entry.getKey(), entry.getValue());
+
             }
+
         }
+
         return Map.copyOf(copy);
     }
 
     private static String stringClaim(Map<String, Object> claims, String name) {
         Object value = claims.get(name);
+
         if (value instanceof String text && !text.isBlank()) {
             return text;
+
         }
+
         return "";
     }
 
     private static String signInProvider(Map<String, Object> claims) {
         Object firebase = claims.get("firebase");
+
         if (firebase instanceof Map<?, ?> map) {
             Object provider = map.get("sign_in_provider");
+
             if (provider instanceof String text) {
                 return text;
+
             }
+
         }
+
         return "";
     }
 }

@@ -37,8 +37,11 @@ public class RivalryController {
     }
 
     @GetMapping
-    public List<Rivalry> list(@RequestParam(required = false) String rivalryName,
-            @RequestParam(required = false) String team1Id, @RequestParam(required = false) String team2Id) {
+    public List<Rivalry> list(
+            @RequestParam(required = false) String rivalryName,
+            @RequestParam(required = false) String team1Id,
+            @RequestParam(required = false) String team2Id
+    ) {
         return rivalryService.search(rivalryName, team1Id, team2Id);
     }
 

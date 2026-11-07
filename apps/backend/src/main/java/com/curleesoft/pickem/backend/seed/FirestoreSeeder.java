@@ -64,6 +64,7 @@ public final class FirestoreSeeder {
 
         if (email == null || email.isBlank()) {
             return Optional.empty();
+
         }
 
         return Optional.of(writeManager(email.trim()));
@@ -75,6 +76,7 @@ public final class FirestoreSeeder {
         for (SeedCatalog.VenueSeed venue : SeedCatalog.venues()) {
             venues.put(venue.id(), venue);
             save(VenueRepository.COLLECTION, venueDocument(venue));
+
         }
 
         Map<String, SeedCatalog.TeamSeed> teams = new HashMap<>();
@@ -82,34 +84,45 @@ public final class FirestoreSeeder {
         for (SeedCatalog.TeamSeed team : SeedCatalog.teams()) {
             teams.put(team.id(), team);
             save(TeamRepository.COLLECTION, teamDocument(team, venues));
+
         }
 
         for (SeedCatalog.RivalrySeed rivalry : SeedCatalog.rivalries()) {
             save(RivalryRepository.COLLECTION, rivalryDocument(rivalry, teams));
+
         }
 
         save(SeasonRepository.COLLECTION, seasonDocument());
 
         for (int weekNumber = 1; weekNumber <= SeedCatalog.WEEK_COUNT; weekNumber++) {
             save(SeasonWeekRepository.COLLECTION, weekDocument(weekNumber));
+
         }
 
         for (SeedCatalog.MatchupSeed matchup : SeedCatalog.matchups()) {
             save(MatchupRepository.COLLECTION, matchupDocument(matchup, teams, venues));
+
         }
 
         for (SeedCatalog.ThemeSeed theme : SeedCatalog.themes()) {
             save(ThemeRepository.COLLECTION, themeDocument(theme));
+
         }
+
     }
 
     private String writeManager(String email) {
         BootstrapAccount account = identity.findByEmail(email)
-                .orElseThrow(() -> new SeedFailedException("No Firebase user exists for " + email
-                        + ". Sign in with that Google account, then run the seed again."));
+                .orElseThrow(
+                        () -> new SeedFailedException(
+                                "No Firebase user exists for " + email
+                                        + ". Sign in with that Google account, then run the seed again."
+                        )
+                );
 
         if (account.uid() == null || account.uid().isBlank()) {
             throw new SeedFailedException("Firebase user " + email + " has no uid");
+
         }
 
         String uid = account.uid();
@@ -133,6 +146,7 @@ public final class FirestoreSeeder {
 
             if (stored == null) {
                 throw new SeedFailedException("Failed to map users/" + uid);
+
             }
 
             user.setFirstName(keep(stored.getFirstName(), account.firstName()));
@@ -147,6 +161,7 @@ public final class FirestoreSeeder {
             user.setNickName(account.firstName());
             user.setThemeId(SeedCatalog.DEFAULT_THEME);
             applyNewAudit(user);
+
         }
 
         set(reference, user);
@@ -180,6 +195,7 @@ public final class FirestoreSeeder {
 
         if (team1.id().equals(team2.id())) {
             throw new SeedFailedException("rivalry teams must differ: " + seed.id());
+
         }
 
         Rivalry rivalry = new Rivalry();
@@ -213,10 +229,15 @@ public final class FirestoreSeeder {
         return week;
     }
 
-    private static Matchup matchupDocument(SeedCatalog.MatchupSeed seed, Map<String, SeedCatalog.TeamSeed> teams,
-            Map<String, SeedCatalog.VenueSeed> venues) {
+    private static Matchup matchupDocument(
+            SeedCatalog.MatchupSeed seed,
+            Map<String, SeedCatalog.TeamSeed> teams,
+            Map<String, SeedCatalog.VenueSeed> venues
+    ) {
+
         if (seed.weekNumber() < 1 || seed.weekNumber() > SeedCatalog.WEEK_COUNT) {
             throw new SeedFailedException("matchup week is invalid: " + seed.id());
+
         }
 
         LocalDate begin = SeedCatalog.weekBegin(seed.weekNumber());
@@ -225,6 +246,7 @@ public final class FirestoreSeeder {
 
         if (date.isBefore(begin) || date.isAfter(end)) {
             throw new SeedFailedException("matchup date is outside its week: " + seed.id());
+
         }
 
         SeedCatalog.TeamSeed home = requireTeam(teams, seed.homeId());
@@ -232,6 +254,7 @@ public final class FirestoreSeeder {
 
         if (home.id().equals(away.id())) {
             throw new SeedFailedException("matchup teams must differ: " + seed.id());
+
         }
 
         SeedCatalog.VenueSeed venue = requireVenue(venues, seed.venueId());
@@ -266,12 +289,15 @@ public final class FirestoreSeeder {
     }
 
     private static String winner(Integer homeScore, Integer awayScore, String homeId, String awayId, String matchupId) {
+
         if (homeScore == null && awayScore == null) {
             return null;
+
         }
 
         if (homeScore == null || awayScore == null || homeScore.equals(awayScore)) {
             throw new SeedFailedException("sample matchup scores must both be set and must not tie: " + matchupId);
+
         }
 
         return homeScore > awayScore ? homeId : awayId;
@@ -281,13 +307,17 @@ public final class FirestoreSeeder {
         String chosen = null;
 
         for (SeedCatalog.RivalrySeed rivalry : SeedCatalog.rivalries()) {
+
             if (!pairs(rivalry, homeId, awayId)) {
                 continue;
+
             }
 
             if (chosen == null || rivalry.name().compareTo(chosen) < 0) {
                 chosen = rivalry.name();
+
             }
+
         }
 
         return chosen;
@@ -303,6 +333,7 @@ public final class FirestoreSeeder {
 
         if (team == null) {
             throw new SeedFailedException("unknown team " + id);
+
         }
 
         return team;
@@ -313,14 +344,17 @@ public final class FirestoreSeeder {
 
         if (venue == null) {
             throw new SeedFailedException("unknown venue " + id);
+
         }
 
         return venue;
     }
 
     private static String keep(String stored, String fallback) {
+
         if (stored != null && !stored.isBlank()) {
             return stored;
+
         }
 
         return fallback;
@@ -336,6 +370,7 @@ public final class FirestoreSeeder {
 
         } else {
             applyExistingAudit(document, readStored(snapshot, document));
+
         }
 
         set(reference, document);
@@ -366,6 +401,7 @@ public final class FirestoreSeeder {
 
         if (stored == null) {
             throw new SeedFailedException("Failed to map " + snapshot.getReference().getPath());
+
         }
 
         return stored;
@@ -379,18 +415,19 @@ public final class FirestoreSeeder {
     }
 
     private static DocumentSnapshot get(DocumentReference reference) {
+
         try {
             return reference.get().get();
 
-        }
-        catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new SeedFailedException("Interrupted reading " + reference.getPath(), ex);
 
-        }
-        catch (ExecutionException ex) {
+        } catch (ExecutionException ex) {
             throw new SeedFailedException("Failed to read " + reference.getPath(), ex);
+
         }
+
     }
 
     private static void set(DocumentReference reference, Object document) {
@@ -399,14 +436,14 @@ public final class FirestoreSeeder {
         try {
             reference.set(body).get();
 
-        }
-        catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new SeedFailedException("Interrupted writing " + reference.getPath(), ex);
 
-        }
-        catch (ExecutionException ex) {
+        } catch (ExecutionException ex) {
             throw new SeedFailedException("Failed to write " + reference.getPath(), ex);
+
         }
+
     }
 }

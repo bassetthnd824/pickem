@@ -44,15 +44,22 @@ public class CfbdClientException extends RuntimeException {
     }
 
     static String messageFor(int status) {
+
         if (status == 401) {
             return REJECTED_KEY;
+
         }
+
         if (status == 429) {
             return RATE_LIMITED;
+
         }
+
         if (status >= 500) {
             return UNAVAILABLE;
+
         }
+
         return REJECTED;
     }
 }

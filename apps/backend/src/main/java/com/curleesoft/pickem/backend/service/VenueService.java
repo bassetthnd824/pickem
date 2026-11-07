@@ -36,8 +36,12 @@ public class VenueService {
                 .filter(item -> name == null || SearchText.contains(item.getVenueName(), name))
                 .filter(item -> city == null || SearchText.contains(item.getCityState(), city))
                 .filter(item -> cfbdVenueId == null || cfbdVenueId.equals(item.getCfbdVenueId()))
-                .sorted(Comparator.comparing((Venue item) -> item.getVenueName(),
-                        Comparator.nullsLast((String left, String right) -> left.compareTo(right))))
+                .sorted(
+                        Comparator.comparing(
+                                (Venue item) -> item.getVenueName(),
+                                Comparator.nullsLast((String left, String right) -> left.compareTo(right))
+                        )
+                )
                 .toList();
     }
 
@@ -48,16 +52,25 @@ public class VenueService {
     public Venue create(Venue request) {
         Venue venue = new Venue();
         apply(venue, request);
-        return venueRepository.save(venue,
-                (transaction, collection, documentId) -> rejectDuplicate(transaction, collection, documentId, venue));
+        return venueRepository.save(
+                venue,
+                (transaction, collection, documentId) -> rejectDuplicate(transaction, collection, documentId, venue)
+        );
     }
 
     public Venue update(String id, Venue request) {
         Venue existing = get(id);
         apply(existing, request);
         existing.setVersion(request.getVersion());
-        return venueRepository.save(existing, (transaction, collection, documentId) -> rejectDuplicate(transaction,
-                collection, documentId, existing));
+        return venueRepository.save(
+                existing,
+                (transaction, collection, documentId) -> rejectDuplicate(
+                        transaction,
+                        collection,
+                        documentId,
+                        existing
+                )
+        );
     }
 
     public void delete(String id) {
@@ -71,18 +84,28 @@ public class VenueService {
         target.setCfbdVenueId(request.getCfbdVenueId());
     }
 
-    private static void rejectDuplicate(Transaction transaction, CollectionReference collection, String documentId,
-            Venue venue) {
+    private static void rejectDuplicate(
+            Transaction transaction,
+            CollectionReference collection,
+            String documentId,
+            Venue venue
+    ) {
         Long externalId = venue.getCfbdVenueId();
 
         if (externalId == null) {
             return;
+
         }
 
-        if (TransactionReads.anotherDocumentMatches(transaction, collection.whereEqualTo("cfbdVenueId", externalId),
-                documentId)) {
+        if (TransactionReads.anotherDocumentMatches(
+                transaction,
+                collection.whereEqualTo("cfbdVenueId", externalId),
+                documentId
+        )) {
             throw new ConflictException(CFBD_NOT_UNIQUE);
+
         }
+
     }
 
 }

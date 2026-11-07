@@ -61,9 +61,12 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
 
     public Optional<VerifiedIdentity> identityForCookie(String sessionCookie) {
         IssuedSession issued = sessions.get(sessionCookie);
+
         if (issued == null) {
             return Optional.empty();
+
         }
+
         return Optional.of(issued.identity());
     }
 
@@ -110,23 +113,32 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
     @Override
     public VerifiedIdentity verifyIdToken(String idToken) {
         VerifiedIdentity identity = idTokens.get(idToken);
+
         if (identity == null) {
             throw new InvalidCredentialException("Invalid Google ID token");
+
         }
+
         Long issued = idTokenIssuedAt.get(idToken);
         Long revoked = revokedAfter.get(identity.uid());
+
         if (issued != null && revoked != null && issued <= revoked) {
             throw new InvalidCredentialException("Invalid Google ID token");
+
         }
+
         return identity;
     }
 
     @Override
     public String createSessionCookie(String idToken, Duration expiresIn) {
         VerifiedIdentity identity = verifyIdToken(idToken);
+
         if (expiresIn.compareTo(Duration.ofMinutes(5)) < 0) {
             throw new InvalidCredentialException("Session duration is too short");
+
         }
+
         String cookie = newCookie();
         sessions.put(cookie, new IssuedSession(identity, clock.instant()));
         return cookie;
@@ -135,13 +147,19 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
     @Override
     public VerifiedIdentity verifySessionCookie(String sessionCookie) {
         IssuedSession issued = sessions.get(sessionCookie);
+
         if (issued == null) {
             throw new InvalidCredentialException("Invalid or revoked session cookie");
+
         }
+
         Instant revoked = revokedAt.get(issued.identity().uid());
+
         if (revoked != null && !issued.issuedAt().isAfter(revoked)) {
             throw new InvalidCredentialException("Invalid or revoked session cookie");
+
         }
+
         return issued.identity();
     }
 
@@ -151,6 +169,7 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
 
         if (failure != null) {
             throw failure;
+
         }
 
         customClaims.put(uid, Map.copyOf(claims));
@@ -164,6 +183,7 @@ public class FakeFirebaseIdentityClient implements FirebaseIdentityClient {
 
         if (failure != null) {
             throw failure;
+
         }
 
         revokedAt.put(uid, clock.instant());

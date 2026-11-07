@@ -36,8 +36,11 @@ public class VenueController {
     }
 
     @GetMapping
-    public List<Venue> list(@RequestParam(required = false) String venueName,
-            @RequestParam(required = false) String cityState, @RequestParam(required = false) Long cfbdVenueId) {
+    public List<Venue> list(
+            @RequestParam(required = false) String venueName,
+            @RequestParam(required = false) String cityState,
+            @RequestParam(required = false) Long cfbdVenueId
+    ) {
         return venueService.search(venueName, cityState, cfbdVenueId);
     }
 

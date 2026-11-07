@@ -15,35 +15,126 @@ class SeedCatalogTests {
     @Test
     void teamsMatchCfbdSchools() {
         assertThat(SeedCatalog.teams()).hasSize(16);
-        assertThat(team("alabama")).isEqualTo(new SeedCatalog.TeamSeed("alabama", "Alabama", "Crimson Tide", 333L,
-                "bryant-denny"));
-        assertThat(team("arkansas")).isEqualTo(new SeedCatalog.TeamSeed("arkansas", "Arkansas", "Razorbacks", 8L,
-                "razorback"));
+        assertThat(team("alabama")).isEqualTo(
+                new SeedCatalog.TeamSeed(
+                        "alabama",
+                        "Alabama",
+                        "Crimson Tide",
+                        333L,
+                        "bryant-denny"
+                )
+        );
+        assertThat(team("arkansas")).isEqualTo(
+                new SeedCatalog.TeamSeed(
+                        "arkansas",
+                        "Arkansas",
+                        "Razorbacks",
+                        8L,
+                        "razorback"
+                )
+        );
         assertThat(team("auburn")).isEqualTo(new SeedCatalog.TeamSeed("auburn", "Auburn", "Tigers", 2L, "jordan-hare"));
-        assertThat(team("florida")).isEqualTo(new SeedCatalog.TeamSeed("florida", "Florida", "Gators", 57L,
-                "ben-hill-griffin"));
-        assertThat(team("georgia")).isEqualTo(new SeedCatalog.TeamSeed("georgia", "Georgia", "Bulldogs", 61L,
-                "sanford"));
-        assertThat(team("kentucky")).isEqualTo(new SeedCatalog.TeamSeed("kentucky", "Kentucky", "Wildcats", 96L,
-                "kroger-field"));
+        assertThat(team("florida")).isEqualTo(
+                new SeedCatalog.TeamSeed(
+                        "florida",
+                        "Florida",
+                        "Gators",
+                        57L,
+                        "ben-hill-griffin"
+                )
+        );
+        assertThat(team("georgia")).isEqualTo(
+                new SeedCatalog.TeamSeed(
+                        "georgia",
+                        "Georgia",
+                        "Bulldogs",
+                        61L,
+                        "sanford"
+                )
+        );
+        assertThat(team("kentucky")).isEqualTo(
+                new SeedCatalog.TeamSeed(
+                        "kentucky",
+                        "Kentucky",
+                        "Wildcats",
+                        96L,
+                        "kroger-field"
+                )
+        );
         assertThat(team("lsu")).isEqualTo(new SeedCatalog.TeamSeed("lsu", "LSU", "Tigers", 99L, "tiger-stadium"));
-        assertThat(team("mississippi-state")).isEqualTo(new SeedCatalog.TeamSeed("mississippi-state",
-                "Mississippi State", "Bulldogs", 344L, "davis-wade"));
-        assertThat(team("missouri")).isEqualTo(new SeedCatalog.TeamSeed("missouri", "Missouri", "Tigers", 142L,
-                "faurot-field"));
-        assertThat(team("oklahoma")).isEqualTo(new SeedCatalog.TeamSeed("oklahoma", "Oklahoma", "Sooners", 201L,
-                "gaylord"));
-        assertThat(team("ole-miss")).isEqualTo(new SeedCatalog.TeamSeed("ole-miss", "Ole Miss", "Rebels", 145L,
-                "vaught-hemingway"));
-        assertThat(team("south-carolina")).isEqualTo(new SeedCatalog.TeamSeed("south-carolina", "South Carolina",
-                "Gamecocks", 2579L, "williams-brice"));
-        assertThat(team("tennessee")).isEqualTo(new SeedCatalog.TeamSeed("tennessee", "Tennessee", "Volunteers", 2633L,
-                "neyland"));
+        assertThat(team("mississippi-state")).isEqualTo(
+                new SeedCatalog.TeamSeed(
+                        "mississippi-state",
+                        "Mississippi State",
+                        "Bulldogs",
+                        344L,
+                        "davis-wade"
+                )
+        );
+        assertThat(team("missouri")).isEqualTo(
+                new SeedCatalog.TeamSeed(
+                        "missouri",
+                        "Missouri",
+                        "Tigers",
+                        142L,
+                        "faurot-field"
+                )
+        );
+        assertThat(team("oklahoma")).isEqualTo(
+                new SeedCatalog.TeamSeed(
+                        "oklahoma",
+                        "Oklahoma",
+                        "Sooners",
+                        201L,
+                        "gaylord"
+                )
+        );
+        assertThat(team("ole-miss")).isEqualTo(
+                new SeedCatalog.TeamSeed(
+                        "ole-miss",
+                        "Ole Miss",
+                        "Rebels",
+                        145L,
+                        "vaught-hemingway"
+                )
+        );
+        assertThat(team("south-carolina")).isEqualTo(
+                new SeedCatalog.TeamSeed(
+                        "south-carolina",
+                        "South Carolina",
+                        "Gamecocks",
+                        2579L,
+                        "williams-brice"
+                )
+        );
+        assertThat(team("tennessee")).isEqualTo(
+                new SeedCatalog.TeamSeed(
+                        "tennessee",
+                        "Tennessee",
+                        "Volunteers",
+                        2633L,
+                        "neyland"
+                )
+        );
         assertThat(team("texas")).isEqualTo(new SeedCatalog.TeamSeed("texas", "Texas", "Longhorns", 251L, "dkr-texas"));
-        assertThat(team("texas-am")).isEqualTo(new SeedCatalog.TeamSeed("texas-am", "Texas A&M", "Aggies", 245L,
-                "kyle-field"));
-        assertThat(team("vanderbilt")).isEqualTo(new SeedCatalog.TeamSeed("vanderbilt", "Vanderbilt", "Commodores",
-                238L, "firstbank"));
+        assertThat(team("texas-am")).isEqualTo(
+                new SeedCatalog.TeamSeed(
+                        "texas-am",
+                        "Texas A&M",
+                        "Aggies",
+                        245L,
+                        "kyle-field"
+                )
+        );
+        assertThat(team("vanderbilt")).isEqualTo(
+                new SeedCatalog.TeamSeed(
+                        "vanderbilt",
+                        "Vanderbilt",
+                        "Commodores",
+                        238L,
+                        "firstbank"
+                )
+        );
 
         Set<Long> cfbdIds = new HashSet<>();
         Set<String> names = new HashSet<>();
@@ -54,7 +145,9 @@ class SeedCatalogTests {
             assertThat(cfbdIds.add(team.cfbdTeamId())).isTrue();
             assertThat(names.add(team.name())).isTrue();
             assertThat(venue(team.venueId()).cfbdVenueId()).isNotNull();
+
         }
+
     }
 
     @Test
@@ -74,7 +167,9 @@ class SeedCatalogTests {
 
             if (venue.cfbdVenueId() != null) {
                 assertThat(cfbdIds.add(venue.cfbdVenueId())).isTrue();
+
             }
+
         }
 
         assertThat(cfbdIds).hasSize(16);
@@ -88,15 +183,28 @@ class SeedCatalogTests {
             assertThat(rivalry.name()).isNotBlank().hasSizeLessThanOrEqualTo(60);
             assertThat(teamIds).contains(rivalry.team1Id(), rivalry.team2Id());
             assertThat(rivalry.team1Id()).isNotEqualTo(rivalry.team2Id());
+
         }
 
         List<String> names = SeedCatalog.rivalries().stream().map(rivalry -> rivalry.name()).toList();
-        assertThat(names).contains("Iron Bowl", "Southwest Classic", "Red River Rivalry", "Lone Star Showdown",
-                "Deep South's Oldest Rivalry", "World's Largest Outdoor Cocktail Party", "Saban Bowl",
-                "Mississippi State - Kentucky Rivalry");
-        assertThat(names).doesNotContain("Sunshine Showdown", "Clean, Old-Fashioned Hate", "Governor's Cup",
-                "Battle of the Palmetto State", "Tennessee - Memphis Rivalry",
-                "Missippissi State - Kentucky Rivalry");
+        assertThat(names).contains(
+                "Iron Bowl",
+                "Southwest Classic",
+                "Red River Rivalry",
+                "Lone Star Showdown",
+                "Deep South's Oldest Rivalry",
+                "World's Largest Outdoor Cocktail Party",
+                "Saban Bowl",
+                "Mississippi State - Kentucky Rivalry"
+        );
+        assertThat(names).doesNotContain(
+                "Sunshine Showdown",
+                "Clean, Old-Fashioned Hate",
+                "Governor's Cup",
+                "Battle of the Palmetto State",
+                "Tennessee - Memphis Rivalry",
+                "Missippissi State - Kentucky Rivalry"
+        );
     }
 
     @Test
@@ -110,11 +218,29 @@ class SeedCatalogTests {
             assertThat(theme.name()).isNotBlank().hasSizeLessThanOrEqualTo(40);
             assertThat(theme.primary()).matches("#[0-9A-F]{6}");
             assertThat(theme.secondary()).matches("#[0-9A-F]{6}");
+
         }
 
-        assertThat(keys).contains("light", "dark", "alabama", "arkansas", "auburn", "florida", "georgia", "kentucky",
-                "lsu", "mississippi-state", "missouri", "oklahoma", "ole-miss", "south-carolina", "tennessee", "texas",
-                "texas-am", "vanderbilt");
+        assertThat(keys).contains(
+                "light",
+                "dark",
+                "alabama",
+                "arkansas",
+                "auburn",
+                "florida",
+                "georgia",
+                "kentucky",
+                "lsu",
+                "mississippi-state",
+                "missouri",
+                "oklahoma",
+                "ole-miss",
+                "south-carolina",
+                "tennessee",
+                "texas",
+                "texas-am",
+                "vanderbilt"
+        );
     }
 
     @Test
@@ -133,6 +259,7 @@ class SeedCatalogTests {
 
         for (SeedCatalog.VenueSeed venue : SeedCatalog.venues()) {
             venueIds.add(venue.id());
+
         }
 
         for (SeedCatalog.MatchupSeed matchup : SeedCatalog.matchups()) {
@@ -147,25 +274,36 @@ class SeedCatalogTests {
                 assertThat(matchup.homeScore()).isNotNull();
                 assertThat(matchup.awayScore()).isNotNull();
                 assertThat(matchup.homeScore()).isNotEqualTo(matchup.awayScore());
+
             }
+
         }
+
     }
 
     private static SeedCatalog.TeamSeed team(String id) {
+
         for (SeedCatalog.TeamSeed team : SeedCatalog.teams()) {
+
             if (id.equals(team.id())) {
                 return team;
+
             }
+
         }
 
         throw new AssertionError("missing team " + id);
     }
 
     private static SeedCatalog.VenueSeed venue(String id) {
+
         for (SeedCatalog.VenueSeed venue : SeedCatalog.venues()) {
+
             if (id.equals(venue.id())) {
                 return venue;
+
             }
+
         }
 
         throw new AssertionError("missing venue " + id);
@@ -176,6 +314,7 @@ class SeedCatalogTests {
 
         for (SeedCatalog.TeamSeed team : SeedCatalog.teams()) {
             ids.add(team.id());
+
         }
 
         return ids;

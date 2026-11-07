@@ -38,10 +38,13 @@ public class TeamController {
     }
 
     @GetMapping
-    public List<Team> list(@RequestParam(required = false) String teamName,
+    public List<Team> list(
+            @RequestParam(required = false) String teamName,
             @RequestParam(required = false) String squadName,
             @RequestParam(required = false) Boolean conferenceMember,
-            @RequestParam(required = false) String homeVenueId, @RequestParam(required = false) Long cfbdTeamId) {
+            @RequestParam(required = false) String homeVenueId,
+            @RequestParam(required = false) Long cfbdTeamId
+    ) {
         return teamService.search(teamName, squadName, conferenceMember, homeVenueId, cfbdTeamId);
     }
 

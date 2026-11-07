@@ -60,9 +60,14 @@ public class PickService {
 
     private final Clock clock;
 
-    public PickService(PickRepository pickRepository, MatchupRepository matchupRepository,
-            SeasonWeekRepository seasonWeekRepository, TeamRepository teamRepository, SeasonService seasonService,
-            Clock clock) {
+    public PickService(
+            PickRepository pickRepository,
+            MatchupRepository matchupRepository,
+            SeasonWeekRepository seasonWeekRepository,
+            TeamRepository teamRepository,
+            SeasonService seasonService,
+            Clock clock
+    ) {
         this.pickRepository = pickRepository;
         this.matchupRepository = matchupRepository;
         this.seasonWeekRepository = seasonWeekRepository;
@@ -78,8 +83,12 @@ public class PickService {
         List<Matchup> matchups = matchupRepository.query(collection -> collection.whereEqualTo("seasonId", seasonId));
         List<GameMain.GameWeek> weeks = seasonWeekRepository
                 .query(collection -> collection.whereEqualTo("seasonId", seasonId)).stream()
-                .sorted(Comparator.comparing((SeasonWeek week) -> week.getWeekNumber(),
-                        Comparator.nullsLast(Comparator.naturalOrder())))
+                .sorted(
+                        Comparator.comparing(
+                                (SeasonWeek week) -> week.getWeekNumber(),
+                                Comparator.nullsLast(Comparator.naturalOrder())
+                        )
+                )
                 .map(week -> toWeek(week, matchups, picks)).toList();
         return new GameMain(season.getId(), season.getSeason(), conferenceTeamCount(), weeks);
     }
@@ -91,8 +100,10 @@ public class PickService {
      * The same plan is checked again inside the commit, against the reread week.
      */
     public List<Pick> saveWeek(String userId, String seasonWeekId, List<PickSelection> selections) {
+
         if (!StringUtils.hasText(seasonWeekId)) {
             throw new InvalidRequestException(WEEK_REQUIRED);
+
         }
 
         SeasonWeek week = seasonWeekRepository.findById(seasonWeekId.trim())
@@ -101,12 +112,23 @@ public class PickService {
         int maxRank = conferenceTeamCount();
         Map<String, Matchup> matchups = matchupsById(week.getId());
         WeekPlan plan = plan(userId, week, maxRank, matchups, picksForWeek(userId, week), selections);
-        return pickRepository.commitWeek(userId, week.getId(), plan.upserts(), plan.deletes(),
-                stored -> plan(userId, week, maxRank, matchups, stored, selections));
+        return pickRepository.commitWeek(
+                userId,
+                week.getId(),
+                plan.upserts(),
+                plan.deletes(),
+                stored -> plan(userId, week, maxRank, matchups, stored, selections)
+        );
     }
 
-    private WeekPlan plan(String userId, SeasonWeek week, int maxRank, Map<String, Matchup> matchups,
-            Map<String, Pick> existing, List<PickSelection> selections) {
+    private WeekPlan plan(
+            String userId,
+            SeasonWeek week,
+            int maxRank,
+            Map<String, Matchup> matchups,
+            Map<String, Pick> existing,
+            List<PickSelection> selections
+    ) {
         rejectLocked(week);
         Map<String, Pick> remaining = new HashMap<>(existing);
         List<PickSelection> rows = selections == null ? List.of() : selections;
@@ -115,8 +137,10 @@ public class PickService {
         List<Pick> deletes = new ArrayList<>();
 
         for (PickSelection row : rows) {
+
             if (row == null) {
                 continue;
+
             }
 
             String matchupId = SearchText.trim(row.matchupId());
@@ -125,26 +149,31 @@ public class PickService {
             if (!StringUtils.hasText(pickedTeamId)) {
                 clear(matchupId, remaining, seen, deletes);
                 continue;
+
             }
 
             if (!StringUtils.hasText(matchupId)) {
                 throw new InvalidRequestException(MATCHUP_REQUIRED);
+
             }
 
             if (!seen.add(matchupId)) {
                 throw new InvalidRequestException(MATCHUP_DUPLICATE);
+
             }
 
             Matchup matchup = matchup(matchups, matchupId);
 
             if (!pickedTeamId.equals(matchup.getHomeTeamId()) && !pickedTeamId.equals(matchup.getAwayTeamId())) {
                 throw new InvalidRequestException(TEAM_NOT_IN_MATCHUP);
+
             }
 
             Integer rank = row.rank();
 
             if (rank == null || rank.intValue() < 1 || rank.intValue() > maxRank) {
                 throw new InvalidRequestException(RANK_INVALID);
+
             }
 
             Pick pick = remaining.remove(matchupId);
@@ -152,6 +181,7 @@ public class PickService {
             if (pick == null) {
                 pick = new Pick();
                 pick.setId(PickRepository.documentId(userId, matchup.getId()));
+
             }
 
             pick.setUserId(userId);
@@ -161,45 +191,60 @@ public class PickService {
             pick.setPickedTeamId(pickedTeamId);
             pick.setRank(rank);
             upserts.add(pick);
+
         }
 
         Set<Integer> ranks = new HashSet<>();
 
         for (Pick pick : upserts) {
+
             if (!ranks.add(pick.getRank())) {
                 throw new InvalidRequestException(RANK_NOT_UNIQUE);
+
             }
+
         }
 
         for (Pick kept : remaining.values()) {
+
             if (kept.getRank() != null && !ranks.add(kept.getRank())) {
                 throw new InvalidRequestException(RANK_NOT_UNIQUE);
+
             }
+
         }
 
         return new WeekPlan(upserts, deletes);
     }
 
     private void rejectLocked(SeasonWeek week) {
+
         if (PickScoring.currentOrPast(week.getBeginDate(), clock)) {
             throw new ConflictException(WEEK_LOCKED);
+
         }
+
     }
 
     private void clear(String matchupId, Map<String, Pick> remaining, Set<String> seen, List<Pick> deletes) {
+
         if (!StringUtils.hasText(matchupId)) {
             return;
+
         }
 
         if (!seen.add(matchupId)) {
             throw new InvalidRequestException(MATCHUP_DUPLICATE);
+
         }
 
         Pick prior = remaining.remove(matchupId);
 
         if (prior != null && StringUtils.hasText(prior.getId())) {
             deletes.add(prior);
+
         }
+
     }
 
     private Matchup matchup(Map<String, Matchup> matchups, String matchupId) {
@@ -207,10 +252,12 @@ public class PickService {
 
         if (matchup != null) {
             return matchup;
+
         }
 
         if (matchupRepository.findById(matchupId).isEmpty()) {
             throw new InvalidRequestException(MatchupService.NOT_FOUND);
+
         }
 
         throw new InvalidRequestException(MATCHUP_WEEK);
@@ -221,9 +268,12 @@ public class PickService {
 
         for (Matchup matchup : matchupRepository
                 .query(collection -> collection.whereEqualTo("seasonWeekId", seasonWeekId))) {
+
             if (StringUtils.hasText(matchup.getId())) {
                 matchups.put(matchup.getId(), matchup);
+
             }
+
         }
 
         return matchups;
@@ -233,9 +283,12 @@ public class PickService {
         Map<String, Pick> picks = new HashMap<>();
 
         for (Pick pick : picksByMatchup(userId, week.getSeasonId()).values()) {
+
             if (week.getId().equals(pick.getSeasonWeekId())) {
                 picks.put(pick.getMatchupId(), pick);
+
             }
+
         }
 
         return picks;
@@ -245,9 +298,12 @@ public class PickService {
         Map<String, Pick> picks = new HashMap<>();
 
         for (Pick pick : pickRepository.findByUserId(userId)) {
+
             if (seasonId.equals(pick.getSeasonId()) && StringUtils.hasText(pick.getMatchupId())) {
                 picks.putIfAbsent(pick.getMatchupId(), pick);
+
             }
+
         }
 
         return picks;
@@ -257,9 +313,12 @@ public class PickService {
         int count = 0;
 
         for (Team team : teamRepository.findAll()) {
+
             if (Boolean.TRUE.equals(team.getConferenceMember())) {
                 count++;
+
             }
+
         }
 
         return count;
@@ -270,30 +329,57 @@ public class PickService {
         List<GameMain.GameMatchup> games = matchups.stream()
                 .filter(item -> week.getId().equals(item.getSeasonWeekId())).sorted(gridOrder(picks))
                 .map(item -> toMatchup(item, picks.get(item.getId()), open)).toList();
-        return new GameMain.GameWeek(week.getId(), week.getWeekNumber(), week.getBeginDate(), week.getEndDate(), open,
-                games);
+        return new GameMain.GameWeek(
+                week.getId(),
+                week.getWeekNumber(),
+                week.getBeginDate(),
+                week.getEndDate(),
+                open,
+                games
+        );
     }
 
     private static GameMain.GameMatchup toMatchup(Matchup matchup, Pick pick, boolean open) {
         String pickedTeamId = pick == null ? null : pick.getPickedTeamId();
         Integer rank = pick == null ? null : pick.getRank();
         Integer points = open
-                ? Integer.valueOf(PickScoring.points(matchup.getHomeTeamScore(), matchup.getAwayTeamScore(),
-                        matchup.getWinningTeamId(), pickedTeamId, rank))
+                ? Integer.valueOf(
+                        PickScoring.points(
+                                matchup.getHomeTeamScore(),
+                                matchup.getAwayTeamScore(),
+                                matchup.getWinningTeamId(),
+                                pickedTeamId,
+                                rank
+                        )
+                )
                 : null;
-        return new GameMain.GameMatchup(matchup.getId(), matchup.getMatchupDate(), matchup.getAwayTeam(),
-                open ? matchup.getAwayTeamScore() : null, matchup.getHomeTeam(),
+        return new GameMain.GameMatchup(
+                matchup.getId(),
+                matchup.getMatchupDate(),
+                matchup.getAwayTeam(),
+                open ? matchup.getAwayTeamScore() : null,
+                matchup.getHomeTeam(),
                 open ? matchup.getHomeTeamScore() : null,
-                matchup.getVenue(), matchup.getRivalryName(), pick == null ? null : pick.getId(), pickedTeamId, rank,
-                open ? matchup.getWinningTeamId() : null, points);
+                matchup.getVenue(),
+                matchup.getRivalryName(),
+                pick == null ? null : pick.getId(),
+                pickedTeamId,
+                rank,
+                open ? matchup.getWinningTeamId() : null,
+                points
+        );
     }
 
     private static Comparator<Matchup> gridOrder(Map<String, Pick> picks) {
         return Comparator
-                .comparing((Matchup matchup) -> rankOf(picks.get(matchup.getId())),
-                        Comparator.nullsLast(Comparator.reverseOrder()))
-                .thenComparing((Matchup matchup) -> matchup.getMatchupDate(),
-                        Comparator.nullsLast(Comparator.naturalOrder()))
+                .comparing(
+                        (Matchup matchup) -> rankOf(picks.get(matchup.getId())),
+                        Comparator.nullsLast(Comparator.reverseOrder())
+                )
+                .thenComparing(
+                        (Matchup matchup) -> matchup.getMatchupDate(),
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                )
                 .thenComparing(PickService::homeName, Comparator.nullsLast(Comparator.naturalOrder()));
     }
 
@@ -302,8 +388,10 @@ public class PickService {
     }
 
     private static String homeName(Matchup matchup) {
+
         if (matchup.getHomeTeam() == null) {
             return null;
+
         }
 
         return matchup.getHomeTeam().getName();

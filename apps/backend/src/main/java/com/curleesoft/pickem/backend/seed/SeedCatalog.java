@@ -42,7 +42,8 @@ public final class SeedCatalog {
             new VenueSeed("dkr-texas", "DKR-Texas Memorial Stadium", "Austin, TX", 3910L),
             new VenueSeed("kyle-field", "Kyle Field", "College Station, TX", 3795L),
             new VenueSeed("firstbank", "FirstBank Stadium", "Nashville, TN", 3973L),
-            new VenueSeed(UNKNOWN_VENUE_ID, "Unknown", "Unknown", null));
+            new VenueSeed(UNKNOWN_VENUE_ID, "Unknown", "Unknown", null)
+    );
 
     private static final List<TeamSeed> TEAMS = List.of(
             new TeamSeed("alabama", "Alabama", "Crimson Tide", 333L, "bryant-denny"),
@@ -60,7 +61,8 @@ public final class SeedCatalog {
             new TeamSeed("tennessee", "Tennessee", "Volunteers", 2633L, "neyland"),
             new TeamSeed("texas", "Texas", "Longhorns", 251L, "dkr-texas"),
             new TeamSeed("texas-am", "Texas A&M", "Aggies", 245L, "kyle-field"),
-            new TeamSeed("vanderbilt", "Vanderbilt", "Commodores", 238L, "firstbank"));
+            new TeamSeed("vanderbilt", "Vanderbilt", "Commodores", 238L, "firstbank")
+    );
 
     private static final List<RivalrySeed> RIVALRIES = List.of(
             new RivalrySeed("iron-bowl", "Iron Bowl", "alabama", "auburn"),
@@ -75,23 +77,40 @@ public final class SeedCatalog {
             new RivalrySeed("deep-souths-oldest-rivalry", "Deep South's Oldest Rivalry", "auburn", "georgia"),
             new RivalrySeed("third-saturday-in-september", "Third Saturday in September", "florida", "tennessee"),
             new RivalrySeed("lsu-florida-rivalry", "LSU - Florida Rivalry", "lsu", "florida"),
-            new RivalrySeed("worlds-largest-outdoor-cocktail-party", "World's Largest Outdoor Cocktail Party",
-                    "florida", "georgia"),
+            new RivalrySeed(
+                    "worlds-largest-outdoor-cocktail-party",
+                    "World's Largest Outdoor Cocktail Party",
+                    "florida",
+                    "georgia"
+            ),
             new RivalrySeed("battle-for-the-barrel", "Battle for the Barrel", "tennessee", "kentucky"),
             new RivalrySeed("magnolia-bowl", "Magnolia Bowl", "lsu", "ole-miss"),
             new RivalrySeed("egg-bowl", "Egg Bowl", "ole-miss", "mississippi-state"),
             new RivalrySeed("vanderbilt-ole-miss-rivalry", "Vanderbilt - Ole Miss Rivalry", "vanderbilt", "ole-miss"),
-            new RivalrySeed("tennessee-vanderbilt-rivalry", "Tennessee - Vanderbilt Rivalry", "tennessee",
-                    "vanderbilt"),
+            new RivalrySeed(
+                    "tennessee-vanderbilt-rivalry",
+                    "Tennessee - Vanderbilt Rivalry",
+                    "tennessee",
+                    "vanderbilt"
+            ),
             new RivalrySeed("tennessee-georgia-rivalry", "Tennessee - Georgia Rivalry", "tennessee", "georgia"),
             new RivalrySeed("florida-auburn-rivalry", "Florida - Auburn Rivalry", "florida", "auburn"),
-            new RivalrySeed("georgia-south-carolina-rivalry", "Georgia - South Carolina Rivalry", "georgia",
-                    "south-carolina"),
+            new RivalrySeed(
+                    "georgia-south-carolina-rivalry",
+                    "Georgia - South Carolina Rivalry",
+                    "georgia",
+                    "south-carolina"
+            ),
             new RivalrySeed("halloween-game", "Halloween Game", "south-carolina", "tennessee"),
-            new RivalrySeed("mississippi-state-kentucky-rivalry", "Mississippi State - Kentucky Rivalry",
-                    "mississippi-state", "kentucky"),
+            new RivalrySeed(
+                    "mississippi-state-kentucky-rivalry",
+                    "Mississippi State - Kentucky Rivalry",
+                    "mississippi-state",
+                    "kentucky"
+            ),
             new RivalrySeed("red-river-rivalry", "Red River Rivalry", "texas", "oklahoma"),
-            new RivalrySeed("lone-star-showdown", "Lone Star Showdown", "texas", "texas-am"));
+            new RivalrySeed("lone-star-showdown", "Lone Star Showdown", "texas", "texas-am")
+    );
 
     private static final List<ThemeSeed> THEMES = List.of(
             new ThemeSeed("light", "Light", "#1F2937", "#2563EB"),
@@ -111,26 +130,76 @@ public final class SeedCatalog {
             new ThemeSeed("tennessee", "Tennessee Volunteers", "#FF8200", "#58595B"),
             new ThemeSeed("texas", "Texas Longhorns", "#BF5700", "#333F48"),
             new ThemeSeed("texas-am", "Texas A&M Aggies", "#500000", "#FFFFFF"),
-            new ThemeSeed("vanderbilt", "Vanderbilt Commodores", "#000000", "#866D4B"));
+            new ThemeSeed("vanderbilt", "Vanderbilt Commodores", "#000000", "#866D4B")
+    );
 
     private static final List<MatchupSeed> MATCHUPS = List.of(
-            new MatchupSeed("2026-w1-vanderbilt-at-alabama", 1, "2026-08-29", "alabama", "vanderbilt", "bryant-denny",
-                    42, 10),
+            new MatchupSeed(
+                    "2026-w1-vanderbilt-at-alabama",
+                    1,
+                    "2026-08-29",
+                    "alabama",
+                    "vanderbilt",
+                    "bryant-denny",
+                    42,
+                    10
+            ),
             new MatchupSeed("2026-w1-ole-miss-at-georgia", 1, "2026-08-29", "georgia", "ole-miss", "sanford", 31, 24),
-            new MatchupSeed("2026-w1-kentucky-at-florida", 1, "2026-08-29", "florida", "kentucky", "ben-hill-griffin",
-                    35, 14),
+            new MatchupSeed(
+                    "2026-w1-kentucky-at-florida",
+                    1,
+                    "2026-08-29",
+                    "florida",
+                    "kentucky",
+                    "ben-hill-griffin",
+                    35,
+                    14
+            ),
             new MatchupSeed("2026-w4-auburn-at-georgia", 4, "2026-09-19", "georgia", "auburn", "sanford", 28, 17),
             new MatchupSeed("2026-w4-lsu-at-ole-miss", 4, "2026-09-19", "ole-miss", "lsu", "vaught-hemingway", 24, 21),
-            new MatchupSeed("2026-w5-tennessee-at-alabama", 5, "2026-09-26", "alabama", "tennessee", "bryant-denny", 24,
-                    17),
+            new MatchupSeed(
+                    "2026-w5-tennessee-at-alabama",
+                    5,
+                    "2026-09-26",
+                    "alabama",
+                    "tennessee",
+                    "bryant-denny",
+                    24,
+                    17
+            ),
             new MatchupSeed("2026-w5-texas-at-oklahoma", 5, "2026-09-26", "oklahoma", "texas", "gaylord", 28, 21),
-            new MatchupSeed("2026-w5-missouri-at-south-carolina", 5, "2026-09-26", "south-carolina", "missouri",
-                    "williams-brice", null, null),
-            new MatchupSeed("2026-w6-alabama-at-auburn", 6, "2026-10-03", "auburn", "alabama", "jordan-hare", null,
-                    null),
+            new MatchupSeed(
+                    "2026-w5-missouri-at-south-carolina",
+                    5,
+                    "2026-09-26",
+                    "south-carolina",
+                    "missouri",
+                    "williams-brice",
+                    null,
+                    null
+            ),
+            new MatchupSeed(
+                    "2026-w6-alabama-at-auburn",
+                    6,
+                    "2026-10-03",
+                    "auburn",
+                    "alabama",
+                    "jordan-hare",
+                    null,
+                    null
+            ),
             new MatchupSeed("2026-w6-florida-at-georgia", 6, "2026-10-03", "georgia", "florida", "sanford", null, null),
-            new MatchupSeed("2026-w6-arkansas-at-lsu", 6, "2026-10-03", "lsu", "arkansas", "tiger-stadium", null,
-                    null));
+            new MatchupSeed(
+                    "2026-w6-arkansas-at-lsu",
+                    6,
+                    "2026-10-03",
+                    "lsu",
+                    "arkansas",
+                    "tiger-stadium",
+                    null,
+                    null
+            )
+    );
 
     private SeedCatalog() {
     }
@@ -144,12 +213,17 @@ public final class SeedCatalog {
     }
 
     public static boolean isConferenceTeamId(long cfbdTeamId) {
+
         for (TeamSeed found : TEAMS) {
             TeamSeed team = Objects.requireNonNull(found, "team");
+
             if (team.cfbdTeamId() == cfbdTeamId) {
                 return true;
+
             }
+
         }
+
         return false;
     }
 
@@ -193,7 +267,15 @@ public final class SeedCatalog {
     public record ThemeSeed(String key, String name, String primary, String secondary) {
     }
 
-    public record MatchupSeed(String id, int weekNumber, String date, String homeId, String awayId, String venueId,
-            Integer homeScore, Integer awayScore) {
+    public record MatchupSeed(
+            String id,
+            int weekNumber,
+            String date,
+            String homeId,
+            String awayId,
+            String venueId,
+            Integer homeScore,
+            Integer awayScore
+    ) {
     }
 }

@@ -141,6 +141,8 @@ The Next.js app (`apps/frontend`) is formatted with oxfmt and linted with oxlint
 
 Backend Java (`apps/backend`) is formatted with the Maven Spotless plugin (`spotless-maven-plugin` 3.10.4) and the Eclipse JDT profile in `apps/backend/eclipse-formatter.xml`. Spotless `check` is bound to the Maven `validate` phase, so `npx nx build backend` and `npx nx test backend` fail when Java is unformatted. Apply with `mvnw -pl apps/backend spotless:apply`. The plugin formats only `apps/backend/src/main/java` and `apps/backend/src/test/java`. Do not format the legacy tree under `src/`.
 
+The profile uses 4-space indents and hanging parentheses: a wrapped argument list ends the opening line with `(`, puts one parameter or argument on each line, and puts `)` on its own line. Lists that fit stay on one line. Opening braces stay at the end of the line. Put exactly one blank line before and after `if`, `try`, `while`, `for`, and other statements that open a block. Consecutive blank lines collapse to one. `else`, `catch`, and `finally` stay on the closing-brace line (`} else {`), with that one blank line before the line. Field annotations go on the line above the field. Parameter annotations stay on the parameter line.
+
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
 

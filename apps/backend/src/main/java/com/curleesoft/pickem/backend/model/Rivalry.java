@@ -4,7 +4,6 @@ import com.curleesoft.pickem.backend.model.snapshot.TeamNameSnapshot;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-
 import lombok.Getter;
 import lombok.Setter;
 
