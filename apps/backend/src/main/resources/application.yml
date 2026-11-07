@@ -22,7 +22,8 @@ springdoc:
 
 pickem:
   auth:
-    # Firebase Admin allows 5 minutes through 14 days. Product window is 5-14 days.
+    # Product window is 5 minutes through 14 days. Admin 9.10 rejects those
+    # exact endpoints, so the client shortens them by 1 ms before createSessionCookie.
     session-duration: ${PICKEM_AUTH_SESSION_DURATION:P14D}
     # Admin SDK reads FIREBASE_AUTH_EMULATOR_HOST from the process environment.
     # This binding also accepts the value from .env so startup can publish it.

@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -54,11 +55,30 @@ public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
     @Override
     public String createSessionCookie(String idToken, Duration expiresIn) {
         try {
-            SessionCookieOptions options = SessionCookieOptions.builder().setExpiresIn(expiresIn.toMillis()).build();
+            SessionCookieOptions options = SessionCookieOptions.builder()
+                    .setExpiresIn(expiresInMillis(expiresIn)).build();
             return auth().createSessionCookie(idToken, options);
         } catch (FirebaseAuthException ex) {
             throw new InvalidCredentialException("Could not create a session cookie", ex);
         }
+    }
+
+    /**
+     * Admin 9.10 rejects a duration that is not strictly inside 5 minutes and
+     * 14 days, despite the error text saying "at most". The product window
+     * includes both endpoints, so those two values move inward by 1 ms.
+     */
+    static long expiresInMillis(Duration expiresIn) {
+        long millis = expiresIn.toMillis();
+        long minimum = TimeUnit.MINUTES.toMillis(5) + 1;
+        long maximum = TimeUnit.DAYS.toMillis(14) - 1;
+        if (millis < minimum) {
+            return minimum;
+        }
+        if (millis > maximum) {
+            return maximum;
+        }
+        return millis;
     }
 
     @Override
