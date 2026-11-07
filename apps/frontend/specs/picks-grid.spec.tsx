@@ -431,19 +431,16 @@ describe("PicksGrid", () => {
     fireEvent.click(future.getByRole("radio", { name: "Pick Ole Miss in week 2" }));
     fireEvent.click(future.getByRole("button", { name: "Move LSU at Ole Miss down" }));
     expect(rankText(future, "Rank for LSU at Ole Miss")).toBe("15");
-    expect(
-      (future.getByRole("radio", { name: "Pick Ole Miss in week 2" }) as HTMLInputElement)
-        .checked,
-    ).toBe(true);
+    expect(isChecked(future.getByRole("radio", { name: "Pick Ole Miss in week 2" }))).toBe(
+      true,
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
 
     await waitFor(() => {
       expect(rankText(future, "Rank for LSU at Ole Miss")).toBe("3");
     });
-    expect(
-      (future.getByRole("radio", { name: "Pick LSU in week 2" }) as HTMLInputElement).checked,
-    ).toBe(true);
+    expect(isChecked(future.getByRole("radio", { name: "Pick LSU in week 2" }))).toBe(true);
     expect(calls.some((call) => call.method === "POST")).toBe(false);
     expect(calls.filter((call) => call.url === "/api/game/main").length).toBeGreaterThan(1);
   });
@@ -537,10 +534,24 @@ describe("PicksGrid", () => {
   });
 });
 
+function isDisabled(element: HTMLElement): boolean {
+  if ("disabled" in element && (element as HTMLButtonElement).disabled === true) {
+    return true;
+  }
+  return element.getAttribute("aria-disabled") === "true";
+}
+
+function isChecked(element: HTMLElement): boolean {
+  if ("checked" in element && (element as HTMLInputElement).checked === true) {
+    return true;
+  }
+  return element.getAttribute("aria-checked") === "true";
+}
+
 function expectDisabled(element: HTMLElement) {
-  expect((element as HTMLButtonElement).disabled).toBe(true);
+  expect(isDisabled(element)).toBe(true);
 }
 
 function expectEnabled(element: HTMLElement) {
-  expect((element as HTMLButtonElement).disabled).toBe(false);
+  expect(isDisabled(element)).toBe(false);
 }

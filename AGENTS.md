@@ -9,7 +9,7 @@ This tree is a **greenfield rewrite** of a Java EE 7 / Struts 2 WAR into:
 
 | Layer     | Stack                                                                 |
 | --------- | --------------------------------------------------------------------- |
-| Frontend  | Next.js App Router (`apps/frontend`) via `@nx/next`                   |
+| Frontend  | Next.js App Router (`apps/frontend`) via `@nx/next`, Base UI controls |
 | Backend   | Spring Boot 4.1 / Java 21 (`apps/backend`) via `@jnxplus/nx-maven`    |
 | Data      | Firestore (native mode) — later stories                               |
 | Auth      | Firebase Google sign-in + HttpOnly `__session` cookie — later stories |
@@ -122,6 +122,7 @@ See [`docs/open-decisions.md`](docs/open-decisions.md).
 - Picks lock when the week has begun. College football ties are invalid (400).
 - CFBD import uses `GET /games?year={season}&conference=SEC` from Spring only (`conference=SEC` includes non-conference games). Scores only when CFBD `completed`.
 - Team/venue edits refresh denormalized snapshots; deletes block if referenced.
+- Interactive UI uses Base UI (`@base-ui/react`): buttons, menus, radios, fields, and inputs. Compose Next.js `Link` with the `render` prop. Tables, headings, and plain text stay semantic HTML. Shared wrappers live in `apps/frontend/components/ui`.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
