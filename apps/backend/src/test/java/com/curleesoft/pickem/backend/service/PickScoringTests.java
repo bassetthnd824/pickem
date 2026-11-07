@@ -17,6 +17,7 @@ class PickScoringTests {
         assertThat(PickScoring.points(null, null, null, "home", 5)).isZero();
         assertThat(PickScoring.points(21, null, null, "home", 5)).isZero();
         assertThat(PickScoring.points(14, 14, null, "away", 5)).isZero();
+        assertThat(PickScoring.points(14, 14, "away", "away", 5)).isZero();
         assertThat(PickScoring.points(31, 14, "home", null, 5)).isZero();
         assertThat(PickScoring.points(31, 14, "home", "home", null)).isZero();
     }
