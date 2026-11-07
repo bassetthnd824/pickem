@@ -63,7 +63,7 @@ College Football Data (CFBD) is new product scope (not in the legacy app):
 | US-32 | Verify the session cookie in Next.js middleware          | F Frontend shell      | Done   | US-04, US-13                                 | US-15                                                  |
 | US-33 | Lock down the BFF allowlist and internal jobs            | F Frontend shell      | Done   | US-31                                        | US-15, US-25, US-29, US-38                             |
 | US-16 | Make and reorder weekly confidence picks                 | G Player / manager UI | Done   | US-09, US-12, US-15, US-34                   | US-22, US-24                                           |
-| US-17 | View the season leaderboard                              | G Player / manager UI | —      | US-10, US-15                                 | US-24                                                  |
+| US-17 | View the season leaderboard                              | G Player / manager UI | Done   | US-10, US-15                                 | US-24                                                  |
 | US-18 | Browse a conference team’s schedule                      | G Player / manager UI | —      | US-11, US-15                                 | US-24                                                  |
 | US-19 | Update nickname and pick a theme                         | G Player / manager UI | —      | US-11, US-14, US-15, US-36                   | US-23, US-24                                           |
 | US-20 | Administer seasons, weeks, venues, teams, and rivalries  | G Player / manager UI | —      | US-05, US-06, US-15, US-35                   | US-21, US-22                                           |
@@ -698,6 +698,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 ---
 
 ### US-17 — View the season leaderboard
+
+**Status:** Done ([PR #43](https://github.com/bassetthnd824/pickem/pull/43)).
 
 **User story.** As a player, I want a ranked table of nicknames and scores so that I can see standings.
 
