@@ -24,25 +24,36 @@ public class DotenvEnvironmentPostProcessor implements EnvironmentPostProcessor,
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+
         if (environment.getPropertySources().contains(PROPERTY_SOURCE_NAME)) {
             return;
+
         }
 
         LoadedDotenv loaded = DotenvFileLoader.load();
+
         if (!loaded.present()) {
             log.debug("No .env file found; skipping dotenv property source");
             return;
+
         }
 
         Map<String, Object> source = Map.copyOf(loaded.values());
         MapPropertySource propertySource = new MapPropertySource(PROPERTY_SOURCE_NAME, source);
+
         if (environment.getPropertySources().contains("systemEnvironment")) {
             environment.getPropertySources().addAfter("systemEnvironment", propertySource);
+
         } else {
             environment.getPropertySources().addLast(propertySource);
+
         }
-        log.info("Loaded {} secret(s) from {} (existing environment variables were not overwritten)", source.size(),
-                loaded.file());
+
+        log.info(
+                "Loaded {} secret(s) from {} (existing environment variables were not overwritten)",
+                source.size(),
+                loaded.file()
+        );
     }
 
     @Override

@@ -160,6 +160,8 @@ jobs:
       - run: npm ci
       - run: chmod +x mvnw
       - run: npx nx show projects
+      - run: npx nx lint frontend
+      - run: npx nx format-check frontend
       - run: npx nx test frontend
       - uses: actions/cache/save@v5
         if: always() && steps.nx-cache.outputs.cache-hit != 'true'

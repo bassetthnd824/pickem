@@ -37,8 +37,11 @@ public class ThemeController {
     }
 
     @GetMapping
-    public List<Theme> list(@RequestParam(required = false) String themeName,
-            @RequestParam(required = false) String themePath, @RequestParam(required = false) Boolean active) {
+    public List<Theme> list(
+            @RequestParam(required = false) String themeName,
+            @RequestParam(required = false) String themePath,
+            @RequestParam(required = false) Boolean active
+    ) {
         return themeService.search(themeName, themePath, active);
     }
 

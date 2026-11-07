@@ -37,18 +37,28 @@ public class SessionCookies {
 
     public Optional<String> read(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
+
         if (cookies == null) {
             return Optional.empty();
+
         }
+
         for (Cookie cookie : cookies) {
+
             if (cookie == null || !NAME.equals(cookie.getName())) {
                 continue;
+
             }
+
             String value = cookie.getValue();
+
             if (value != null && !value.isBlank()) {
                 return Optional.of(value);
+
             }
+
         }
+
         return Optional.empty();
     }
 

@@ -1,0 +1,82 @@
+{
+  "$schema": "../../node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "semi": false,
+  "sortPackageJson": false,
+  "sortImports": {
+    "internalPattern": ["@/"],
+    "sortSideEffects": true,
+    "newlinesBetween": false,
+    "ignoreCase": true,
+    "customGroups": [
+      {
+        "groupName": "app",
+        "selector": "side_effect_style"
+      },
+      {
+        "groupName": "app",
+        "selector": "style"
+      },
+      {
+        "groupName": "app",
+        "selector": "internal"
+      },
+      {
+        "groupName": "app",
+        "selector": "parent"
+      },
+      {
+        "groupName": "app",
+        "selector": "sibling"
+      },
+      {
+        "groupName": "app",
+        "selector": "index"
+      },
+      {
+        "groupName": "app",
+        "selector": "subpath"
+      },
+      {
+        "groupName": "thirdParty",
+        "selector": "builtin"
+      },
+      {
+        "groupName": "thirdParty",
+        "selector": "external"
+      },
+      {
+        "groupName": "thirdParty",
+        "selector": "side_effect"
+      }
+    ],
+    "groups": [
+      [
+        "thirdParty",
+        "type-builtin",
+        "type-external",
+        "builtin",
+        "external",
+        "side_effect"
+      ],
+      { "newlinesBetween": true },
+      [
+        "app",
+        "type-internal",
+        "type-parent",
+        "type-sibling",
+        "type-index",
+        "internal",
+        "parent",
+        "sibling",
+        "index",
+        "style",
+        "side_effect_style"
+      ],
+      "unknown"
+    ]
+  },
+  "ignorePatterns": [".next/**", "next-env.d.ts", "**/*.log"]
+}

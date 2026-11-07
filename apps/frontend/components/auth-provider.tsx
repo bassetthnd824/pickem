@@ -1,42 +1,43 @@
-"use client";
+'use client'
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   createContext,
   useContext,
   useEffect,
   useMemo,
   type ReactNode,
-} from "react";
-import { api } from "../lib/api-client";
-import { parseAuthProfile, type AuthProfile } from "../lib/auth-profile";
-import { isThemeKey } from "../lib/theme";
+} from 'react'
 
-export const AUTH_ME_KEY = ["auth", "me"] as const;
+import { api } from '@/lib/api-client'
+import { parseAuthProfile, type AuthProfile } from '@/lib/auth-profile'
+import { isThemeKey } from '@/lib/theme'
+
+export const AUTH_ME_KEY = ['auth', 'me'] as const
 
 type AuthState = {
-  profile: AuthProfile | null;
-  isManager: boolean;
-  sessionPresent: boolean;
-};
+  profile: AuthProfile | null
+  isManager: boolean
+  sessionPresent: boolean
+}
 
 const AuthContext = createContext<AuthState>({
   profile: null,
   isManager: false,
   sessionPresent: false,
-});
+})
 
 export function useAuth(): AuthState {
-  return useContext(AuthContext);
+  return useContext(AuthContext)
 }
 
 async function loadProfile(): Promise<AuthProfile> {
-  const body: unknown = await api.get("/api/auth/me");
-  const profile = parseAuthProfile(body);
+  const body: unknown = await api.get('/api/auth/me')
+  const profile = parseAuthProfile(body)
   if (!profile) {
-    throw new Error("Profile response was invalid");
+    throw new Error('Profile response was invalid')
   }
-  return profile;
+  return profile
 }
 
 export function AuthProvider({
@@ -45,38 +46,38 @@ export function AuthProvider({
   sessionIsManager,
   children,
 }: {
-  initialProfile: AuthProfile | null;
-  sessionPresent: boolean;
-  sessionIsManager: boolean;
-  children: ReactNode;
+  initialProfile: AuthProfile | null
+  sessionPresent: boolean
+  sessionIsManager: boolean
+  children: ReactNode
 }) {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   const query = useQuery({
     queryKey: AUTH_ME_KEY,
     queryFn: loadProfile,
     initialData: initialProfile ?? undefined,
     enabled: sessionPresent,
-  });
+  })
 
   useEffect(() => {
     if (!sessionPresent) {
-      queryClient.removeQueries({ queryKey: AUTH_ME_KEY });
-      return;
+      queryClient.removeQueries({ queryKey: AUTH_ME_KEY })
+      return
     }
     if (initialProfile) {
-      queryClient.setQueryData(AUTH_ME_KEY, initialProfile);
+      queryClient.setQueryData(AUTH_ME_KEY, initialProfile)
     }
-  }, [initialProfile, queryClient, sessionPresent]);
+  }, [initialProfile, queryClient, sessionPresent])
 
   const profile =
-    !sessionPresent || query.isError ? null : (query.data ?? initialProfile);
+    !sessionPresent || query.isError ? null : (query.data ?? initialProfile)
 
   useEffect(() => {
     if (!profile || !isThemeKey(profile.themeId)) {
-      return;
+      return
     }
-    document.documentElement.setAttribute("data-theme", profile.themeId);
-  }, [profile]);
+    document.documentElement.setAttribute('data-theme', profile.themeId)
+  }, [profile])
 
   const value = useMemo<AuthState>(
     () => ({
@@ -87,7 +88,7 @@ export function AuthProvider({
       sessionPresent,
     }),
     [profile, sessionIsManager, sessionPresent],
-  );
+  )
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

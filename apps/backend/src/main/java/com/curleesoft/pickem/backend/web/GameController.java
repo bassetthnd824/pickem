@@ -49,8 +49,13 @@ public class GameController {
 
     private final AccountService accountService;
 
-    public GameController(PickService pickService, LeaderboardService leaderboardService,
-            TeamScheduleService teamScheduleService, TeamService teamService, AccountService accountService) {
+    public GameController(
+            PickService pickService,
+            LeaderboardService leaderboardService,
+            TeamScheduleService teamScheduleService,
+            TeamService teamService,
+            AccountService accountService
+    ) {
         this.pickService = pickService;
         this.leaderboardService = leaderboardService;
         this.teamScheduleService = teamScheduleService;
@@ -70,8 +75,11 @@ public class GameController {
     }
 
     @GetMapping("/team-schedule")
-    public List<TeamScheduleRow> teamSchedule(@RequestParam(required = false) String teamId,
-            @RequestParam(required = false) String seasonId, Authentication authentication) {
+    public List<TeamScheduleRow> teamSchedule(
+            @RequestParam(required = false) String teamId,
+            @RequestParam(required = false) String seasonId,
+            Authentication authentication
+    ) {
         principal(authentication);
         return teamScheduleService.schedule(teamId, seasonId);
     }
@@ -99,8 +107,10 @@ public class GameController {
     }
 
     private static PickemPrincipal principal(Authentication authentication) {
+
         if (authentication != null && authentication.getPrincipal() instanceof PickemPrincipal caller) {
             return caller;
+
         }
 
         throw new InvalidCredentialException("Authentication is required");

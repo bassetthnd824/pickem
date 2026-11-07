@@ -70,9 +70,14 @@ public class MatchupService {
 
     private final RivalryRepository rivalryRepository;
 
-    public MatchupService(MatchupRepository matchupRepository, SeasonRepository seasonRepository,
-            SeasonWeekRepository seasonWeekRepository, TeamRepository teamRepository, VenueRepository venueRepository,
-            RivalryRepository rivalryRepository) {
+    public MatchupService(
+            MatchupRepository matchupRepository,
+            SeasonRepository seasonRepository,
+            SeasonWeekRepository seasonWeekRepository,
+            TeamRepository teamRepository,
+            VenueRepository venueRepository,
+            RivalryRepository rivalryRepository
+    ) {
         this.matchupRepository = matchupRepository;
         this.seasonRepository = seasonRepository;
         this.seasonWeekRepository = seasonWeekRepository;
@@ -86,8 +91,15 @@ public class MatchupService {
      * legacy matchup search form looks up one team. Order follows
      * {@code MatchupBean}: season year, week number, date, home team name.
      */
-    public List<Matchup> search(String seasonId, String seasonWeekId, Integer weekNumber, String matchupDate,
-            String teamId, String venueId, Long cfbdGameId) {
+    public List<Matchup> search(
+            String seasonId,
+            String seasonWeekId,
+            Integer weekNumber,
+            String matchupDate,
+            String teamId,
+            String venueId,
+            Long cfbdGameId
+    ) {
         String season = SearchText.blankToNull(seasonId);
         String weekId = SearchText.blankToNull(seasonWeekId);
         String date = SearchText.blankToNull(matchupDate);
@@ -113,16 +125,30 @@ public class MatchupService {
     public Matchup create(Matchup request) {
         Matchup matchup = new Matchup();
         apply(matchup, request);
-        return matchupRepository.save(matchup, (transaction, collection, documentId) -> rejectDuplicate(transaction,
-                collection, documentId, matchup));
+        return matchupRepository.save(
+                matchup,
+                (transaction, collection, documentId) -> rejectDuplicate(
+                        transaction,
+                        collection,
+                        documentId,
+                        matchup
+                )
+        );
     }
 
     public Matchup update(String id, Matchup request) {
         Matchup existing = get(id);
         apply(existing, request);
         existing.setVersion(request.getVersion());
-        return matchupRepository.save(existing, (transaction, collection, documentId) -> rejectDuplicate(transaction,
-                collection, documentId, existing));
+        return matchupRepository.save(
+                existing,
+                (transaction, collection, documentId) -> rejectDuplicate(
+                        transaction,
+                        collection,
+                        documentId,
+                        existing
+                )
+        );
     }
 
     public void delete(String id) {
@@ -139,10 +165,12 @@ public class MatchupService {
 
         if (!StringUtils.hasText(seasonId) || !seasonId.equals(week.getSeasonId())) {
             throw new InvalidRequestException(SEASON_MISMATCH);
+
         }
 
         if (request.getWeekNumber() != null && !request.getWeekNumber().equals(week.getWeekNumber())) {
             throw new InvalidRequestException(WEEK_NUMBER_MISMATCH);
+
         }
 
         LocalDate date = parseDate(SearchText.trim(request.getMatchupDate()));
@@ -151,6 +179,7 @@ public class MatchupService {
 
         if (date.isBefore(begin) || date.isAfter(end)) {
             throw new InvalidRequestException(DATE_INVALID);
+
         }
 
         String homeId = SearchText.trim(request.getHomeTeamId());
@@ -158,6 +187,7 @@ public class MatchupService {
 
         if (homeId != null && homeId.equals(awayId)) {
             throw new InvalidRequestException(TEAMS_EQUAL);
+
         }
 
         Team home = teamRepository.findById(homeId)
@@ -188,36 +218,44 @@ public class MatchupService {
     }
 
     private static String winner(Integer homeScore, Integer awayScore, String homeId, String awayId) {
+
         if (homeScore == null && awayScore == null) {
             return null;
+
         }
 
         if (homeScore == null || awayScore == null) {
             throw new InvalidRequestException(SCORES_INCOMPLETE);
+
         }
 
         if (homeScore.equals(awayScore)) {
             throw new InvalidRequestException(SCORES_TIED);
+
         }
 
         return homeScore.compareTo(awayScore) > 0 ? homeId : awayId;
     }
 
     /**
-     * The pair may be stored in either order. Several rivalries for the same
-     * pair keep the alphabetically first name so the snapshot is stable.
+     * The pair may be stored in either order. Several rivalries for the same pair
+     * keep the alphabetically first name so the snapshot is stable.
      */
     private String rivalryName(String homeId, String awayId) {
         String chosen = null;
 
         for (Rivalry rivalry : rivalryRepository.findAll()) {
+
             if (!pairs(rivalry, homeId, awayId) || !StringUtils.hasText(rivalry.getRivalryName())) {
                 continue;
+
             }
 
             if (chosen == null || rivalry.getRivalryName().compareTo(chosen) < 0) {
                 chosen = rivalry.getRivalryName();
+
             }
+
         }
 
         return chosen;
@@ -229,27 +267,40 @@ public class MatchupService {
         return (homeId.equals(first) && awayId.equals(second)) || (homeId.equals(second) && awayId.equals(first));
     }
 
-    private static void rejectDuplicate(Transaction transaction, CollectionReference collection, String documentId,
-            Matchup matchup) {
+    private static void rejectDuplicate(
+            Transaction transaction,
+            CollectionReference collection,
+            String documentId,
+            Matchup matchup
+    ) {
         Long externalId = matchup.getCfbdGameId();
 
         if (externalId == null) {
             return;
+
         }
 
-        if (TransactionReads.anotherDocumentMatches(transaction, collection.whereEqualTo("cfbdGameId", externalId),
-                documentId)) {
+        if (TransactionReads.anotherDocumentMatches(
+                transaction,
+                collection.whereEqualTo("cfbdGameId", externalId),
+                documentId
+        )) {
             throw new ConflictException(CFBD_NOT_UNIQUE);
+
         }
+
     }
 
     private Map<String, String> seasonYears() {
         Map<String, String> seasonYearById = new HashMap<>();
 
         for (Season season : seasonRepository.findAll()) {
+
             if (season.getId() != null) {
                 seasonYearById.put(season.getId(), season.getSeason());
+
             }
+
         }
 
         return seasonYearById;
@@ -257,26 +308,39 @@ public class MatchupService {
 
     private static Comparator<Matchup> matchupOrder(Map<String, String> seasonYearById) {
         return Comparator
-                .comparing((Matchup item) -> seasonYearById.get(item.getSeasonId()),
-                        Comparator.nullsLast((String left, String right) -> left.compareTo(right)))
-                .thenComparing((Matchup item) -> item.getWeekNumber(),
-                        Comparator.nullsLast((Integer left, Integer right) -> left.compareTo(right)))
-                .thenComparing((Matchup item) -> item.getMatchupDate(),
-                        Comparator.nullsLast((String left, String right) -> left.compareTo(right)))
-                .thenComparing((Matchup item) -> item.getHomeTeam() == null ? null : item.getHomeTeam().getName(),
-                        Comparator.nullsLast((String left, String right) -> left.compareTo(right)));
+                .comparing(
+                        (Matchup item) -> seasonYearById.get(item.getSeasonId()),
+                        Comparator.nullsLast((String left, String right) -> left.compareTo(right))
+                )
+                .thenComparing(
+                        (Matchup item) -> item.getWeekNumber(),
+                        Comparator.nullsLast((Integer left, Integer right) -> left.compareTo(right))
+                )
+                .thenComparing(
+                        (Matchup item) -> item.getMatchupDate(),
+                        Comparator.nullsLast((String left, String right) -> left.compareTo(right))
+                )
+                .thenComparing(
+                        (Matchup item) -> item.getHomeTeam() == null ? null : item.getHomeTeam().getName(),
+                        Comparator.nullsLast((String left, String right) -> left.compareTo(right))
+                );
     }
 
     private static LocalDate parseDate(String value) {
+
         if (!StringUtils.hasText(value)) {
             throw new InvalidRequestException(DATE_INVALID);
+
         }
 
         try {
             return LocalDate.parse(value);
+
         } catch (DateTimeParseException ex) {
             throw new InvalidRequestException(DATE_INVALID);
+
         }
+
     }
 
 }

@@ -34,8 +34,11 @@ public class AuthService {
 
     private final PickemAuthProperties authProperties;
 
-    public AuthService(FirebaseIdentityClient identityClient, UserRepository userRepository,
-            PickemAuthProperties authProperties) {
+    public AuthService(
+            FirebaseIdentityClient identityClient,
+            UserRepository userRepository,
+            PickemAuthProperties authProperties
+    ) {
         this.identityClient = identityClient;
         this.userRepository = userRepository;
         this.authProperties = authProperties;
@@ -45,11 +48,15 @@ public class AuthService {
         VerifiedIdentity identity = identityClient.verifyIdToken(idToken);
         GoogleProfile profile = GoogleProfile.from(identity);
         Optional<User> existing = userRepository.findById(identity.uid());
+
         if (existing.isEmpty()) {
             provision(identity.uid(), profile);
+
         } else {
             refresh(existing.get(), profile);
+
         }
+
         return identityClient.createSessionCookie(idToken, authProperties.sessionDuration());
     }
 
@@ -61,8 +68,15 @@ public class AuthService {
         User user = userRepository.findById(principal.uid())
                 .orElseThrow(() -> new InvalidCredentialException("Signed-in user is not provisioned"));
         List<String> roles = user.getRoles() == null ? List.of() : List.copyOf(user.getRoles());
-        return new AuthProfileResponse(user.getUid(), user.getEmailAddr(), user.getFirstName(), user.getLastName(),
-                user.getNickName(), user.getThemeId(), roles);
+        return new AuthProfileResponse(
+                user.getUid(),
+                user.getEmailAddr(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getNickName(),
+                user.getThemeId(),
+                roles
+        );
     }
 
     private void provision(String uid, GoogleProfile profile) {
@@ -77,21 +91,30 @@ public class AuthService {
         user.setNickName(nickName(profile.firstName()));
         user.setThemeId(DEFAULT_THEME_ID);
         user.setRoles(player);
+
         try {
             userRepository.save(user, uid);
+
         } catch (StaleDocumentVersionException ex) {
             User winner = userRepository.findById(uid)
                     .orElseThrow(() -> new InvalidCredentialException("Could not provision the user", ex));
             refresh(winner, profile);
             RoleClaimSync.align(identityClient, userRepository, uid, player);
+
         } catch (RuntimeException ex) {
+
             try {
                 RoleClaimSync.align(identityClient, userRepository, uid, List.of());
+
             } catch (RuntimeException restore) {
                 ex.addSuppressed(restore);
+
             }
+
             throw ex;
+
         }
+
     }
 
     private void refresh(User user, GoogleProfile profile) {
@@ -103,9 +126,12 @@ public class AuthService {
 
     static String nickName(String firstName) {
         String trimmed = firstName == null ? "" : firstName.trim();
+
         if (trimmed.length() <= NICK_NAME_MAX) {
             return trimmed;
+
         }
+
         return trimmed.substring(0, NICK_NAME_MAX);
     }
 }

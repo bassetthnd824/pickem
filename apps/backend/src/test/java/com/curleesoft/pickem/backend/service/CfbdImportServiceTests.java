@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -120,42 +119,68 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
 
     @AfterEach
     void deleteFixtures() {
+
         for (String pickId : pickIds) {
             pickRepository.delete(pickId);
+
         }
+
         for (String rivalryId : rivalryIds) {
             rivalryRepository.delete(rivalryId);
+
         }
+
         for (String seasonId : seasonIds) {
             String parentId = Objects.requireNonNull(seasonId, "seasonId");
+
             for (Matchup matchup : matchups(parentId)) {
                 matchupRepository.delete(Objects.requireNonNull(matchup.getId(), "matchupId"));
+
             }
+
             for (SeasonWeek week : seasonWeekRepository.findAll()) {
+
                 if (parentId.equals(week.getSeasonId()) && week.getId() != null) {
                     seasonWeekRepository.delete(week.getId());
+
                 }
+
             }
+
             seasonRepository.delete(parentId);
+
         }
+
         for (Team team : teamRepository.findAll()) {
+
             if (team.getTeamName() != null && team.getTeamName().contains(token) && team.getId() != null) {
                 teamRepository.delete(team.getId());
+
             }
+
         }
+
         for (Venue venue : venueRepository.findAll()) {
             boolean named = venue.getVenueName() != null && venue.getVenueName().contains(token);
             boolean ours = venue.getCfbdVenueId() != null && venue.getCfbdVenueId().longValue() >= 800_000_000L;
+
             if ((named || ours) && venue.getId() != null) {
                 venueRepository.delete(venue.getId());
+
             }
+
         }
+
         if (!unknownExisted) {
             venueRepository.delete(SeedCatalog.UNKNOWN_VENUE_ID);
+
         }
+
         for (String jobId : jobIds) {
             importJobRepository.delete(jobId);
+
         }
+
         seasonIds.clear();
         jobIds.clear();
         pickIds.clear();
@@ -178,21 +203,86 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         String jackets = "Jackets " + token;
         String mocs = "Mocs " + token;
         String furman = "Furman " + token;
-        CfbdCalendarWeek week = new CfbdCalendarWeek(year, 1, "regular", monday + "T00:00:00.000Z",
-                sunday + "T23:59:59.000Z");
+        CfbdCalendarWeek week = new CfbdCalendarWeek(
+                year,
+                1,
+                "regular",
+                monday + "T00:00:00.000Z",
+                sunday + "T23:59:59.000Z"
+        );
         String easternKickoff = sunday.plusDays(1) + "T03:30:00.000Z";
-        CfbdGame atDodd = game(910_001L, year, 1, easternKickoff, "Bobby Dodd " + token, doddId, alabama.getCfbdTeamId(),
-                alabama.getTeamName(), jacketsId, jackets);
-        CfbdGame jacketsHome = game(910_005L, year, 1, monday + "T18:00:00.000Z", "Bobby Dodd " + token, doddId,
-                jacketsId, jackets, alabama.getCfbdTeamId(), alabama.getTeamName());
-        CfbdGame atFinley = game(910_002L, year, 1, monday + "T18:00:00.000Z", "Finley " + token, finleyId, mocsId, mocs,
-                alabama.getCfbdTeamId(), alabama.getTeamName());
-        CfbdGame noVenue = game(910_003L, year, 1, monday + "T20:00:00.000Z", null, null, alabama.getCfbdTeamId(),
-                alabama.getTeamName(), furmanId, furman);
-        CfbdGame unmapped = game(910_004L, year, 4, monday + "T18:00:00.000Z", null, null, alabama.getCfbdTeamId(),
-                alabama.getTeamName(), furmanId, furman);
-        CfbdGame earlyKickoff = game(910_006L, year, 1, monday + "T02:00:00.000Z", null, null, alabama.getCfbdTeamId(),
-                alabama.getTeamName(), furmanId, furman);
+        CfbdGame atDodd = game(
+                910_001L,
+                year,
+                1,
+                easternKickoff,
+                "Bobby Dodd " + token,
+                doddId,
+                alabama.getCfbdTeamId(),
+                alabama.getTeamName(),
+                jacketsId,
+                jackets
+        );
+        CfbdGame jacketsHome = game(
+                910_005L,
+                year,
+                1,
+                monday + "T18:00:00.000Z",
+                "Bobby Dodd " + token,
+                doddId,
+                jacketsId,
+                jackets,
+                alabama.getCfbdTeamId(),
+                alabama.getTeamName()
+        );
+        CfbdGame atFinley = game(
+                910_002L,
+                year,
+                1,
+                monday + "T18:00:00.000Z",
+                "Finley " + token,
+                finleyId,
+                mocsId,
+                mocs,
+                alabama.getCfbdTeamId(),
+                alabama.getTeamName()
+        );
+        CfbdGame noVenue = game(
+                910_003L,
+                year,
+                1,
+                monday + "T20:00:00.000Z",
+                null,
+                null,
+                alabama.getCfbdTeamId(),
+                alabama.getTeamName(),
+                furmanId,
+                furman
+        );
+        CfbdGame unmapped = game(
+                910_004L,
+                year,
+                4,
+                monday + "T18:00:00.000Z",
+                null,
+                null,
+                alabama.getCfbdTeamId(),
+                alabama.getTeamName(),
+                furmanId,
+                furman
+        );
+        CfbdGame earlyKickoff = game(
+                910_006L,
+                year,
+                1,
+                monday + "T02:00:00.000Z",
+                null,
+                null,
+                alabama.getCfbdTeamId(),
+                alabama.getTeamName(),
+                furmanId,
+                furman
+        );
         when(cfbdClient.calendar(year)).thenReturn(List.of(week));
         when(cfbdClient.games(eq(year), isNull(), eq("regular")))
                 .thenReturn(List.of(atDodd, jacketsHome, atFinley, noVenue, unmapped, earlyKickoff, atDodd));
@@ -296,8 +386,13 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         int year = uniqueYear();
         String seasonId = createSeason(year);
         LocalDate monday = firstMondayInAugust(year);
-        CfbdCalendarWeek week = new CfbdCalendarWeek(year, 1, "regular", monday + "T00:00:00.000Z",
-                monday.plusDays(6) + "T23:59:59.000Z");
+        CfbdCalendarWeek week = new CfbdCalendarWeek(
+                year,
+                1,
+                "regular",
+                monday + "T00:00:00.000Z",
+                monday.plusDays(6) + "T23:59:59.000Z"
+        );
         when(cfbdClient.calendar(year)).thenThrow(new CfbdClientException(429, CfbdClientException.RATE_LIMITED))
                 .thenThrow(new CfbdClientException(503, CfbdClientException.UNAVAILABLE)).thenReturn(List.of(week));
         when(cfbdClient.games(eq(year), isNull(), eq("regular"))).thenReturn(List.of());
@@ -326,10 +421,12 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
 
         int rejectedYear = uniqueYear();
         String rejectedSeason = createSeason(rejectedYear);
-        when(cfbdClient.calendar(rejectedYear)).thenThrow(new CfbdClientException(401, CfbdClientException.REJECTED_KEY));
+        when(cfbdClient.calendar(rejectedYear))
+                .thenThrow(new CfbdClientException(401, CfbdClientException.REJECTED_KEY));
         ImportJob rejectedJob = cfbdImportService.enqueue(rejectedSeason, null);
         jobIds.add(Objects.requireNonNull(rejectedJob.getId(), "jobId"));
-        assertThatThrownBy(() -> cfbdImportService.execute(rejectedJob.getId())).isInstanceOf(CfbdClientException.class);
+        assertThatThrownBy(() -> cfbdImportService.execute(rejectedJob.getId()))
+                .isInstanceOf(CfbdClientException.class);
         assertThat(cfbdImportService.get(rejectedJob.getId()).getError()).isEqualTo(CfbdClientException.REJECTED_KEY);
         verify(cfbdClient, times(1)).calendar(rejectedYear);
         verify(cfbdPause, times(4)).pause(anyInt());
@@ -341,10 +438,20 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         String seasonId = createSeason(year);
         LocalDate monday = firstMondayInAugust(year);
         LocalDate bowl = LocalDate.of(year, 12, 15);
-        CfbdCalendarWeek regular = new CfbdCalendarWeek(year, 1, "regular", monday + "T00:00:00.000Z",
-                monday.plusDays(6) + "T23:59:59.000Z");
-        CfbdCalendarWeek postseason = new CfbdCalendarWeek(year, 1, "postseason", bowl + "T00:00:00.000Z",
-                bowl.plusDays(6) + "T23:59:59.000Z");
+        CfbdCalendarWeek regular = new CfbdCalendarWeek(
+                year,
+                1,
+                "regular",
+                monday + "T00:00:00.000Z",
+                monday.plusDays(6) + "T23:59:59.000Z"
+        );
+        CfbdCalendarWeek postseason = new CfbdCalendarWeek(
+                year,
+                1,
+                "postseason",
+                bowl + "T00:00:00.000Z",
+                bowl.plusDays(6) + "T23:59:59.000Z"
+        );
         when(cfbdClient.calendar(year)).thenReturn(List.of(regular, postseason));
         when(cfbdClient.games(eq(year), isNull(), eq("postseason"))).thenReturn(List.of());
 
@@ -369,14 +476,45 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         Team alabama = conferenceTeam("Alabama " + token, "Tide " + token, 800_000_011L, home);
         long guestId = 800_000_012L;
         String guest = "Guest " + token;
-        CfbdCalendarWeek regular = new CfbdCalendarWeek(year, 1, "regular", monday + "T00:00:00.000Z",
-                sunday + "T23:59:59.000Z");
-        CfbdCalendarWeek postseason = new CfbdCalendarWeek(year, 1, "postseason", bowl + "T00:00:00.000Z",
-                bowl.plusDays(6) + "T23:59:59.000Z");
-        CfbdGame opener = game(920_001L, year, 1, monday + "T18:00:00.000Z", null, null, alabama.getCfbdTeamId(),
-                alabama.getTeamName(), guestId, guest);
-        CfbdGame bowlGame = game(920_002L, year, 1, "postseason", bowl + "T18:00:00.000Z", "Bowl " + token, 800_000_777L,
-                alabama.getCfbdTeamId(), alabama.getTeamName(), guestId, guest);
+        CfbdCalendarWeek regular = new CfbdCalendarWeek(
+                year,
+                1,
+                "regular",
+                monday + "T00:00:00.000Z",
+                sunday + "T23:59:59.000Z"
+        );
+        CfbdCalendarWeek postseason = new CfbdCalendarWeek(
+                year,
+                1,
+                "postseason",
+                bowl + "T00:00:00.000Z",
+                bowl.plusDays(6) + "T23:59:59.000Z"
+        );
+        CfbdGame opener = game(
+                920_001L,
+                year,
+                1,
+                monday + "T18:00:00.000Z",
+                null,
+                null,
+                alabama.getCfbdTeamId(),
+                alabama.getTeamName(),
+                guestId,
+                guest
+        );
+        CfbdGame bowlGame = game(
+                920_002L,
+                year,
+                1,
+                "postseason",
+                bowl + "T18:00:00.000Z",
+                "Bowl " + token,
+                800_000_777L,
+                alabama.getCfbdTeamId(),
+                alabama.getTeamName(),
+                guestId,
+                guest
+        );
         when(cfbdClient.calendar(year)).thenReturn(List.of(regular, postseason));
         when(cfbdClient.games(eq(year), isNull(), eq("regular"))).thenReturn(List.of(opener));
         when(cfbdClient.games(eq(year), isNull(), eq("postseason"))).thenReturn(List.of(bowlGame));
@@ -395,14 +533,21 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
 
         SeasonWeek stillOpening = null;
         SeasonWeek bowlWeek = null;
+
         for (SeasonWeek week : weeks(seasonId)) {
+
             if (Integer.valueOf(1).equals(week.getWeekNumber())) {
                 stillOpening = week;
+
             }
+
             if (Integer.valueOf(CfbdImportService.POSTSEASON_WEEK_BASE + 1).equals(week.getWeekNumber())) {
                 bowlWeek = week;
+
             }
+
         }
+
         SeasonWeek regularWeek = Objects.requireNonNull(stillOpening, "regularWeek");
         SeasonWeek postseasonWeek = Objects.requireNonNull(bowlWeek, "postseasonWeek");
         assertThat(regularWeek.getId()).isEqualTo(openingId);
@@ -441,9 +586,12 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         List<Team> members = new ArrayList<>();
         members.add(conferenceTeam("Alabama " + token, "Crimson Tide " + token, 810_000_001L, bryant));
         members.add(conferenceTeam("Auburn " + token, "Tigers " + token, 810_000_002L, sanford));
+
         for (int index = 3; index <= 16; index++) {
             members.add(conferenceTeam("Club " + index + " " + token, "Squad " + index, 810_000_000L + index, bryant));
+
         }
+
         Team alabama = members.get(0);
         Team auburn = members.get(1);
         Rivalry rivalry = new Rivalry();
@@ -461,49 +609,232 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         String later = monday.plusDays(2) + "T18:00:00.000Z";
         List<CfbdGame> opening = new ArrayList<>();
         List<CfbdGame> rerun = new ArrayList<>();
+
         for (int index = 0; index < members.size(); index += 2) {
             Team home = Objects.requireNonNull(members.get(index), "home");
             Team away = Objects.requireNonNull(members.get(index + 1), "away");
             long gameId = 930_001L + (index / 2);
+
             if (index == 0) {
-                opening.add(game(gameId, year, 1, kickoff, false, "Mercedes " + token, Long.valueOf(mercedesId), home,
-                        away, null, null, true, null, null));
-                rerun.add(game(gameId, year, 1, later, false, "Dome " + token, Long.valueOf(domeId), home, away, null,
-                        null, true, null, null));
+                opening.add(
+                        game(
+                                gameId,
+                                year,
+                                1,
+                                kickoff,
+                                false,
+                                "Mercedes " + token,
+                                Long.valueOf(mercedesId),
+                                home,
+                                away,
+                                null,
+                                null,
+                                true,
+                                null,
+                                null
+                        )
+                );
+                rerun.add(
+                        game(
+                                gameId,
+                                year,
+                                1,
+                                later,
+                                false,
+                                "Dome " + token,
+                                Long.valueOf(domeId),
+                                home,
+                                away,
+                                null,
+                                null,
+                                true,
+                                null,
+                                null
+                        )
+                );
+
             } else if (index == 2) {
-                opening.add(game(gameId, year, 1, kickoff, false, null, null, home, away, null, null, false, null,
-                        null));
-                rerun.add(game(gameId, year, 1, kickoff, true, null, null, home, away, Integer.valueOf(10),
-                        Integer.valueOf(10), false, null, null));
+                opening.add(
+                        game(
+                                gameId,
+                                year,
+                                1,
+                                kickoff,
+                                false,
+                                null,
+                                null,
+                                home,
+                                away,
+                                null,
+                                null,
+                                false,
+                                null,
+                                null
+                        )
+                );
+                rerun.add(
+                        game(
+                                gameId,
+                                year,
+                                1,
+                                kickoff,
+                                true,
+                                null,
+                                null,
+                                home,
+                                away,
+                                Integer.valueOf(10),
+                                Integer.valueOf(10),
+                                false,
+                                null,
+                                null
+                        )
+                );
+
             } else {
-                CfbdGame row = game(gameId, year, 1, kickoff, false, null, null, home, away, null, null, false, null,
-                        null);
+                CfbdGame row = game(
+                        gameId,
+                        year,
+                        1,
+                        kickoff,
+                        false,
+                        null,
+                        null,
+                        home,
+                        away,
+                        null,
+                        null,
+                        false,
+                        null,
+                        null
+                );
                 opening.add(row);
                 rerun.add(row);
+
             }
+
         }
+
         opening.add(opening.get(0));
         rerun.add(rerun.get(0));
         Long alabamaId = Objects.requireNonNull(alabama.getCfbdTeamId(), "alabamaId");
-        opening.add(game(930_009L, year, 1, "regular", monday + "T20:00:00.000Z", true, null, null,
-                alabamaId.longValue(), alabama.getTeamName(), Integer.valueOf(31), furmanId, furman,
-                Integer.valueOf(17), false, null, null));
-        rerun.add(game(930_009L, year, 1, "regular", monday + "T20:00:00.000Z", true, null, null,
-                alabamaId.longValue(), alabama.getTeamName(), Integer.valueOf(28), furmanId, furman,
-                Integer.valueOf(14), false, null, null));
+        opening.add(
+                game(
+                        930_009L,
+                        year,
+                        1,
+                        "regular",
+                        monday + "T20:00:00.000Z",
+                        true,
+                        null,
+                        null,
+                        alabamaId.longValue(),
+                        alabama.getTeamName(),
+                        Integer.valueOf(31),
+                        furmanId,
+                        furman,
+                        Integer.valueOf(17),
+                        false,
+                        null,
+                        null
+                )
+        );
+        rerun.add(
+                game(
+                        930_009L,
+                        year,
+                        1,
+                        "regular",
+                        monday + "T20:00:00.000Z",
+                        true,
+                        null,
+                        null,
+                        alabamaId.longValue(),
+                        alabama.getTeamName(),
+                        Integer.valueOf(28),
+                        furmanId,
+                        furman,
+                        Integer.valueOf(14),
+                        false,
+                        null,
+                        null
+                )
+        );
         Long auburnId = Objects.requireNonNull(auburn.getCfbdTeamId(), "auburnId");
         long showcaseId = 810_000_060L;
         String showcase = "Showcase " + token;
-        opening.add(game(930_010L, year, 1, "regular", kickoff, false, "Mercedes " + token, Long.valueOf(mercedesId),
-                showcaseId, showcase, null, alabamaId.longValue(), alabama.getTeamName(), null, true, null, null));
-        rerun.add(game(930_010L, year, 1, "regular", kickoff, false, "Mercedes " + token, Long.valueOf(mercedesId),
-                showcaseId, showcase, null, alabamaId.longValue(), alabama.getTeamName(), null, true, null, null));
-        opening.add(game(930_099L, year, 1, "regular", kickoff, false, null, null, 810_000_777L, "Ghost " + token, null,
-                auburnId.longValue(), auburn.getTeamName(), null, false, "SEC", null));
+        opening.add(
+                game(
+                        930_010L,
+                        year,
+                        1,
+                        "regular",
+                        kickoff,
+                        false,
+                        "Mercedes " + token,
+                        Long.valueOf(mercedesId),
+                        showcaseId,
+                        showcase,
+                        null,
+                        alabamaId.longValue(),
+                        alabama.getTeamName(),
+                        null,
+                        true,
+                        null,
+                        null
+                )
+        );
+        rerun.add(
+                game(
+                        930_010L,
+                        year,
+                        1,
+                        "regular",
+                        kickoff,
+                        false,
+                        "Mercedes " + token,
+                        Long.valueOf(mercedesId),
+                        showcaseId,
+                        showcase,
+                        null,
+                        alabamaId.longValue(),
+                        alabama.getTeamName(),
+                        null,
+                        true,
+                        null,
+                        null
+                )
+        );
+        opening.add(
+                game(
+                        930_099L,
+                        year,
+                        1,
+                        "regular",
+                        kickoff,
+                        false,
+                        null,
+                        null,
+                        810_000_777L,
+                        "Ghost " + token,
+                        null,
+                        auburnId.longValue(),
+                        auburn.getTeamName(),
+                        null,
+                        false,
+                        "SEC",
+                        null
+                )
+        );
         rerun.add(opening.get(opening.size() - 1));
 
-        CfbdCalendarWeek week = new CfbdCalendarWeek(year, 1, "regular", monday + "T00:00:00.000Z",
-                sunday + "T23:59:59.000Z");
+        CfbdCalendarWeek week = new CfbdCalendarWeek(
+                year,
+                1,
+                "regular",
+                monday + "T00:00:00.000Z",
+                sunday + "T23:59:59.000Z"
+        );
         when(cfbdClient.calendar(year)).thenReturn(List.of(week));
         when(cfbdClient.games(eq(year), isNull(), eq("regular"))).thenReturn(opening, rerun);
         when(cfbdClient.venues()).thenReturn(List.of(new CfbdVenue(mercedesId, "Mercedes " + token, "Atlanta", "GA")));
@@ -527,18 +858,25 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         assertThat(teamByCfbd(furmanId).getConferenceMember()).isFalse();
 
         List<String> seen = new ArrayList<>();
+
         for (int number = 0; number < 8; number++) {
             Matchup row = matchupByGame(930_001L + number);
             seen.add(row.getHomeTeamId());
             seen.add(row.getAwayTeamId());
+
             if (number > 1) {
                 assertThat(row.getHomeTeamScore()).isNull();
                 assertThat(row.getAwayTeamScore()).isNull();
+
             }
+
         }
+
         assertThat(seen).hasSize(16);
+
         for (Team member : members) {
             assertThat(seen).contains(member.getId());
+
         }
 
         Matchup ironBowl = matchupByGame(930_001L);
@@ -623,10 +961,25 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         Team alabama = conferenceTeam("Alabama " + token, "Tide " + token, 810_000_612L, known);
         long guestId = 810_000_613L;
         String guest = "Guest " + token;
-        CfbdCalendarWeek week = new CfbdCalendarWeek(year, 1, "regular", monday + "T00:00:00.000Z",
-                sunday + "T23:59:59.000Z");
-        CfbdGame atKnown = game(940_001L, year, 1, monday + "T18:00:00.000Z", known.getVenueName(), knownId,
-                alabama.getCfbdTeamId(), alabama.getTeamName(), guestId, guest);
+        CfbdCalendarWeek week = new CfbdCalendarWeek(
+                year,
+                1,
+                "regular",
+                monday + "T00:00:00.000Z",
+                sunday + "T23:59:59.000Z"
+        );
+        CfbdGame atKnown = game(
+                940_001L,
+                year,
+                1,
+                monday + "T18:00:00.000Z",
+                known.getVenueName(),
+                knownId,
+                alabama.getCfbdTeamId(),
+                alabama.getTeamName(),
+                guestId,
+                guest
+        );
         when(cfbdClient.calendar(year)).thenReturn(List.of(week));
         when(cfbdClient.games(eq(year), isNull(), eq("regular"))).thenReturn(List.of(atKnown));
         lenient().doThrow(new CfbdClientException(503, CfbdClientException.UNAVAILABLE)).when(cfbdClient).venues();
@@ -641,10 +994,30 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         verify(cfbdClient, never()).venues();
 
         long freshId = 810_000_614L;
-        CfbdGame atFresh = game(940_002L, year, 1, monday + "T20:00:00.000Z", "Fresh " + token, freshId,
-                guestId, guest, alabama.getCfbdTeamId().longValue(), alabama.getTeamName());
-        CfbdGame atStale = game(940_003L, year, 1, monday + "T21:00:00.000Z", stale.getVenueName(),
-                stale.getCfbdVenueId(), alabama.getCfbdTeamId(), alabama.getTeamName(), guestId, guest);
+        CfbdGame atFresh = game(
+                940_002L,
+                year,
+                1,
+                monday + "T20:00:00.000Z",
+                "Fresh " + token,
+                freshId,
+                guestId,
+                guest,
+                alabama.getCfbdTeamId().longValue(),
+                alabama.getTeamName()
+        );
+        CfbdGame atStale = game(
+                940_003L,
+                year,
+                1,
+                monday + "T21:00:00.000Z",
+                stale.getVenueName(),
+                stale.getCfbdVenueId(),
+                alabama.getCfbdTeamId(),
+                alabama.getTeamName(),
+                guestId,
+                guest
+        );
         when(cfbdClient.games(eq(year), isNull(), eq("regular"))).thenReturn(List.of(atFresh, atStale));
         doReturn(List.of(new CfbdVenue(810_000_611L, stale.getVenueName(), "Atlanta", "GA"))).when(cfbdClient)
                 .venues();
@@ -670,15 +1043,64 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         blank.setCfbdVenueId(Long.valueOf(blankId));
         blank = venueRepository.save(blank, "test");
         Team alabama = conferenceTeam("Alabama " + token, "Tide " + token, 810_000_701L, blank);
-        CfbdCalendarWeek week = new CfbdCalendarWeek(year, 1, "regular", monday + "T00:00:00.000Z",
-                sunday + "T23:59:59.000Z");
+        CfbdCalendarWeek week = new CfbdCalendarWeek(
+                year,
+                1,
+                "regular",
+                monday + "T00:00:00.000Z",
+                sunday + "T23:59:59.000Z"
+        );
         long guestId = 810_000_702L;
-        CfbdGame atBlank = game(950_001L, year, 1, monday + "T18:00:00.000Z", blank.getVenueName(), blankId,
-                alabama.getCfbdTeamId(), alabama.getTeamName(), guestId, "Guest " + token);
-        CfbdGame bothMissing = game(950_002L, year, 1, "regular", monday + "T19:00:00.000Z", false, "Nowhere", null, 0L,
-                "Nobody", null, 0L, "Nobody Else", null, false, null, null);
-        CfbdGame secMissing = game(950_003L, year, 1, "regular", monday + "T20:00:00.000Z", false, "Nowhere", null, 0L,
-                "Ghost", null, 0L, "Visitor", null, false, "SEC", null);
+        CfbdGame atBlank = game(
+                950_001L,
+                year,
+                1,
+                monday + "T18:00:00.000Z",
+                blank.getVenueName(),
+                blankId,
+                alabama.getCfbdTeamId(),
+                alabama.getTeamName(),
+                guestId,
+                "Guest " + token
+        );
+        CfbdGame bothMissing = game(
+                950_002L,
+                year,
+                1,
+                "regular",
+                monday + "T19:00:00.000Z",
+                false,
+                "Nowhere",
+                null,
+                0L,
+                "Nobody",
+                null,
+                0L,
+                "Nobody Else",
+                null,
+                false,
+                null,
+                null
+        );
+        CfbdGame secMissing = game(
+                950_003L,
+                year,
+                1,
+                "regular",
+                monday + "T20:00:00.000Z",
+                false,
+                "Nowhere",
+                null,
+                0L,
+                "Ghost",
+                null,
+                0L,
+                "Visitor",
+                null,
+                false,
+                "SEC",
+                null
+        );
         when(cfbdClient.calendar(year)).thenReturn(List.of(week));
         when(cfbdClient.games(eq(year), isNull(), eq("regular")))
                 .thenReturn(List.of(atBlank, bothMissing, secMissing));
@@ -692,8 +1114,10 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         assertThat(done.getStatus()).isEqualTo(ImportJob.SUCCEEDED);
         assertThat(venueByCfbd(blankId).getCityState()).isEqualTo("Nashville, TN");
         assertThat(done.getSkipped()).extracting(ImportJobSkip::getCfbdGameId, ImportJobSkip::getReason)
-                .containsExactlyInAnyOrder(tuple(Long.valueOf(950_002L), CfbdImportService.MISSING_TEAM_ID),
-                        tuple(Long.valueOf(950_003L), CfbdImportService.MISSING_CONFERENCE_TEAM));
+                .containsExactlyInAnyOrder(
+                        tuple(Long.valueOf(950_002L), CfbdImportService.MISSING_TEAM_ID),
+                        tuple(Long.valueOf(950_003L), CfbdImportService.MISSING_CONFERENCE_TEAM)
+                );
         assertThat(teamsNamed("Nobody")).isEmpty();
         assertThat(teamsNamed("Ghost")).isEmpty();
     }
@@ -708,11 +1132,30 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         Venue sanford = venue("Sanford " + token, "Athens, GA", null);
         Team alabama = conferenceTeam("Alabama " + token, "Tide " + token, 810_000_801L, bryant);
         Team auburn = conferenceTeam("Auburn " + token, "Tigers " + token, 810_000_802L, sanford);
-        CfbdCalendarWeek week = new CfbdCalendarWeek(year, 1, "regular", monday + "T00:00:00.000Z",
-                sunday + "T23:59:59.000Z");
+        CfbdCalendarWeek week = new CfbdCalendarWeek(
+                year,
+                1,
+                "regular",
+                monday + "T00:00:00.000Z",
+                sunday + "T23:59:59.000Z"
+        );
         String start = monday + "T18:00:00.000Z";
-        CfbdGame opening = game(960_001L, year, 1, start, false, null, null, alabama, auburn, null, null, false, null,
-                null);
+        CfbdGame opening = game(
+                960_001L,
+                year,
+                1,
+                start,
+                false,
+                null,
+                null,
+                alabama,
+                auburn,
+                null,
+                null,
+                false,
+                null,
+                null
+        );
         when(cfbdClient.calendar(year)).thenReturn(List.of(week));
         when(cfbdClient.games(eq(year), isNull(), eq("regular"))).thenReturn(List.of(opening));
 
@@ -726,8 +1169,22 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         scored.setAwayTeamScore(17);
         matchupService.update(matchupId, scored);
 
-        CfbdGame swapped = game(960_001L, year, 1, start, false, null, null, auburn, alabama, null, null, false, null,
-                null);
+        CfbdGame swapped = game(
+                960_001L,
+                year,
+                1,
+                start,
+                false,
+                null,
+                null,
+                auburn,
+                alabama,
+                null,
+                null,
+                false,
+                null,
+                null
+        );
         when(cfbdClient.games(eq(year), isNull(), eq("regular"))).thenReturn(List.of(swapped));
         cfbdImportService.execute(queued.getId());
 
@@ -740,8 +1197,18 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         assertThat(flipped.getWinningTeamId()).isEqualTo(alabama.getId());
 
         long guestId = 810_000_803L;
-        CfbdGame replaced = game(960_001L, year, 1, start, null, null, alabama.getCfbdTeamId(), alabama.getTeamName(),
-                guestId, "Guest " + token);
+        CfbdGame replaced = game(
+                960_001L,
+                year,
+                1,
+                start,
+                null,
+                null,
+                alabama.getCfbdTeamId(),
+                alabama.getTeamName(),
+                guestId,
+                "Guest " + token
+        );
         when(cfbdClient.games(eq(year), isNull(), eq("regular"))).thenReturn(List.of(replaced));
         cfbdImportService.execute(queued.getId());
 
@@ -785,37 +1252,137 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         return teamRepository.save(team, "test");
     }
 
-    private static CfbdGame game(long id, int year, int week, String start, String venue, Long venueId, Long homeId,
-            String homeName, long awayId, String awayName) {
+    private static CfbdGame game(
+            long id,
+            int year,
+            int week,
+            String start,
+            String venue,
+            Long venueId,
+            Long homeId,
+            String homeName,
+            long awayId,
+            String awayName
+    ) {
         return game(id, year, week, "regular", start, venue, venueId, homeId, homeName, awayId, awayName);
     }
 
-    private static CfbdGame game(long id, int year, int week, String seasonType, String start, String venue,
-            Long venueId, Long homeId, String homeName, long awayId, String awayName) {
+    private static CfbdGame game(
+            long id,
+            int year,
+            int week,
+            String seasonType,
+            String start,
+            String venue,
+            Long venueId,
+            Long homeId,
+            String homeName,
+            long awayId,
+            String awayName
+    ) {
         Long home = Objects.requireNonNull(homeId, "homeId");
         String type = Objects.requireNonNull(seasonType, "seasonType");
-        return game(id, year, week, type, start, false, venue, venueId, home.longValue(), homeName, null, awayId,
-                awayName, null, false, null, null);
+        return game(
+                id,
+                year,
+                week,
+                type,
+                start,
+                false,
+                venue,
+                venueId,
+                home.longValue(),
+                homeName,
+                null,
+                awayId,
+                awayName,
+                null,
+                false,
+                null,
+                null
+        );
     }
 
-    private static CfbdGame game(long id, int year, int week, String seasonType, String start, boolean completed,
-            String venue, Long venueId, long homeId, String homeName, Integer homePoints, long awayId, String awayName,
-            Integer awayPoints, boolean neutralSite, String homeConference, String awayConference) {
+    private static CfbdGame game(
+            long id,
+            int year,
+            int week,
+            String seasonType,
+            String start,
+            boolean completed,
+            String venue,
+            Long venueId,
+            long homeId,
+            String homeName,
+            Integer homePoints,
+            long awayId,
+            String awayName,
+            Integer awayPoints,
+            boolean neutralSite,
+            String homeConference,
+            String awayConference
+    ) {
         String type = Objects.requireNonNull(seasonType, "seasonType");
-        return new CfbdGame(id, year, week, type, start, completed, venue, venueId, homeId, homeName, homePoints,
-                awayId, awayName, awayPoints, neutralSite, homeConference, awayConference);
+        return new CfbdGame(
+                id,
+                year,
+                week,
+                type,
+                start,
+                completed,
+                venue,
+                venueId,
+                homeId,
+                homeName,
+                homePoints,
+                awayId,
+                awayName,
+                awayPoints,
+                neutralSite,
+                homeConference,
+                awayConference
+        );
     }
 
-    private static CfbdGame game(long id, int year, int week, String start, boolean completed, String venue,
-            Long venueId, Team home, Team away, Integer homePoints, Integer awayPoints, boolean neutralSite,
-            String homeConference, String awayConference) {
+    private static CfbdGame game(
+            long id,
+            int year,
+            int week,
+            String start,
+            boolean completed,
+            String venue,
+            Long venueId,
+            Team home,
+            Team away,
+            Integer homePoints,
+            Integer awayPoints,
+            boolean neutralSite,
+            String homeConference,
+            String awayConference
+    ) {
         Team homeTeam = Objects.requireNonNull(home, "home");
         Team awayTeam = Objects.requireNonNull(away, "away");
         Long homeId = Objects.requireNonNull(homeTeam.getCfbdTeamId(), "homeId");
         Long awayId = Objects.requireNonNull(awayTeam.getCfbdTeamId(), "awayId");
-        return game(id, year, week, "regular", start, completed, venue, venueId, homeId.longValue(),
-                homeTeam.getTeamName(), homePoints, awayId.longValue(), awayTeam.getTeamName(), awayPoints, neutralSite,
-                homeConference, awayConference);
+        return game(
+                id,
+                year,
+                week,
+                "regular",
+                start,
+                completed,
+                venue,
+                venueId,
+                homeId.longValue(),
+                homeTeam.getTeamName(),
+                homePoints,
+                awayId.longValue(),
+                awayTeam.getTeamName(),
+                awayPoints,
+                neutralSite,
+                homeConference,
+                awayConference
+        );
     }
 
     private SeasonWeek onlyWeek(String seasonId) {
@@ -827,11 +1394,16 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
     private List<SeasonWeek> weeks(String seasonId) {
         String parentId = Objects.requireNonNull(seasonId, "seasonId");
         List<SeasonWeek> found = new ArrayList<>();
+
         for (SeasonWeek week : seasonWeekRepository.findAll()) {
+
             if (parentId.equals(week.getSeasonId())) {
                 found.add(week);
+
             }
+
         }
+
         return found;
     }
 
@@ -841,6 +1413,7 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
             CollectionReference matchups = Objects.requireNonNull(collection, "collection");
             Query query = Objects.requireNonNull(matchups.whereEqualTo("seasonId", parentId), "query");
             return query;
+
         });
     }
 
@@ -850,6 +1423,7 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
             CollectionReference matchups = Objects.requireNonNull(collection, "collection");
             Query query = Objects.requireNonNull(matchups.whereEqualTo("cfbdGameId", externalId), "query");
             return query;
+
         });
         assertThat(found).hasSize(1);
         return found.get(0);
@@ -857,39 +1431,57 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
 
     private Team teamByCfbd(long cfbdTeamId) {
         Long externalId = Long.valueOf(cfbdTeamId);
+
         for (Team team : teamRepository.findAll()) {
+
             if (externalId.equals(team.getCfbdTeamId())) {
                 return team;
+
             }
+
         }
+
         throw new AssertionError("missing team " + cfbdTeamId);
     }
 
     private Venue venueByCfbd(long cfbdVenueId) {
         Long externalId = Long.valueOf(cfbdVenueId);
+
         for (Venue venue : venueRepository.findAll()) {
+
             if (externalId.equals(venue.getCfbdVenueId())) {
                 return venue;
+
             }
+
         }
+
         throw new AssertionError("missing venue " + cfbdVenueId);
     }
 
     private List<Team> teamsNamed(String name) {
         List<Team> found = new ArrayList<>();
+
         for (Team team : teamRepository.findAll()) {
+
             if (name.equals(team.getTeamName())) {
                 found.add(team);
+
             }
+
         }
+
         return found;
     }
 
     private static LocalDate firstMondayInAugust(int year) {
         LocalDate cursor = LocalDate.of(year, 8, 1);
+
         while (cursor.getDayOfWeek() != DayOfWeek.MONDAY) {
             cursor = cursor.plusDays(1);
+
         }
+
         return cursor;
     }
 

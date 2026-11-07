@@ -12,12 +12,30 @@ import com.curleesoft.pickem.backend.model.snapshot.VenueSnapshot;
  */
 public record GameMain(String seasonId, String season, int numberOfConferenceTeams, List<GameWeek> weeks) {
 
-    public record GameWeek(String id, Integer weekNumber, String beginDate, String endDate, boolean currentOrPast,
-            List<GameMatchup> matchups) {
+    public record GameWeek(
+            String id,
+            Integer weekNumber,
+            String beginDate,
+            String endDate,
+            boolean currentOrPast,
+            List<GameMatchup> matchups
+    ) {
     }
 
-    public record GameMatchup(String matchupId, String matchupDate, TeamSquadSnapshot awayTeam, Integer awayTeamScore,
-            TeamSquadSnapshot homeTeam, Integer homeTeamScore, VenueSnapshot venue, String rivalryName, String pickId,
-            String pickedTeamId, Integer rank, String winningTeamId, Integer points) {
+    public record GameMatchup(
+            String matchupId,
+            String matchupDate,
+            TeamSquadSnapshot awayTeam,
+            Integer awayTeamScore,
+            TeamSquadSnapshot homeTeam,
+            Integer homeTeamScore,
+            VenueSnapshot venue,
+            String rivalryName,
+            String pickId,
+            String pickedTeamId,
+            Integer rank,
+            String winningTeamId,
+            Integer points
+    ) {
     }
 }

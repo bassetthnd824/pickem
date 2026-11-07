@@ -26,17 +26,23 @@ class SessionCookieFilterTests {
     private final JsonMapper jsonMapper = JsonMapper.builder().build();
 
     private final SessionCookies sessionCookies = new SessionCookies(
-            new PickemAuthProperties("fake", Duration.ofDays(14), ""));
+            new PickemAuthProperties("fake", Duration.ofDays(14), "")
+    );
 
     @Test
     void missingAdminCredentialsWithASessionCookieReturns503() throws Exception {
-        FirebaseIdentityClient identities = new StubIdentityClient(new AuthUnavailableException(
-                "Firebase Admin credentials are not configured", new IOException("adc")));
+        FirebaseIdentityClient identities = new StubIdentityClient(
+                new AuthUnavailableException(
+                        "Firebase Admin credentials are not configured",
+                        new IOException("adc")
+                )
+        );
         SessionCookieFilter filter = filter(identities, mock(UserRepository.class));
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         filter.doFilter(requestWithCookie(), response, (servletRequest, servletResponse) -> {
             throw new AssertionError("filter chain continued");
+
         });
 
         assertThat(response.getStatus()).isEqualTo(503);
@@ -53,6 +59,7 @@ class SessionCookieFilterTests {
 
         filter.doFilter(requestWithCookie(), response, (servletRequest, servletResponse) -> {
             throw new AssertionError("filter chain continued");
+
         });
 
         assertThat(response.getStatus()).isEqualTo(503);
@@ -62,11 +69,17 @@ class SessionCookieFilterTests {
 
     @Test
     void invalidCookieContinuesUnauthenticated() throws Exception {
-        FirebaseIdentityClient identities = new StubIdentityClient(new InvalidCredentialException("Invalid or revoked session cookie"));
+        FirebaseIdentityClient identities = new StubIdentityClient(
+                new InvalidCredentialException("Invalid or revoked session cookie")
+        );
         SessionCookieFilter filter = filter(identities, mock(UserRepository.class));
         AtomicBoolean continued = new AtomicBoolean();
 
-        filter.doFilter(requestWithCookie(), new MockHttpServletResponse(), (servletRequest, servletResponse) -> continued.set(true));
+        filter.doFilter(
+                requestWithCookie(),
+                new MockHttpServletResponse(),
+                (servletRequest, servletResponse) -> continued.set(true)
+        );
 
         assertThat(continued).isTrue();
     }
@@ -101,9 +114,12 @@ class SessionCookieFilterTests {
 
         @Override
         public VerifiedIdentity verifySessionCookie(String sessionCookie) {
+
             if (sessionFailure != null) {
                 throw sessionFailure;
+
             }
+
             return new VerifiedIdentity("uid-1", "a@b.com", "A B", "A", "B", "google.com", Map.of());
         }
 

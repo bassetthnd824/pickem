@@ -17,10 +17,12 @@ class FirebaseEmulatorEnvironmentTests {
     @Test
     void publishesDotenvHostWhenTheProcessEnvironmentIsUnset() {
         String fromOs = System.getenv("FIREBASE_AUTH_EMULATOR_HOST");
+
         if (fromOs != null && !fromOs.isBlank()) {
             FirebaseEmulatorEnvironment.publish("127.0.0.1:1");
             assertThat(FirebaseProcessEnvironment.getenv("FIREBASE_AUTH_EMULATOR_HOST")).isEqualTo(fromOs);
             return;
+
         }
 
         FirebaseEmulatorEnvironment.publish("127.0.0.1:9099");

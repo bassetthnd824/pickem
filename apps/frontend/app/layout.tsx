@@ -1,39 +1,38 @@
-import { cookies } from "next/headers";
-import type { ReactNode } from "react";
-import { AuthProvider } from "../components/auth-provider";
-import { QueryProvider } from "../components/query-provider";
-import { verifySessionClaims } from "../lib/server/firebase-session";
-import { fetchAuthProfile } from "../lib/server/spring-auth";
-import { SESSION_COOKIE_NAME } from "../lib/session-gate";
-import { resolveThemeId, THEME_COOKIE_NAME } from "../lib/theme";
-import "./global.css";
+import { cookies } from 'next/headers'
+import type { ReactNode } from 'react'
+
+import '@/app/global.css'
+import { AuthProvider } from '@/components/auth-provider'
+import { QueryProvider } from '@/components/query-provider'
+import { verifySessionClaims } from '@/lib/server/firebase-session'
+import { fetchAuthProfile } from '@/lib/server/spring-auth'
+import { SESSION_COOKIE_NAME } from '@/lib/session-gate'
+import { resolveThemeId, THEME_COOKIE_NAME } from '@/lib/theme'
 
 export const metadata = {
   title: "Kenney's Pickem",
   description: "Season-long college football confidence pick'em",
-};
+}
 
 export default async function RootLayout({
   children,
 }: {
-  children: ReactNode;
+  children: ReactNode
 }) {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  const claims = await verifySessionClaims(sessionCookie);
-  const profile = claims.signedIn
-    ? await fetchAuthProfile(sessionCookie)
-    : null;
+  const cookieStore = await cookies()
+  const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value
+  const claims = await verifySessionClaims(sessionCookie)
+  const profile = claims.signedIn ? await fetchAuthProfile(sessionCookie) : null
   // A known profile theme wins. Otherwise the theme cookie is used.
   // A first visit, with neither, stays Light.
   const themeId = resolveThemeId(
     profile?.themeId,
     cookieStore.get(THEME_COOKIE_NAME)?.value,
-  );
+  )
 
   return (
-    <html lang="en" data-theme={themeId}>
-      <body className="min-h-dvh bg-bg text-text antialiased">
+    <html lang='en' data-theme={themeId}>
+      <body className='min-h-dvh bg-bg text-text antialiased'>
         <QueryProvider>
           <AuthProvider
             initialProfile={profile}
@@ -45,5 +44,5 @@ export default async function RootLayout({
         </QueryProvider>
       </body>
     </html>
-  );
+  )
 }

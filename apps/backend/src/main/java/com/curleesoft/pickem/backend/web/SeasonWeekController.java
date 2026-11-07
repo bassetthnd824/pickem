@@ -37,9 +37,12 @@ public class SeasonWeekController {
     }
 
     @GetMapping
-    public List<SeasonWeek> list(@RequestParam(required = false) String seasonId,
-            @RequestParam(required = false) Integer weekNumber, @RequestParam(required = false) String beginDate,
-            @RequestParam(required = false) String endDate) {
+    public List<SeasonWeek> list(
+            @RequestParam(required = false) String seasonId,
+            @RequestParam(required = false) Integer weekNumber,
+            @RequestParam(required = false) String beginDate,
+            @RequestParam(required = false) String endDate
+    ) {
         return seasonWeekService.search(seasonId, weekNumber, beginDate, endDate);
     }
 

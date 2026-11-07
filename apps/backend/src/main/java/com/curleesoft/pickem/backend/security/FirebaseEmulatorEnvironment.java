@@ -13,13 +13,19 @@ final class FirebaseEmulatorEnvironment {
     }
 
     static void publish(String emulatorHost) {
+
         if (emulatorHost == null || emulatorHost.isBlank()) {
             return;
+
         }
+
         String current = System.getenv("FIREBASE_AUTH_EMULATOR_HOST");
+
         if (current != null && !current.isBlank()) {
             return;
+
         }
+
         FirebaseProcessEnvironment.setenv("FIREBASE_AUTH_EMULATOR_HOST", emulatorHost.trim());
     }
 }

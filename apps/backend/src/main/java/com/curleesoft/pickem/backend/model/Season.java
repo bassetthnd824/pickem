@@ -5,7 +5,6 @@ import com.google.cloud.firestore.annotation.PropertyName;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,7 +25,7 @@ public class Season extends AuditableDocument {
     private String endDate;
 
     @NotNull
-    @Getter(onMethod_ = { @JsonProperty("isCurrent"), @PropertyName("isCurrent") })
-    @Setter(onMethod_ = { @JsonProperty("isCurrent"), @PropertyName("isCurrent") })
+    @Getter(onMethod_ = {@JsonProperty("isCurrent"), @PropertyName("isCurrent")})
+    @Setter(onMethod_ = {@JsonProperty("isCurrent"), @PropertyName("isCurrent")})
     private boolean current;
 }

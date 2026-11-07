@@ -17,8 +17,9 @@ import com.google.cloud.firestore.Transaction;
 /**
  * Manager CRUD for teams. The home-venue snapshot is copied from the venue
  * document on each save of this team. Refreshing other documents is US-35.
- * {@code GET ?conferenceMember=true} replaces {@code TeamBean.getConferenceTeams}
- * and {@code getNumberOfConferenceTeams} (the list length is the count).
+ * {@code GET ?conferenceMember=true} replaces
+ * {@code TeamBean.getConferenceTeams} and {@code getNumberOfConferenceTeams}
+ * (the list length is the count).
  */
 @Service
 public class TeamService {
@@ -38,8 +39,13 @@ public class TeamService {
         this.venueRepository = venueRepository;
     }
 
-    public List<Team> search(String teamName, String squadName, Boolean conferenceMember, String homeVenueId,
-            Long cfbdTeamId) {
+    public List<Team> search(
+            String teamName,
+            String squadName,
+            Boolean conferenceMember,
+            String homeVenueId,
+            Long cfbdTeamId
+    ) {
         String name = SearchText.normalizeContains(teamName);
         String squad = SearchText.normalizeContains(squadName);
         String venueId = SearchText.blankToNull(homeVenueId);
@@ -50,15 +56,19 @@ public class TeamService {
                 .filter(item -> conferenceMember == null || conferenceMember.equals(item.getConferenceMember()))
                 .filter(item -> venueId == null || venueId.equals(item.getHomeVenueId()))
                 .filter(item -> cfbdTeamId == null || cfbdTeamId.equals(item.getCfbdTeamId()))
-                .sorted(Comparator.comparing((Team item) -> item.getTeamName(),
-                        Comparator.nullsLast((String left, String right) -> left.compareTo(right))))
+                .sorted(
+                        Comparator.comparing(
+                                (Team item) -> item.getTeamName(),
+                                Comparator.nullsLast((String left, String right) -> left.compareTo(right))
+                        )
+                )
                 .toList();
     }
 
     /**
      * Conference members ordered by team name. Replaces
-     * {@code TeamBean.getConferenceTeams}. The player schedule dropdown uses
-     * this list; {@link #search} remains the manager filter.
+     * {@code TeamBean.getConferenceTeams}. The player schedule dropdown uses this
+     * list; {@link #search} remains the manager filter.
      */
     public List<Team> conferenceTeams() {
         return search(null, null, Boolean.TRUE, null, null);
@@ -71,16 +81,25 @@ public class TeamService {
     public Team create(Team request) {
         Team team = new Team();
         apply(team, request);
-        return teamRepository.save(team,
-                (transaction, collection, documentId) -> rejectDuplicate(transaction, collection, documentId, team));
+        return teamRepository.save(
+                team,
+                (transaction, collection, documentId) -> rejectDuplicate(transaction, collection, documentId, team)
+        );
     }
 
     public Team update(String id, Team request) {
         Team existing = get(id);
         apply(existing, request);
         existing.setVersion(request.getVersion());
-        return teamRepository.save(existing, (transaction, collection, documentId) -> rejectDuplicate(transaction,
-                collection, documentId, existing));
+        return teamRepository.save(
+                existing,
+                (transaction, collection, documentId) -> rejectDuplicate(
+                        transaction,
+                        collection,
+                        documentId,
+                        existing
+                )
+        );
     }
 
     public void delete(String id) {
@@ -101,23 +120,38 @@ public class TeamService {
         target.setCfbdTeamId(request.getCfbdTeamId());
     }
 
-    private static void rejectDuplicate(Transaction transaction, CollectionReference collection, String documentId,
-            Team team) {
-        if (TransactionReads.anotherDocumentMatches(transaction, collection.whereEqualTo("teamName", team.getTeamName()),
-                documentId)) {
+    private static void rejectDuplicate(
+            Transaction transaction,
+            CollectionReference collection,
+            String documentId,
+            Team team
+    ) {
+
+        if (TransactionReads.anotherDocumentMatches(
+                transaction,
+                collection.whereEqualTo("teamName", team.getTeamName()),
+                documentId
+        )) {
             throw new ConflictException(NAME_NOT_UNIQUE);
+
         }
 
         Long externalId = team.getCfbdTeamId();
 
         if (externalId == null) {
             return;
+
         }
 
-        if (TransactionReads.anotherDocumentMatches(transaction, collection.whereEqualTo("cfbdTeamId", externalId),
-                documentId)) {
+        if (TransactionReads.anotherDocumentMatches(
+                transaction,
+                collection.whereEqualTo("cfbdTeamId", externalId),
+                documentId
+        )) {
             throw new ConflictException(CFBD_NOT_UNIQUE);
+
         }
+
     }
 
 }

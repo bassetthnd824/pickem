@@ -23,9 +23,15 @@ class CfbdClientExceptionHandlerTests {
 
     @Test
     void cfbdFailuresAreServiceUnavailableWithoutAStack() throws Exception {
-        List<String> messages = List.of(CfbdClientException.MISSING_KEY, CfbdClientException.REJECTED_KEY,
-                CfbdClientException.RATE_LIMITED, CfbdClientException.UNAVAILABLE, CfbdClientException.REJECTED,
-                CfbdClientException.UNREACHABLE, CfbdClientException.UNEXPECTED);
+        List<String> messages = List.of(
+                CfbdClientException.MISSING_KEY,
+                CfbdClientException.REJECTED_KEY,
+                CfbdClientException.RATE_LIMITED,
+                CfbdClientException.UNAVAILABLE,
+                CfbdClientException.REJECTED,
+                CfbdClientException.UNREACHABLE,
+                CfbdClientException.UNEXPECTED
+        );
 
         for (String message : messages) {
             ProblemDetail problem = new ApiExceptionHandler().cfbd(new CfbdClientException(401, message));
@@ -44,7 +50,9 @@ class CfbdClientExceptionHandlerTests {
             assertThat(body).doesNotContain("CfbdClientException");
             assertThat(body).doesNotContain("\tat ");
             assertThat(body).doesNotContain("\"trace\"");
+
         }
+
     }
 
     @RestController

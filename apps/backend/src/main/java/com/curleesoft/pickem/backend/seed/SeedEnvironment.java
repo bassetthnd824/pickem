@@ -12,8 +12,12 @@ import io.github.cdimascio.dotenv.DotenvEntry;
  * Process environment for {@link SeedMain}. OS variables win over a dotenv
  * file. {@code --email} wins over {@code PICKEM_BOOTSTRAP_MANAGER_EMAIL}.
  */
-public record SeedEnvironment(String projectId, String firestoreEmulatorHost, String authEmulatorHost,
-        String bootstrapEmail) {
+public record SeedEnvironment(
+        String projectId,
+        String firestoreEmulatorHost,
+        String authEmulatorHost,
+        String bootstrapEmail
+) {
 
     static final String DOTENV_PATH = "PICKEM_DOTENV_FILE";
 
@@ -45,8 +49,12 @@ public record SeedEnvironment(String projectId, String firestoreEmulatorHost, St
         String emailFlag = emailArg(args);
         String email = emailFlag != null ? blankToNull(emailFlag) : value(env, file, BOOTSTRAP_EMAIL);
 
-        return new SeedEnvironment(project == null ? DEFAULT_PROJECT_ID : project, value(env, file, FIRESTORE_HOST),
-                value(env, file, AUTH_HOST), email);
+        return new SeedEnvironment(
+                project == null ? DEFAULT_PROJECT_ID : project,
+                value(env, file, FIRESTORE_HOST),
+                value(env, file, AUTH_HOST),
+                email
+        );
     }
 
     static Map<String, String> dotenvValues(Map<String, String> environment, Path cwd) {
@@ -54,24 +62,30 @@ public record SeedEnvironment(String projectId, String firestoreEmulatorHost, St
 
         if (file == null) {
             return Map.of();
+
         }
 
-        Dotenv dotenv = Dotenv.configure().directory(file.getParent().toString()).filename(file.getFileName().toString())
+        Dotenv dotenv = Dotenv.configure().directory(file.getParent().toString())
+                .filename(file.getFileName().toString())
                 .ignoreIfMalformed().ignoreIfMissing().load();
         Map<String, String> values = new LinkedHashMap<>();
 
         // entries() also returns the process environment and lets those values
         // replace the file. The map passed in is the OS view for this call.
         for (DotenvEntry entry : dotenv.entries(Dotenv.Filter.DECLARED_IN_ENV_FILE)) {
+
             if (entry.getKey() == null || entry.getKey().isBlank() || entry.getValue() == null) {
                 continue;
+
             }
 
             if (environment != null && environment.get(entry.getKey()) != null) {
                 continue;
+
             }
 
             values.put(entry.getKey(), entry.getValue());
+
         }
 
         return values;
@@ -85,55 +99,70 @@ public record SeedEnvironment(String projectId, String firestoreEmulatorHost, St
 
             if (!Files.isRegularFile(configured)) {
                 return null;
+
             }
 
             return configured.toAbsolutePath().normalize();
+
         }
 
         Path base = cwd == null ? Path.of("").toAbsolutePath().normalize() : cwd.toAbsolutePath().normalize();
-        Path[] candidates = new Path[] { base.resolve(".env"), base.resolve("apps").resolve("backend").resolve(".env"),
-                base.getParent() == null ? null : base.getParent().resolve(".env") };
+        Path[] candidates = new Path[]{base.resolve(".env"), base.resolve("apps").resolve("backend").resolve(".env"),
+                base.getParent() == null ? null : base.getParent().resolve(".env")};
 
         for (Path candidate : candidates) {
+
             if (candidate != null && Files.isRegularFile(candidate)) {
                 return candidate.toAbsolutePath().normalize();
+
             }
+
         }
 
         return null;
     }
 
     private static void copyPropertyIfAbsent(Map<String, String> environment, String key) {
+
         if (environment.get(key) != null) {
             return;
+
         }
 
         String property = System.getProperty(key);
 
         if (property != null) {
             environment.put(key, property);
+
         }
+
     }
 
     private static String value(Map<String, String> environment, Map<String, String> dotenv, String key) {
+
         if (environment.get(key) != null) {
             return blankToNull(environment.get(key));
+
         }
 
         return blankToNull(dotenv.get(key));
     }
 
     private static String blankToNull(String value) {
+
         if (value == null || value.isBlank()) {
             return null;
+
         }
 
         return value.trim();
     }
 
     private static String emailArg(String[] args) {
+
         if (args == null) {
             return null;
+
         }
 
         for (int index = 0; index < args.length; index++) {
@@ -141,15 +170,19 @@ public record SeedEnvironment(String projectId, String firestoreEmulatorHost, St
 
             if (arg == null) {
                 continue;
+
             }
 
             if (arg.startsWith("--email=")) {
                 return arg.substring("--email=".length()).trim();
+
             }
 
             if ("--email".equals(arg) && index + 1 < args.length) {
                 return args[index + 1] == null ? "" : args[index + 1].trim();
+
             }
+
         }
 
         return null;

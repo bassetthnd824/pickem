@@ -1,6 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "paths": {
+      "@/*": ["./*"]
+    },
     "jsx": "preserve",
     "strict": true,
     "noEmit": true,

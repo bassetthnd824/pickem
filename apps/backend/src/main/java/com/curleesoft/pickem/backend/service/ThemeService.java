@@ -42,8 +42,12 @@ public class ThemeService {
                 .filter(item -> name == null || SearchText.contains(item.getThemeName(), name))
                 .filter(item -> path == null || SearchText.contains(item.getThemePath(), path))
                 .filter(item -> active == null || active.equals(item.getActive()))
-                .sorted(Comparator.comparing((Theme item) -> item.getThemeName(),
-                        Comparator.nullsLast((String left, String right) -> left.compareTo(right))))
+                .sorted(
+                        Comparator.comparing(
+                                (Theme item) -> item.getThemeName(),
+                                Comparator.nullsLast((String left, String right) -> left.compareTo(right))
+                        )
+                )
                 .toList();
     }
 
@@ -52,8 +56,10 @@ public class ThemeService {
     }
 
     public boolean pathExists(String themePath) {
+
         if (!StringUtils.hasText(themePath)) {
             return false;
+
         }
 
         return !themeRepository.query(themes -> themes.whereEqualTo("themePath", themePath)).isEmpty();
@@ -62,16 +68,30 @@ public class ThemeService {
     public Theme create(Theme request) {
         Theme theme = new Theme();
         apply(theme, request);
-        return themeRepository.save(theme, (transaction, collection, documentId) -> rejectDuplicate(transaction,
-                collection, documentId, theme));
+        return themeRepository.save(
+                theme,
+                (transaction, collection, documentId) -> rejectDuplicate(
+                        transaction,
+                        collection,
+                        documentId,
+                        theme
+                )
+        );
     }
 
     public Theme update(String id, Theme request) {
         Theme existing = get(id);
         apply(existing, request);
         existing.setVersion(request.getVersion());
-        return themeRepository.save(existing, (transaction, collection, documentId) -> rejectDuplicate(transaction,
-                collection, documentId, existing));
+        return themeRepository.save(
+                existing,
+                (transaction, collection, documentId) -> rejectDuplicate(
+                        transaction,
+                        collection,
+                        documentId,
+                        existing
+                )
+        );
     }
 
     public void delete(String id) {
@@ -84,6 +104,7 @@ public class ThemeService {
 
         if (path != null && path.startsWith("/")) {
             throw new InvalidRequestException(PATH_SLASH);
+
         }
 
         target.setThemeName(SearchText.trim(request.getThemeName()));
@@ -93,17 +114,31 @@ public class ThemeService {
         target.setSecondary(SearchText.trim(request.getSecondary()));
     }
 
-    private static void rejectDuplicate(Transaction transaction, CollectionReference collection, String documentId,
-            Theme theme) {
-        if (TransactionReads.anotherDocumentMatches(transaction,
-                collection.whereEqualTo("themeName", theme.getThemeName()), documentId)) {
+    private static void rejectDuplicate(
+            Transaction transaction,
+            CollectionReference collection,
+            String documentId,
+            Theme theme
+    ) {
+
+        if (TransactionReads.anotherDocumentMatches(
+                transaction,
+                collection.whereEqualTo("themeName", theme.getThemeName()),
+                documentId
+        )) {
             throw new ConflictException(NAME_NOT_UNIQUE);
+
         }
 
-        if (TransactionReads.anotherDocumentMatches(transaction,
-                collection.whereEqualTo("themePath", theme.getThemePath()), documentId)) {
+        if (TransactionReads.anotherDocumentMatches(
+                transaction,
+                collection.whereEqualTo("themePath", theme.getThemePath()),
+                documentId
+        )) {
             throw new ConflictException(PATH_NOT_UNIQUE);
+
         }
+
     }
 
 }

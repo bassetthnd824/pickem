@@ -16,9 +16,9 @@ import com.curleesoft.pickem.backend.repository.TeamRepository;
 /**
  * Conference-team schedule. Ports {@code TeamScheduleAction} and
  * {@code MatchupBean.getMatchupsBySeasonTeam}. The opponent label is the other
- * team's name, prefixed with {@code "at "} when the selected team is away.
- * W/L is from that team's perspective. The score string stays home score, then
- * away score. Unplayed games (either score empty, or equal scores) omit both.
+ * team's name, prefixed with {@code "at "} when the selected team is away. W/L
+ * is from that team's perspective. The score string stays home score, then away
+ * score. Unplayed games (either score empty, or equal scores) omit both.
  */
 @Service
 public class TeamScheduleService {
@@ -35,8 +35,11 @@ public class TeamScheduleService {
 
     private final SeasonService seasonService;
 
-    public TeamScheduleService(MatchupRepository matchupRepository, TeamRepository teamRepository,
-            SeasonService seasonService) {
+    public TeamScheduleService(
+            MatchupRepository matchupRepository,
+            TeamRepository teamRepository,
+            SeasonService seasonService
+    ) {
         this.matchupRepository = matchupRepository;
         this.teamRepository = teamRepository;
         this.seasonService = seasonService;
@@ -47,6 +50,7 @@ public class TeamScheduleService {
 
         if (team == null) {
             throw new InvalidRequestException(TEAM_REQUIRED);
+
         }
 
         Team selected = teamRepository.findById(team)
@@ -54,6 +58,7 @@ public class TeamScheduleService {
 
         if (!Boolean.TRUE.equals(selected.getConferenceMember())) {
             throw new InvalidRequestException(NOT_CONFERENCE);
+
         }
 
         Season season = seasonService.resolve(seasonId);
@@ -72,6 +77,7 @@ public class TeamScheduleService {
 
         if (homeScore == null || awayScore == null || homeScore.equals(awayScore)) {
             return new TeamScheduleRow(matchup.getMatchupDate(), opponent, null, null);
+
         }
 
         String scoreResult = homeScore + " - " + awayScore;
@@ -79,16 +85,20 @@ public class TeamScheduleService {
 
         if (home) {
             winLoss = homeScore.intValue() > awayScore.intValue() ? "W" : "L";
+
         } else {
             winLoss = homeScore.intValue() > awayScore.intValue() ? "L" : "W";
+
         }
 
         return new TeamScheduleRow(matchup.getMatchupDate(), opponent, scoreResult, winLoss);
     }
 
     private static String name(TeamSquadSnapshot snapshot) {
+
         if (snapshot == null || !StringUtils.hasText(snapshot.getName())) {
             return "";
+
         }
 
         return snapshot.getName();
@@ -100,12 +110,18 @@ public class TeamScheduleService {
 
     private static Comparator<Matchup> scheduleOrder() {
         return Comparator
-                .comparing((Matchup item) -> item.getWeekNumber(),
-                        Comparator.nullsLast((Integer left, Integer right) -> left.compareTo(right)))
-                .thenComparing((Matchup item) -> item.getMatchupDate(),
-                        Comparator.nullsLast((String left, String right) -> left.compareTo(right)))
-                .thenComparing((Matchup item) -> homeName(item),
-                        Comparator.nullsLast((String left, String right) -> left.compareTo(right)));
+                .comparing(
+                        (Matchup item) -> item.getWeekNumber(),
+                        Comparator.nullsLast((Integer left, Integer right) -> left.compareTo(right))
+                )
+                .thenComparing(
+                        (Matchup item) -> item.getMatchupDate(),
+                        Comparator.nullsLast((String left, String right) -> left.compareTo(right))
+                )
+                .thenComparing(
+                        (Matchup item) -> homeName(item),
+                        Comparator.nullsLast((String left, String right) -> left.compareTo(right))
+                );
     }
 
     private static String homeName(Matchup matchup) {
@@ -113,6 +129,7 @@ public class TeamScheduleService {
 
         if (home == null) {
             return null;
+
         }
 
         return home.getName();

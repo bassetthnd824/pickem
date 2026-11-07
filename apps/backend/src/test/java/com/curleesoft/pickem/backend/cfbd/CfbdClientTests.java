@@ -265,8 +265,11 @@ class CfbdClientTests {
 
     @Test
     void upstreamErrorsStayControlledAndDoNotEchoTheKey() {
-        expectStatus(BASE + "/games?year=2024&conference=SEC", withUnauthorizedRequest()
-                .body("{\"message\":\"bad " + API_KEY + "\"}").contentType(MediaType.APPLICATION_JSON));
+        expectStatus(
+                BASE + "/games?year=2024&conference=SEC",
+                withUnauthorizedRequest()
+                        .body("{\"message\":\"bad " + API_KEY + "\"}").contentType(MediaType.APPLICATION_JSON)
+        );
         assertFailure(() -> client.games(2024, null, null), 401, CfbdClientException.REJECTED_KEY);
         nextExchange();
 
@@ -328,8 +331,10 @@ class CfbdClientTests {
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
     }
 
-    private void expectStatus(String url,
-            org.springframework.test.web.client.response.DefaultResponseCreator response) {
+    private void expectStatus(
+            String url,
+            org.springframework.test.web.client.response.DefaultResponseCreator response
+    ) {
         server.expect(requestTo(url)).andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + API_KEY))
                 .andRespond(response);
     }
@@ -342,9 +347,12 @@ class CfbdClientTests {
     private void assertKeyWasNotLogged() {
         assertThat(logs.list).allSatisfy(event -> {
             assertThat(event.getFormattedMessage()).doesNotContain(API_KEY);
+
             if (event.getThrowableProxy() != null) {
                 assertThat(event.getThrowableProxy().getMessage()).doesNotContain(API_KEY);
+
             }
+
         });
     }
 
@@ -352,6 +360,7 @@ class CfbdClientTests {
         RestClient.Builder builder = RestClient.builder().baseUrl(BASE).configureMessageConverters(converters -> {
             HttpMessageConverters.ClientBuilder http = Objects.requireNonNull(converters, "converters");
             http.disableDefaults().withJsonConverter(new JacksonJsonHttpMessageConverter());
+
         });
         server = MockRestServiceServer.bindTo(builder).build();
         return new CfbdClient(builder.build(), apiKey);

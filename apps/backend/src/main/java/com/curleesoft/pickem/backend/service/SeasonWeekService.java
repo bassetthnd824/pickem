@@ -43,17 +43,24 @@ public class SeasonWeekService {
         String season = SearchText.blankToNull(seasonId);
         String begin = SearchText.blankToNull(beginDate);
         String end = SearchText.blankToNull(endDate);
-        List<SeasonWeek> candidates = season == null ? seasonWeekRepository.findAll()
+        List<SeasonWeek> candidates = season == null
+                ? seasonWeekRepository.findAll()
                 : seasonWeekRepository.query(collection -> collection.whereEqualTo("seasonId", season));
 
         return candidates.stream().filter(item -> weekNumber == null || weekNumber.equals(item.getWeekNumber()))
                 .filter(item -> begin == null || begin.equals(item.getBeginDate()))
                 .filter(item -> end == null || end.equals(item.getEndDate()))
-                .sorted(Comparator
-                        .comparing((SeasonWeek week) -> week.getSeasonId(),
-                                Comparator.nullsLast((String left, String right) -> left.compareTo(right)))
-                        .thenComparing((SeasonWeek week) -> week.getWeekNumber(),
-                                Comparator.nullsLast((Integer left, Integer right) -> left.compareTo(right))))
+                .sorted(
+                        Comparator
+                                .comparing(
+                                        (SeasonWeek week) -> week.getSeasonId(),
+                                        Comparator.nullsLast((String left, String right) -> left.compareTo(right))
+                                )
+                                .thenComparing(
+                                        (SeasonWeek week) -> week.getWeekNumber(),
+                                        Comparator.nullsLast((Integer left, Integer right) -> left.compareTo(right))
+                                )
+                )
                 .toList();
     }
 
@@ -64,16 +71,25 @@ public class SeasonWeekService {
     public SeasonWeek create(SeasonWeek request) {
         SeasonWeek week = new SeasonWeek();
         apply(week, request);
-        return seasonWeekRepository.save(week,
-                (transaction, collection, documentId) -> rejectDuplicate(transaction, collection, documentId, week));
+        return seasonWeekRepository.save(
+                week,
+                (transaction, collection, documentId) -> rejectDuplicate(transaction, collection, documentId, week)
+        );
     }
 
     public SeasonWeek update(String id, SeasonWeek request) {
         SeasonWeek existing = get(id);
         apply(existing, request);
         existing.setVersion(request.getVersion());
-        return seasonWeekRepository.save(existing, (transaction, collection, documentId) -> rejectDuplicate(transaction,
-                collection, documentId, existing));
+        return seasonWeekRepository.save(
+                existing,
+                (transaction, collection, documentId) -> rejectDuplicate(
+                        transaction,
+                        collection,
+                        documentId,
+                        existing
+                )
+        );
     }
 
     public void delete(String id) {
@@ -88,32 +104,48 @@ public class SeasonWeekService {
 
         if (request.getWeekNumber() == null) {
             throw new InvalidRequestException(SeasonCalendar.WEEK_NUMBER_INVALID);
+
         }
 
-        ParsedWeek parsed = SeasonCalendar.parseManualWeek(season.getBeginDate(), request.getWeekNumber(),
-                SearchText.trim(request.getBeginDate()), SearchText.trim(request.getEndDate()));
+        ParsedWeek parsed = SeasonCalendar.parseManualWeek(
+                season.getBeginDate(),
+                request.getWeekNumber(),
+                SearchText.trim(request.getBeginDate()),
+                SearchText.trim(request.getEndDate())
+        );
         target.setSeasonId(season.getId());
         target.setWeekNumber(request.getWeekNumber());
         target.setBeginDate(parsed.beginDate().toString());
         target.setEndDate(parsed.endDate().toString());
     }
 
-    private static void rejectDuplicate(Transaction transaction, CollectionReference collection, String documentId,
-            SeasonWeek week) {
-        QuerySnapshot snapshot = TransactionReads.get(transaction,
-                collection.whereEqualTo("seasonId", week.getSeasonId()));
+    private static void rejectDuplicate(
+            Transaction transaction,
+            CollectionReference collection,
+            String documentId,
+            SeasonWeek week
+    ) {
+        QuerySnapshot snapshot = TransactionReads.get(
+                transaction,
+                collection.whereEqualTo("seasonId", week.getSeasonId())
+        );
 
         for (QueryDocumentSnapshot found : snapshot.getDocuments()) {
+
             if (found.getId().equals(documentId)) {
                 continue;
+
             }
 
             SeasonWeek other = found.toObject(SeasonWeek.class);
 
             if (other != null && week.getWeekNumber().equals(other.getWeekNumber())) {
                 throw new ConflictException(NOT_UNIQUE);
+
             }
+
         }
+
     }
 
 }

@@ -16,9 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
@@ -55,8 +55,10 @@ class InternalJobLoopbackDisabledTests extends FirestoreEmulatorSupport {
 
     @Test
     void loopbackWithTheSecretRunsTheScoreJob() throws Exception {
-        mockMvc.perform(post("/api/internal/jobs/cfbd-scores").header(InternalJobFilter.SECRET_HEADER, "test-secret")
-                .with(from("127.0.0.1"))).andExpect(status().isOk())
+        mockMvc.perform(
+                post("/api/internal/jobs/cfbd-scores").header(InternalJobFilter.SECRET_HEADER, "test-secret")
+                        .with(from("127.0.0.1"))
+        ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.job").value("cfbd-scores"));
     }
 
@@ -65,6 +67,7 @@ class InternalJobLoopbackDisabledTests extends FirestoreEmulatorSupport {
         return request -> {
             request.setRemoteAddr(address);
             return request;
+
         };
     }
 }

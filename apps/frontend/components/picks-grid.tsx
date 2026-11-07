@@ -1,9 +1,14 @@
-"use client";
+'use client'
 
-import { Toolbar } from "@base-ui/react/toolbar";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { ApiError, api } from "../lib/api-client";
+import { Toolbar } from '@base-ui/react/toolbar'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+
+import { useAuth } from '@/components/auth-provider'
+import { PickResultIcon } from '@/components/pick-result-icon'
+import { Button } from '@/components/ui/button'
+import { Radio, RadioGroup } from '@/components/ui/radio'
+import { ApiError, api } from '@/lib/api-client'
 import {
   draftsFromMain,
   moveMatchup,
@@ -15,111 +20,107 @@ import {
   type GridMatchup,
   type GridWeek,
   type WeekDraft,
-} from "../lib/picks-grid";
-import { useAuth } from "./auth-provider";
-import { PickResultIcon } from "./pick-result-icon";
-import { Button } from "./ui/button";
-import { Radio, RadioGroup } from "./ui/radio";
+} from '@/lib/picks-grid'
 
-const MAIN_KEY = ["game", "main"] as const;
+const MAIN_KEY = ['game', 'main'] as const
 
 async function loadMain(): Promise<GridMain> {
-  return parseGameMain(await api.get<unknown>("/api/game/main"));
+  return parseGameMain(await api.get<unknown>('/api/game/main'))
 }
 
 export function PicksGrid() {
-  const { profile } = useAuth();
-  const queryClient = useQueryClient();
+  const { profile } = useAuth()
+  const queryClient = useQueryClient()
   const query = useQuery({
     queryKey: MAIN_KEY,
     queryFn: loadMain,
-  });
-  const [drafts, setDrafts] = useState<Record<string, WeekDraft> | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  })
+  const [drafts, setDrafts] = useState<Record<string, WeekDraft> | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
 
   if (query.data && drafts === null) {
-    setDrafts(draftsFromMain(query.data));
+    setDrafts(draftsFromMain(query.data))
   }
 
   if (query.isPending) {
-    return <p>Loading picks.</p>;
+    return <p>Loading picks.</p>
   }
 
   if (!query.data) {
-    return <p role="alert">Could not load picks.</p>;
+    return <p role='alert'>Could not load picks.</p>
   }
 
-  const main = query.data;
-  const canSave = main.weeks.some((week) => !week.currentOrPast);
+  const main = query.data
+  const canSave = main.weeks.some((week) => !week.currentOrPast)
 
   async function reload(): Promise<GridMain | null> {
-    await queryClient.cancelQueries({ queryKey: MAIN_KEY });
+    await queryClient.cancelQueries({ queryKey: MAIN_KEY })
     try {
       return await queryClient.fetchQuery({
         queryKey: MAIN_KEY,
         queryFn: loadMain,
         staleTime: 0,
-      });
+      })
     } catch {
-      return null;
+      return null
     }
   }
 
   async function save() {
     if (!canSave || busy || !drafts) {
-      return;
+      return
     }
-    const snapshot = drafts;
-    setBusy(true);
-    setMessage(null);
-    let failed = false;
+    const snapshot = drafts
+    setBusy(true)
+    setMessage(null)
+    let failed = false
     try {
       for (const week of main.weeks) {
-        const draft = snapshot[week.id];
+        const draft = snapshot[week.id]
         if (week.currentOrPast || !draft) {
-          continue;
+          continue
         }
-        await api.post("/api/game/picks", saveBody(week.id, draft));
+        await api.post('/api/game/picks', saveBody(week.id, draft))
       }
     } catch (error) {
-      failed = true;
-      setMessage(errorDetail(error));
+      failed = true
+      setMessage(errorDetail(error))
     } finally {
-      const fresh = await reload();
+      const fresh = await reload()
       if (fresh) {
-        setDrafts(draftsFromMain(fresh));
+        setDrafts(draftsFromMain(fresh))
       } else if (!failed) {
-        setMessage("Could not reload picks.");
+        setMessage('Could not reload picks.')
       }
-      setBusy(false);
+      setBusy(false)
     }
   }
 
   async function cancel() {
     if (busy) {
-      return;
+      return
     }
-    setBusy(true);
-    setMessage(null);
-    const fresh = await reload();
+    setBusy(true)
+    setMessage(null)
+    const fresh = await reload()
     if (!fresh) {
-      setMessage("Could not reload picks.");
+      setMessage('Could not reload picks.')
     } else {
-      setDrafts(draftsFromMain(fresh));
+      setDrafts(draftsFromMain(fresh))
     }
-    setBusy(false);
+    setBusy(false)
   }
 
   return (
-    <div className="flex flex-col gap-8">
-      <h2 className="text-xl font-semibold text-text">
-        Welcome {profile?.firstName ?? ""}, Season {main.season}
+    <div className='flex flex-col gap-8'>
+      <h2 className='text-xl font-semibold text-text'>
+        Welcome {profile?.firstName ?? ''}, Season {main.season}
       </h2>
       {main.weeks.map((week) => {
-        const draft = drafts?.[week.id];
+        const draft = drafts?.[week.id]
         if (!draft) {
-          return null;
+          return null
         }
         return (
           <WeekPicks
@@ -135,28 +136,32 @@ export function PicksGrid() {
               }))
             }
           />
-        );
+        )
       })}
       {message ? (
-        <p role="alert" className="text-sm text-danger">
+        <p role='alert' className='text-sm text-danger'>
           {message}
         </p>
       ) : null}
-      <div className="flex justify-end gap-2">
+      <div className='flex justify-end gap-2'>
         <Button
-          type="button"
-          variant="secondary"
+          type='button'
+          variant='secondary'
           disabled={busy}
           onClick={() => void cancel()}
         >
           Cancel
         </Button>
-        <Button type="button" disabled={!canSave || busy} onClick={() => void save()}>
+        <Button
+          type='button'
+          disabled={!canSave || busy}
+          onClick={() => void save()}
+        >
           Save
         </Button>
       </div>
     </div>
-  );
+  )
 }
 
 function WeekPicks({
@@ -166,51 +171,58 @@ function WeekPicks({
   busy,
   onChange,
 }: {
-  week: GridWeek;
-  draft: WeekDraft;
-  conferenceTeams: number;
-  busy: boolean;
-  onChange: (draft: WeekDraft) => void;
+  week: GridWeek
+  draft: WeekDraft
+  conferenceTeams: number
+  busy: boolean
+  onChange: (draft: WeekDraft) => void
 }) {
-  const locked = week.currentOrPast;
-  const frozen = locked || busy;
+  const locked = week.currentOrPast
+  const frozen = locked || busy
 
   return (
-    <section aria-label={`Week ${week.weekNumber}`} className="flex flex-col gap-3">
-      <h3 className="text-lg font-semibold text-text">Week {week.weekNumber}</h3>
-      <p className="text-sm text-muted">
-        {locked ? "Picks are locked" : "Picks are open"}
+    <section
+      aria-label={`Week ${week.weekNumber}`}
+      className='flex flex-col gap-3'
+    >
+      <h3 className='text-lg font-semibold text-text'>
+        Week {week.weekNumber}
+      </h3>
+      <p className='text-sm text-muted'>
+        {locked ? 'Picks are locked' : 'Picks are open'}
       </p>
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left text-sm text-text">
+      <div className='overflow-x-auto'>
+        <table className='w-full border-collapse text-left text-sm text-text'>
           <thead>
-            <tr className="border-b border-border">
-              {locked ? <Column label="Result" /> : null}
-              <Column label="Date" className="hidden md:table-cell" />
-              <Column label="Rivalry" className="hidden lg:table-cell" />
-              <Column label="Away" />
-              {locked ? <Column label="Score" /> : null}
-              <Column label="Rank" />
-              {locked ? <Column label="Score" /> : null}
-              <Column label="Home" />
-              <Column label="Venue" className="hidden md:table-cell" />
-              <Column label="Reorder" />
+            <tr className='border-b border-border'>
+              {locked ? <Column label='Result' /> : null}
+              <Column label='Date' className='hidden md:table-cell' />
+              <Column label='Rivalry' className='hidden lg:table-cell' />
+              <Column label='Away' />
+              {locked ? <Column label='Score' /> : null}
+              <Column label='Rank' />
+              {locked ? <Column label='Score' /> : null}
+              <Column label='Home' />
+              <Column label='Venue' className='hidden md:table-cell' />
+              <Column label='Reorder' />
             </tr>
           </thead>
           <tbody>
             {draft.order.map((matchupId, index) => {
-              const matchup = week.matchups.find((item) => item.matchupId === matchupId);
+              const matchup = week.matchups.find(
+                (item) => item.matchupId === matchupId,
+              )
               if (!matchup) {
-                return null;
+                return null
               }
-              const pickedTeamId = draft.pickedTeamId[matchup.matchupId] ?? "";
-              const rank = draft.rank[matchup.matchupId];
-              const matchupLabel = `${matchup.awayTeam.name} at ${matchup.homeTeam.name}`;
+              const pickedTeamId = draft.pickedTeamId[matchup.matchupId] ?? ''
+              const rank = draft.rank[matchup.matchupId]
+              const matchupLabel = `${matchup.awayTeam.name} at ${matchup.homeTeam.name}`
               return (
                 <RadioGroup
                   key={matchup.matchupId}
                   render={<tr />}
-                  className="border-b border-border"
+                  className='border-b border-border'
                   aria-label={matchupLabel}
                   name={`${matchup.matchupId}-week-${week.weekNumber}`}
                   value={pickedTeamId}
@@ -226,56 +238,78 @@ function WeekPicks({
                   }
                 >
                   {locked ? (
-                    <td className="px-2 py-2">
+                    <td className='px-2 py-2'>
                       <ResultCell matchup={matchup} />
                     </td>
                   ) : null}
-                  <td className="hidden px-2 py-2 md:table-cell">{dateText(matchup.matchupDate)}</td>
-                  <td className="hidden px-2 py-2 lg:table-cell">
-                    {matchup.rivalryName ?? ""}
+                  <td className='hidden px-2 py-2 md:table-cell'>
+                    {dateText(matchup.matchupDate)}
                   </td>
-                  <TeamCell weekNumber={week.weekNumber} team={matchup.awayTeam} />
+                  <td className='hidden px-2 py-2 lg:table-cell'>
+                    {matchup.rivalryName ?? ''}
+                  </td>
+                  <TeamCell
+                    weekNumber={week.weekNumber}
+                    team={matchup.awayTeam}
+                  />
                   {locked ? (
-                    <td className="px-2 py-2">{scoreText(matchup.awayTeamScore)}</td>
+                    <td className='px-2 py-2'>
+                      {scoreText(matchup.awayTeamScore)}
+                    </td>
                   ) : null}
-                  <td className="px-2 py-2">
+                  <td className='px-2 py-2'>
                     <output aria-label={`Rank for ${matchupLabel}`}>
-                      {rank ?? ""}
+                      {rank ?? ''}
                     </output>
                   </td>
                   {locked ? (
-                    <td className="px-2 py-2">{scoreText(matchup.homeTeamScore)}</td>
+                    <td className='px-2 py-2'>
+                      {scoreText(matchup.homeTeamScore)}
+                    </td>
                   ) : null}
-                  <TeamCell weekNumber={week.weekNumber} team={matchup.homeTeam} />
-                  <td className="hidden px-2 py-2 md:table-cell">
+                  <TeamCell
+                    weekNumber={week.weekNumber}
+                    team={matchup.homeTeam}
+                  />
+                  <td className='hidden px-2 py-2 md:table-cell'>
                     {venueLabel(matchup.venue)}
                   </td>
-                  <td className="px-2 py-2">
+                  <td className='px-2 py-2'>
                     <Toolbar.Root
                       aria-label={`Reorder ${matchupLabel}`}
-                      className="flex gap-2"
+                      className='flex gap-2'
                     >
                       <Toolbar.Button
-                        render={<Button variant="nav" className="bg-primary" />}
+                        render={<Button variant='nav' className='bg-primary' />}
                         focusableWhenDisabled={false}
                         disabled={frozen || index === 0}
                         aria-label={`Move ${matchupLabel} up`}
                         onClick={() =>
                           onChange(
-                            moveMatchup(draft, matchup.matchupId, -1, conferenceTeams),
+                            moveMatchup(
+                              draft,
+                              matchup.matchupId,
+                              -1,
+                              conferenceTeams,
+                            ),
                           )
                         }
                       >
                         Up
                       </Toolbar.Button>
                       <Toolbar.Button
-                        render={<Button variant="nav" className="bg-primary" />}
+                        render={<Button variant='nav' className='bg-primary' />}
                         focusableWhenDisabled={false}
                         disabled={frozen || index === draft.order.length - 1}
                         aria-label={`Move ${matchupLabel} down`}
                         onClick={() =>
                           onChange(
-                            moveMatchup(draft, matchup.matchupId, 1, conferenceTeams),
+                            moveMatchup(
+                              draft,
+                              matchup.matchupId,
+                              1,
+                              conferenceTeams,
+                            ),
                           )
                         }
                       >
@@ -284,69 +318,76 @@ function WeekPicks({
                     </Toolbar.Root>
                   </td>
                 </RadioGroup>
-              );
+              )
             })}
           </tbody>
         </table>
       </div>
     </section>
-  );
+  )
 }
 
 function Column({ label, className }: { label: string; className?: string }) {
   return (
-    <th scope="col" className={["px-2 py-2 font-medium", className].filter(Boolean).join(" ")}>
+    <th
+      scope='col'
+      className={['px-2 py-2 font-medium', className].filter(Boolean).join(' ')}
+    >
       {label}
     </th>
-  );
+  )
 }
 
 function TeamCell({
   weekNumber,
   team,
 }: {
-  weekNumber: number;
-  team: GridMatchup["homeTeam"];
+  weekNumber: number
+  team: GridMatchup['homeTeam']
 }) {
   return (
-    <td className="px-2 py-2">
-      <label className="inline-flex items-center gap-2">
+    <td className='px-2 py-2'>
+      <label className='inline-flex items-center gap-2'>
         <Radio
           value={team.id}
           aria-label={`Pick ${team.name} in week ${weekNumber}`}
         />
         <span>{team.name}</span>
-        {team.squad !== "" ? (
-          <span className="hidden md:inline">{team.squad}</span>
+        {team.squad !== '' ? (
+          <span className='hidden md:inline'>{team.squad}</span>
         ) : null}
       </label>
     </td>
-  );
+  )
 }
 
 function ResultCell({ matchup }: { matchup: GridMatchup }) {
-  const result = pickResult(matchup);
+  const result = pickResult(matchup)
   if (!result) {
-    return null;
+    return null
   }
-  return <PickResultIcon result={result} />;
+  return <PickResultIcon result={result} />
 }
 
 function dateText(value: string): string {
-  const match = /^(\d{4}-\d{2}-\d{2})/.exec(value);
-  return match?.[1] ?? value;
+  const match = /^(\d{4}-\d{2}-\d{2})/.exec(value)
+  return match?.[1] ?? value
 }
 
 function scoreText(score: number | null): string {
-  return score == null ? "" : String(score);
+  return score == null ? '' : String(score)
 }
 
 function errorDetail(error: unknown): string {
-  if (error instanceof ApiError && error.body && typeof error.body === "object") {
-    const detail = (error.body as { detail?: unknown }).detail;
-    if (typeof detail === "string" && detail.trim() !== "") {
-      return detail;
+  if (
+    error instanceof ApiError &&
+    error.body &&
+    typeof error.body === 'object'
+  ) {
+    const detail = (error.body as { detail?: unknown }).detail
+    if (typeof detail === 'string' && detail.trim() !== '') {
+      return detail
     }
   }
-  return "Could not save picks.";
+  return 'Could not save picks.'
 }

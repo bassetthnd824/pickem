@@ -53,13 +53,27 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
 
     private static final Instant SECOND = Instant.parse("2026-10-01T15:00:00Z");
 
-    private static final List<String> COLLECTIONS = List.of(VenueRepository.COLLECTION, TeamRepository.COLLECTION,
-            RivalryRepository.COLLECTION, SeasonRepository.COLLECTION, SeasonWeekRepository.COLLECTION,
-            MatchupRepository.COLLECTION, ThemeRepository.COLLECTION, UserRepository.COLLECTION,
-            PickRepository.COLLECTION);
+    private static final List<String> COLLECTIONS = List.of(
+            VenueRepository.COLLECTION,
+            TeamRepository.COLLECTION,
+            RivalryRepository.COLLECTION,
+            SeasonRepository.COLLECTION,
+            SeasonWeekRepository.COLLECTION,
+            MatchupRepository.COLLECTION,
+            ThemeRepository.COLLECTION,
+            UserRepository.COLLECTION,
+            PickRepository.COLLECTION
+    );
 
-    private static final List<String> PASSWORD_KEYS = List.of("password", "oldpass", "userpass", "confirmpass",
-            "passwd", "passhash", "passwordhash");
+    private static final List<String> PASSWORD_KEYS = List.of(
+            "password",
+            "oldpass",
+            "userpass",
+            "confirmpass",
+            "passwd",
+            "passhash",
+            "passwordhash"
+    );
 
     private Firestore firestore;
 
@@ -74,15 +88,21 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
 
     @AfterEach
     void closeClient() throws Exception {
+
         if (firestore != null) {
             firestore.close();
+
         }
+
     }
 
     @Test
     void seedsReferenceDataTheAppCanRead() throws Exception {
         RecordingIdentity identity = new RecordingIdentity();
-        identity.accounts.put("boss@example.com", new BootstrapAccount("uid-1", "boss@example.com", "Kenney", "Curlee"));
+        identity.accounts.put(
+                "boss@example.com",
+                new BootstrapAccount("uid-1", "boss@example.com", "Kenney", "Curlee")
+        );
         Optional<String> uid = seeder(FIRST, identity).seed("boss@example.com");
 
         assertThat(uid).contains("uid-1");
@@ -107,48 +127,62 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
         assertThat(season.getCreateUser()).isEqualTo(SeedCatalog.ACTOR);
         assertThat(season.getVersion()).isZero();
 
-        Venue unknown = Objects.requireNonNull(require(VenueRepository.COLLECTION, "unknown").toObject(Venue.class),
-                "unknown");
+        Venue unknown = Objects.requireNonNull(
+                require(VenueRepository.COLLECTION, "unknown").toObject(Venue.class),
+                "unknown"
+        );
         assertThat(unknown.getCfbdVenueId()).isNull();
 
         for (SeedCatalog.TeamSeed expected : SeedCatalog.teams()) {
-            Team team = Objects.requireNonNull(require(TeamRepository.COLLECTION, expected.id()).toObject(Team.class),
-                    "team");
+            Team team = Objects.requireNonNull(
+                    require(TeamRepository.COLLECTION, expected.id()).toObject(Team.class),
+                    "team"
+            );
             assertThat(team.getTeamName()).isEqualTo(expected.name());
             assertThat(team.getCfbdTeamId()).isEqualTo(expected.cfbdTeamId());
             assertThat(team.getConferenceMember()).isTrue();
             assertThat(team.getHomeVenue()).isNotNull();
             Venue home = Objects.requireNonNull(
-                    require(VenueRepository.COLLECTION, team.getHomeVenueId()).toObject(Venue.class), "home");
+                    require(VenueRepository.COLLECTION, team.getHomeVenueId()).toObject(Venue.class),
+                    "home"
+            );
             assertThat(home.getCfbdVenueId()).isNotNull();
             assertThat(team.getHomeVenue().getName()).isEqualTo(home.getVenueName());
+
         }
 
         for (int weekNumber = 1; weekNumber <= SeedCatalog.WEEK_COUNT; weekNumber++) {
             SeasonWeek week = Objects.requireNonNull(
                     require(SeasonWeekRepository.COLLECTION, SeedCatalog.weekId(weekNumber)).toObject(SeasonWeek.class),
-                    "week");
+                    "week"
+            );
             LocalDate begin = LocalDate.parse(week.getBeginDate());
             LocalDate end = LocalDate.parse(week.getEndDate());
             assertThat(begin.getDayOfWeek()).isEqualTo(DayOfWeek.THURSDAY);
             assertThat(end).isEqualTo(begin.plusDays(6));
             assertThat(begin).isEqualTo(SeedCatalog.weekBegin(weekNumber));
+
         }
 
         Matchup ironBowl = Objects.requireNonNull(
-                require(MatchupRepository.COLLECTION, "2026-w6-alabama-at-auburn").toObject(Matchup.class), "ironBowl");
+                require(MatchupRepository.COLLECTION, "2026-w6-alabama-at-auburn").toObject(Matchup.class),
+                "ironBowl"
+        );
         assertThat(ironBowl.getRivalryName()).isEqualTo("Iron Bowl");
         assertThat(ironBowl.getHomeTeamScore()).isNull();
         assertThat(ironBowl.getWinningTeamId()).isNull();
         assertThat(ironBowl.getVenue().getName()).isEqualTo("Jordan-Hare Stadium");
 
         Matchup cocktail = Objects.requireNonNull(
-                require(MatchupRepository.COLLECTION, "2026-w6-florida-at-georgia").toObject(Matchup.class), "cocktail");
+                require(MatchupRepository.COLLECTION, "2026-w6-florida-at-georgia").toObject(Matchup.class),
+                "cocktail"
+        );
         assertThat(cocktail.getRivalryName()).isEqualTo("World's Largest Outdoor Cocktail Party");
 
         Matchup thirdSaturday = Objects.requireNonNull(
                 require(MatchupRepository.COLLECTION, "2026-w5-tennessee-at-alabama").toObject(Matchup.class),
-                "thirdSaturday");
+                "thirdSaturday"
+        );
         assertThat(thirdSaturday.getRivalryName()).isEqualTo("Third Saturday in October");
         assertThat(thirdSaturday.getHomeTeam().getName()).isEqualTo("Alabama");
         assertThat(thirdSaturday.getHomeTeam().getSquad()).isEqualTo("Crimson Tide");
@@ -158,22 +192,28 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
 
         Matchup unscored = Objects.requireNonNull(
                 require(MatchupRepository.COLLECTION, "2026-w5-missouri-at-south-carolina").toObject(Matchup.class),
-                "unscored");
+                "unscored"
+        );
         assertThat(unscored.getRivalryName()).isNull();
         assertThat(unscored.getWinningTeamId()).isNull();
 
         for (SeedCatalog.ThemeSeed expected : SeedCatalog.themes()) {
             Theme theme = Objects.requireNonNull(
-                    require(ThemeRepository.COLLECTION, expected.key()).toObject(Theme.class), "theme");
+                    require(ThemeRepository.COLLECTION, expected.key()).toObject(Theme.class),
+                    "theme"
+            );
             assertThat(theme.getThemePath()).isEqualTo(expected.key());
             assertThat(theme.getThemeName()).isEqualTo(expected.name());
             assertThat(theme.getPrimary()).isEqualTo(expected.primary());
             assertThat(theme.getSecondary()).isEqualTo(expected.secondary());
             assertThat(theme.getActive()).isTrue();
+
         }
 
-        User manager = Objects.requireNonNull(require(UserRepository.COLLECTION, "uid-1").toObject(User.class),
-                "manager");
+        User manager = Objects.requireNonNull(
+                require(UserRepository.COLLECTION, "uid-1").toObject(User.class),
+                "manager"
+        );
         assertThat(manager.getEmailAddr()).isEqualTo("boss@example.com");
         assertThat(manager.getFirstName()).isEqualTo("Kenney");
         assertThat(manager.getLastName()).isEqualTo("Curlee");
@@ -186,20 +226,29 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
     @Test
     void rerunKeepsAuditPicksAndAnEditedProfile() throws Exception {
         RecordingIdentity identity = new RecordingIdentity();
-        identity.accounts.put("boss@example.com", new BootstrapAccount("uid-1", "boss@example.com", "Kenney", "Curlee"));
+        identity.accounts.put(
+                "boss@example.com",
+                new BootstrapAccount("uid-1", "boss@example.com", "Kenney", "Curlee")
+        );
         seeder(FIRST, identity).seed("boss@example.com");
 
         String pickId = "uid-1__2026-w1-vanderbilt-at-alabama";
         Map<String, Object> pick = Objects.requireNonNull(
-                Map.of("userId", "uid-1", "matchupId", "2026-w1-vanderbilt-at-alabama", "note", "keep"), "pick");
+                Map.of("userId", "uid-1", "matchupId", "2026-w1-vanderbilt-at-alabama", "note", "keep"),
+                "pick"
+        );
         document(PickRepository.COLLECTION, pickId).set(pick).get();
-        Map<String, Object> extra = Objects.requireNonNull(Map.of("venueName", "Extra", "cityState", "Nowhere"),
-                "extra");
+        Map<String, Object> extra = Objects.requireNonNull(
+                Map.of("venueName", "Extra", "cityState", "Nowhere"),
+                "extra"
+        );
         document(VenueRepository.COLLECTION, "extra").set(extra).get();
         firestore.collection(UserRepository.COLLECTION).document("uid-1")
                 .update("nickName", "KC", "themeId", "dark", "firstName", "Ken").get();
-        identity.accounts.put("boss@example.com",
-                new BootstrapAccount("uid-1", "boss2@example.com", "New", "Name"));
+        identity.accounts.put(
+                "boss@example.com",
+                new BootstrapAccount("uid-1", "boss2@example.com", "New", "Name")
+        );
 
         seeder(SECOND, identity).seed("boss@example.com");
 
@@ -209,16 +258,20 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
         assertThat(require(VenueRepository.COLLECTION, "extra").getString("venueName")).isEqualTo("Extra");
         assertThat(require(PickRepository.COLLECTION, pickId).getString("note")).isEqualTo("keep");
 
-        Venue venue = Objects.requireNonNull(require(VenueRepository.COLLECTION, "bryant-denny").toObject(Venue.class),
-                "venue");
+        Venue venue = Objects.requireNonNull(
+                require(VenueRepository.COLLECTION, "bryant-denny").toObject(Venue.class),
+                "venue"
+        );
         assertThat(venue.getCreateDate()).isEqualTo(FIRST);
         assertThat(venue.getCreateUser()).isEqualTo(SeedCatalog.ACTOR);
         assertThat(venue.getLastUpdateDate()).isEqualTo(SECOND);
         assertThat(venue.getLastUpdateUser()).isEqualTo(SeedCatalog.ACTOR);
         assertThat(venue.getVersion()).isEqualTo(1L);
 
-        User manager = Objects.requireNonNull(require(UserRepository.COLLECTION, "uid-1").toObject(User.class),
-                "manager");
+        User manager = Objects.requireNonNull(
+                require(UserRepository.COLLECTION, "uid-1").toObject(User.class),
+                "manager"
+        );
         assertThat(manager.getEmailAddr()).isEqualTo("boss2@example.com");
         assertThat(manager.getFirstName()).isEqualTo("Ken");
         assertThat(manager.getLastName()).isEqualTo("Curlee");
@@ -255,11 +308,16 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
         firestore.collection(UserRepository.COLLECTION).document("uid-1").set(existing).get();
 
         RecordingIdentity identity = new RecordingIdentity();
-        identity.accounts.put("boss@example.com", new BootstrapAccount("uid-1", "boss@example.com", "Kenney", "Curlee"));
+        identity.accounts.put(
+                "boss@example.com",
+                new BootstrapAccount("uid-1", "boss@example.com", "Kenney", "Curlee")
+        );
         seeder(FIRST, identity).seed("boss@example.com");
 
-        User manager = Objects.requireNonNull(require(UserRepository.COLLECTION, "uid-1").toObject(User.class),
-                "manager");
+        User manager = Objects.requireNonNull(
+                require(UserRepository.COLLECTION, "uid-1").toObject(User.class),
+                "manager"
+        );
         assertThat(manager.getFirstName()).isEqualTo("Kenney");
         assertThat(manager.getLastName()).isEqualTo("Curlee");
         assertThat(manager.getNickName()).isEqualTo("Kenney");
@@ -313,19 +371,29 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
     }
 
     private void clear() throws Exception {
+
         for (String collection : COLLECTIONS) {
+
             for (QueryDocumentSnapshot document : collection(collection).get().get().getDocuments()) {
                 document.getReference().delete().get();
+
             }
+
         }
+
     }
 
     private void assertNoPasswordFields() throws Exception {
+
         for (String collection : COLLECTIONS) {
+
             for (QueryDocumentSnapshot document : collection(collection).get().get().getDocuments()) {
                 assertNoPasswordFields(document.getData());
+
             }
+
         }
+
     }
 
     private CollectionReference collection(String name) {
@@ -339,17 +407,25 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
     }
 
     private static void assertNoPasswordFields(Map<String, Object> data) {
+
         for (Map.Entry<String, Object> entry : data.entrySet()) {
             String normalized = entry.getKey().toLowerCase(Locale.ROOT).replaceAll("[^a-z]", "");
             assertThat(PASSWORD_KEYS).doesNotContain(normalized);
+
             if (entry.getValue() instanceof Map<?, ?> nested) {
                 Map<String, Object> child = new LinkedHashMap<>();
+
                 for (Map.Entry<?, ?> item : nested.entrySet()) {
                     child.put(String.valueOf(item.getKey()), item.getValue());
+
                 }
+
                 assertNoPasswordFields(child);
+
             }
+
         }
+
     }
 
     private static final class RecordingIdentity implements BootstrapIdentity {
@@ -370,6 +446,7 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
 
             if (miss) {
                 return Optional.empty();
+
             }
 
             return Optional.ofNullable(accounts.get(email));

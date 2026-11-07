@@ -16,15 +16,19 @@ public class FirestoreConfig {
     @Bean(destroyMethod = "close")
     public Firestore firestore(PickemFirestoreProperties properties) {
         String projectId = properties.projectId();
+
         if (projectId == null || projectId.isBlank()) {
             projectId = "pickem-local";
+
         }
 
         FirestoreOptions.Builder builder = FirestoreOptions.newBuilder().setProjectId(projectId);
 
         String emulatorHost = resolveEmulatorHost(properties);
+
         if (emulatorHost != null) {
             builder.setEmulatorHost(emulatorHost).setCredentials(new FirestoreOptions.EmulatorCredentials());
+
         }
 
         return builder.build().getService();
@@ -32,16 +36,24 @@ public class FirestoreConfig {
 
     static String resolveEmulatorHost(PickemFirestoreProperties properties) {
         String fromEnv = System.getenv("FIRESTORE_EMULATOR_HOST");
+
         if (fromEnv == null || fromEnv.isBlank()) {
             fromEnv = System.getProperty("FIRESTORE_EMULATOR_HOST");
+
         }
+
         if (fromEnv != null && !fromEnv.isBlank()) {
             return fromEnv.trim();
+
         }
+
         String configuredHost = properties.emulatorHost();
+
         if (properties.emulatorEnabled() && configuredHost != null && !configuredHost.isBlank()) {
             return configuredHost.trim();
+
         }
+
         return null;
     }
 }

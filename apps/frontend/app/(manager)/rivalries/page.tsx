@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
-import { TitledPage } from "../../../components/titled-page";
+import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: "Rivalries · Kenney's Pickem" };
+import { TitledPage } from '@/components/titled-page'
+
+export const metadata: Metadata = { title: "Rivalries · Kenney's Pickem" }
 
 export default function RivalriesPage() {
-  return <TitledPage title="Rivalries" />;
+  return <TitledPage title='Rivalries' />
 }

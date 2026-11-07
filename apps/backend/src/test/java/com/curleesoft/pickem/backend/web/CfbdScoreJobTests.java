@@ -302,8 +302,14 @@ class CfbdScoreJobTests extends FirestoreEmulatorSupport {
         Slate slate = slate(true);
         Season other = season(today.plusYears(1), false);
         SeasonWeek otherWeek = week(other, 1, today.minusDays(3), today.plusDays(3));
-        matchup(new Slate(other, otherWeek, slate.home(), slate.away(), slate.venue()), today, nextGameId(), null, null,
-                null);
+        matchup(
+                new Slate(other, otherWeek, slate.home(), slate.away(), slate.venue()),
+                today,
+                nextGameId(),
+                null,
+                null,
+                null
+        );
         assertThat(seasonService.current().getId()).isEqualTo(slate.season().getId());
 
         mockMvc.perform(post("/api/internal/jobs/cfbd-scores").with(loopback())).andExpect(status().isOk())
@@ -315,25 +321,36 @@ class CfbdScoreJobTests extends FirestoreEmulatorSupport {
     @Test
     void noCurrentSeasonDoesNotCallCfbd() {
         List<Season> flagged = new ArrayList<>();
+
         for (Season season : seasonRepository.findAll()) {
+
             if (season.isCurrent()) {
                 flagged.add(season);
                 season.setCurrent(false);
                 seasonRepository.save(season, "test");
+
             }
+
         }
+
         try {
             pin(LocalDate.of(1000, 6, 1));
             ScoreSyncResult result = cfbdScoreService.syncToday();
             assertThat(result).isEqualTo(new ScoreSyncResult(0, 0));
             verifyNoInteractions(cfbdClient);
+
         } finally {
+
             for (Season season : flagged) {
                 season.setCurrent(true);
                 seasonRepository.save(season, "test");
+
             }
+
             pin(today);
+
         }
+
     }
 
     @Test
@@ -369,8 +386,14 @@ class CfbdScoreJobTests extends FirestoreEmulatorSupport {
     void postseasonWeekUsesThePostseasonGamesCall() {
         Slate slate = slate(true);
         long gameId = nextGameId();
-        Matchup bowl = matchup(slate, today, gameId, Integer.valueOf(101), null,
-                null);
+        Matchup bowl = matchup(
+                slate,
+                today,
+                gameId,
+                Integer.valueOf(101),
+                null,
+                null
+        );
         when(cfbdClient.games(eq(today.getYear()), isNull(), eq("postseason")))
                 .thenReturn(List.of(game(gameId, true, 35, 17)));
 
@@ -440,9 +463,25 @@ class CfbdScoreJobTests extends FirestoreEmulatorSupport {
     }
 
     private CfbdGame game(long id, boolean completed, Integer homePoints, Integer awayPoints) {
-        return new CfbdGame(id, today.getYear(), 1, "regular", today + "T23:30:00Z", completed,
-                "Stadium", Long.valueOf(1), 100L, "Home", homePoints, 200L, "Away", awayPoints, Boolean.FALSE, "SEC",
-                "SEC");
+        return new CfbdGame(
+                id,
+                today.getYear(),
+                1,
+                "regular",
+                today + "T23:30:00Z",
+                completed,
+                "Stadium",
+                Long.valueOf(1),
+                100L,
+                "Home",
+                homePoints,
+                200L,
+                "Away",
+                awayPoints,
+                Boolean.FALSE,
+                "SEC",
+                "SEC"
+        );
     }
 
     private Slate slate(boolean current) {
@@ -497,8 +536,14 @@ class CfbdScoreJobTests extends FirestoreEmulatorSupport {
         return saved;
     }
 
-    private Matchup matchup(Slate slate, LocalDate date, Long cfbdGameId, Integer weekNumber, Integer homeScore,
-            Integer awayScore) {
+    private Matchup matchup(
+            Slate slate,
+            LocalDate date,
+            Long cfbdGameId,
+            Integer weekNumber,
+            Integer homeScore,
+            Integer awayScore
+    ) {
         Team home = slate.home();
         Team away = slate.away();
         Venue venue = slate.venue();
@@ -513,9 +558,12 @@ class CfbdScoreJobTests extends FirestoreEmulatorSupport {
         matchup.setAwayTeam(new TeamSquadSnapshot(away.getId(), away.getTeamName(), away.getSquadName()));
         matchup.setHomeTeamScore(homeScore);
         matchup.setAwayTeamScore(awayScore);
+
         if (homeScore != null && awayScore != null && !homeScore.equals(awayScore)) {
             matchup.setWinningTeamId(homeScore.compareTo(awayScore) > 0 ? home.getId() : away.getId());
+
         }
+
         matchup.setVenueId(Objects.requireNonNull(venue.getId(), "venueId"));
         matchup.setVenue(new VenueSnapshot(venue.getId(), venue.getVenueName(), venue.getCityState()));
         matchup.setCfbdGameId(cfbdGameId);
@@ -553,9 +601,20 @@ class CfbdScoreJobTests extends FirestoreEmulatorSupport {
     }
 
     private Cookie cookie(String uid) {
-        return new Cookie(SessionCookies.NAME,
-                firebase.issueCookie(new VerifiedIdentity(uid, uid + "@example.com", "Test Player", "Test", "Player",
-                        "google.com", RoleClaims.forRoles(List.of(RoleClaims.PLAYER)))));
+        return new Cookie(
+                SessionCookies.NAME,
+                firebase.issueCookie(
+                        new VerifiedIdentity(
+                                uid,
+                                uid + "@example.com",
+                                "Test Player",
+                                "Test",
+                                "Player",
+                                "google.com",
+                                RoleClaims.forRoles(List.of(RoleClaims.PLAYER))
+                        )
+                )
+        );
     }
 
     private Matchup reload(Matchup matchup) {
@@ -575,22 +634,34 @@ class CfbdScoreJobTests extends FirestoreEmulatorSupport {
     }
 
     private static JsonNode matchupNode(JsonNode main, String matchupId) {
+
         for (JsonNode week : main.path("weeks")) {
+
             for (JsonNode matchup : week.path("matchups")) {
+
                 if (matchupId.equals(matchup.path("matchupId").asString())) {
                     return matchup;
+
                 }
+
             }
+
         }
+
         throw new AssertionError("missing matchup " + matchupId);
     }
 
     private static JsonNode standing(JsonNode board, String uid) {
+
         for (JsonNode row : board.path("standings")) {
+
             if (uid.equals(row.path("uid").asString())) {
                 return row;
+
             }
+
         }
+
         throw new AssertionError("missing standing " + uid);
     }
 
@@ -607,6 +678,7 @@ class CfbdScoreJobTests extends FirestoreEmulatorSupport {
         return request -> {
             request.setRemoteAddr("127.0.0.1");
             return request;
+
         };
     }
 

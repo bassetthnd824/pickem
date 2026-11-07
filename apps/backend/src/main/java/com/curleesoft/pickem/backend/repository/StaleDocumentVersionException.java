@@ -14,10 +14,16 @@ public class StaleDocumentVersionException extends RuntimeException {
     private final Long expectedVersion;
     private final Long actualVersion;
 
-    public StaleDocumentVersionException(String collectionName, String documentId, Long expectedVersion,
-            Long actualVersion) {
-        super("Stale version for " + collectionName + "/" + documentId + ": expected " + expectedVersion + " but was "
-                + actualVersion);
+    public StaleDocumentVersionException(
+            String collectionName,
+            String documentId,
+            Long expectedVersion,
+            Long actualVersion
+    ) {
+        super(
+                "Stale version for " + collectionName + "/" + documentId + ": expected " + expectedVersion + " but was "
+                        + actualVersion
+        );
         this.collectionName = collectionName;
         this.documentId = documentId;
         this.expectedVersion = expectedVersion;

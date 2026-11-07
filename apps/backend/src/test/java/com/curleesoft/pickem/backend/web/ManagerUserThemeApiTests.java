@@ -78,20 +78,27 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
 
     @AfterEach
     void deleteFixtures() {
+
         for (String id : userIds) {
             userRepository.delete(id);
+
         }
+
         for (String id : themeIds) {
             themeRepository.delete(id);
+
         }
+
         userIds.clear();
         themeIds.clear();
     }
 
     @Test
     void usersAndThemesRequireTheManagerRole() throws Exception {
-        Cookie player = new Cookie(SessionCookies.NAME,
-                firebase.issueCookie(identity("player-" + UUID.randomUUID(), List.of("player"))));
+        Cookie player = new Cookie(
+                SessionCookies.NAME,
+                firebase.issueCookie(identity("player-" + UUID.randomUUID(), List.of("player")))
+        );
 
         mockMvc.perform(get("/api/manager/users")).andExpect(status().isUnauthorized());
         mockMvc.perform(post("/api/manager/users").contentType(MediaType.APPLICATION_JSON).content("{}"))
@@ -108,10 +115,14 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
 
         mockMvc.perform(get("/api/manager/users").cookie(player)).andExpect(status().isForbidden());
         mockMvc.perform(get("/api/manager/users/missing").cookie(player)).andExpect(status().isForbidden());
-        mockMvc.perform(post("/api/manager/themes").cookie(player).contentType(MediaType.APPLICATION_JSON).content("{}"))
+        mockMvc.perform(
+                post("/api/manager/themes").cookie(player).contentType(MediaType.APPLICATION_JSON).content("{}")
+        )
                 .andExpect(status().isForbidden());
-        mockMvc.perform(put("/api/manager/themes/missing").cookie(player).contentType(MediaType.APPLICATION_JSON)
-                .content("{}")).andExpect(status().isForbidden());
+        mockMvc.perform(
+                put("/api/manager/themes/missing").cookie(player).contentType(MediaType.APPLICATION_JSON)
+                        .content("{}")
+        ).andExpect(status().isForbidden());
         mockMvc.perform(delete("/api/manager/users/missing").cookie(player)).andExpect(status().isForbidden());
         mockMvc.perform(get("/api/manager/themes").cookie(player)).andExpect(status().isForbidden());
     }
@@ -123,8 +134,10 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         String darkKey = "dark-" + token;
 
         MvcResult created = mockMvc
-                .perform(post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                        .content(themeBody("Light " + token, lightKey, true, "#1F2937", "#2563EB", null)))
+                .perform(
+                        post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                                .content(themeBody("Light " + token, lightKey, true, "#1F2937", "#2563EB", null))
+                )
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", containsString("/api/manager/themes/")))
                 .andExpect(jsonPath("$.themeName").value("Light " + token))
@@ -141,28 +154,40 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         mockMvc.perform(get("/api/manager/themes/" + lightId).cookie(manager)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.active").value(true));
 
-        mockMvc.perform(post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(themeBody("Light " + token, "other-" + token, true, "#000000", "#FFFFFF", null)))
+        mockMvc.perform(
+                post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(themeBody("Light " + token, "other-" + token, true, "#000000", "#FFFFFF", null))
+        )
                 .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(ThemeService.NAME_NOT_UNIQUE));
 
-        mockMvc.perform(post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(themeBody("Other " + token, lightKey, true, "#000000", "#FFFFFF", null)))
+        mockMvc.perform(
+                post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(themeBody("Other " + token, lightKey, true, "#000000", "#FFFFFF", null))
+        )
                 .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(ThemeService.PATH_NOT_UNIQUE));
 
-        mockMvc.perform(post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(themeBody(" ", lightKey, true, "#000000", "#FFFFFF", null))).andExpect(status().isBadRequest())
+        mockMvc.perform(
+                post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(themeBody(" ", lightKey, true, "#000000", "#FFFFFF", null))
+        ).andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.detail").value(containsString("themeName")));
 
-        mockMvc.perform(post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(themeBody("x".repeat(41), "long-" + token, true, "#000000", "#FFFFFF", null)))
+        mockMvc.perform(
+                post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(themeBody("x".repeat(41), "long-" + token, true, "#000000", "#FFFFFF", null))
+        )
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(containsString("themeName")));
 
-        mockMvc.perform(post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(themeBody("Slash " + token, "/" + lightKey, true, "#000000", "#FFFFFF", null)))
+        mockMvc.perform(
+                post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(themeBody("Slash " + token, "/" + lightKey, true, "#000000", "#FFFFFF", null))
+        )
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(ThemeService.PATH_SLASH));
 
-        mockMvc.perform(post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(themeBody("Long " + token, "k".repeat(101), true, "#000000", "#FFFFFF", null)))
+        mockMvc.perform(
+                post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(themeBody("Long " + token, "k".repeat(101), true, "#000000", "#FFFFFF", null))
+        )
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(containsString("themePath")));
 
         mockMvc.perform(post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
@@ -183,12 +208,17 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         JsonNode themes = jsonMapper.readTree(listed);
         assertThat(indexOf(themes, darkId)).isLessThan(indexOf(themes, lightId));
 
-        mockMvc.perform(put("/api/manager/themes/" + lightId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(themeBody("Light " + token, lightKey, false, "#1F2937", "#2563EB", 4L)))
-                .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(containsString("Stale version")));
+        mockMvc.perform(
+                put("/api/manager/themes/" + lightId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(themeBody("Light " + token, lightKey, false, "#1F2937", "#2563EB", 4L))
+        )
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value(containsString("Stale version")));
 
-        mockMvc.perform(put("/api/manager/themes/" + lightId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(themeBody("Day " + token, lightKey, false, "#111111", "#EEEEEE", 0L)))
+        mockMvc.perform(
+                put("/api/manager/themes/" + lightId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(themeBody("Day " + token, lightKey, false, "#111111", "#EEEEEE", 0L))
+        )
                 .andExpect(status().isOk()).andExpect(jsonPath("$.version").value(1))
                 .andExpect(jsonPath("$.active").value(false)).andExpect(jsonPath("$.themeName").value("Day " + token))
                 .andExpect(jsonPath("$.primary").value("#111111"))
@@ -211,9 +241,21 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         String adaUid = "ada-" + token;
         String graceUid = "grace-" + token;
         MvcResult created = mockMvc
-                .perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                        .content(userBody(adaUid, "ada-" + token + "@example.com", "Ada", "Lovelace", "Ada", themeKey,
-                                "[\"player\"]", null)))
+                .perform(
+                        post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        userBody(
+                                                adaUid,
+                                                "ada-" + token + "@example.com",
+                                                "Ada",
+                                                "Lovelace",
+                                                "Ada",
+                                                themeKey,
+                                                "[\"player\"]",
+                                                null
+                                        )
+                                )
+                )
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", containsString("/api/manager/users/" + adaUid)))
                 .andExpect(jsonPath("$.uid").value(adaUid)).andExpect(jsonPath("$.id").value(adaUid))
@@ -230,8 +272,14 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         assertThat(playerClaims.get(RoleClaims.PLAYER)).isEqualTo(Boolean.TRUE);
         assertThat(playerClaims).doesNotContainKey(RoleClaims.MANAGER);
 
-        String graceId = createUser(graceUid, "grace-" + token + "@example.com", "Grace", "Hopper", themeKey,
-                "[\"player\"]");
+        String graceId = createUser(
+                graceUid,
+                "grace-" + token + "@example.com",
+                "Grace",
+                "Hopper",
+                themeKey,
+                "[\"player\"]"
+        );
 
         mockMvc.perform(get("/api/manager/users/" + adaUid).cookie(manager)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.nickName").value("Ada")).andExpect(jsonPath("$.lastName").value("Lovelace"));
@@ -249,46 +297,131 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         JsonNode users = jsonMapper.readTree(listed);
         assertThat(indexOf(users, adaUid)).isLessThan(indexOf(users, graceId));
 
-        mockMvc.perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(userBody("other-" + token, "ada-" + token + "@example.com", "Ada", "Other", "Ada", themeKey,
-                        "[\"player\"]", null)))
+        mockMvc.perform(
+                post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                userBody(
+                                        "other-" + token,
+                                        "ada-" + token + "@example.com",
+                                        "Ada",
+                                        "Other",
+                                        "Ada",
+                                        themeKey,
+                                        "[\"player\"]",
+                                        null
+                                )
+                        )
+        )
                 .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(UserService.EMAIL_NOT_UNIQUE));
         assertThat(firebase.customClaims("other-" + token).get(RoleClaims.ROLES)).isEqualTo(List.of());
         assertThat(firebase.customClaims("other-" + token)).doesNotContainKey(RoleClaims.PLAYER);
         assertThat(firebase.claimWriteCount("other-" + token)).isEqualTo(2);
 
         int claimWrites = firebase.claimWriteCount(adaUid);
-        mockMvc.perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(userBody(adaUid, "fresh-" + token + "@example.com", "Ada", "Lovelace", "Ada", themeKey,
-                        "[\"player\"]", null)))
+        mockMvc.perform(
+                post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                userBody(
+                                        adaUid,
+                                        "fresh-" + token + "@example.com",
+                                        "Ada",
+                                        "Lovelace",
+                                        "Ada",
+                                        themeKey,
+                                        "[\"player\"]",
+                                        null
+                                )
+                        )
+        )
                 .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(UserService.ALREADY_EXISTS));
         assertThat(firebase.claimWriteCount(adaUid)).isEqualTo(claimWrites);
 
-        mockMvc.perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(userBody("empty-" + token, "empty-" + token + "@example.com", "Empty", "Roles", "Empty",
-                        themeKey, "[]", null)))
+        mockMvc.perform(
+                post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                userBody(
+                                        "empty-" + token,
+                                        "empty-" + token + "@example.com",
+                                        "Empty",
+                                        "Roles",
+                                        "Empty",
+                                        themeKey,
+                                        "[]",
+                                        null
+                                )
+                        )
+        )
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(UserService.ROLES_REQUIRED));
 
-        mockMvc.perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(userBody("coach-" + token, "coach-" + token + "@example.com", "Coach", "Role", "Coach",
-                        themeKey, "[\"coach\"]", null)))
+        mockMvc.perform(
+                post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                userBody(
+                                        "coach-" + token,
+                                        "coach-" + token + "@example.com",
+                                        "Coach",
+                                        "Role",
+                                        "Coach",
+                                        themeKey,
+                                        "[\"coach\"]",
+                                        null
+                                )
+                        )
+        )
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(UserService.ROLE_INVALID));
 
-        mockMvc.perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(userBody("missing-" + token, "missing-" + token + "@example.com", "Missing", "Theme", "Miss",
-                        "not-a-theme-" + token, "[\"player\"]", null)))
+        mockMvc.perform(
+                post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                userBody(
+                                        "missing-" + token,
+                                        "missing-" + token + "@example.com",
+                                        "Missing",
+                                        "Theme",
+                                        "Miss",
+                                        "not-a-theme-" + token,
+                                        "[\"player\"]",
+                                        null
+                                )
+                        )
+        )
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(ThemeService.NOT_FOUND));
 
-        mockMvc.perform(put("/api/manager/users/" + adaUid).cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(userBody(adaUid, "ada-" + token + "@example.com", "Ada", "Lovelace", "Countess", themeKey,
-                        "[\"player\",\"manager\"]", 4L)))
-                .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(containsString("Stale version")));
+        mockMvc.perform(
+                put("/api/manager/users/" + adaUid).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                userBody(
+                                        adaUid,
+                                        "ada-" + token + "@example.com",
+                                        "Ada",
+                                        "Lovelace",
+                                        "Countess",
+                                        themeKey,
+                                        "[\"player\",\"manager\"]",
+                                        4L
+                                )
+                        )
+        )
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value(containsString("Stale version")));
         assertThat(firebase.customClaims(adaUid)).doesNotContainKey(RoleClaims.MANAGER);
         assertThat(firebase.customClaims(adaUid).get(RoleClaims.PLAYER)).isEqualTo(Boolean.TRUE);
 
-        mockMvc.perform(put("/api/manager/users/" + adaUid).cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(userBody(adaUid, "ada-" + token + "@example.com", "Ada", "Lovelace", "Countess", themeKey,
-                        "[\"player\",\"manager\"]", 0L)))
+        mockMvc.perform(
+                put("/api/manager/users/" + adaUid).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                userBody(
+                                        adaUid,
+                                        "ada-" + token + "@example.com",
+                                        "Ada",
+                                        "Lovelace",
+                                        "Countess",
+                                        themeKey,
+                                        "[\"player\",\"manager\"]",
+                                        0L
+                                )
+                        )
+        )
                 .andExpect(status().isOk()).andExpect(jsonPath("$.version").value(1))
                 .andExpect(jsonPath("$.roles[0]").value("player")).andExpect(jsonPath("$.roles[1]").value("manager"))
                 .andExpect(jsonPath("$.nickName").value("Countess"));
@@ -298,15 +431,39 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         assertThat(elevated.get(RoleClaims.PLAYER)).isEqualTo(Boolean.TRUE);
         assertThat(elevated.get(RoleClaims.ROLES)).isEqualTo(List.of("player", "manager"));
 
-        mockMvc.perform(put("/api/manager/users/" + adaUid).cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(userBody(adaUid, "ada-" + token + "@example.com", "Ada", "Lovelace", "Countess", themeKey,
-                        "[]", 1L)))
+        mockMvc.perform(
+                put("/api/manager/users/" + adaUid).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                userBody(
+                                        adaUid,
+                                        "ada-" + token + "@example.com",
+                                        "Ada",
+                                        "Lovelace",
+                                        "Countess",
+                                        themeKey,
+                                        "[]",
+                                        1L
+                                )
+                        )
+        )
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(UserService.ROLES_REQUIRED));
         assertThat(firebase.customClaims(adaUid).get(RoleClaims.MANAGER)).isEqualTo(Boolean.TRUE);
 
-        mockMvc.perform(put("/api/manager/users/" + adaUid).cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(userBody(adaUid, "ada-" + token + "@example.com", "Ada", "Lovelace", "Countess", themeKey,
-                        "[\"player\"]", 1L)))
+        mockMvc.perform(
+                put("/api/manager/users/" + adaUid).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                userBody(
+                                        adaUid,
+                                        "ada-" + token + "@example.com",
+                                        "Ada",
+                                        "Lovelace",
+                                        "Countess",
+                                        themeKey,
+                                        "[\"player\"]",
+                                        1L
+                                )
+                        )
+        )
                 .andExpect(status().isOk()).andExpect(jsonPath("$.roles[0]").value("player"))
                 .andExpect(jsonPath("$.roles[1]").doesNotExist());
 
@@ -315,11 +472,15 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         assertThat(cleared.get(RoleClaims.PLAYER)).isEqualTo(Boolean.TRUE);
         assertThat(cleared.get(RoleClaims.ROLES)).isEqualTo(List.of("player"));
 
-        mockMvc.perform(post("/api/manager/users/" + adaUid + "/password").cookie(manager)
-                .contentType(MediaType.APPLICATION_JSON).content("{\"password\":\"secret\"}"))
+        mockMvc.perform(
+                post("/api/manager/users/" + adaUid + "/password").cookie(manager)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"password\":\"secret\"}")
+        )
                 .andExpect(status().isNotFound());
-        mockMvc.perform(post("/api/manager/users/" + adaUid + "/reset-password").cookie(manager)
-                .contentType(MediaType.APPLICATION_JSON).content("{}")).andExpect(status().isNotFound());
+        mockMvc.perform(
+                post("/api/manager/users/" + adaUid + "/reset-password").cookie(manager)
+                        .contentType(MediaType.APPLICATION_JSON).content("{}")
+        ).andExpect(status().isNotFound());
 
         mockMvc.perform(get("/api/manager/users/missing-" + token).cookie(manager)).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.detail").value(UserService.NOT_FOUND));
@@ -365,22 +526,56 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         createTheme("Claims " + token, themeKey, true);
 
         String missingUid = "missing-auth-" + token;
-        firebase.failClaims(missingUid, new IdentityAdminException(IdentityAdminException.Kind.USER_NOT_FOUND,
-                IdentityAdminException.USER_MISSING));
-        mockMvc.perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(userBody(missingUid, missingUid + "@example.com", "Missing", "Auth", "Missing", themeKey,
-                        "[\"player\"]", null)))
+        firebase.failClaims(
+                missingUid,
+                new IdentityAdminException(
+                        IdentityAdminException.Kind.USER_NOT_FOUND,
+                        IdentityAdminException.USER_MISSING
+                )
+        );
+        mockMvc.perform(
+                post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                userBody(
+                                        missingUid,
+                                        missingUid + "@example.com",
+                                        "Missing",
+                                        "Auth",
+                                        "Missing",
+                                        themeKey,
+                                        "[\"player\"]",
+                                        null
+                                )
+                        )
+        )
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.detail").value(IdentityAdminException.USER_MISSING));
         assertThat(userRepository.findById(missingUid)).isEmpty();
         assertThat(firebase.claimWriteCount(missingUid)).isZero();
 
         String downUid = "claims-down-" + token;
-        firebase.failClaims(downUid,
-                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, IdentityAdminException.CLAIMS_FAILED));
-        mockMvc.perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(userBody(downUid, downUid + "@example.com", "Claims", "Down", "Claims", themeKey,
-                        "[\"player\"]", null)))
+        firebase.failClaims(
+                downUid,
+                new IdentityAdminException(
+                        IdentityAdminException.Kind.UNAVAILABLE,
+                        IdentityAdminException.CLAIMS_FAILED
+                )
+        );
+        mockMvc.perform(
+                post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                userBody(
+                                        downUid,
+                                        downUid + "@example.com",
+                                        "Claims",
+                                        "Down",
+                                        "Claims",
+                                        themeKey,
+                                        "[\"player\"]",
+                                        null
+                                )
+                        )
+        )
                 .andExpect(status().isServiceUnavailable())
                 .andExpect(jsonPath("$.detail").value(IdentityAdminException.CLAIMS_FAILED));
         assertThat(userRepository.findById(downUid)).isEmpty();
@@ -388,11 +583,28 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
 
         String keptUid = "kept-" + token;
         String keptId = createUser(keptUid, keptUid + "@example.com", "Kept", "Player", themeKey, "[\"player\"]");
-        firebase.failClaims(keptUid,
-                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, IdentityAdminException.CLAIMS_FAILED));
-        mockMvc.perform(put("/api/manager/users/" + keptId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(userBody(keptUid, keptUid + "@example.com", "Kept", "Player", "Kept", themeKey,
-                        "[\"player\",\"manager\"]", 0L)))
+        firebase.failClaims(
+                keptUid,
+                new IdentityAdminException(
+                        IdentityAdminException.Kind.UNAVAILABLE,
+                        IdentityAdminException.CLAIMS_FAILED
+                )
+        );
+        mockMvc.perform(
+                put("/api/manager/users/" + keptId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                userBody(
+                                        keptUid,
+                                        keptUid + "@example.com",
+                                        "Kept",
+                                        "Player",
+                                        "Kept",
+                                        themeKey,
+                                        "[\"player\",\"manager\"]",
+                                        0L
+                                )
+                        )
+        )
                 .andExpect(status().isServiceUnavailable())
                 .andExpect(jsonPath("$.detail").value(IdentityAdminException.CLAIMS_FAILED));
 
@@ -402,23 +614,40 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         assertThat(firebase.customClaims(keptUid)).doesNotContainKey(RoleClaims.MANAGER);
         assertThat(firebase.customClaims(keptUid).get(RoleClaims.PLAYER)).isEqualTo(Boolean.TRUE);
 
-        firebase.failRevoke(keptUid,
-                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, IdentityAdminException.REVOKE_FAILED));
-        mockMvc.perform(delete("/api/manager/users/" + keptId).cookie(manager)).andExpect(status().isServiceUnavailable())
+        firebase.failRevoke(
+                keptUid,
+                new IdentityAdminException(
+                        IdentityAdminException.Kind.UNAVAILABLE,
+                        IdentityAdminException.REVOKE_FAILED
+                )
+        );
+        mockMvc.perform(delete("/api/manager/users/" + keptId).cookie(manager))
+                .andExpect(status().isServiceUnavailable())
                 .andExpect(jsonPath("$.detail").value(IdentityAdminException.REVOKE_FAILED));
         assertThat(userRepository.findById(keptId)).isPresent();
         assertThat(firebase.refreshRevoked(keptUid)).isFalse();
         assertThat(firebase.customClaims(keptUid).get(RoleClaims.PLAYER)).isEqualTo(Boolean.TRUE);
         assertThat(firebase.customClaims(keptUid)).doesNotContainKey(RoleClaims.MANAGER);
 
-        firebase.failClaims(keptUid,
-                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, IdentityAdminException.CLAIMS_FAILED));
-        mockMvc.perform(delete("/api/manager/users/" + keptId).cookie(manager)).andExpect(status().isServiceUnavailable());
+        firebase.failClaims(
+                keptUid,
+                new IdentityAdminException(
+                        IdentityAdminException.Kind.UNAVAILABLE,
+                        IdentityAdminException.CLAIMS_FAILED
+                )
+        );
+        mockMvc.perform(delete("/api/manager/users/" + keptId).cookie(manager))
+                .andExpect(status().isServiceUnavailable());
         assertThat(userRepository.findById(keptId)).isPresent();
         assertThat(firebase.refreshRevoked(keptUid)).isFalse();
 
-        firebase.failClaims(keptUid, new IdentityAdminException(IdentityAdminException.Kind.USER_NOT_FOUND,
-                IdentityAdminException.USER_MISSING));
+        firebase.failClaims(
+                keptUid,
+                new IdentityAdminException(
+                        IdentityAdminException.Kind.USER_NOT_FOUND,
+                        IdentityAdminException.USER_MISSING
+                )
+        );
         mockMvc.perform(delete("/api/manager/users/" + keptId).cookie(manager)).andExpect(status().isNoContent());
         userIds.remove(keptId);
         assertThat(userRepository.findById(keptId)).isEmpty();
@@ -426,19 +655,29 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
 
     private String createTheme(String name, String path, boolean active) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                        .content(themeBody(name, path, active, "#000000", "#FFFFFF", null)))
+                .perform(
+                        post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                                .content(themeBody(name, path, active, "#000000", "#FFFFFF", null))
+                )
                 .andExpect(status().isCreated()).andReturn();
         String id = idOf(result);
         themeIds.add(id);
         return id;
     }
 
-    private String createUser(String uid, String email, String firstName, String lastName, String themeId,
-            String rolesJson) throws Exception {
+    private String createUser(
+            String uid,
+            String email,
+            String firstName,
+            String lastName,
+            String themeId,
+            String rolesJson
+    ) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                        .content(userBody(uid, email, firstName, lastName, firstName, themeId, rolesJson, null)))
+                .perform(
+                        post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                                .content(userBody(uid, email, firstName, lastName, firstName, themeId, rolesJson, null))
+                )
                 .andExpect(status().isCreated()).andReturn();
         String id = idOf(result);
         userIds.add(id);
@@ -450,29 +689,57 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
     }
 
     private static int indexOf(JsonNode documents, String id) {
+
         for (int i = 0; i < documents.size(); i++) {
+
             if (id.equals(documents.get(i).path("id").asString())) {
                 return i;
+
             }
+
         }
+
         return -1;
     }
 
-    private static String themeBody(String name, String path, boolean active, String primary, String secondary,
-            Long version) {
+    private static String themeBody(
+            String name,
+            String path,
+            boolean active,
+            String primary,
+            String secondary,
+            Long version
+    ) {
         String versionField = version == null ? "" : ",\"version\":" + version;
         return """
                 {"themeName":"%s","themePath":"%s","active":%s,"primary":"%s","secondary":"%s","createUser":"hacker"%s}
                 """.formatted(escape(name), escape(path), active, escape(primary), escape(secondary), versionField);
     }
 
-    private static String userBody(String uid, String email, String firstName, String lastName, String nickName,
-            String themeId, String rolesJson, Long version) {
+    private static String userBody(
+            String uid,
+            String email,
+            String firstName,
+            String lastName,
+            String nickName,
+            String themeId,
+            String rolesJson,
+            Long version
+    ) {
         String versionField = version == null ? "" : ",\"version\":" + version;
         return """
                 {"uid":"%s","emailAddr":"%s","firstName":"%s","lastName":"%s","nickName":"%s","themeId":"%s","roles":%s,"userPass":"secret","password":"secret","createUser":"hacker"%s}
-                """.formatted(escape(uid), escape(email), escape(firstName), escape(lastName), escape(nickName),
-                        escape(themeId), rolesJson, versionField);
+                """
+                .formatted(
+                        escape(uid),
+                        escape(email),
+                        escape(firstName),
+                        escape(lastName),
+                        escape(nickName),
+                        escape(themeId),
+                        rolesJson,
+                        versionField
+                );
     }
 
     private static String escape(String value) {
@@ -484,7 +751,14 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
     }
 
     private static VerifiedIdentity identity(String uid, List<String> roles) {
-        return new VerifiedIdentity(uid, uid + "@example.com", "Test User", "Test", "User", "google.com",
-                RoleClaims.forRoles(roles));
+        return new VerifiedIdentity(
+                uid,
+                uid + "@example.com",
+                "Test User",
+                "Test",
+                "User",
+                "google.com",
+                RoleClaims.forRoles(roles)
+        );
     }
 }

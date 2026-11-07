@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
@@ -16,6 +14,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriBuilder;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Server-side client for {@code https://api.collegefootballdata.com}. Sends
@@ -51,22 +51,28 @@ public final class CfbdClient {
     }
 
     /**
-     * {@code GET /games?year=&conference=SEC}. {@code week} and
-     * {@code seasonType} are omitted when empty.
+     * {@code GET /games?year=&conference=SEC}. {@code week} and {@code seasonType}
+     * are omitted when empty.
      */
     public List<CfbdGame> games(int year, Integer week, String seasonType) {
         return get("games", builder -> {
             UriBuilder uri = Objects.requireNonNull(builder, "uriBuilder").path("/games").queryParam("year", year)
                     .queryParam("conference", SEC);
+
             if (week != null) {
                 Integer weekNumber = Objects.requireNonNull(week, "week");
                 uri.queryParam("week", weekNumber);
+
             }
+
             if (StringUtils.hasText(seasonType)) {
                 String type = Objects.requireNonNull(seasonType, "seasonType");
                 uri.queryParam("seasonType", type);
+
             }
+
             return Objects.requireNonNull(uri.build(), "uri");
+
         }, GAMES);
     }
 
@@ -77,17 +83,20 @@ public final class CfbdClient {
         return get("calendar", builder -> {
             URI uri = Objects.requireNonNull(builder, "uriBuilder").path("/calendar").queryParam("year", year).build();
             return Objects.requireNonNull(uri, "uri");
+
         }, WEEKS);
     }
 
     /**
      * {@code GET /venues}. Used to fill city and state when import creates a venue.
-     * A venue missing from this list still imports; its city and state stay unknown.
+     * A venue missing from this list still imports; its city and state stay
+     * unknown.
      */
     public List<CfbdVenue> venues() {
         return get("venues", builder -> {
             URI uri = Objects.requireNonNull(builder, "uriBuilder").path("/venues").build();
             return Objects.requireNonNull(uri, "uri");
+
         }, VENUES);
     }
 
@@ -99,12 +108,15 @@ public final class CfbdClient {
             URI uri = Objects.requireNonNull(builder, "uriBuilder").path("/scoreboard")
                     .queryParam("classification", FBS).queryParam("conference", SEC).build();
             return Objects.requireNonNull(uri, "uri");
+
         }, SCOREBOARD);
     }
 
     private <T> List<T> get(String operation, Function<UriBuilder, URI> uri, ParameterizedTypeReference<List<T>> type) {
+
         if (!StringUtils.hasText(apiKey)) {
             throw new CfbdClientException(CfbdClientException.MISSING_KEY);
+
         }
 
         String credential = Objects.requireNonNull(apiKey, "apiKey");
@@ -115,27 +127,42 @@ public final class CfbdClient {
         try {
             List<T> body = Objects.requireNonNull(restClient.get(), "request").uri(uriFunction)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + credential).retrieve()
-                    .onStatus(status -> Objects.requireNonNull(status, "status").isError(),
-                            (request, response) -> fail(path, request, response))
+                    .onStatus(
+                            status -> Objects.requireNonNull(status, "status").isError(),
+                            (request, response) -> fail(path, request, response)
+                    )
                     .body(bodyType);
+
             if (body == null) {
                 log.warn("CFBD {} returned no body", path);
                 throw new CfbdClientException(CfbdClientException.EMPTY);
+
             }
+
             return body;
+
         } catch (CfbdClientException ex) {
             throw ex;
+
         } catch (RuntimeException ex) {
             CfbdClientException upstream = findCfbd(ex);
+
             if (upstream != null) {
                 throw upstream;
+
             }
+
             logFailure(path, credential, ex);
+
             if (ex instanceof ResourceAccessException) {
                 throw new CfbdClientException(CfbdClientException.UNREACHABLE);
+
             }
+
             throw new CfbdClientException(CfbdClientException.UNEXPECTED);
+
         }
+
     }
 
     private static void fail(String path, HttpRequest request, ClientHttpResponse response) throws IOException {
@@ -148,20 +175,29 @@ public final class CfbdClient {
 
     private static void logFailure(String path, String credential, RuntimeException ex) {
         String message = ex.getMessage();
+
         if (message != null && StringUtils.hasText(credential)) {
             message = message.replace(credential, "[redacted]");
+
         }
+
         log.warn("CFBD {} call failed ({}): {}", path, ex.getClass().getSimpleName(), message);
     }
 
     private static CfbdClientException findCfbd(Throwable error) {
         Throwable current = error;
+
         while (current != null) {
+
             if (current instanceof CfbdClientException cfbd) {
                 return cfbd;
+
             }
+
             current = current.getCause();
+
         }
+
         return null;
     }
 }

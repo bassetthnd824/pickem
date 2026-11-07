@@ -19,9 +19,9 @@ import com.google.firebase.auth.UserRecord;
 import com.google.firebase.internal.FirebaseProcessEnvironment;
 
 /**
- * Firebase Admin lookup used by {@link SeedMain}. Initialized on the first
- * call so a reference-data seed does not need credentials when no bootstrap
- * email is set.
+ * Firebase Admin lookup used by {@link SeedMain}. Initialized on the first call
+ * so a reference-data seed does not need credentials when no bootstrap email is
+ * set.
  */
 public final class FirebaseBootstrapIdentity implements BootstrapIdentity {
 
@@ -37,27 +37,35 @@ public final class FirebaseBootstrapIdentity implements BootstrapIdentity {
 
     @Override
     public Optional<BootstrapAccount> findByEmail(String email) {
+
         try {
             UserRecord user = auth().getUserByEmail(email);
             return Optional.of(toAccount(user));
 
         } catch (FirebaseAuthException ex) {
+
             if (ex.getAuthErrorCode() == AuthErrorCode.USER_NOT_FOUND) {
                 return Optional.empty();
+
             }
 
             throw new SeedFailedException("Could not look up Firebase user " + email, ex);
+
         }
+
     }
 
     @Override
     public void grantManagerAndPlayer(String uid) {
+
         try {
             auth().setCustomUserClaims(uid, RoleClaims.forRoles(List.of(RoleClaims.PLAYER, RoleClaims.MANAGER)));
 
         } catch (FirebaseAuthException ex) {
             throw new SeedFailedException("Could not grant manager and player claims to " + uid, ex);
+
         }
+
     }
 
     private FirebaseAuth auth() {
@@ -65,15 +73,20 @@ public final class FirebaseBootstrapIdentity implements BootstrapIdentity {
 
         if (current != null) {
             return current;
+
         }
 
         synchronized (this) {
+
             if (firebaseAuth == null) {
                 firebaseAuth = initialize();
+
             }
 
             return firebaseAuth;
+
         }
+
     }
 
     private FirebaseAuth initialize() {
@@ -84,17 +97,23 @@ public final class FirebaseBootstrapIdentity implements BootstrapIdentity {
             FirebaseOptions.Builder builder = FirebaseOptions.builder().setProjectId(environment.projectId());
 
             if (emulator) {
-                builder.setCredentials(GoogleCredentials
-                        .create(new AccessToken("owner", Date.from(Instant.now().plus(Duration.ofHours(1))))));
+                builder.setCredentials(
+                        GoogleCredentials
+                                .create(new AccessToken("owner", Date.from(Instant.now().plus(Duration.ofHours(1)))))
+                );
+
             } else {
                 builder.setCredentials(GoogleCredentials.getApplicationDefault());
+
             }
 
             return FirebaseAuth.getInstance(firebaseApp(builder.build()));
 
         } catch (IOException ex) {
             throw new SeedFailedException("Firebase Admin credentials are not configured", ex);
+
         }
+
     }
 
     private void publishAuthEmulator() {
@@ -102,12 +121,14 @@ public final class FirebaseBootstrapIdentity implements BootstrapIdentity {
 
         if (host == null || host.isBlank()) {
             return;
+
         }
 
         String current = System.getenv(SeedEnvironment.AUTH_HOST);
 
         if (current != null && !current.isBlank()) {
             return;
+
         }
 
         FirebaseProcessEnvironment.setenv(SeedEnvironment.AUTH_HOST, host);
@@ -118,6 +139,7 @@ public final class FirebaseBootstrapIdentity implements BootstrapIdentity {
 
         if (fromEnv != null && !fromEnv.isBlank()) {
             return true;
+
         }
 
         String configured = environment.authEmulatorHost();
@@ -125,15 +147,22 @@ public final class FirebaseBootstrapIdentity implements BootstrapIdentity {
     }
 
     private static FirebaseApp firebaseApp(FirebaseOptions options) {
+
         synchronized (FirebaseApp.class) {
+
             for (FirebaseApp app : FirebaseApp.getApps()) {
+
                 if (APP_NAME.equals(app.getName())) {
                     return app;
+
                 }
+
             }
 
             return FirebaseApp.initializeApp(options, APP_NAME);
+
         }
+
     }
 
     private static BootstrapAccount toAccount(UserRecord user) {

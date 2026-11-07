@@ -42,16 +42,25 @@ class GoogleProfileTests {
 
     @Test
     void rejectsMissingEmailOrName() {
-        assertThatThrownBy(() -> GoogleProfile
-                .from(new VerifiedIdentity("uid", " ", "Kenney", "Kenney", "C", "google.com", Map.of())))
-                        .isInstanceOf(InvalidCredentialException.class);
+        assertThatThrownBy(
+                () -> GoogleProfile
+                        .from(new VerifiedIdentity("uid", " ", "Kenney", "Kenney", "C", "google.com", Map.of()))
+        )
+                .isInstanceOf(InvalidCredentialException.class);
 
         assertThatThrownBy(() -> GoogleProfile.from(identity(" ", "", "", "google.com")))
                 .isInstanceOf(InvalidCredentialException.class);
     }
 
     private static VerifiedIdentity identity(String displayName, String givenName, String familyName, String provider) {
-        return new VerifiedIdentity("uid", "kenney@example.com", displayName, givenName, familyName, provider,
-                Map.of());
+        return new VerifiedIdentity(
+                "uid",
+                "kenney@example.com",
+                displayName,
+                givenName,
+                familyName,
+                provider,
+                Map.of()
+        );
     }
 }

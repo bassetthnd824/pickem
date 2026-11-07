@@ -7,8 +7,16 @@ import java.util.Map;
  * the token claims, including custom claims when the token was minted after
  * {@code setCustomUserClaims}.
  */
-public record VerifiedIdentity(String uid, String email, String displayName, String givenName, String familyName,
-        String signInProvider, Map<String, Object> claims) {
+public record VerifiedIdentity(
+        String uid,
+        String email,
+        String displayName,
+        String givenName,
+        String familyName,
+        String signInProvider,
+        Map<String, Object> claims
+) {
+
     public VerifiedIdentity {
         uid = uid == null ? "" : uid;
         email = email == null ? "" : email;

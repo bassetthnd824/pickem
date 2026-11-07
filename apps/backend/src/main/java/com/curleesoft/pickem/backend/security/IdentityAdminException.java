@@ -21,8 +21,7 @@ public class IdentityAdminException extends RuntimeException {
      * The Auth user is gone, or Admin could not complete the write.
      */
     public enum Kind {
-        USER_NOT_FOUND,
-        UNAVAILABLE
+        USER_NOT_FOUND, UNAVAILABLE
     }
 
     private final Kind kind;

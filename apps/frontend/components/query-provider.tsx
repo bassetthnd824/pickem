@@ -1,9 +1,10 @@
-"use client";
+'use client'
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
-import type { ReactNode } from "react";
-import { ApiError } from "../lib/api-client";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useState } from 'react'
+import type { ReactNode } from 'react'
+
+import { ApiError } from '@/lib/api-client'
 
 function makeQueryClient(): QueryClient {
   return new QueryClient({
@@ -16,16 +17,16 @@ function makeQueryClient(): QueryClient {
             error.status >= 400 &&
             error.status < 500
           ) {
-            return false;
+            return false
           }
-          return failureCount < 2;
+          return failureCount < 2
         },
       },
     },
-  });
+  })
 }
 
 export function QueryProvider({ children }: { children: ReactNode }) {
-  const [client] = useState(makeQueryClient);
-  return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+  const [client] = useState(makeQueryClient)
+  return <QueryClientProvider client={client}>{children}</QueryClientProvider>
 }

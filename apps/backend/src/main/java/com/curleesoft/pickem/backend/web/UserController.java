@@ -37,8 +37,11 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> list(@RequestParam(required = false) String emailAddr,
-            @RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName) {
+    public List<User> list(
+            @RequestParam(required = false) String emailAddr,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName
+    ) {
         return userService.search(emailAddr, firstName, lastName);
     }
 

@@ -15,9 +15,12 @@ public final class JobSecrets {
     }
 
     public static boolean matches(String provided, String expected) {
+
         if (expected == null || expected.isBlank() || provided == null) {
             return false;
+
         }
+
         byte[] actual = digest(provided);
         byte[] required = digest(expected);
         return MessageDigest.isEqual(actual, required);
@@ -25,10 +28,14 @@ public final class JobSecrets {
 
     private static byte[] digest(String value) {
         String text = Objects.requireNonNull(value, "value");
+
         try {
             return MessageDigest.getInstance("SHA-256").digest(text.getBytes(StandardCharsets.UTF_8));
+
         } catch (NoSuchAlgorithmException ex) {
             throw new IllegalStateException("SHA-256 is unavailable", ex);
+
         }
+
     }
 }

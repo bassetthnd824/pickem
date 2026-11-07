@@ -7,6 +7,7 @@ package com.curleesoft.pickem.backend.config;
  */
 @FunctionalInterface
 public interface AuditActorResolver {
+
     String SYSTEM_ACTOR = "system";
 
     String currentActor();

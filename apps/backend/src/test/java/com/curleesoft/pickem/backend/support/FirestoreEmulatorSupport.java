@@ -15,15 +15,20 @@ public abstract class FirestoreEmulatorSupport {
     private static final DockerImageName EMULATOR_IMAGE = DockerImageName
             .parse("gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators");
 
-    private static final String EXTERNAL_HOST = firstNonBlank(System.getenv("FIRESTORE_EMULATOR_HOST"),
-            System.getProperty("FIRESTORE_EMULATOR_HOST"));
+    private static final String EXTERNAL_HOST = firstNonBlank(
+            System.getenv("FIRESTORE_EMULATOR_HOST"),
+            System.getProperty("FIRESTORE_EMULATOR_HOST")
+    );
 
     private static final FirestoreEmulatorContainer CONTAINER = startIfNeeded();
 
     private static FirestoreEmulatorContainer startIfNeeded() {
+
         if (EXTERNAL_HOST != null) {
             return null;
+
         }
+
         FirestoreEmulatorContainer container = new FirestoreEmulatorContainer(EMULATOR_IMAGE);
         container.start();
         return container;
@@ -38,21 +43,31 @@ public abstract class FirestoreEmulatorSupport {
     }
 
     protected static String emulatorEndpoint() {
+
         if (EXTERNAL_HOST != null) {
             return EXTERNAL_HOST;
+
         }
+
         if (CONTAINER == null) {
             throw new IllegalStateException("Firestore emulator container was not started");
+
         }
+
         return CONTAINER.getEmulatorEndpoint();
     }
 
     private static String firstNonBlank(String... values) {
+
         for (String value : values) {
+
             if (value != null && !value.isBlank()) {
                 return value.trim();
+
             }
+
         }
+
         return null;
     }
 }

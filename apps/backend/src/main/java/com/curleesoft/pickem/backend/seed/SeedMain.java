@@ -22,8 +22,11 @@ public final class SeedMain {
         try {
             SeedEnvironment environment = SeedEnvironment.load(args);
             firestore = open(environment);
-            FirestoreSeeder seeder = new FirestoreSeeder(firestore, Clock.systemUTC(),
-                    new FirebaseBootstrapIdentity(environment));
+            FirestoreSeeder seeder = new FirestoreSeeder(
+                    firestore,
+                    Clock.systemUTC(),
+                    new FirebaseBootstrapIdentity(environment)
+            );
             Optional<String> manager = seeder.seed(environment.bootstrapEmail());
             report(environment, manager);
 
@@ -37,7 +40,9 @@ public final class SeedMain {
 
         } finally {
             close(firestore);
+
         }
+
     }
 
     private static Firestore open(SeedEnvironment environment) {
@@ -46,35 +51,47 @@ public final class SeedMain {
 
         if (emulatorHost != null) {
             builder.setEmulatorHost(emulatorHost).setCredentials(new FirestoreOptions.EmulatorCredentials());
+
         }
 
         return builder.build().getService();
     }
 
     private static void report(SeedEnvironment environment, Optional<String> managerUid) {
+
         if (environment.firestoreEmulatorHost() != null) {
             System.out.println(
-                    "Firestore emulator " + environment.firestoreEmulatorHost() + " project " + environment.projectId());
+                    "Firestore emulator " + environment.firestoreEmulatorHost() + " project "
+                            + environment.projectId()
+            );
+
         } else {
             System.out.println("Firestore project " + environment.projectId() + " (application default credentials)");
+
         }
 
-        System.out.println("Seeded " + SeedCatalog.venues().size() + " venues, " + SeedCatalog.teams().size()
-                + " teams, " + SeedCatalog.rivalries().size() + " rivalries, 1 season, " + SeedCatalog.WEEK_COUNT
-                + " weeks, " + SeedCatalog.matchups().size() + " matchups, " + SeedCatalog.themes().size()
-                + " themes.");
+        System.out.println(
+                "Seeded " + SeedCatalog.venues().size() + " venues, " + SeedCatalog.teams().size()
+                        + " teams, " + SeedCatalog.rivalries().size() + " rivalries, 1 season, "
+                        + SeedCatalog.WEEK_COUNT
+                        + " weeks, " + SeedCatalog.matchups().size() + " matchups, " + SeedCatalog.themes().size()
+                        + " themes."
+        );
 
         if (managerUid.isEmpty()) {
             System.out.println("Bootstrap manager skipped (PICKEM_BOOTSTRAP_MANAGER_EMAIL is unset).");
             return;
+
         }
 
         System.out.println("Granted manager and player to " + managerUid.get() + ".");
     }
 
     private static void close(Firestore firestore) {
+
         if (firestore == null) {
             return;
+
         }
 
         try {
@@ -82,6 +99,8 @@ public final class SeedMain {
 
         } catch (Exception ex) {
             System.err.println("Failed to close Firestore: " + ex.getMessage());
+
         }
+
     }
 }

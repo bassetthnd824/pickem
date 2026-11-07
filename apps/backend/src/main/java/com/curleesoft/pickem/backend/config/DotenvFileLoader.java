@@ -23,58 +23,81 @@ final class DotenvFileLoader {
 
     static LoadedDotenv load() {
         Path file = resolveFile();
+
         if (file == null) {
             return LoadedDotenv.missing();
+
         }
 
         Dotenv dotenv = Dotenv.configure().directory(file.getParent().toString())
                 .filename(file.getFileName().toString()).ignoreIfMalformed().ignoreIfMissing().load();
 
         Map<String, String> values = new LinkedHashMap<>();
+
         // entries() also returns the process environment and lets those values
         // replace the file. OS precedence is applied below, per key.
         for (DotenvEntry entry : dotenv.entries(Dotenv.Filter.DECLARED_IN_ENV_FILE)) {
+
             if (entry.getKey() == null || entry.getKey().isBlank()) {
                 continue;
+
             }
+
             if (entry.getValue() == null) {
                 continue;
+
             }
+
             if (System.getenv(entry.getKey()) != null) {
                 continue;
+
             }
+
             values.put(entry.getKey(), entry.getValue());
+
         }
+
         return new LoadedDotenv(file, values);
     }
 
     private static Path resolveFile() {
         List<Path> candidates = new ArrayList<>();
         String explicit = System.getenv(DOTENV_PATH_PROPERTY);
+
         if (explicit == null || explicit.isBlank()) {
             explicit = System.getProperty(DOTENV_PATH_PROPERTY);
+
         }
+
         if (explicit != null && !explicit.isBlank()) {
             Path configured = Path.of(explicit);
             return Files.isRegularFile(configured) ? configured.toAbsolutePath().normalize() : null;
+
         }
 
         Path cwd = Path.of("").toAbsolutePath().normalize();
         candidates.add(cwd.resolve(".env"));
         candidates.add(cwd.resolve("apps/backend/.env"));
+
         if (cwd.getParent() != null) {
             candidates.add(cwd.getParent().resolve(".env"));
+
         }
 
         for (Path candidate : candidates) {
+
             if (Files.isRegularFile(candidate)) {
                 return candidate.toAbsolutePath().normalize();
+
             }
+
         }
+
         return null;
     }
 
     record LoadedDotenv(Path file, Map<String, String> values) {
+
         boolean present() {
             return file != null;
         }

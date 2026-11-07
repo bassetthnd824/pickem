@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
-import { PicksGrid } from "../../../components/picks-grid";
-import { TitledPage } from "../../../components/titled-page";
+import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: "Home · Kenney's Pickem" };
+import { PicksGrid } from '@/components/picks-grid'
+import { TitledPage } from '@/components/titled-page'
+
+export const metadata: Metadata = { title: "Home · Kenney's Pickem" }
 
 export default function MainPage() {
   return (
-    <TitledPage title="Home" wide>
+    <TitledPage title='Home' wide>
       <PicksGrid />
     </TitledPage>
-  );
+  )
 }

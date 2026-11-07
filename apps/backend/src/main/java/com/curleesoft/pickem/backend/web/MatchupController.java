@@ -39,10 +39,15 @@ public class MatchupController {
     }
 
     @GetMapping
-    public List<Matchup> list(@RequestParam(required = false) String seasonId,
-            @RequestParam(required = false) String seasonWeekId, @RequestParam(required = false) Integer weekNumber,
-            @RequestParam(required = false) String matchupDate, @RequestParam(required = false) String teamId,
-            @RequestParam(required = false) String venueId, @RequestParam(required = false) Long cfbdGameId) {
+    public List<Matchup> list(
+            @RequestParam(required = false) String seasonId,
+            @RequestParam(required = false) String seasonWeekId,
+            @RequestParam(required = false) Integer weekNumber,
+            @RequestParam(required = false) String matchupDate,
+            @RequestParam(required = false) String teamId,
+            @RequestParam(required = false) String venueId,
+            @RequestParam(required = false) Long cfbdGameId
+    ) {
         return matchupService.search(seasonId, seasonWeekId, weekNumber, matchupDate, teamId, venueId, cfbdGameId);
     }
 

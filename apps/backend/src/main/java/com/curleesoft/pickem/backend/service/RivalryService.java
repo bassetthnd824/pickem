@@ -12,9 +12,9 @@ import com.curleesoft.pickem.backend.repository.RivalryRepository;
 import com.curleesoft.pickem.backend.repository.TeamRepository;
 
 /**
- * Manager CRUD for rivalries. Team snapshots are copied from the team
- * documents on each save of this rivalry. A search {@code team1Id} matches
- * either side, which is how the legacy rivalry search form looks up one team.
+ * Manager CRUD for rivalries. Team snapshots are copied from the team documents
+ * on each save of this rivalry. A search {@code team1Id} matches either side,
+ * which is how the legacy rivalry search form looks up one team.
  */
 @Service
 public class RivalryService {
@@ -41,8 +41,12 @@ public class RivalryService {
                 .filter(item -> name == null || SearchText.contains(item.getRivalryName(), name))
                 .filter(item -> first == null || first.equals(item.getTeam1Id()) || first.equals(item.getTeam2Id()))
                 .filter(item -> second == null || second.equals(item.getTeam2Id()))
-                .sorted(Comparator.comparing((Rivalry item) -> item.getRivalryName(),
-                        Comparator.nullsLast((String left, String right) -> left.compareTo(right))))
+                .sorted(
+                        Comparator.comparing(
+                                (Rivalry item) -> item.getRivalryName(),
+                                Comparator.nullsLast((String left, String right) -> left.compareTo(right))
+                        )
+                )
                 .toList();
     }
 
@@ -75,6 +79,7 @@ public class RivalryService {
 
         if (firstId != null && firstId.equals(secondId)) {
             throw new InvalidRequestException(TEAMS_EQUAL);
+
         }
 
         Team first = teamRepository.findById(firstId)

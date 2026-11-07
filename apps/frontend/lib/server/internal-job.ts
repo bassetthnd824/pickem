@@ -1,121 +1,122 @@
-import "server-only";
-import { createHash, timingSafeEqual } from "node:crypto";
-import type { NextResponse } from "next/server";
-import { SESSION_COOKIE_NAME } from "../session-gate";
-import { verifySchedulerOidc } from "./job-oidc";
+import type { NextResponse } from 'next/server'
+import { createHash, timingSafeEqual } from 'node:crypto'
+import 'server-only'
+
+import { verifySchedulerOidc } from '@/lib/server/job-oidc'
 import {
   authError,
   proxyApiRequest,
   proxyInternalJobCall,
-} from "./spring-proxy";
+} from '@/lib/server/spring-proxy'
+import { SESSION_COOKIE_NAME } from '@/lib/session-gate'
 
 /** Header the BFF and Spring share. Not the session cookie. */
-export const JOB_SECRET_HEADER = "x-pickem-job-secret";
+export const JOB_SECRET_HEADER = 'x-pickem-job-secret'
 
-export const INTERNAL_JOBS = new Set(["cfbd-scores", "cfbd-matchups"]);
+export const INTERNAL_JOBS = new Set(['cfbd-scores', 'cfbd-matchups'])
 
-export type JobDecision = "ok" | "forbidden" | "unauthorized";
+export type JobDecision = 'ok' | 'forbidden' | 'unauthorized'
 
 export function configuredJobSecret(): string {
-  return process.env.PICKEM_INTERNAL_JOB_SECRET?.trim() ?? "";
+  return process.env.PICKEM_INTERNAL_JOB_SECRET?.trim() ?? ''
 }
 
 export function jobAudience(): string {
-  return process.env.PICKEM_INTERNAL_JOB_AUDIENCE?.trim() ?? "";
+  return process.env.PICKEM_INTERNAL_JOB_AUDIENCE?.trim() ?? ''
 }
 
 export function configuredOidcEmails(): readonly string[] {
-  const raw = process.env.PICKEM_INTERNAL_JOB_OIDC_EMAILS ?? "";
-  const emails: string[] = [];
-  for (const part of raw.split(",")) {
-    const email = part.trim();
-    if (email !== "") {
-      emails.push(email);
+  const raw = process.env.PICKEM_INTERNAL_JOB_OIDC_EMAILS ?? ''
+  const emails: string[] = []
+  for (const part of raw.split(',')) {
+    const email = part.trim()
+    if (email !== '') {
+      emails.push(email)
     }
   }
-  return emails;
+  return emails
 }
 
 export function secretsMatch(provided: string, expected: string): boolean {
-  if (expected === "") {
-    return false;
+  if (expected === '') {
+    return false
   }
-  const actual = createHash("sha256").update(provided, "utf8").digest();
-  const required = createHash("sha256").update(expected, "utf8").digest();
-  return timingSafeEqual(actual, required);
+  const actual = createHash('sha256').update(provided, 'utf8').digest()
+  const required = createHash('sha256').update(expected, 'utf8').digest()
+  return timingSafeEqual(actual, required)
 }
 
 export function jobFromSegments(segments: readonly string[]): string {
-  const root = segments[0];
-  const kind = segments[1];
-  const job = segments[2];
+  const root = segments[0]
+  const kind = segments[1]
+  const job = segments[2]
   if (
     segments.length !== 3 ||
-    root !== "internal" ||
-    kind !== "jobs" ||
+    root !== 'internal' ||
+    kind !== 'jobs' ||
     job === undefined
   ) {
-    return "";
+    return ''
   }
-  return job;
+  return job
 }
 
 function hasSessionCookie(request: Request): boolean {
-  const header = request.headers.get("cookie");
+  const header = request.headers.get('cookie')
   if (!header) {
-    return false;
+    return false
   }
-  for (const part of header.split(";")) {
-    const eq = part.indexOf("=");
-    const name = (eq === -1 ? part : part.slice(0, eq)).trim();
+  for (const part of header.split(';')) {
+    const eq = part.indexOf('=')
+    const name = (eq === -1 ? part : part.slice(0, eq)).trim()
     if (name === SESSION_COOKIE_NAME) {
-      return true;
+      return true
     }
   }
-  return false;
+  return false
 }
 
 function bearerToken(request: Request): string | null {
-  const header = request.headers.get("authorization");
+  const header = request.headers.get('authorization')
   if (!header) {
-    return null;
+    return null
   }
-  const match = /^Bearer\s+(\S+)$/i.exec(header.trim());
-  const token = match?.[1];
-  if (!token || token.split(".").length !== 3) {
-    return null;
+  const match = /^Bearer\s+(\S+)$/i.exec(header.trim())
+  const token = match?.[1]
+  if (!token || token.split('.').length !== 3) {
+    return null
   }
-  return token;
+  return token
 }
 
 export async function authorizeInternalJob(
   request: Request,
 ): Promise<JobDecision> {
-  const secret = configuredJobSecret();
-  const provided = request.headers.get(JOB_SECRET_HEADER)?.trim() ?? "";
+  const secret = configuredJobSecret()
+  const provided = request.headers.get(JOB_SECRET_HEADER)?.trim() ?? ''
   if (secretsMatch(provided, secret)) {
-    return "ok";
+    return 'ok'
   }
-  const token = bearerToken(request);
-  const audience = jobAudience();
-  const allowedEmails = configuredOidcEmails();
-  if (token && audience !== "" && allowedEmails.length > 0) {
+  const token = bearerToken(request)
+  const audience = jobAudience()
+  const allowedEmails = configuredOidcEmails()
+  if (token && audience !== '' && allowedEmails.length > 0) {
     try {
       if (await verifySchedulerOidc(token, audience, allowedEmails)) {
-        return "ok";
+        return 'ok'
       }
     } catch {
-      return hasSessionCookie(request) ? "forbidden" : "unauthorized";
+      return hasSessionCookie(request) ? 'forbidden' : 'unauthorized'
     }
   }
-  return hasSessionCookie(request) ? "forbidden" : "unauthorized";
+  return hasSessionCookie(request) ? 'forbidden' : 'unauthorized'
 }
 
 function rejected(decision: JobDecision): NextResponse {
-  if (decision === "forbidden") {
-    return authError(403, "Internal jobs do not accept a session cookie");
+  if (decision === 'forbidden') {
+    return authError(403, 'Internal jobs do not accept a session cookie')
   }
-  return authError(401, "Internal job credential is required");
+  return authError(401, 'Internal job credential is required')
 }
 
 /**
@@ -127,25 +128,25 @@ export async function handleInternalJob(
   request: Request,
   job: string,
 ): Promise<NextResponse> {
-  if (request.method !== "POST") {
-    return authError(405, "Method not allowed");
+  if (request.method !== 'POST') {
+    return authError(405, 'Method not allowed')
   }
-  const decision = await authorizeInternalJob(request);
-  if (decision !== "ok") {
-    return rejected(decision);
+  const decision = await authorizeInternalJob(request)
+  if (decision !== 'ok') {
+    return rejected(decision)
   }
   if (!INTERNAL_JOBS.has(job)) {
-    return authError(404, "Not found");
+    return authError(404, 'Not found')
   }
-  return proxyInternalJobCall(request, job, configuredJobSecret());
+  return proxyInternalJobCall(request, job, configuredJobSecret())
 }
 
 export function dispatchCaughtApi(
   request: Request,
   segments: readonly string[],
 ): Promise<NextResponse> {
-  if (segments[0] === "internal") {
-    return handleInternalJob(request, jobFromSegments(segments));
+  if (segments[0] === 'internal') {
+    return handleInternalJob(request, jobFromSegments(segments))
   }
-  return proxyApiRequest(request, segments);
+  return proxyApiRequest(request, segments)
 }

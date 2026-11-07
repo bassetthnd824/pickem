@@ -33,7 +33,9 @@ public final class TransactionReads {
         } catch (ExecutionException ex) {
             Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
             throw new FirestoreAccessException("Failed to read Firestore", cause);
+
         }
+
     }
 
     public static boolean documentExists(Transaction transaction, DocumentReference reference) {
@@ -51,14 +53,20 @@ public final class TransactionReads {
         } catch (ExecutionException ex) {
             Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
             throw new FirestoreAccessException("Failed to read Firestore", cause);
+
         }
+
     }
 
     public static boolean anotherDocumentMatches(Transaction transaction, Query query, String documentId) {
+
         for (QueryDocumentSnapshot found : get(transaction, query).getDocuments()) {
+
             if (!found.getId().equals(documentId)) {
                 return true;
+
             }
+
         }
 
         return false;

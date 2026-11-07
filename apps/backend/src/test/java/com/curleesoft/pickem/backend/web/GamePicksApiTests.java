@@ -113,44 +113,57 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
     @BeforeEach
     void signInManager() {
         firebase.clear();
-        manager = new Cookie(SessionCookies.NAME,
-                firebase.issueCookie(identity("manager-" + UUID.randomUUID(), List.of("manager"))));
+        manager = new Cookie(
+                SessionCookies.NAME,
+                firebase.issueCookie(identity("manager-" + UUID.randomUUID(), List.of("manager")))
+        );
     }
 
     @AfterEach
     void deleteFixtures() {
+
         for (String userId : userIds) {
+
             for (Pick pick : pickRepository.findByUserId(userId)) {
                 pickRepository.delete(pick.getId());
+
             }
+
         }
 
         for (String id : matchupIds) {
             matchupRepository.delete(id);
+
         }
 
         for (String id : rivalryIds) {
             rivalryRepository.delete(id);
+
         }
 
         for (String id : teamIds) {
             teamRepository.delete(id);
+
         }
 
         for (String id : venueIds) {
             venueRepository.delete(id);
+
         }
 
         for (String id : weekIds) {
             seasonWeekRepository.delete(id);
+
         }
 
         for (String id : seasonIds) {
             seasonRepository.delete(id);
+
         }
 
         for (String userId : userIds) {
             userRepository.delete(userId);
+
         }
 
         userIds.clear();
@@ -178,7 +191,8 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         assertThat(leaderboardStatus).isIn(200, 404);
         mockMvc.perform(post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest());
-        int managerStatus = mockMvc.perform(get("/api/game/main").cookie(manager)).andReturn().getResponse().getStatus();
+        int managerStatus = mockMvc.perform(get("/api/game/main").cookie(manager)).andReturn().getResponse()
+                .getStatus();
         assertThat(managerStatus).isIn(200, 404);
         int managerBoard = mockMvc.perform(get("/api/game/leaderboard").cookie(manager)).andReturn().getResponse()
                 .getStatus();
@@ -194,16 +208,25 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         Slate slate = arrange();
         Cookie player = player("player-" + UUID.randomUUID());
 
-        saveWhileOpen(player, slate.currentBegin(), slate.currentWeekId(),
+        saveWhileOpen(
+                player,
+                slate.currentBegin(),
+                slate.currentWeekId(),
                 pickRow(slate.correctId(), slate.correctHomeId(), 5) + ","
                         + pickRow(slate.wrongId(), slate.wrongHomeId(), 1) + ","
-                        + pickRow(slate.alphaId(), null, null));
-        mockMvc.perform(post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON)
-                .content(picksBody(slate.futureWeekId(), pickRow(slate.futureId(), slate.futureAwayId(), 2))))
+                        + pickRow(slate.alphaId(), null, null)
+        );
+        mockMvc.perform(
+                post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON)
+                        .content(picksBody(slate.futureWeekId(), pickRow(slate.futureId(), slate.futureAwayId(), 2)))
+        )
                 .andExpect(status().isOk());
 
-        JsonNode main = jsonMapper.readTree(mockMvc.perform(get("/api/game/main").cookie(player)).andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString());
+        JsonNode main = jsonMapper
+                .readTree(
+                        mockMvc.perform(get("/api/game/main").cookie(player)).andExpect(status().isOk())
+                                .andReturn().getResponse().getContentAsString()
+                );
 
         assertThat(main.path("seasonId").asString()).isEqualTo(slate.seasonId());
         assertThat(main.path("season").asString()).isEqualTo(slate.year());
@@ -213,7 +236,8 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         assertThat(main.path("weeks").get(1).path("id").asString()).isEqualTo(slate.futureWeekId());
         assertThat(main.path("weeks").get(1).path("currentOrPast").asBoolean()).isFalse();
 
-        long conference = teamRepository.findAll().stream().filter(team -> Boolean.TRUE.equals(team.getConferenceMember()))
+        long conference = teamRepository.findAll().stream()
+                .filter(team -> Boolean.TRUE.equals(team.getConferenceMember()))
                 .count();
         assertThat(main.path("numberOfConferenceTeams").asInt()).isEqualTo((int) conference);
         assertThat(conference).isLessThan(teamRepository.findAll().size());
@@ -272,8 +296,11 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         Cookie first = player(firstUid);
         Cookie second = player(secondUid);
 
-        JsonNode created = save(first, slate.currentWeekId(),
-                pickRow(slate.correctId(), slate.correctHomeId(), 5) + "," + pickRow(slate.wrongId(), "  ", 9));
+        JsonNode created = save(
+                first,
+                slate.currentWeekId(),
+                pickRow(slate.correctId(), slate.correctHomeId(), 5) + "," + pickRow(slate.wrongId(), "  ", 9)
+        );
         assertThat(created).hasSize(1);
         assertThat(created.get(0).path("userId").asString()).isEqualTo(firstUid);
         assertThat(created.get(0).path("matchupId").asString()).isEqualTo(slate.correctId());
@@ -284,9 +311,12 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         assertThat(pickId).isEqualTo(PickRepository.documentId(firstUid, slate.correctId()));
         assertThat(pickRepository.findByUserId(firstUid)).hasSize(1);
 
-        JsonNode updated = save(first, slate.currentWeekId(),
+        JsonNode updated = save(
+                first,
+                slate.currentWeekId(),
                 pickRow(slate.correctId(), slate.correctAwayId(), 4) + ","
-                        + pickRow(slate.wrongId(), slate.wrongHomeId(), 1));
+                        + pickRow(slate.wrongId(), slate.wrongHomeId(), 1)
+        );
         assertThat(updated).hasSize(2);
         JsonNode corrected = findPick(updated, slate.correctId());
         assertThat(corrected.path("id").asString()).isEqualTo(pickId);
@@ -306,22 +336,35 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         assertThat(stillFirst.getRank()).isEqualTo(4);
 
         JsonNode firstView = jsonMapper.readTree(
-                mockMvc.perform(get("/api/game/main").cookie(first)).andExpect(status().isOk()).andReturn().getResponse()
-                        .getContentAsString());
+                mockMvc.perform(get("/api/game/main").cookie(first)).andExpect(status().isOk()).andReturn()
+                        .getResponse()
+                        .getContentAsString()
+        );
         JsonNode secondView = jsonMapper.readTree(
-                mockMvc.perform(get("/api/game/main").cookie(second)).andExpect(status().isOk()).andReturn().getResponse()
-                        .getContentAsString());
-        assertThat(matchup(firstView.path("weeks").get(0).path("matchups"), slate.correctId()).path("pickedTeamId")
-                .asString()).isEqualTo(slate.correctAwayId());
-        assertThat(matchup(secondView.path("weeks").get(0).path("matchups"), slate.correctId()).path("pickedTeamId")
-                .asString()).isEqualTo(slate.correctHomeId());
+                mockMvc.perform(get("/api/game/main").cookie(second)).andExpect(status().isOk()).andReturn()
+                        .getResponse()
+                        .getContentAsString()
+        );
+        assertThat(
+                matchup(firstView.path("weeks").get(0).path("matchups"), slate.correctId()).path("pickedTeamId")
+                        .asString()
+        ).isEqualTo(slate.correctAwayId());
+        assertThat(
+                matchup(secondView.path("weeks").get(0).path("matchups"), slate.correctId()).path("pickedTeamId")
+                        .asString()
+        ).isEqualTo(slate.correctHomeId());
 
-        mockMvc.perform(post("/api/game/picks").cookie(first).contentType(MediaType.APPLICATION_JSON)
-                .content(picksBody(slate.currentWeekId(), pickRow(slate.wrongId(), slate.wrongHomeId(), 4))))
+        mockMvc.perform(
+                post("/api/game/picks").cookie(first).contentType(MediaType.APPLICATION_JSON)
+                        .content(picksBody(slate.currentWeekId(), pickRow(slate.wrongId(), slate.wrongHomeId(), 4)))
+        )
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(PickService.RANK_NOT_UNIQUE));
 
-        JsonNode cleared = save(first, slate.currentWeekId(),
-                pickRow(slate.correctId(), null, null) + "," + pickRow(slate.wrongId(), slate.correctAwayId(), 4));
+        JsonNode cleared = save(
+                first,
+                slate.currentWeekId(),
+                pickRow(slate.correctId(), null, null) + "," + pickRow(slate.wrongId(), slate.correctAwayId(), 4)
+        );
         assertThat(cleared).hasSize(1);
         assertThat(cleared.get(0).path("matchupId").asString()).isEqualTo(slate.wrongId());
         assertThat(pickRepository.findById(pickId)).isEmpty();
@@ -334,28 +377,62 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         pin(slate.currentBegin().minusDays(1));
         Cookie player = player("player-" + UUID.randomUUID());
 
-        reject(player, slate.currentWeekId(), pickRow(slate.correctId(), slate.correctHomeId(), 0),
-                PickService.RANK_INVALID);
-        reject(player, slate.currentWeekId(), pickRow(slate.correctId(), slate.correctHomeId(), 1_000_000),
-                PickService.RANK_INVALID);
-        reject(player, slate.currentWeekId(), pickRow(slate.correctId(), slate.correctHomeId(), null),
-                PickService.RANK_INVALID);
-        reject(player, slate.currentWeekId(), pickRow(slate.correctId(), slate.wrongHomeId(), 1),
-                PickService.TEAM_NOT_IN_MATCHUP);
-        reject(player, slate.currentWeekId(), pickRow(slate.futureId(), slate.futureAwayId(), 1),
-                PickService.MATCHUP_WEEK);
-        reject(player, slate.currentWeekId(), pickRow("missing-matchup", slate.correctHomeId(), 1),
-                "Matchup not found");
-        reject(player, "missing-week", pickRow(slate.correctId(), slate.correctHomeId(), 1),
-                SeasonWeekService.NOT_FOUND);
-        reject(player, slate.currentWeekId(),
+        reject(
+                player,
+                slate.currentWeekId(),
+                pickRow(slate.correctId(), slate.correctHomeId(), 0),
+                PickService.RANK_INVALID
+        );
+        reject(
+                player,
+                slate.currentWeekId(),
+                pickRow(slate.correctId(), slate.correctHomeId(), 1_000_000),
+                PickService.RANK_INVALID
+        );
+        reject(
+                player,
+                slate.currentWeekId(),
+                pickRow(slate.correctId(), slate.correctHomeId(), null),
+                PickService.RANK_INVALID
+        );
+        reject(
+                player,
+                slate.currentWeekId(),
+                pickRow(slate.correctId(), slate.wrongHomeId(), 1),
+                PickService.TEAM_NOT_IN_MATCHUP
+        );
+        reject(
+                player,
+                slate.currentWeekId(),
+                pickRow(slate.futureId(), slate.futureAwayId(), 1),
+                PickService.MATCHUP_WEEK
+        );
+        reject(
+                player,
+                slate.currentWeekId(),
+                pickRow("missing-matchup", slate.correctHomeId(), 1),
+                "Matchup not found"
+        );
+        reject(
+                player,
+                "missing-week",
+                pickRow(slate.correctId(), slate.correctHomeId(), 1),
+                SeasonWeekService.NOT_FOUND
+        );
+        reject(
+                player,
+                slate.currentWeekId(),
                 pickRow(slate.correctId(), slate.correctHomeId(), 1) + ","
                         + pickRow(slate.correctId(), slate.correctAwayId(), 2),
-                PickService.MATCHUP_DUPLICATE);
-        reject(player, slate.currentWeekId(),
+                PickService.MATCHUP_DUPLICATE
+        );
+        reject(
+                player,
+                slate.currentWeekId(),
                 pickRow(slate.correctId(), slate.correctHomeId(), 1) + ","
                         + pickRow(slate.wrongId(), slate.wrongHomeId(), 1),
-                PickService.RANK_NOT_UNIQUE);
+                PickService.RANK_NOT_UNIQUE
+        );
         assertThat(pickRepository.findByUserId(userIds.get(userIds.size() - 1))).isEmpty();
     }
 
@@ -375,8 +452,10 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
                 .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(PickService.WEEK_LOCKED));
         assertThat(pickRepository.findByUserId(uid)).isEmpty();
 
-        mockMvc.perform(post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON)
-                .content(picksBody(slate.futureWeekId(), pickRow(slate.futureId(), slate.futureAwayId(), 2))))
+        mockMvc.perform(
+                post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON)
+                        .content(picksBody(slate.futureWeekId(), pickRow(slate.futureId(), slate.futureAwayId(), 2)))
+        )
                 .andExpect(status().isOk());
         assertThat(pickRepository.findByUserId(uid)).hasSize(1);
     }
@@ -392,14 +471,21 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         tied.setWinningTeamId(slate.alphaHomeId());
         matchupRepository.save(tied);
 
-        saveWhileOpen(player, slate.currentBegin(), slate.currentWeekId(),
-                pickRow(slate.alphaId(), slate.alphaHomeId(), 5));
+        saveWhileOpen(
+                player,
+                slate.currentBegin(),
+                slate.currentWeekId(),
+                pickRow(slate.alphaId(), slate.alphaHomeId(), 5)
+        );
 
         JsonNode board = leaderboard(player, slate.seasonId());
         assertThat(standing(board.path("standings"), uid).path("score").asLong()).isZero();
 
-        JsonNode main = jsonMapper.readTree(mockMvc.perform(get("/api/game/main").cookie(player)).andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString());
+        JsonNode main = jsonMapper
+                .readTree(
+                        mockMvc.perform(get("/api/game/main").cookie(player)).andExpect(status().isOk())
+                                .andReturn().getResponse().getContentAsString()
+                );
         JsonNode row = matchup(main.path("weeks").get(0).path("matchups"), slate.alphaId());
         assertThat(row.path("homeTeamScore").asInt()).isEqualTo(14);
         assertThat(row.path("awayTeamScore").asInt()).isEqualTo(14);
@@ -419,17 +505,31 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         String ghostUid = "ghost-" + UUID.randomUUID();
         Cookie ghost = player(ghostUid);
 
-        saveWhileOpen(ada, slate.currentBegin(), slate.currentWeekId(),
-                pickRow(slate.correctId(), slate.correctHomeId(), 5));
-        saveWhileOpen(bea, slate.currentBegin(), slate.currentWeekId(),
+        saveWhileOpen(
+                ada,
+                slate.currentBegin(),
+                slate.currentWeekId(),
+                pickRow(slate.correctId(), slate.correctHomeId(), 5)
+        );
+        saveWhileOpen(
+                bea,
+                slate.currentBegin(),
+                slate.currentWeekId(),
                 pickRow(slate.correctId(), slate.correctHomeId(), 3) + ","
                         + pickRow(slate.wrongId(), slate.wrongHomeId(), 1) + ","
-                        + pickRow(slate.alphaId(), slate.alphaHomeId(), 2));
-        mockMvc.perform(post("/api/game/picks").cookie(bea).contentType(MediaType.APPLICATION_JSON)
-                .content(picksBody(slate.futureWeekId(), pickRow(slate.futureId(), slate.futureHomeId(), 4))))
+                        + pickRow(slate.alphaId(), slate.alphaHomeId(), 2)
+        );
+        mockMvc.perform(
+                post("/api/game/picks").cookie(bea).contentType(MediaType.APPLICATION_JSON)
+                        .content(picksBody(slate.futureWeekId(), pickRow(slate.futureId(), slate.futureHomeId(), 4)))
+        )
                 .andExpect(status().isOk());
-        saveWhileOpen(ghost, slate.currentBegin(), slate.currentWeekId(),
-                pickRow(slate.correctId(), slate.correctHomeId(), 6));
+        saveWhileOpen(
+                ghost,
+                slate.currentBegin(),
+                slate.currentWeekId(),
+                pickRow(slate.correctId(), slate.correctHomeId(), 6)
+        );
 
         Matchup futureGame = matchupRepository.findById(slate.futureId()).orElseThrow();
         assertThat(futureGame.getWinningTeamId()).isEqualTo(slate.futureHomeId());
@@ -487,8 +587,12 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         String uid = "lb-once-" + token();
         Cookie player = signIn(uid, "Once");
 
-        saveWhileOpen(player, slate.currentBegin(), slate.currentWeekId(),
-                pickRow(slate.correctId(), slate.correctHomeId(), 5));
+        saveWhileOpen(
+                player,
+                slate.currentBegin(),
+                slate.currentWeekId(),
+                pickRow(slate.correctId(), slate.correctHomeId(), 5)
+        );
 
         Pick extra = new Pick();
         extra.setId(uid + "__extra");
@@ -510,22 +614,29 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
 
         try {
             return save(player, weekId, picks);
+
         } finally {
             PinnedClockConfig.NOW.set(prior);
+
         }
+
     }
 
     private JsonNode save(Cookie player, String weekId, String picks) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON)
-                        .content(picksBody(weekId, picks)))
+                .perform(
+                        post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON)
+                                .content(picksBody(weekId, picks))
+                )
                 .andExpect(status().isOk()).andReturn();
         return jsonMapper.readTree(result.getResponse().getContentAsString());
     }
 
     private void reject(Cookie player, String weekId, String picks, String detail) throws Exception {
-        mockMvc.perform(post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON)
-                .content(picksBody(weekId, picks))).andExpect(status().isBadRequest())
+        mockMvc.perform(
+                post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON)
+                        .content(picksBody(weekId, picks))
+        ).andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.detail").value(detail));
     }
 
@@ -556,20 +667,85 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         String currentWeekId = createWeek(seasonId, 1, thursday, thursday.plusDays(6));
         LocalDate futureBegin = thursday.plusDays(7);
         String futureWeekId = createWeek(seasonId, 2, futureBegin, futureBegin.plusDays(6));
-        String correctId = createMatchup(seasonId, currentWeekId, 1, thursday.plusDays(1).toString(), correctHomeId,
-                correctAwayId, venueId, 31, 14);
-        String wrongId = createMatchup(seasonId, currentWeekId, 1, thursday.toString(), wrongHomeId, correctAwayId,
-                venueId, 10, 24);
-        String alphaMatchupId = createMatchup(seasonId, currentWeekId, 1, thursday.toString(), alphaIdTeam,
-                futureHomeId, venueId, null, null);
-        String zuluMatchupId = createMatchup(seasonId, currentWeekId, 1, thursday.plusDays(2).toString(), zuluIdTeam,
-                futureAwayId, venueId, null, null);
-        String futureId = createMatchup(seasonId, futureWeekId, 2, futureBegin.toString(), futureHomeId, futureAwayId,
-                venueId, 21, 7);
+        String correctId = createMatchup(
+                seasonId,
+                currentWeekId,
+                1,
+                thursday.plusDays(1).toString(),
+                correctHomeId,
+                correctAwayId,
+                venueId,
+                31,
+                14
+        );
+        String wrongId = createMatchup(
+                seasonId,
+                currentWeekId,
+                1,
+                thursday.toString(),
+                wrongHomeId,
+                correctAwayId,
+                venueId,
+                10,
+                24
+        );
+        String alphaMatchupId = createMatchup(
+                seasonId,
+                currentWeekId,
+                1,
+                thursday.toString(),
+                alphaIdTeam,
+                futureHomeId,
+                venueId,
+                null,
+                null
+        );
+        String zuluMatchupId = createMatchup(
+                seasonId,
+                currentWeekId,
+                1,
+                thursday.plusDays(2).toString(),
+                zuluIdTeam,
+                futureAwayId,
+                venueId,
+                null,
+                null
+        );
+        String futureId = createMatchup(
+                seasonId,
+                futureWeekId,
+                2,
+                futureBegin.toString(),
+                futureHomeId,
+                futureAwayId,
+                venueId,
+                21,
+                7
+        );
 
-        return new Slate(seasonId, year, currentWeekId, futureWeekId, correctId, wrongId, alphaMatchupId, zuluMatchupId,
-                futureId, correctHomeId, correctHomeName, correctAwayId, correctAwayName, wrongHomeId, futureAwayId,
-                venueName, cityState, rivalryName, alphaIdTeam, futureHomeId, thursday);
+        return new Slate(
+                seasonId,
+                year,
+                currentWeekId,
+                futureWeekId,
+                correctId,
+                wrongId,
+                alphaMatchupId,
+                zuluMatchupId,
+                futureId,
+                correctHomeId,
+                correctHomeName,
+                correctAwayId,
+                correctAwayName,
+                wrongHomeId,
+                futureAwayId,
+                venueName,
+                cityState,
+                rivalryName,
+                alphaIdTeam,
+                futureHomeId,
+                thursday
+        );
     }
 
     private Cookie player(String uid) {
@@ -587,9 +763,12 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
 
     private String createSeason(String year, LocalDate begin, LocalDate end, boolean current) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                        {"season":"%s","beginDate":"%s","endDate":"%s","isCurrent":%s}
-                        """.formatted(year, begin, end, current))).andExpect(status().isCreated()).andReturn();
+                .perform(
+                        post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
+                                {"season":"%s","beginDate":"%s","endDate":"%s","isCurrent":%s}
+                                """.formatted(year, begin, end, current))
+                )
+                .andExpect(status().isCreated()).andReturn();
         String id = idOf(result);
         seasonIds.add(id);
         return id;
@@ -597,10 +776,12 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
 
     private String createWeek(String seasonId, int weekNumber, LocalDate begin, LocalDate end) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/season-weeks").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"seasonId":"%s","weekNumber":%d,"beginDate":"%s","endDate":"%s"}
-                                """.formatted(seasonId, weekNumber, begin, end)))
+                .perform(
+                        post("/api/manager/season-weeks").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {"seasonId":"%s","weekNumber":%d,"beginDate":"%s","endDate":"%s"}
+                                        """.formatted(seasonId, weekNumber, begin, end))
+                )
                 .andExpect(status().isCreated()).andReturn();
         String id = idOf(result);
         weekIds.add(id);
@@ -630,20 +811,47 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
 
     private String createRivalry(String name, String team1Id, String team2Id) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/rivalries").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                        {"rivalryName":"%s","team1Id":"%s","team2Id":"%s"}
-                        """.formatted(escape(name), escape(team1Id), escape(team2Id)))).andExpect(status().isCreated())
+                .perform(
+                        post("/api/manager/rivalries").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {"rivalryName":"%s","team1Id":"%s","team2Id":"%s"}
+                                        """.formatted(escape(name), escape(team1Id), escape(team2Id)))
+                )
+                .andExpect(status().isCreated())
                 .andReturn();
         return idOf(result);
     }
 
-    private String createMatchup(String seasonId, String seasonWeekId, int weekNumber, String date, String homeTeamId,
-            String awayTeamId, String venueId, Integer homeScore, Integer awayScore) throws Exception {
+    private String createMatchup(
+            String seasonId,
+            String seasonWeekId,
+            int weekNumber,
+            String date,
+            String homeTeamId,
+            String awayTeamId,
+            String venueId,
+            Integer homeScore,
+            Integer awayScore
+    ) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                        {"seasonId":"%s","seasonWeekId":"%s","weekNumber":%d,"matchupDate":"%s","homeTeamId":"%s","awayTeamId":"%s","venueId":"%s","homeTeamScore":%s,"awayTeamScore":%s}
-                        """.formatted(escape(seasonId), escape(seasonWeekId), weekNumber, escape(date), escape(homeTeamId),
-                        escape(awayTeamId), escape(venueId), jsonNumber(homeScore), jsonNumber(awayScore))))
+                .perform(
+                        post("/api/manager/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON).content(
+                                """
+                                        {"seasonId":"%s","seasonWeekId":"%s","weekNumber":%d,"matchupDate":"%s","homeTeamId":"%s","awayTeamId":"%s","venueId":"%s","homeTeamScore":%s,"awayTeamScore":%s}
+                                        """
+                                        .formatted(
+                                                escape(seasonId),
+                                                escape(seasonWeekId),
+                                                weekNumber,
+                                                escape(date),
+                                                escape(homeTeamId),
+                                                escape(awayTeamId),
+                                                escape(venueId),
+                                                jsonNumber(homeScore),
+                                                jsonNumber(awayScore)
+                                        )
+                        )
+                )
                 .andExpect(status().isCreated()).andReturn();
         String id = idOf(result);
         matchupIds.add(id);
@@ -658,9 +866,12 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         JsonNode found = null;
 
         for (JsonNode node : matchups) {
+
             if (matchupId.equals(node.path("matchupId").asString())) {
                 found = node;
+
             }
+
         }
 
         assertThat(found).isNotNull();
@@ -668,20 +879,28 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
     }
 
     private static JsonNode findPick(JsonNode picks, String matchupId) {
+
         for (JsonNode pick : picks) {
+
             if (matchupId.equals(pick.path("matchupId").asString())) {
                 return pick;
+
             }
+
         }
 
         throw new AssertionError("missing pick " + matchupId);
     }
 
     private static int indexOf(JsonNode matchups, String matchupId) {
+
         for (int i = 0; i < matchups.size(); i++) {
+
             if (matchupId.equals(matchups.get(i).path("matchupId").asString())) {
                 return i;
+
             }
+
         }
 
         return -1;
@@ -724,6 +943,7 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
 
         if (seasonId != null) {
             request.param("seasonId", seasonId);
+
         }
 
         MvcResult result = mockMvc.perform(request).andExpect(status().isOk()).andReturn();
@@ -733,13 +953,25 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
     private Cookie signIn(String uid, String firstName) throws Exception {
         userIds.add(uid);
         String token = "token-" + uid;
-        firebase.registerIdToken(token, new VerifiedIdentity(uid, uid + "@example.com", firstName + " Player",
-                firstName, "Player", "google.com", Map.of()));
+        firebase.registerIdToken(
+                token,
+                new VerifiedIdentity(
+                        uid,
+                        uid + "@example.com",
+                        firstName + " Player",
+                        firstName,
+                        "Player",
+                        "google.com",
+                        Map.of()
+                )
+        );
         MvcResult result = mockMvc
-                .perform(post("/api/auth/session").contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"idToken":"%s"}
-                                """.formatted(escape(token))))
+                .perform(
+                        post("/api/auth/session").contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {"idToken":"%s"}
+                                        """.formatted(escape(token)))
+                )
                 .andExpect(status().isNoContent()).andReturn();
         String header = result.getResponse().getHeader("Set-Cookie");
         assertThat(header).isNotNull();
@@ -764,21 +996,28 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
 
                 if (score == previousScore) {
                     assertThat(uid.compareTo(previousUid)).isPositive();
+
                 }
+
             }
 
             previousScore = score;
             previousUid = uid;
+
         }
+
     }
 
     private static JsonNode standing(JsonNode standings, String uid) {
         JsonNode found = null;
 
         for (JsonNode node : standings) {
+
             if (uid.equals(node.path("uid").asString())) {
                 found = node;
+
             }
+
         }
 
         assertThat(found).isNotNull();
@@ -786,10 +1025,14 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
     }
 
     private static int indexOfUid(JsonNode standings, String uid) {
+
         for (int i = 0; i < standings.size(); i++) {
+
             if (uid.equals(standings.get(i).path("uid").asString())) {
                 return i;
+
             }
+
         }
 
         return -1;
@@ -800,20 +1043,47 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
 
         while (cursor.getDayOfWeek() != DayOfWeek.THURSDAY) {
             cursor = cursor.plusDays(1);
+
         }
 
         return cursor;
     }
 
     private static VerifiedIdentity identity(String uid, List<String> roles) {
-        return new VerifiedIdentity(uid, uid + "@example.com", "Test User", "Test", "User", "google.com",
-                RoleClaims.forRoles(roles));
+        return new VerifiedIdentity(
+                uid,
+                uid + "@example.com",
+                "Test User",
+                "Test",
+                "User",
+                "google.com",
+                RoleClaims.forRoles(roles)
+        );
     }
 
-    private record Slate(String seasonId, String year, String currentWeekId, String futureWeekId, String correctId,
-            String wrongId, String alphaId, String zuluId, String futureId, String correctHomeId, String correctHomeName,
-            String correctAwayId, String correctAwayName, String wrongHomeId, String futureAwayId, String venueName,
-            String cityState, String rivalryName, String alphaHomeId, String futureHomeId, LocalDate currentBegin) {
+    private record Slate(
+            String seasonId,
+            String year,
+            String currentWeekId,
+            String futureWeekId,
+            String correctId,
+            String wrongId,
+            String alphaId,
+            String zuluId,
+            String futureId,
+            String correctHomeId,
+            String correctHomeName,
+            String correctAwayId,
+            String correctAwayName,
+            String wrongHomeId,
+            String futureAwayId,
+            String venueName,
+            String cityState,
+            String rivalryName,
+            String alphaHomeId,
+            String futureHomeId,
+            LocalDate currentBegin
+    ) {
     }
 
     @TestConfiguration

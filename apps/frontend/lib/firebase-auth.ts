@@ -1,4 +1,4 @@
-import { getApps, initializeApp } from "firebase/app";
+import { getApps, initializeApp } from 'firebase/app'
 import {
   GoogleAuthProvider,
   connectAuthEmulator,
@@ -7,42 +7,43 @@ import {
   signInWithPopup,
   signInWithRedirect,
   signOut,
-} from "firebase/auth";
+} from 'firebase/auth'
+
 import {
   emulatorUrl,
   readAuthEmulatorHost,
   readFirebaseWebConfig,
-} from "./firebase-config";
-import { FirebaseNotConfiguredError } from "./google-auth-error";
+} from '@/lib/firebase-config'
+import { FirebaseNotConfiguredError } from '@/lib/google-auth-error'
 
-let emulatorConnected = false;
-let redirectRead: Promise<string | null> | null = null;
+let emulatorConnected = false
+let redirectRead: Promise<string | null> | null = null
 
 function clientAuth() {
-  const config = readFirebaseWebConfig();
+  const config = readFirebaseWebConfig()
   if (!config) {
-    throw new FirebaseNotConfiguredError();
+    throw new FirebaseNotConfiguredError()
   }
-  const app = getApps()[0] ?? initializeApp(config);
-  const auth = getAuth(app);
-  const emulatorHost = readAuthEmulatorHost();
+  const app = getApps()[0] ?? initializeApp(config)
+  const auth = getAuth(app)
+  const emulatorHost = readAuthEmulatorHost()
   if (emulatorHost && !emulatorConnected) {
     connectAuthEmulator(auth, emulatorUrl(emulatorHost), {
       disableWarnings: true,
-    });
-    emulatorConnected = true;
+    })
+    emulatorConnected = true
   }
-  return auth;
+  return auth
 }
 
 export async function signInWithGooglePopup(): Promise<string> {
-  const result = await signInWithPopup(clientAuth(), new GoogleAuthProvider());
-  return result.user.getIdToken();
+  const result = await signInWithPopup(clientAuth(), new GoogleAuthProvider())
+  return result.user.getIdToken()
 }
 
 export async function signInWithGoogleRedirect(): Promise<void> {
-  redirectRead = null;
-  await signInWithRedirect(clientAuth(), new GoogleAuthProvider());
+  redirectRead = null
+  await signInWithRedirect(clientAuth(), new GoogleAuthProvider())
 }
 
 /**
@@ -53,31 +54,31 @@ export async function signInWithGoogleRedirect(): Promise<void> {
 export function consumeGoogleRedirect(): Promise<string | null> {
   if (!redirectRead) {
     redirectRead = readRedirectResult().finally(() => {
-      redirectRead = null;
-    });
+      redirectRead = null
+    })
   }
-  return redirectRead;
+  return redirectRead
 }
 
 async function readRedirectResult(): Promise<string | null> {
   if (!readFirebaseWebConfig()) {
-    return null;
+    return null
   }
-  const result = await getRedirectResult(clientAuth());
+  const result = await getRedirectResult(clientAuth())
   if (!result) {
-    return null;
+    return null
   }
-  return result.user.getIdToken();
+  return result.user.getIdToken()
 }
 
 export async function signOutFromGoogle(): Promise<void> {
   if (!readFirebaseWebConfig()) {
-    return;
+    return
   }
   try {
     // A reloaded page has not initialized Auth yet. Sign-out still has to
     // clear the persisted Google user, or the next visit restores it.
-    await signOut(clientAuth());
+    await signOut(clientAuth())
   } catch {
     // The session cookie is the app login. A client sign-out failure
     // still leaves the HttpOnly cookie cleared by POST /api/auth/logout.
