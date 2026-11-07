@@ -62,6 +62,8 @@ describe("gateDecision", () => {
 
   it("allows a signed-in player on game routes and restricts manager routes", () => {
     expect(gateDecision("/main", player)).toBe("allow");
+    expect(gateDecision("/leaderboard", player)).toBe("allow");
+    expect(gateDecision("/leaderboard", manager)).toBe("allow");
     expect(gateDecision("/team-schedule", player)).toBe("allow");
     expect(gateDecision("/users", player)).toBe("restricted");
     expect(gateDecision("/teams", player)).toBe("restricted");

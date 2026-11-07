@@ -89,6 +89,10 @@ describe("Navbar", () => {
     renderNavbar(manager, true);
     fireEvent.click(screen.getByRole("button", { name: "Admin" }));
 
+    expect(
+      screen.getByRole("link", { name: "Leader Board" }).getAttribute("href"),
+    ).toBe("/leaderboard");
+
     for (const link of MANAGER_LINKS) {
       const item = screen.getByRole("menuitem", { name: link.label });
       expect(item.getAttribute("href")).toBe(link.href);
