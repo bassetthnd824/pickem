@@ -27,15 +27,18 @@ public final class SeedMain {
             Optional<String> manager = seeder.seed(environment.bootstrapEmail());
             report(environment, manager);
 
-        } catch (SeedFailedException ex) {
+        }
+        catch (SeedFailedException ex) {
             System.err.println(ex.getMessage());
             System.exit(1);
 
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             ex.printStackTrace(System.err);
             System.exit(1);
 
-        } finally {
+        }
+        finally {
             close(firestore);
         }
     }
@@ -54,7 +57,8 @@ public final class SeedMain {
     private static void report(SeedEnvironment environment, Optional<String> managerUid) {
         if (environment.firestoreEmulatorHost() != null) {
             System.out.println(
-                    "Firestore emulator " + environment.firestoreEmulatorHost() + " project " + environment.projectId());
+                    "Firestore emulator " + environment.firestoreEmulatorHost() + " project "
+                            + environment.projectId());
         } else {
             System.out.println("Firestore project " + environment.projectId() + " (application default credentials)");
         }
@@ -80,7 +84,8 @@ public final class SeedMain {
         try {
             firestore.close();
 
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             System.err.println("Failed to close Firestore: " + ex.getMessage());
         }
     }

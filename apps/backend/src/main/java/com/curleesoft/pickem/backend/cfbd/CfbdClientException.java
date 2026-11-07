@@ -2,8 +2,8 @@ package com.curleesoft.pickem.backend.cfbd;
 
 /**
  * A College Football Data call could not be completed. The message is safe to
- * show to an API caller: it never includes the API key or a stack trace.
- * Mapped to HTTP 503.
+ * show to an API caller: it never includes the API key or a stack trace. Mapped
+ * to HTTP 503.
  */
 public class CfbdClientException extends RuntimeException {
 

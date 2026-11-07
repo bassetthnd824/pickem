@@ -23,7 +23,8 @@ final class CfbdDates {
         if (value.length() >= 10) {
             try {
                 return LocalDate.parse(value.substring(0, 10));
-            } catch (DateTimeParseException ex) {
+            }
+            catch (DateTimeParseException ex) {
                 return LocalDate.ofInstant(instant(value), EASTERN);
             }
         }
@@ -64,7 +65,8 @@ final class CfbdDates {
     private static Instant instant(String value) {
         try {
             return Instant.parse(value);
-        } catch (DateTimeParseException ex) {
+        }
+        catch (DateTimeParseException ex) {
             throw new InvalidRequestException("CFBD date is invalid");
         }
     }

@@ -68,7 +68,8 @@ public class SecurityConfig {
      * servlet container. It must run only inside the security chain.
      */
     @Bean
-    public FilterRegistrationBean<InternalJobFilter> internalJobFilterRegistration(InternalJobFilter internalJobFilter) {
+    public FilterRegistrationBean<InternalJobFilter> internalJobFilterRegistration(
+            InternalJobFilter internalJobFilter) {
         InternalJobFilter filter = Objects.requireNonNull(internalJobFilter, "internalJobFilter");
         FilterRegistrationBean<InternalJobFilter> registration = new FilterRegistrationBean<>(filter);
         registration.setEnabled(false);

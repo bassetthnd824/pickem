@@ -43,7 +43,8 @@ public class SeasonWeekService {
         String season = SearchText.blankToNull(seasonId);
         String begin = SearchText.blankToNull(beginDate);
         String end = SearchText.blankToNull(endDate);
-        List<SeasonWeek> candidates = season == null ? seasonWeekRepository.findAll()
+        List<SeasonWeek> candidates = season == null
+                ? seasonWeekRepository.findAll()
                 : seasonWeekRepository.query(collection -> collection.whereEqualTo("seasonId", season));
 
         return candidates.stream().filter(item -> weekNumber == null || weekNumber.equals(item.getWeekNumber()))

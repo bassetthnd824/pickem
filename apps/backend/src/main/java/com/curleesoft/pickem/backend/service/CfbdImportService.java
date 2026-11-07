@@ -47,8 +47,8 @@ import com.google.cloud.firestore.Transaction;
 /**
  * Enqueues a season import and, when the worker runs, upserts CFBD calendar
  * weeks, missing opponents, venues, and matchups. Week dates are the CFBD
- * calendar dates. They are not forced onto Thursday–Wednesday. Manual week
- * CRUD stays on {@link SeasonWeekService}.
+ * calendar dates. They are not forced onto Thursday–Wednesday. Manual week CRUD
+ * stays on {@link SeasonWeekService}.
  * <p>
  * One CFBD game id becomes one matchup. A re-run updates that row's date,
  * venue, and teams. Conference-team ids that are not already stored are
@@ -139,7 +139,8 @@ public class CfbdImportService {
         if (id == null) {
             throw new InvalidRequestException(SEASON_YEAR_INVALID);
         }
-        Season season = seasonRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(SeasonService.NOT_FOUND));
+        Season season = seasonRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(SeasonService.NOT_FOUND));
         int year = seasonYear(season.getSeason());
         ImportJob job = new ImportJob();
         job.setSeasonId(season.getId());
@@ -181,7 +182,8 @@ public class CfbdImportService {
             job.setStatus(ImportJob.FAILED);
             job.setError(message(new IllegalStateException(message)));
             importJobRepository.save(job, ACTOR);
-        } catch (RuntimeException ex) {
+        }
+        catch (RuntimeException ex) {
             log.warn("CFBD import {} could not record a start failure: {}", jobId, ex.getMessage());
         }
     }
@@ -201,10 +203,12 @@ public class CfbdImportService {
             job.setStatus(ImportJob.SUCCEEDED);
             job.setError(null);
             importJobRepository.save(job, ACTOR);
-        } catch (RuntimeException ex) {
+        }
+        catch (RuntimeException ex) {
             fail(job, ex);
             throw ex;
-        } finally {
+        }
+        finally {
             SecurityContextHolder.setContext(previous);
         }
     }
@@ -248,7 +252,8 @@ public class CfbdImportService {
             try {
                 begin = CfbdDates.weekBegin(found.startDate());
                 end = CfbdDates.weekEnd(found.endDate());
-            } catch (RuntimeException ex) {
+            }
+            catch (RuntimeException ex) {
                 skip(job, null, "calendar week " + found.week() + " dates are invalid");
                 continue;
             }
@@ -269,7 +274,8 @@ public class CfbdImportService {
             SeasonWeek current, ImportJob job) {
         try {
             return saveWeek(seasonId, weekNumber, begin, end, current, job);
-        } catch (StaleDocumentVersionException ex) {
+        }
+        catch (StaleDocumentVersionException ex) {
             if (current == null || current.getId() == null) {
                 throw ex;
             }
@@ -289,8 +295,9 @@ public class CfbdImportService {
         week.setWeekNumber(number);
         week.setBeginDate(begin.toString());
         week.setEndDate(end.toString());
-        SeasonWeek saved = seasonWeekRepository.save(week, ACTOR, (transaction, collection, documentId) -> rejectDuplicateWeek(
-                transaction, collection, documentId, parentId, number));
+        SeasonWeek saved = seasonWeekRepository.save(week, ACTOR,
+                (transaction, collection, documentId) -> rejectDuplicateWeek(
+                        transaction, collection, documentId, parentId, number));
         if (created) {
             job.setWeeksCreated(count(job.getWeeksCreated()) + 1);
         } else {
@@ -340,7 +347,8 @@ public class CfbdImportService {
                 skip(job, gameId, "game date is outside the calendar week");
                 return;
             }
-        } catch (RuntimeException ex) {
+        }
+        catch (RuntimeException ex) {
             skip(job, gameId, "game date is invalid");
             return;
         }
@@ -368,7 +376,8 @@ public class CfbdImportService {
                     job);
             Venue venue = matchupVenue(row, venues, places, home, job);
             upsertMatchup(job, seasonId, week, date, home, away, venue, row);
-        } catch (InvalidRequestException | ConflictException | StaleDocumentVersionException ex) {
+        }
+        catch (InvalidRequestException | ConflictException | StaleDocumentVersionException ex) {
             skip(job, gameId, ex.getMessage());
         }
     }
@@ -413,7 +422,8 @@ public class CfbdImportService {
         Team saved;
         try {
             saved = teamService.create(draft);
-        } catch (ConflictException ex) {
+        }
+        catch (ConflictException ex) {
             if (!TeamService.NAME_NOT_UNIQUE.equals(ex.getMessage())) {
                 throw ex;
             }
@@ -502,7 +512,8 @@ public class CfbdImportService {
         List<CfbdVenue> listed;
         try {
             listed = callCfbd(() -> client.venues());
-        } catch (CfbdClientException ex) {
+        }
+        catch (CfbdClientException ex) {
             log.warn("CFBD venue catalog unavailable; new venues keep an unknown city and state: {}",
                     ex.getMessage());
             return new HashMap<>();
@@ -590,10 +601,10 @@ public class CfbdImportService {
 
     /**
      * Scores stay with the team that earned them. A completed non-tie replaces
-     * them. Otherwise the same pairing keeps the stored totals, a pure swap
-     * moves each total with its team, and any other change clears both so a
-     * leftover total is not awarded to a new opponent. A tie is left unset
-     * because matchup validation would reject the row.
+     * them. Otherwise the same pairing keeps the stored totals, a pure swap moves
+     * each total with its team, and any other change clears both so a leftover
+     * total is not awarded to a new opponent. A tie is left unset because matchup
+     * validation would reject the row.
      */
     private static void applyScores(Matchup request, Matchup existing, CfbdGame game) {
         Integer homePoints = game.homePoints();
@@ -688,7 +699,8 @@ public class CfbdImportService {
         for (int tryNumber = 1; tryNumber <= MAX_ATTEMPTS; tryNumber++) {
             try {
                 return attempt.get();
-            } catch (CfbdClientException ex) {
+            }
+            catch (CfbdClientException ex) {
                 last = ex;
                 if (!isTransient(ex) || tryNumber == MAX_ATTEMPTS) {
                     throw ex;
@@ -710,7 +722,8 @@ public class CfbdImportService {
             job.setStatus(ImportJob.FAILED);
             job.setError(message(ex));
             importJobRepository.save(job, ACTOR);
-        } catch (RuntimeException saveEx) {
+        }
+        catch (RuntimeException saveEx) {
             log.warn("CFBD import {} could not record failure: {}", job.getId(), saveEx.getMessage());
         }
     }

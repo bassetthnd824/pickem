@@ -211,11 +211,13 @@ class GameAccountScheduleApiTests extends FirestoreEmulatorSupport {
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
         assertConferenceTeams(teams, slate);
         JsonNode explicit = jsonMapper.readTree(mockMvc
-                .perform(get("/api/game/teams").cookie(player).param("conferenceMember", "true")).andExpect(status().isOk())
+                .perform(get("/api/game/teams").cookie(player).param("conferenceMember", "true"))
+                .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString());
         assertConferenceTeams(explicit, slate);
         JsonNode ignored = jsonMapper.readTree(mockMvc
-                .perform(get("/api/game/teams").cookie(player).param("conferenceMember", "false")).andExpect(status().isOk())
+                .perform(get("/api/game/teams").cookie(player).param("conferenceMember", "false"))
+                .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString());
         assertConferenceTeams(ignored, slate);
 
@@ -245,9 +247,11 @@ class GameAccountScheduleApiTests extends FirestoreEmulatorSupport {
         assertThat(profile.has("oldPass")).isFalse();
         assertThat(profile.has("roles")).isFalse();
 
-        JsonNode updated = putAccount(player, """
-                {"nickName":"  Tide  ","themeId":" %s ","version":0,"emailAddr":"other@example.com","firstName":"Changed","lastName":"Name","roles":["manager"]}
-                """.formatted(themePath));
+        JsonNode updated = putAccount(player,
+                """
+                        {"nickName":"  Tide  ","themeId":" %s ","version":0,"emailAddr":"other@example.com","firstName":"Changed","lastName":"Name","roles":["manager"]}
+                        """
+                        .formatted(themePath));
         assertThat(updated.path("nickName").asString()).isEqualTo("Tide");
         assertThat(updated.path("themeId").asString()).isEqualTo(themePath);
         assertThat(updated.path("emailAddr").asString()).isEqualTo(uid + "@example.com");
@@ -486,9 +490,11 @@ class GameAccountScheduleApiTests extends FirestoreEmulatorSupport {
 
     private String createSeason(String year, LocalDate begin, LocalDate end, boolean current) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                        {"season":"%s","beginDate":"%s","endDate":"%s","isCurrent":%s}
-                        """.formatted(year, begin, end, current))).andExpect(status().isCreated()).andReturn();
+                .perform(
+                        post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
+                                {"season":"%s","beginDate":"%s","endDate":"%s","isCurrent":%s}
+                                """.formatted(year, begin, end, current)))
+                .andExpect(status().isCreated()).andReturn();
         String id = idOf(result);
         seasonIds.add(id);
         return id;
@@ -540,11 +546,13 @@ class GameAccountScheduleApiTests extends FirestoreEmulatorSupport {
     private String createMatchup(String seasonId, String seasonWeekId, int weekNumber, String date, String homeTeamId,
             String awayTeamId, String venueId, Integer homeScore, Integer awayScore) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                        {"seasonId":"%s","seasonWeekId":"%s","weekNumber":%d,"matchupDate":"%s","homeTeamId":"%s","awayTeamId":"%s","venueId":"%s","homeTeamScore":%s,"awayTeamScore":%s}
-                        """.formatted(escape(seasonId), escape(seasonWeekId), weekNumber, escape(date),
-                        escape(homeTeamId), escape(awayTeamId), escape(venueId), jsonNumber(homeScore),
-                        jsonNumber(awayScore))))
+                .perform(post("/api/manager/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON).content(
+                        """
+                                {"seasonId":"%s","seasonWeekId":"%s","weekNumber":%d,"matchupDate":"%s","homeTeamId":"%s","awayTeamId":"%s","venueId":"%s","homeTeamScore":%s,"awayTeamScore":%s}
+                                """
+                                .formatted(escape(seasonId), escape(seasonWeekId), weekNumber, escape(date),
+                                        escape(homeTeamId), escape(awayTeamId), escape(venueId), jsonNumber(homeScore),
+                                        jsonNumber(awayScore))))
                 .andExpect(status().isCreated()).andReturn();
         String id = idOf(result);
         matchupIds.add(id);

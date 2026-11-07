@@ -102,7 +102,8 @@ public class LeaderboardService {
         return indexed;
     }
 
-    private Map<String, Long> scorePicks(String seasonId, Map<String, Matchup> matchups, Map<String, SeasonWeek> weeks) {
+    private Map<String, Long> scorePicks(String seasonId, Map<String, Matchup> matchups,
+            Map<String, SeasonWeek> weeks) {
         Map<String, Long> totals = new HashMap<>();
         Map<String, Set<String>> counted = new HashMap<>();
 

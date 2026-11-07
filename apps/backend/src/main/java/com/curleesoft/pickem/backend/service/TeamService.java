@@ -17,8 +17,9 @@ import com.google.cloud.firestore.Transaction;
 /**
  * Manager CRUD for teams. The home-venue snapshot is copied from the venue
  * document on each save of this team. Refreshing other documents is US-35.
- * {@code GET ?conferenceMember=true} replaces {@code TeamBean.getConferenceTeams}
- * and {@code getNumberOfConferenceTeams} (the list length is the count).
+ * {@code GET ?conferenceMember=true} replaces
+ * {@code TeamBean.getConferenceTeams} and {@code getNumberOfConferenceTeams}
+ * (the list length is the count).
  */
 @Service
 public class TeamService {
@@ -57,8 +58,8 @@ public class TeamService {
 
     /**
      * Conference members ordered by team name. Replaces
-     * {@code TeamBean.getConferenceTeams}. The player schedule dropdown uses
-     * this list; {@link #search} remains the manager filter.
+     * {@code TeamBean.getConferenceTeams}. The player schedule dropdown uses this
+     * list; {@link #search} remains the manager filter.
      */
     public List<Team> conferenceTeams() {
         return search(null, null, Boolean.TRUE, null, null);
@@ -103,7 +104,8 @@ public class TeamService {
 
     private static void rejectDuplicate(Transaction transaction, CollectionReference collection, String documentId,
             Team team) {
-        if (TransactionReads.anotherDocumentMatches(transaction, collection.whereEqualTo("teamName", team.getTeamName()),
+        if (TransactionReads.anotherDocumentMatches(transaction,
+                collection.whereEqualTo("teamName", team.getTeamName()),
                 documentId)) {
             throw new ConflictException(NAME_NOT_UNIQUE);
         }

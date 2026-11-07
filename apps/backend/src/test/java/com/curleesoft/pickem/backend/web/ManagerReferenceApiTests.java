@@ -218,7 +218,8 @@ class ManagerReferenceApiTests extends FirestoreEmulatorSupport {
                 .andExpect(jsonPath("$.teamName").value("Alabama " + token))
                 .andExpect(jsonPath("$.squadName").value("Crimson Tide")).andExpect(jsonPath("$.version").value(0))
                 .andExpect(jsonPath("$.createUser").value(managerUid))
-                .andExpect(jsonPath("$.homeVenueId").value(venueId)).andExpect(jsonPath("$.homeVenue.id").value(venueId))
+                .andExpect(jsonPath("$.homeVenueId").value(venueId))
+                .andExpect(jsonPath("$.homeVenue.id").value(venueId))
                 .andExpect(jsonPath("$.homeVenue.name").value("Bryant-Denny " + token))
                 .andExpect(jsonPath("$.homeVenue.cityState").value("Tuscaloosa " + token))
                 .andExpect(jsonPath("$.cfbdTeamId").value(externalId)).andReturn();
@@ -277,7 +278,8 @@ class ManagerReferenceApiTests extends FirestoreEmulatorSupport {
 
         mockMvc.perform(put("/api/manager/teams/" + alabamaId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
                 .content(versionedTeam("Alabama " + token, "Crimson Tide", true, laterVenueId, externalId, 0)))
-                .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(containsString("Stale version")));
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value(containsString("Stale version")));
 
         mockMvc.perform(put("/api/manager/teams/" + alabamaId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
                 .content(versionedTeam("Alabama " + token, "Crimson Tide", true, laterVenueId, null, 1)))
@@ -287,7 +289,8 @@ class ManagerReferenceApiTests extends FirestoreEmulatorSupport {
         String reused = createTeam("Auburn " + token, "Tigers", true, venueId, externalId);
         assertThat(reused).isNotBlank();
 
-        String cleared = mockMvc.perform(get("/api/manager/teams/" + alabamaId).cookie(manager)).andExpect(status().isOk())
+        String cleared = mockMvc.perform(get("/api/manager/teams/" + alabamaId).cookie(manager))
+                .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         assertThat(jsonMapper.readTree(cleared).path("cfbdTeamId").isNull()).isTrue();
 
@@ -312,7 +315,8 @@ class ManagerReferenceApiTests extends FirestoreEmulatorSupport {
         String midId = createTeam("Mid " + token, "Squad M " + token, true, venueId, null);
         String otherId = createTeam("Other " + token, "Squad Z " + token, false, venueId, null);
 
-        mockMvc.perform(get("/api/manager/teams").cookie(manager).param("conferenceMember", "true").param("teamName", token))
+        mockMvc.perform(
+                get("/api/manager/teams").cookie(manager).param("conferenceMember", "true").param("teamName", token))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value(alphaId)).andExpect(jsonPath("$[1].id").value(midId));
 
@@ -320,7 +324,8 @@ class ManagerReferenceApiTests extends FirestoreEmulatorSupport {
                 "squad z " + token.toLowerCase())).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].id").value(otherId));
 
-        mockMvc.perform(get("/api/manager/teams").cookie(manager).param("homeVenueId", venueId).param("teamName", "Alpha"))
+        mockMvc.perform(
+                get("/api/manager/teams").cookie(manager).param("homeVenueId", venueId).param("teamName", "Alpha"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].id").value(alphaId))
                 .andExpect(jsonPath("$[1]").doesNotExist());
     }
@@ -398,12 +403,14 @@ class ManagerReferenceApiTests extends FirestoreEmulatorSupport {
         mockMvc.perform(put("/api/manager/rivalries/" + rivalryId).cookie(manager)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(versionedRivalry("Third Saturday " + token, tennesseeId, georgiaId, 0)))
-                .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(containsString("Stale version")));
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value(containsString("Stale version")));
 
         mockMvc.perform(get("/api/manager/rivalries/missing-" + token).cookie(manager)).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.detail").value(RivalryService.NOT_FOUND));
 
-        mockMvc.perform(delete("/api/manager/rivalries/" + rivalryId).cookie(manager)).andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/manager/rivalries/" + rivalryId).cookie(manager))
+                .andExpect(status().isNoContent());
         rivalryIds.remove(rivalryId);
         mockMvc.perform(get("/api/manager/rivalries/" + rivalryId).cookie(manager)).andExpect(status().isNotFound());
 
@@ -472,12 +479,14 @@ class ManagerReferenceApiTests extends FirestoreEmulatorSupport {
 
     private static String teamBody(String name, String squad, boolean conferenceMember, String venueId, Long cfbdTeamId,
             boolean wrongSnapshot) {
-        String snapshot = wrongSnapshot ? ",\"homeVenue\":{\"id\":\"wrong\",\"name\":\"Wrong\",\"cityState\":\"Nowhere\"}"
+        String snapshot = wrongSnapshot
+                ? ",\"homeVenue\":{\"id\":\"wrong\",\"name\":\"Wrong\",\"cityState\":\"Nowhere\"}"
                 : "";
         return """
                 {"teamName":"%s","squadName":"%s","conferenceMember":%s,"homeVenueId":"%s","cfbdTeamId":%s%s,"createUser":"hacker","version":9}
-                """.formatted(escape(name), escape(squad), conferenceMember, escape(venueId), jsonNumber(cfbdTeamId),
-                snapshot);
+                """
+                .formatted(escape(name), escape(squad), conferenceMember, escape(venueId), jsonNumber(cfbdTeamId),
+                        snapshot);
     }
 
     private static String versionedTeam(String name, String squad, boolean conferenceMember, String venueId,

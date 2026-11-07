@@ -12,6 +12,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConfigurationProperties(prefix = "pickem.auth")
 public record PickemAuthProperties(@DefaultValue("firebase") String provider,
         @DefaultValue("P14D") Duration sessionDuration, @DefaultValue("") String emulatorHost) {
+
     public PickemAuthProperties {
         if (provider == null || provider.isBlank()) {
             provider = "firebase";

@@ -38,8 +38,8 @@ import com.google.cloud.firestore.Firestore;
 
 /**
  * Upserts seed documents by stable id. Does not delete extra documents, picks,
- * or any password field. A re-run keeps {@code createDate} and {@code createUser}
- * and increments {@code version}.
+ * or any password field. A re-run keeps {@code createDate} and
+ * {@code createUser} and increments {@code version}.
  */
 public final class FirestoreSeeder {
 
@@ -382,11 +382,13 @@ public final class FirestoreSeeder {
         try {
             return reference.get().get();
 
-        } catch (InterruptedException ex) {
+        }
+        catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new SeedFailedException("Interrupted reading " + reference.getPath(), ex);
 
-        } catch (ExecutionException ex) {
+        }
+        catch (ExecutionException ex) {
             throw new SeedFailedException("Failed to read " + reference.getPath(), ex);
         }
     }
@@ -397,11 +399,13 @@ public final class FirestoreSeeder {
         try {
             reference.set(body).get();
 
-        } catch (InterruptedException ex) {
+        }
+        catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new SeedFailedException("Interrupted writing " + reference.getPath(), ex);
 
-        } catch (ExecutionException ex) {
+        }
+        catch (ExecutionException ex) {
             throw new SeedFailedException("Failed to write " + reference.getPath(), ex);
         }
     }

@@ -24,7 +24,8 @@ public class AuthExceptionHandler {
 
     @ExceptionHandler(IdentityAdminException.class)
     public ProblemDetail adminWrite(IdentityAdminException ex) {
-        HttpStatus status = ex.getKind() == IdentityAdminException.Kind.USER_NOT_FOUND ? HttpStatus.CONFLICT
+        HttpStatus status = ex.getKind() == IdentityAdminException.Kind.USER_NOT_FOUND
+                ? HttpStatus.CONFLICT
                 : HttpStatus.SERVICE_UNAVAILABLE;
         return ProblemDetail.forStatusAndDetail(status, ex.getMessage());
     }

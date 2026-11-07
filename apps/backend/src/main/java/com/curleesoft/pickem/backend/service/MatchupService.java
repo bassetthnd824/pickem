@@ -204,8 +204,8 @@ public class MatchupService {
     }
 
     /**
-     * The pair may be stored in either order. Several rivalries for the same
-     * pair keep the alphabetically first name so the snapshot is stable.
+     * The pair may be stored in either order. Several rivalries for the same pair
+     * keep the alphabetically first name so the snapshot is stable.
      */
     private String rivalryName(String homeId, String awayId) {
         String chosen = null;
@@ -274,7 +274,8 @@ public class MatchupService {
 
         try {
             return LocalDate.parse(value);
-        } catch (DateTimeParseException ex) {
+        }
+        catch (DateTimeParseException ex) {
             throw new InvalidRequestException(DATE_INVALID);
         }
     }

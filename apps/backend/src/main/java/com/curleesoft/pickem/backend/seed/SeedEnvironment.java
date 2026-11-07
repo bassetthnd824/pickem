@@ -56,7 +56,8 @@ public record SeedEnvironment(String projectId, String firestoreEmulatorHost, St
             return Map.of();
         }
 
-        Dotenv dotenv = Dotenv.configure().directory(file.getParent().toString()).filename(file.getFileName().toString())
+        Dotenv dotenv = Dotenv.configure().directory(file.getParent().toString())
+                .filename(file.getFileName().toString())
                 .ignoreIfMalformed().ignoreIfMissing().load();
         Map<String, String> values = new LinkedHashMap<>();
 
@@ -91,8 +92,8 @@ public record SeedEnvironment(String projectId, String firestoreEmulatorHost, St
         }
 
         Path base = cwd == null ? Path.of("").toAbsolutePath().normalize() : cwd.toAbsolutePath().normalize();
-        Path[] candidates = new Path[] { base.resolve(".env"), base.resolve("apps").resolve("backend").resolve(".env"),
-                base.getParent() == null ? null : base.getParent().resolve(".env") };
+        Path[] candidates = new Path[]{base.resolve(".env"), base.resolve("apps").resolve("backend").resolve(".env"),
+                base.getParent() == null ? null : base.getParent().resolve(".env")};
 
         for (Path candidate : candidates) {
             if (candidate != null && Files.isRegularFile(candidate)) {

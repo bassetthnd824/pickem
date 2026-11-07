@@ -51,8 +51,8 @@ public final class CfbdClient {
     }
 
     /**
-     * {@code GET /games?year=&conference=SEC}. {@code week} and
-     * {@code seasonType} are omitted when empty.
+     * {@code GET /games?year=&conference=SEC}. {@code week} and {@code seasonType}
+     * are omitted when empty.
      */
     public List<CfbdGame> games(int year, Integer week, String seasonType) {
         return get("games", builder -> {
@@ -82,7 +82,8 @@ public final class CfbdClient {
 
     /**
      * {@code GET /venues}. Used to fill city and state when import creates a venue.
-     * A venue missing from this list still imports; its city and state stay unknown.
+     * A venue missing from this list still imports; its city and state stay
+     * unknown.
      */
     public List<CfbdVenue> venues() {
         return get("venues", builder -> {
@@ -123,9 +124,11 @@ public final class CfbdClient {
                 throw new CfbdClientException(CfbdClientException.EMPTY);
             }
             return body;
-        } catch (CfbdClientException ex) {
+        }
+        catch (CfbdClientException ex) {
             throw ex;
-        } catch (RuntimeException ex) {
+        }
+        catch (RuntimeException ex) {
             CfbdClientException upstream = findCfbd(ex);
             if (upstream != null) {
                 throw upstream;

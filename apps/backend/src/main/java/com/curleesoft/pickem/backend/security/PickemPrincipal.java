@@ -8,6 +8,7 @@ import java.util.List;
  * audit fields.
  */
 public record PickemPrincipal(String uid, List<String> roles) implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     public PickemPrincipal {

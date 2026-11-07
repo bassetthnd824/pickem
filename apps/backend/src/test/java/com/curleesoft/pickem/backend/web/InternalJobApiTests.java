@@ -105,7 +105,8 @@ class InternalJobApiTests extends FirestoreEmulatorSupport {
                 .andExpect(header().doesNotExist("Access-Control-Allow-Origin"));
 
         mockMvc.perform(post("/api/internal/jobs/cfbd-matchups").header(InternalJobFilter.SECRET_HEADER, "  " + SECRET)
-                .with(from(OUTSIDE))).andExpect(status().isAccepted()).andExpect(jsonPath("$.job").value("cfbd-matchups"));
+                .with(from(OUTSIDE))).andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.job").value("cfbd-matchups"));
     }
 
     @Test
@@ -121,7 +122,8 @@ class InternalJobApiTests extends FirestoreEmulatorSupport {
         mockMvc.perform(get("/api/internal/jobs/cfbd-scores").header(InternalJobFilter.SECRET_HEADER, SECRET)
                 .with(from(OUTSIDE))).andExpect(status().isMethodNotAllowed());
 
-        mockMvc.perform(post("/api/internal/jobs/other").header(InternalJobFilter.SECRET_HEADER, SECRET).with(from(OUTSIDE)))
+        mockMvc.perform(
+                post("/api/internal/jobs/other").header(InternalJobFilter.SECRET_HEADER, SECRET).with(from(OUTSIDE)))
                 .andExpect(status().isNotFound());
     }
 

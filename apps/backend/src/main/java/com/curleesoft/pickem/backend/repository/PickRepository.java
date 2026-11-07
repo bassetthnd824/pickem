@@ -58,8 +58,10 @@ public class PickRepository extends BaseRepository<Pick> {
     public List<Pick> commitWeek(String userId, String seasonWeekId, List<Pick> upserts, List<Pick> deletes,
             WeekGuard guard) {
         List<Pick> sources = upserts == null ? List.of() : List.copyOf(upserts);
-        List<Pick> removals = deletes == null ? List.of() : deletes.stream()
-                .filter(pick -> pick != null && StringUtils.hasText(pick.getId())).toList();
+        List<Pick> removals = deletes == null
+                ? List.of()
+                : deletes.stream()
+                        .filter(pick -> pick != null && StringUtils.hasText(pick.getId())).toList();
 
         if (sources.isEmpty() && removals.isEmpty()) {
             return List.of();
@@ -118,11 +120,13 @@ public class PickRepository extends BaseRepository<Pick> {
             return stored;
         }
 
-        for (QueryDocumentSnapshot document : TransactionReads.get(transaction, collection().whereEqualTo("userId", userId))
+        for (QueryDocumentSnapshot document : TransactionReads
+                .get(transaction, collection().whereEqualTo("userId", userId))
                 .getDocuments()) {
             Pick pick = document.toObject(Pick.class);
 
-            if (pick == null || !seasonWeekId.equals(pick.getSeasonWeekId()) || !StringUtils.hasText(pick.getMatchupId())) {
+            if (pick == null || !seasonWeekId.equals(pick.getSeasonWeekId())
+                    || !StringUtils.hasText(pick.getMatchupId())) {
                 continue;
             }
 
@@ -134,10 +138,12 @@ public class PickRepository extends BaseRepository<Pick> {
 
     /**
      * Rank check for one week. Throw to abort the commit. The map is the user's
-     * stored picks for that week, including rows this commit will replace or delete.
+     * stored picks for that week, including rows this commit will replace or
+     * delete.
      */
     @FunctionalInterface
     public interface WeekGuard {
+
         void check(Map<String, Pick> storedByMatchupId);
     }
 

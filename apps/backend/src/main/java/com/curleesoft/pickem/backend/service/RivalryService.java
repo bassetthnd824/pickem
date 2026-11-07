@@ -12,9 +12,9 @@ import com.curleesoft.pickem.backend.repository.RivalryRepository;
 import com.curleesoft.pickem.backend.repository.TeamRepository;
 
 /**
- * Manager CRUD for rivalries. Team snapshots are copied from the team
- * documents on each save of this rivalry. A search {@code team1Id} matches
- * either side, which is how the legacy rivalry search form looks up one team.
+ * Manager CRUD for rivalries. Team snapshots are copied from the team documents
+ * on each save of this rivalry. A search {@code team1Id} matches either side,
+ * which is how the legacy rivalry search form looks up one team.
  */
 @Service
 public class RivalryService {

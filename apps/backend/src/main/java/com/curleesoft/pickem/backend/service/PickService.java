@@ -277,10 +277,13 @@ public class PickService {
     private static GameMain.GameMatchup toMatchup(Matchup matchup, Pick pick, boolean open) {
         String pickedTeamId = pick == null ? null : pick.getPickedTeamId();
         Integer rank = pick == null ? null : pick.getRank();
-        Integer points = open ? Integer.valueOf(PickScoring.points(matchup.getHomeTeamScore(), matchup.getAwayTeamScore(),
-                matchup.getWinningTeamId(), pickedTeamId, rank)) : null;
+        Integer points = open
+                ? Integer.valueOf(PickScoring.points(matchup.getHomeTeamScore(), matchup.getAwayTeamScore(),
+                        matchup.getWinningTeamId(), pickedTeamId, rank))
+                : null;
         return new GameMain.GameMatchup(matchup.getId(), matchup.getMatchupDate(), matchup.getAwayTeam(),
-                open ? matchup.getAwayTeamScore() : null, matchup.getHomeTeam(), open ? matchup.getHomeTeamScore() : null,
+                open ? matchup.getAwayTeamScore() : null, matchup.getHomeTeam(),
+                open ? matchup.getHomeTeamScore() : null,
                 matchup.getVenue(), matchup.getRivalryName(), pick == null ? null : pick.getId(), pickedTeamId, rank,
                 open ? matchup.getWinningTeamId() : null, points);
     }

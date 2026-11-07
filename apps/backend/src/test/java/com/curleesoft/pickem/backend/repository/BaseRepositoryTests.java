@@ -133,7 +133,8 @@ class BaseRepositoryTests extends FirestoreEmulatorSupport {
             assertThat(loaded.getBeginDate()).isEqualTo("2024-08-29");
             assertThat(loaded.getEndDate()).isEqualTo("2025-01-13");
             assertThat(loaded.isCurrent()).isTrue();
-        } finally {
+        }
+        finally {
             seasonRepository.delete(saved.getId());
         }
     }

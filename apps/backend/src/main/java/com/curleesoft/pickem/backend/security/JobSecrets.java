@@ -27,7 +27,8 @@ public final class JobSecrets {
         String text = Objects.requireNonNull(value, "value");
         try {
             return MessageDigest.getInstance("SHA-256").digest(text.getBytes(StandardCharsets.UTF_8));
-        } catch (NoSuchAlgorithmException ex) {
+        }
+        catch (NoSuchAlgorithmException ex) {
             throw new IllegalStateException("SHA-256 is unavailable", ex);
         }
     }

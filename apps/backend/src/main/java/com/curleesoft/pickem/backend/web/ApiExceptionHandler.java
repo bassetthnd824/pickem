@@ -38,7 +38,7 @@ public class ApiExceptionHandler {
         return problem(HttpStatus.BAD_REQUEST, detail);
     }
 
-    @ExceptionHandler({ HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class })
+    @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
     public ProblemDetail unreadable(Exception ex) {
         return problem(HttpStatus.BAD_REQUEST, "Request is invalid");
     }

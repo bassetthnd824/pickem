@@ -26,7 +26,7 @@ public class Season extends AuditableDocument {
     private String endDate;
 
     @NotNull
-    @Getter(onMethod_ = { @JsonProperty("isCurrent"), @PropertyName("isCurrent") })
-    @Setter(onMethod_ = { @JsonProperty("isCurrent"), @PropertyName("isCurrent") })
+    @Getter(onMethod_ = {@JsonProperty("isCurrent"), @PropertyName("isCurrent")})
+    @Setter(onMethod_ = {@JsonProperty("isCurrent"), @PropertyName("isCurrent")})
     private boolean current;
 }

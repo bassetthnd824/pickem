@@ -53,7 +53,8 @@ public class InternalJobFilter extends OncePerRequestFilter {
         if (!authorized(request)) {
             log.debug("Rejected internal job call");
             HttpStatus status = hasSessionCookie(request) ? HttpStatus.FORBIDDEN : HttpStatus.UNAUTHORIZED;
-            String detail = status == HttpStatus.FORBIDDEN ? "Internal jobs do not accept a session cookie"
+            String detail = status == HttpStatus.FORBIDDEN
+                    ? "Internal jobs do not accept a session cookie"
                     : "Internal job credential is required";
             writeProblem(response, status, detail);
             return;

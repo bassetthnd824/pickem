@@ -108,7 +108,8 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
 
         mockMvc.perform(get("/api/manager/users").cookie(player)).andExpect(status().isForbidden());
         mockMvc.perform(get("/api/manager/users/missing").cookie(player)).andExpect(status().isForbidden());
-        mockMvc.perform(post("/api/manager/themes").cookie(player).contentType(MediaType.APPLICATION_JSON).content("{}"))
+        mockMvc.perform(
+                post("/api/manager/themes").cookie(player).contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isForbidden());
         mockMvc.perform(put("/api/manager/themes/missing").cookie(player).contentType(MediaType.APPLICATION_JSON)
                 .content("{}")).andExpect(status().isForbidden());
@@ -185,7 +186,8 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
 
         mockMvc.perform(put("/api/manager/themes/" + lightId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
                 .content(themeBody("Light " + token, lightKey, false, "#1F2937", "#2563EB", 4L)))
-                .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(containsString("Stale version")));
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value(containsString("Stale version")));
 
         mockMvc.perform(put("/api/manager/themes/" + lightId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
                 .content(themeBody("Day " + token, lightKey, false, "#111111", "#EEEEEE", 0L)))
@@ -282,7 +284,8 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         mockMvc.perform(put("/api/manager/users/" + adaUid).cookie(manager).contentType(MediaType.APPLICATION_JSON)
                 .content(userBody(adaUid, "ada-" + token + "@example.com", "Ada", "Lovelace", "Countess", themeKey,
                         "[\"player\",\"manager\"]", 4L)))
-                .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(containsString("Stale version")));
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value(containsString("Stale version")));
         assertThat(firebase.customClaims(adaUid)).doesNotContainKey(RoleClaims.MANAGER);
         assertThat(firebase.customClaims(adaUid).get(RoleClaims.PLAYER)).isEqualTo(Boolean.TRUE);
 
@@ -377,7 +380,8 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
 
         String downUid = "claims-down-" + token;
         firebase.failClaims(downUid,
-                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, IdentityAdminException.CLAIMS_FAILED));
+                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE,
+                        IdentityAdminException.CLAIMS_FAILED));
         mockMvc.perform(post("/api/manager/users").cookie(manager).contentType(MediaType.APPLICATION_JSON)
                 .content(userBody(downUid, downUid + "@example.com", "Claims", "Down", "Claims", themeKey,
                         "[\"player\"]", null)))
@@ -389,7 +393,8 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         String keptUid = "kept-" + token;
         String keptId = createUser(keptUid, keptUid + "@example.com", "Kept", "Player", themeKey, "[\"player\"]");
         firebase.failClaims(keptUid,
-                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, IdentityAdminException.CLAIMS_FAILED));
+                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE,
+                        IdentityAdminException.CLAIMS_FAILED));
         mockMvc.perform(put("/api/manager/users/" + keptId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
                 .content(userBody(keptUid, keptUid + "@example.com", "Kept", "Player", "Kept", themeKey,
                         "[\"player\",\"manager\"]", 0L)))
@@ -403,8 +408,10 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         assertThat(firebase.customClaims(keptUid).get(RoleClaims.PLAYER)).isEqualTo(Boolean.TRUE);
 
         firebase.failRevoke(keptUid,
-                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, IdentityAdminException.REVOKE_FAILED));
-        mockMvc.perform(delete("/api/manager/users/" + keptId).cookie(manager)).andExpect(status().isServiceUnavailable())
+                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE,
+                        IdentityAdminException.REVOKE_FAILED));
+        mockMvc.perform(delete("/api/manager/users/" + keptId).cookie(manager))
+                .andExpect(status().isServiceUnavailable())
                 .andExpect(jsonPath("$.detail").value(IdentityAdminException.REVOKE_FAILED));
         assertThat(userRepository.findById(keptId)).isPresent();
         assertThat(firebase.refreshRevoked(keptUid)).isFalse();
@@ -412,8 +419,10 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         assertThat(firebase.customClaims(keptUid)).doesNotContainKey(RoleClaims.MANAGER);
 
         firebase.failClaims(keptUid,
-                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE, IdentityAdminException.CLAIMS_FAILED));
-        mockMvc.perform(delete("/api/manager/users/" + keptId).cookie(manager)).andExpect(status().isServiceUnavailable());
+                new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE,
+                        IdentityAdminException.CLAIMS_FAILED));
+        mockMvc.perform(delete("/api/manager/users/" + keptId).cookie(manager))
+                .andExpect(status().isServiceUnavailable());
         assertThat(userRepository.findById(keptId)).isPresent();
         assertThat(firebase.refreshRevoked(keptUid)).isFalse();
 
@@ -471,7 +480,8 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         String versionField = version == null ? "" : ",\"version\":" + version;
         return """
                 {"uid":"%s","emailAddr":"%s","firstName":"%s","lastName":"%s","nickName":"%s","themeId":"%s","roles":%s,"userPass":"secret","password":"secret","createUser":"hacker"%s}
-                """.formatted(escape(uid), escape(email), escape(firstName), escape(lastName), escape(nickName),
+                """
+                .formatted(escape(uid), escape(email), escape(firstName), escape(lastName), escape(nickName),
                         escape(themeId), rolesJson, versionField);
     }
 

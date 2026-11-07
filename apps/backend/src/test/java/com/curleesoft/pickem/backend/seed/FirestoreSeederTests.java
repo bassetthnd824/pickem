@@ -82,7 +82,8 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
     @Test
     void seedsReferenceDataTheAppCanRead() throws Exception {
         RecordingIdentity identity = new RecordingIdentity();
-        identity.accounts.put("boss@example.com", new BootstrapAccount("uid-1", "boss@example.com", "Kenney", "Curlee"));
+        identity.accounts.put("boss@example.com",
+                new BootstrapAccount("uid-1", "boss@example.com", "Kenney", "Curlee"));
         Optional<String> uid = seeder(FIRST, identity).seed("boss@example.com");
 
         assertThat(uid).contains("uid-1");
@@ -143,7 +144,8 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
         assertThat(ironBowl.getVenue().getName()).isEqualTo("Jordan-Hare Stadium");
 
         Matchup cocktail = Objects.requireNonNull(
-                require(MatchupRepository.COLLECTION, "2026-w6-florida-at-georgia").toObject(Matchup.class), "cocktail");
+                require(MatchupRepository.COLLECTION, "2026-w6-florida-at-georgia").toObject(Matchup.class),
+                "cocktail");
         assertThat(cocktail.getRivalryName()).isEqualTo("World's Largest Outdoor Cocktail Party");
 
         Matchup thirdSaturday = Objects.requireNonNull(
@@ -186,7 +188,8 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
     @Test
     void rerunKeepsAuditPicksAndAnEditedProfile() throws Exception {
         RecordingIdentity identity = new RecordingIdentity();
-        identity.accounts.put("boss@example.com", new BootstrapAccount("uid-1", "boss@example.com", "Kenney", "Curlee"));
+        identity.accounts.put("boss@example.com",
+                new BootstrapAccount("uid-1", "boss@example.com", "Kenney", "Curlee"));
         seeder(FIRST, identity).seed("boss@example.com");
 
         String pickId = "uid-1__2026-w1-vanderbilt-at-alabama";
@@ -255,7 +258,8 @@ class FirestoreSeederTests extends FirestoreEmulatorSupport {
         firestore.collection(UserRepository.COLLECTION).document("uid-1").set(existing).get();
 
         RecordingIdentity identity = new RecordingIdentity();
-        identity.accounts.put("boss@example.com", new BootstrapAccount("uid-1", "boss@example.com", "Kenney", "Curlee"));
+        identity.accounts.put("boss@example.com",
+                new BootstrapAccount("uid-1", "boss@example.com", "Kenney", "Curlee"));
         seeder(FIRST, identity).seed("boss@example.com");
 
         User manager = Objects.requireNonNull(require(UserRepository.COLLECTION, "uid-1").toObject(User.class),

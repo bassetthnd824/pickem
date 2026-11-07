@@ -75,6 +75,7 @@ final class DotenvFileLoader {
     }
 
     record LoadedDotenv(Path file, Map<String, String> values) {
+
         boolean present() {
             return file != null;
         }

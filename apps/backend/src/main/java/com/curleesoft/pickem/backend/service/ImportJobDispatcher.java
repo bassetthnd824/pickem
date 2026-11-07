@@ -33,7 +33,8 @@ public class ImportJobDispatcher {
         String id = Objects.requireNonNull(jobId, "jobId");
         try {
             importJobExecutor.execute(() -> run(id));
-        } catch (RejectedExecutionException ex) {
+        }
+        catch (RejectedExecutionException ex) {
             log.warn("CFBD import {} was not started: {}", id, ex.getMessage());
             cfbdImportService.recordStartFailure(id, "Import could not be started");
         }
@@ -42,7 +43,8 @@ public class ImportJobDispatcher {
     private void run(String jobId) {
         try {
             cfbdImportService.execute(jobId);
-        } catch (RuntimeException ex) {
+        }
+        catch (RuntimeException ex) {
             log.warn("CFBD import {} failed: {}", jobId, ex.getMessage());
         }
     }

@@ -44,7 +44,7 @@ class GoogleProfileTests {
     void rejectsMissingEmailOrName() {
         assertThatThrownBy(() -> GoogleProfile
                 .from(new VerifiedIdentity("uid", " ", "Kenney", "Kenney", "C", "google.com", Map.of())))
-                        .isInstanceOf(InvalidCredentialException.class);
+                .isInstanceOf(InvalidCredentialException.class);
 
         assertThatThrownBy(() -> GoogleProfile.from(identity(" ", "", "", "google.com")))
                 .isInstanceOf(InvalidCredentialException.class);

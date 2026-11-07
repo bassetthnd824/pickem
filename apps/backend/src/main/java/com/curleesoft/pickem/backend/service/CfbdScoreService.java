@@ -28,8 +28,8 @@ import com.google.cloud.firestore.Query;
 
 /**
  * Game-day score sync. Loads the current season's matchups dated today in
- * {@code America/New_York}, plus yesterday's matchups that still have no
- * scores (a kickoff that spilled past midnight). For each one with a
+ * {@code America/New_York}, plus yesterday's matchups that still have no scores
+ * (a kickoff that spilled past midnight). For each one with a
  * {@code cfbdGameId}, a completed CFBD game that has both point totals and a
  * winner replaces {@code homeTeamScore} / {@code awayTeamScore} and
  * {@code winningTeamId}. The same totals are not written again. Uncompleted
@@ -63,15 +63,16 @@ public class CfbdScoreService {
 
     /**
      * Runs one sync. CFBD failures are logged and rethrown so the HTTP entry
-     * returns 503 and Cloud Scheduler retries. Matchups that were not written
-     * stay as they were.
+     * returns 503 and Cloud Scheduler retries. Matchups that were not written stay
+     * as they were.
      */
     public ScoreSyncResult syncToday() {
         Clock leagueClock = Objects.requireNonNull(clock, "clock");
         LocalDate today;
         try {
             today = LocalDate.now(leagueClock.withZone(PickScoring.LEAGUE_ZONE));
-        } catch (DateTimeException ex) {
+        }
+        catch (DateTimeException ex) {
             throw new IllegalStateException("score sync clock is invalid", ex);
         }
         Optional<Season> current = SeasonCalendar.selectCurrent(seasonRepository.findAll(), today);
@@ -90,7 +91,8 @@ public class CfbdScoreService {
         Map<Long, CfbdGame> games;
         try {
             games = loadGames(year, due);
-        } catch (CfbdClientException ex) {
+        }
+        catch (CfbdClientException ex) {
             log.warn("CFBD score sync failed: {}", ex.getMessage());
             throw ex;
         }
@@ -129,8 +131,8 @@ public class CfbdScoreService {
     }
 
     /**
-     * Today, or yesterday when both scores are still empty. Older games and
-     * rows without a CFBD id are left alone.
+     * Today, or yesterday when both scores are still empty. Older games and rows
+     * without a CFBD id are left alone.
      */
     private static boolean isDue(Matchup matchup, LocalDate today, LocalDate yesterday) {
         if (matchup.getCfbdGameId() == null) {
@@ -153,7 +155,8 @@ public class CfbdScoreService {
         }
         try {
             return LocalDate.parse(value.trim());
-        } catch (DateTimeParseException ex) {
+        }
+        catch (DateTimeParseException ex) {
             log.warn("CFBD score sync skipped matchup {} with date {}", matchup.getId(), value);
             return null;
         }
@@ -206,8 +209,8 @@ public class CfbdScoreService {
 
     /**
      * Home wins when {@code homePoints > awayPoints}; otherwise away. That is
-     * {@code MatchupUserPick.getWinningTeamId()} once both totals exist and
-     * are not equal. A tie is not stored.
+     * {@code MatchupUserPick.getWinningTeamId()} once both totals exist and are not
+     * equal. A tie is not stored.
      */
     private boolean apply(Matchup matchup, CfbdGame game) {
         if (game == null) {
@@ -250,7 +253,8 @@ public class CfbdScoreService {
         for (int tryNumber = 1; tryNumber <= MAX_ATTEMPTS; tryNumber++) {
             try {
                 return attempt.get();
-            } catch (CfbdClientException ex) {
+            }
+            catch (CfbdClientException ex) {
                 last = ex;
                 if (!isTransient(ex) || tryNumber == MAX_ATTEMPTS) {
                     throw ex;
@@ -275,8 +279,10 @@ public class CfbdScoreService {
     }
 
     /**
-     * @param considered matchups the job tried to score
-     * @param updated matchups whose stored scores or winner changed
+     * @param considered
+     *            matchups the job tried to score
+     * @param updated
+     *            matchups whose stored scores or winner changed
      */
     public record ScoreSyncResult(int considered, int updated) {
     }

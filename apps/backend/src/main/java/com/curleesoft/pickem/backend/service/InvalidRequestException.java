@@ -1,7 +1,8 @@
 package com.curleesoft.pickem.backend.service;
 
 /**
- * A manager request failed calendar or reference validation. Mapped to HTTP 400.
+ * A manager request failed calendar or reference validation. Mapped to HTTP
+ * 400.
  */
 public class InvalidRequestException extends RuntimeException {
 

@@ -34,8 +34,8 @@ public class InternalJobController {
     }
 
     /**
-     * Local loopback or {@code X-Pickem-Job-Secret}. See the API contract for
-     * the emulator curl and the Cloud Scheduler cron.
+     * Local loopback or {@code X-Pickem-Job-Secret}. See the API contract for the
+     * emulator curl and the Cloud Scheduler cron.
      */
     @PostMapping("/cfbd-scores")
     public ResponseEntity<ScoreJobResponse> scores() {
@@ -44,8 +44,8 @@ public class InternalJobController {
     }
 
     /**
-     * Without a job id this only acknowledges the worker, so a probe does not
-     * call College Football Data. With a job id it runs that import to completion.
+     * Without a job id this only acknowledges the worker, so a probe does not call
+     * College Football Data. With a job id it runs that import to completion.
      */
     @PostMapping("/cfbd-matchups")
     public ResponseEntity<InternalJobAccepted> matchups(@RequestBody(required = false) ImportWorkerRequest request) {

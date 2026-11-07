@@ -118,7 +118,8 @@ public class UserService {
 
         try {
             RoleClaimSync.publish(identityClient, uid, List.of());
-        } catch (IdentityAdminException ex) {
+        }
+        catch (IdentityAdminException ex) {
             if (ex.getKind() != IdentityAdminException.Kind.USER_NOT_FOUND) {
                 throw ex;
             }
@@ -129,7 +130,8 @@ public class UserService {
 
         try {
             identityClient.revokeRefreshTokens(uid);
-        } catch (IdentityAdminException ex) {
+        }
+        catch (IdentityAdminException ex) {
             if (ex.getKind() != IdentityAdminException.Kind.USER_NOT_FOUND) {
                 RoleClaimSync.align(identityClient, userRepository, uid, existing.getRoles());
                 throw ex;
@@ -146,10 +148,12 @@ public class UserService {
         try {
             return userRepository.save(user, constraints);
 
-        } catch (RuntimeException ex) {
+        }
+        catch (RuntimeException ex) {
             try {
                 RoleClaimSync.align(identityClient, userRepository, user.getUid(), claimsIfMissing);
-            } catch (RuntimeException restore) {
+            }
+            catch (RuntimeException restore) {
                 IdentityAdminException failure = new IdentityAdminException(IdentityAdminException.Kind.UNAVAILABLE,
                         IdentityAdminException.CLAIMS_NOT_RESTORED, restore);
                 failure.addSuppressed(ex);

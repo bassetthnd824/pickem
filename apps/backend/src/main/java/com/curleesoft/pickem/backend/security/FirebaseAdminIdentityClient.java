@@ -47,7 +47,8 @@ public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
     public VerifiedIdentity verifyIdToken(String idToken) {
         try {
             return toIdentity(auth().verifyIdToken(idToken, true));
-        } catch (FirebaseAuthException ex) {
+        }
+        catch (FirebaseAuthException ex) {
             throw new InvalidCredentialException("Invalid Google ID token", ex);
         }
     }
@@ -58,15 +59,16 @@ public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
             SessionCookieOptions options = SessionCookieOptions.builder()
                     .setExpiresIn(expiresInMillis(expiresIn)).build();
             return auth().createSessionCookie(idToken, options);
-        } catch (FirebaseAuthException ex) {
+        }
+        catch (FirebaseAuthException ex) {
             throw new InvalidCredentialException("Could not create a session cookie", ex);
         }
     }
 
     /**
-     * Admin 9.10 rejects a duration that is not strictly inside 5 minutes and
-     * 14 days, despite the error text saying "at most". The product window
-     * includes both endpoints, so those two values move inward by 1 ms.
+     * Admin 9.10 rejects a duration that is not strictly inside 5 minutes and 14
+     * days, despite the error text saying "at most". The product window includes
+     * both endpoints, so those two values move inward by 1 ms.
      */
     static long expiresInMillis(Duration expiresIn) {
         long millis = expiresIn.toMillis();
@@ -85,7 +87,8 @@ public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
     public VerifiedIdentity verifySessionCookie(String sessionCookie) {
         try {
             return toIdentity(auth().verifySessionCookie(sessionCookie, true));
-        } catch (FirebaseAuthException ex) {
+        }
+        catch (FirebaseAuthException ex) {
             throw new InvalidCredentialException("Invalid or revoked session cookie", ex);
         }
     }
@@ -94,7 +97,8 @@ public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
     public void setCustomUserClaims(String uid, Map<String, Object> claims) {
         try {
             auth().setCustomUserClaims(uid, claims);
-        } catch (FirebaseAuthException ex) {
+        }
+        catch (FirebaseAuthException ex) {
             throw adminFailure(ex, IdentityAdminException.CLAIMS_FAILED);
         }
     }
@@ -103,7 +107,8 @@ public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
     public void revokeRefreshTokens(String uid) {
         try {
             auth().revokeRefreshTokens(uid);
-        } catch (FirebaseAuthException ex) {
+        }
+        catch (FirebaseAuthException ex) {
             throw adminFailure(ex, IdentityAdminException.REVOKE_FAILED);
         }
     }
@@ -146,7 +151,8 @@ public class FirebaseAdminIdentityClient implements FirebaseIdentityClient {
             }
             FirebaseApp app = firebaseApp(builder.build());
             return FirebaseAuth.getInstance(app);
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             throw new AuthUnavailableException("Firebase Admin credentials are not configured", ex);
         }
     }

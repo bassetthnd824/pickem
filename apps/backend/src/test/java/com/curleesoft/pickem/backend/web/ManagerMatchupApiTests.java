@@ -144,7 +144,8 @@ class ManagerMatchupApiTests extends FirestoreEmulatorSupport {
 
         mockMvc.perform(get("/api/manager/matchups").cookie(player)).andExpect(status().isForbidden());
         mockMvc.perform(get("/api/manager/matchups/missing").cookie(player)).andExpect(status().isForbidden());
-        mockMvc.perform(post("/api/manager/matchups").cookie(player).contentType(MediaType.APPLICATION_JSON).content("{}"))
+        mockMvc.perform(
+                post("/api/manager/matchups").cookie(player).contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isForbidden());
         mockMvc.perform(put("/api/manager/matchups/missing").cookie(player).contentType(MediaType.APPLICATION_JSON)
                 .content("{}")).andExpect(status().isForbidden());
@@ -170,7 +171,8 @@ class ManagerMatchupApiTests extends FirestoreEmulatorSupport {
 
         MvcResult created = mockMvc
                 .perform(post("/api/manager/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                        .content(matchupBody(slate.seasonId(), slate.weekId(), null, slate.begin().plusDays(2).toString(),
+                        .content(matchupBody(slate.seasonId(), slate.weekId(), null,
+                                slate.begin().plusDays(2).toString(),
                                 homeId, awayId, neutralId, null, null, externalId)))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", containsString("/api/manager/matchups/")))
@@ -246,7 +248,8 @@ class ManagerMatchupApiTests extends FirestoreEmulatorSupport {
         mockMvc.perform(post("/api/manager/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON)
                 .content(matchupBody(other.seasonId(), slate.weekId(), 1, slate.begin().toString(), homeId, awayId,
                         neutralId, null, null, null)))
-                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(MatchupService.SEASON_MISMATCH));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value(MatchupService.SEASON_MISMATCH));
 
         mockMvc.perform(post("/api/manager/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON)
                 .content(matchupBody(slate.seasonId(), "missing-" + token, 1, slate.begin().toString(), homeId, awayId,
@@ -274,12 +277,15 @@ class ManagerMatchupApiTests extends FirestoreEmulatorSupport {
                         neutralId, 14, 14, null)))
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(MatchupService.SCORES_TIED));
 
-        mockMvc.perform(post("/api/manager/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                {"seasonWeekId":"%s","matchupDate":"%s","awayTeamId":"%s","venueId":"%s"}
-                """.formatted(slate.weekId(), slate.begin(), awayId, neutralId))).andExpect(status().isBadRequest())
+        mockMvc.perform(
+                post("/api/manager/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
+                        {"seasonWeekId":"%s","matchupDate":"%s","awayTeamId":"%s","venueId":"%s"}
+                        """.formatted(slate.weekId(), slate.begin(), awayId, neutralId)))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.detail").value(containsString("homeTeamId")));
 
-        mockMvc.perform(put("/api/manager/matchups/" + matchupId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/manager/matchups/" + matchupId).cookie(manager)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(versionedMatchup(slate.seasonId(), slate.weekId(), 1, slate.begin().toString(), homeId, awayId,
                         homeVenueId, 10, 24, externalId, 0)))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.version").value(1))
@@ -290,7 +296,8 @@ class ManagerMatchupApiTests extends FirestoreEmulatorSupport {
                 .andExpect(jsonPath("$.createUser").value(managerUid))
                 .andExpect(jsonPath("$.rivalryName").value("Third Saturday " + token));
 
-        mockMvc.perform(put("/api/manager/matchups/" + matchupId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/manager/matchups/" + matchupId).cookie(manager)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(versionedMatchup(slate.seasonId(), slate.weekId(), 1, slate.end().toString(), homeId, thirdId,
                         neutralId, 31, 7, externalId, 1)))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.version").value(2))
@@ -299,7 +306,8 @@ class ManagerMatchupApiTests extends FirestoreEmulatorSupport {
                 .andExpect(jsonPath("$.awayTeam.name").value("Georgia " + token))
                 .andExpect(jsonPath("$.rivalryName").value(nullValue()));
 
-        mockMvc.perform(put("/api/manager/matchups/" + matchupId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/manager/matchups/" + matchupId).cookie(manager)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(versionedMatchup(slate.seasonId(), slate.weekId(), 1, slate.end().toString(), homeId, thirdId,
                         neutralId, null, null, null, 2)))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.version").value(3))
@@ -317,15 +325,18 @@ class ManagerMatchupApiTests extends FirestoreEmulatorSupport {
                 thirdId, neutralId, null, null, externalId);
         assertThat(reused).isNotBlank();
 
-        mockMvc.perform(put("/api/manager/matchups/" + matchupId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/manager/matchups/" + matchupId).cookie(manager)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(versionedMatchup(slate.seasonId(), slate.weekId(), 1, slate.end().toString(), homeId, thirdId,
                         neutralId, 21, 21, null, 3)))
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(MatchupService.SCORES_TIED));
 
-        mockMvc.perform(put("/api/manager/matchups/" + matchupId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/manager/matchups/" + matchupId).cookie(manager)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(versionedMatchup(slate.seasonId(), slate.weekId(), 1, slate.end().toString(), homeId, thirdId,
                         neutralId, null, null, null, 0)))
-                .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(containsString("Stale version")));
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value(containsString("Stale version")));
 
         mockMvc.perform(get("/api/manager/matchups/missing-" + token).cookie(manager)).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.detail").value(MatchupService.NOT_FOUND));
@@ -362,7 +373,8 @@ class ManagerMatchupApiTests extends FirestoreEmulatorSupport {
                 alphaId, otherAwayId, mainId, 7, 3, null);
         String weekTwoGame = createMatchup(older.seasonId(), weekTwo, 2, older.begin().plusDays(7).toString(), zuluId,
                 awayId, mainId, null, null, null);
-        String nextSeason = createMatchup(newer.seasonId(), newer.weekId(), 1, newer.begin().toString(), alphaId, awayId,
+        String nextSeason = createMatchup(newer.seasonId(), newer.weekId(), 1, newer.begin().toString(), alphaId,
+                awayId,
                 mainId, null, null, null);
 
         mockMvc.perform(get("/api/manager/matchups/" + alphaSaturday).cookie(manager)).andExpect(status().isOk())
@@ -384,22 +396,27 @@ class ManagerMatchupApiTests extends FirestoreEmulatorSupport {
         mockMvc.perform(get("/api/manager/matchups").cookie(manager).param("seasonWeekId", older.weekId()))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(3));
 
-        mockMvc.perform(get("/api/manager/matchups").cookie(manager).param("seasonId", older.seasonId()).param("weekNumber",
-                "2")).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1))
+        mockMvc.perform(
+                get("/api/manager/matchups").cookie(manager).param("seasonId", older.seasonId()).param("weekNumber",
+                        "2"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].id").value(weekTwoGame));
 
         mockMvc.perform(get("/api/manager/matchups").cookie(manager).param("seasonId", older.seasonId())
                 .param("matchupDate", older.begin().plusDays(2).toString())).andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1)).andExpect(jsonPath("$[0].id").value(alphaSaturday));
 
-        mockMvc.perform(get("/api/manager/matchups").cookie(manager).param("teamId", otherAwayId)).andExpect(status().isOk())
+        mockMvc.perform(get("/api/manager/matchups").cookie(manager).param("teamId", otherAwayId))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2)).andExpect(jsonPath("$[0].id").value(zuluThursday))
                 .andExpect(jsonPath("$[1].id").value(alphaSaturday));
 
-        mockMvc.perform(get("/api/manager/matchups").cookie(manager).param("teamId", awayId).param("venueId", neutralId))
+        mockMvc.perform(
+                get("/api/manager/matchups").cookie(manager).param("teamId", awayId).param("venueId", neutralId))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(0));
 
-        mockMvc.perform(get("/api/manager/matchups").cookie(manager).param("venueId", neutralId)).andExpect(status().isOk())
+        mockMvc.perform(get("/api/manager/matchups").cookie(manager).param("venueId", neutralId))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1)).andExpect(jsonPath("$[0].id").value(zuluThursday));
 
         mockMvc.perform(get("/api/manager/matchups").cookie(manager).param("cfbdGameId", Long.toString(externalId)))
@@ -409,7 +426,8 @@ class ManagerMatchupApiTests extends FirestoreEmulatorSupport {
         mockMvc.perform(get("/api/manager/matchups").cookie(manager).param("weekNumber", "nope"))
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value("Request is invalid"));
 
-        String all = mockMvc.perform(get("/api/manager/matchups").cookie(manager)).andExpect(status().isOk()).andReturn()
+        String all = mockMvc.perform(get("/api/manager/matchups").cookie(manager)).andExpect(status().isOk())
+                .andReturn()
                 .getResponse().getContentAsString();
         JsonNode games = jsonMapper.readTree(all);
         assertThat(indexOf(games, weekTwoGame)).isLessThan(indexOf(games, nextSeason));
@@ -425,9 +443,11 @@ class ManagerMatchupApiTests extends FirestoreEmulatorSupport {
 
     private String createSeason(String year, LocalDate begin, LocalDate end) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                        {"season":"%s","beginDate":"%s","endDate":"%s","isCurrent":false}
-                        """.formatted(year, begin, end))).andExpect(status().isCreated()).andReturn();
+                .perform(
+                        post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
+                                {"season":"%s","beginDate":"%s","endDate":"%s","isCurrent":false}
+                                """.formatted(year, begin, end)))
+                .andExpect(status().isCreated()).andReturn();
         String id = idOf(result);
         seasonIds.add(id);
         return id;
@@ -468,9 +488,11 @@ class ManagerMatchupApiTests extends FirestoreEmulatorSupport {
 
     private String createRivalry(String name, String team1Id, String team2Id) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/rivalries").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                        {"rivalryName":"%s","team1Id":"%s","team2Id":"%s"}
-                        """.formatted(escape(name), escape(team1Id), escape(team2Id)))).andExpect(status().isCreated())
+                .perform(post("/api/manager/rivalries").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"rivalryName":"%s","team1Id":"%s","team2Id":"%s"}
+                                """.formatted(escape(name), escape(team1Id), escape(team2Id))))
+                .andExpect(status().isCreated())
                 .andReturn();
         String id = idOf(result);
         rivalryIds.add(id);
@@ -514,9 +536,11 @@ class ManagerMatchupApiTests extends FirestoreEmulatorSupport {
             long version) {
         return """
                 {"seasonId":"%s","seasonWeekId":"%s","weekNumber":%s,"matchupDate":"%s","homeTeamId":"%s","awayTeamId":"%s","venueId":"%s","homeTeamScore":%s,"awayTeamScore":%s,"cfbdGameId":%s,"winningTeamId":"client-winner","rivalryName":"Client Rivalry","homeTeam":{"id":"wrong","name":"Wrong","squad":"Wrong"},"awayTeam":{"id":"wrong","name":"Wrong","squad":"Wrong"},"venue":{"id":"wrong","name":"Wrong","cityState":"Nowhere"},"createUser":"hacker","version":%d}
-                """.formatted(escape(seasonId), escape(seasonWeekId), jsonNumber(weekNumber), escape(date),
-                escape(homeTeamId), escape(awayTeamId), escape(venueId), jsonNumber(homeScore), jsonNumber(awayScore),
-                jsonNumber(cfbdGameId), version);
+                """
+                .formatted(escape(seasonId), escape(seasonWeekId), jsonNumber(weekNumber), escape(date),
+                        escape(homeTeamId), escape(awayTeamId), escape(venueId), jsonNumber(homeScore),
+                        jsonNumber(awayScore),
+                        jsonNumber(cfbdGameId), version);
     }
 
     private static String jsonNumber(Number value) {

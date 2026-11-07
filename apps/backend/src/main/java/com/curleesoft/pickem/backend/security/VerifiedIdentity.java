@@ -9,6 +9,7 @@ import java.util.Map;
  */
 public record VerifiedIdentity(String uid, String email, String displayName, String givenName, String familyName,
         String signInProvider, Map<String, Object> claims) {
+
     public VerifiedIdentity {
         uid = uid == null ? "" : uid;
         email = email == null ? "" : email;

@@ -178,7 +178,8 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         assertThat(leaderboardStatus).isIn(200, 404);
         mockMvc.perform(post("/api/game/picks").cookie(player).contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest());
-        int managerStatus = mockMvc.perform(get("/api/game/main").cookie(manager)).andReturn().getResponse().getStatus();
+        int managerStatus = mockMvc.perform(get("/api/game/main").cookie(manager)).andReturn().getResponse()
+                .getStatus();
         assertThat(managerStatus).isIn(200, 404);
         int managerBoard = mockMvc.perform(get("/api/game/leaderboard").cookie(manager)).andReturn().getResponse()
                 .getStatus();
@@ -202,8 +203,9 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
                 .content(picksBody(slate.futureWeekId(), pickRow(slate.futureId(), slate.futureAwayId(), 2))))
                 .andExpect(status().isOk());
 
-        JsonNode main = jsonMapper.readTree(mockMvc.perform(get("/api/game/main").cookie(player)).andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString());
+        JsonNode main = jsonMapper
+                .readTree(mockMvc.perform(get("/api/game/main").cookie(player)).andExpect(status().isOk())
+                        .andReturn().getResponse().getContentAsString());
 
         assertThat(main.path("seasonId").asString()).isEqualTo(slate.seasonId());
         assertThat(main.path("season").asString()).isEqualTo(slate.year());
@@ -213,7 +215,8 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         assertThat(main.path("weeks").get(1).path("id").asString()).isEqualTo(slate.futureWeekId());
         assertThat(main.path("weeks").get(1).path("currentOrPast").asBoolean()).isFalse();
 
-        long conference = teamRepository.findAll().stream().filter(team -> Boolean.TRUE.equals(team.getConferenceMember()))
+        long conference = teamRepository.findAll().stream()
+                .filter(team -> Boolean.TRUE.equals(team.getConferenceMember()))
                 .count();
         assertThat(main.path("numberOfConferenceTeams").asInt()).isEqualTo((int) conference);
         assertThat(conference).isLessThan(teamRepository.findAll().size());
@@ -306,10 +309,12 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         assertThat(stillFirst.getRank()).isEqualTo(4);
 
         JsonNode firstView = jsonMapper.readTree(
-                mockMvc.perform(get("/api/game/main").cookie(first)).andExpect(status().isOk()).andReturn().getResponse()
+                mockMvc.perform(get("/api/game/main").cookie(first)).andExpect(status().isOk()).andReturn()
+                        .getResponse()
                         .getContentAsString());
         JsonNode secondView = jsonMapper.readTree(
-                mockMvc.perform(get("/api/game/main").cookie(second)).andExpect(status().isOk()).andReturn().getResponse()
+                mockMvc.perform(get("/api/game/main").cookie(second)).andExpect(status().isOk()).andReturn()
+                        .getResponse()
                         .getContentAsString());
         assertThat(matchup(firstView.path("weeks").get(0).path("matchups"), slate.correctId()).path("pickedTeamId")
                 .asString()).isEqualTo(slate.correctAwayId());
@@ -398,8 +403,9 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
         JsonNode board = leaderboard(player, slate.seasonId());
         assertThat(standing(board.path("standings"), uid).path("score").asLong()).isZero();
 
-        JsonNode main = jsonMapper.readTree(mockMvc.perform(get("/api/game/main").cookie(player)).andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString());
+        JsonNode main = jsonMapper
+                .readTree(mockMvc.perform(get("/api/game/main").cookie(player)).andExpect(status().isOk())
+                        .andReturn().getResponse().getContentAsString());
         JsonNode row = matchup(main.path("weeks").get(0).path("matchups"), slate.alphaId());
         assertThat(row.path("homeTeamScore").asInt()).isEqualTo(14);
         assertThat(row.path("awayTeamScore").asInt()).isEqualTo(14);
@@ -510,7 +516,8 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
 
         try {
             return save(player, weekId, picks);
-        } finally {
+        }
+        finally {
             PinnedClockConfig.NOW.set(prior);
         }
     }
@@ -587,9 +594,11 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
 
     private String createSeason(String year, LocalDate begin, LocalDate end, boolean current) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                        {"season":"%s","beginDate":"%s","endDate":"%s","isCurrent":%s}
-                        """.formatted(year, begin, end, current))).andExpect(status().isCreated()).andReturn();
+                .perform(
+                        post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
+                                {"season":"%s","beginDate":"%s","endDate":"%s","isCurrent":%s}
+                                """.formatted(year, begin, end, current)))
+                .andExpect(status().isCreated()).andReturn();
         String id = idOf(result);
         seasonIds.add(id);
         return id;
@@ -630,9 +639,11 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
 
     private String createRivalry(String name, String team1Id, String team2Id) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/rivalries").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                        {"rivalryName":"%s","team1Id":"%s","team2Id":"%s"}
-                        """.formatted(escape(name), escape(team1Id), escape(team2Id)))).andExpect(status().isCreated())
+                .perform(post("/api/manager/rivalries").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"rivalryName":"%s","team1Id":"%s","team2Id":"%s"}
+                                """.formatted(escape(name), escape(team1Id), escape(team2Id))))
+                .andExpect(status().isCreated())
                 .andReturn();
         return idOf(result);
     }
@@ -640,10 +651,14 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
     private String createMatchup(String seasonId, String seasonWeekId, int weekNumber, String date, String homeTeamId,
             String awayTeamId, String venueId, Integer homeScore, Integer awayScore) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                        {"seasonId":"%s","seasonWeekId":"%s","weekNumber":%d,"matchupDate":"%s","homeTeamId":"%s","awayTeamId":"%s","venueId":"%s","homeTeamScore":%s,"awayTeamScore":%s}
-                        """.formatted(escape(seasonId), escape(seasonWeekId), weekNumber, escape(date), escape(homeTeamId),
-                        escape(awayTeamId), escape(venueId), jsonNumber(homeScore), jsonNumber(awayScore))))
+                .perform(post("/api/manager/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON).content(
+                        """
+                                {"seasonId":"%s","seasonWeekId":"%s","weekNumber":%d,"matchupDate":"%s","homeTeamId":"%s","awayTeamId":"%s","venueId":"%s","homeTeamScore":%s,"awayTeamScore":%s}
+                                """
+                                .formatted(escape(seasonId), escape(seasonWeekId), weekNumber, escape(date),
+                                        escape(homeTeamId),
+                                        escape(awayTeamId), escape(venueId), jsonNumber(homeScore),
+                                        jsonNumber(awayScore))))
                 .andExpect(status().isCreated()).andReturn();
         String id = idOf(result);
         matchupIds.add(id);
@@ -811,7 +826,8 @@ class GamePicksApiTests extends FirestoreEmulatorSupport {
     }
 
     private record Slate(String seasonId, String year, String currentWeekId, String futureWeekId, String correctId,
-            String wrongId, String alphaId, String zuluId, String futureId, String correctHomeId, String correctHomeName,
+            String wrongId, String alphaId, String zuluId, String futureId, String correctHomeId,
+            String correctHomeName,
             String correctAwayId, String correctAwayName, String wrongHomeId, String futureAwayId, String venueName,
             String cityState, String rivalryName, String alphaHomeId, String futureHomeId, LocalDate currentBegin) {
     }

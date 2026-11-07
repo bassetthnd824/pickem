@@ -26,11 +26,13 @@ public final class TransactionReads {
         try {
             return active.get(checked).get();
 
-        } catch (InterruptedException ex) {
+        }
+        catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new FirestoreAccessException("Interrupted reading Firestore", ex);
 
-        } catch (ExecutionException ex) {
+        }
+        catch (ExecutionException ex) {
             Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
             throw new FirestoreAccessException("Failed to read Firestore", cause);
         }
@@ -44,11 +46,13 @@ public final class TransactionReads {
             DocumentSnapshot snapshot = Objects.requireNonNull(active.get(document), "document").get();
             return snapshot.exists();
 
-        } catch (InterruptedException ex) {
+        }
+        catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new FirestoreAccessException("Interrupted reading Firestore", ex);
 
-        } catch (ExecutionException ex) {
+        }
+        catch (ExecutionException ex) {
             Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
             throw new FirestoreAccessException("Failed to read Firestore", cause);
         }

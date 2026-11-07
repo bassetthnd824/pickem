@@ -171,7 +171,8 @@ class ImportApiTests extends FirestoreEmulatorSupport {
             jobIds.add(jobId);
             ImportJob running = importJobRepository.findById(jobId).orElseThrow();
             assertThat(running.getStatus()).isEqualTo(ImportJob.RUNNING);
-        } finally {
+        }
+        finally {
             requestFinished.countDown();
             future.get(10, TimeUnit.SECONDS);
             callers.shutdownNow();
@@ -208,7 +209,8 @@ class ImportApiTests extends FirestoreEmulatorSupport {
                 .andExpect(jsonPath("$.detail").value(SeasonService.NOT_FOUND));
         mockMvc.perform(post("/api/manager/imports/matchups").cookie(manager).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"seasonId\":\"" + seasonId + "\",\"seasonType\":\"bowls\"}"))
-                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(CfbdImportService.SEASON_TYPE_INVALID));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value(CfbdImportService.SEASON_TYPE_INVALID));
 
         ImportJob queued = cfbdImportService.enqueue(seasonId, null);
         String jobId = Objects.requireNonNull(queued.getId(), "jobId");
@@ -220,7 +222,8 @@ class ImportApiTests extends FirestoreEmulatorSupport {
         verifyNoInteractions(cfbdClient);
 
         mockMvc.perform(post("/api/internal/jobs/cfbd-matchups").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"jobId\":\"" + jobId + "\"}").header(InternalJobFilter.SECRET_HEADER, SECRET).with(from(OUTSIDE)))
+                .content("{\"jobId\":\"" + jobId + "\"}").header(InternalJobFilter.SECRET_HEADER, SECRET)
+                .with(from(OUTSIDE)))
                 .andExpect(status().isServiceUnavailable())
                 .andExpect(jsonPath("$.detail").value(CfbdClientException.RATE_LIMITED));
         verify(cfbdClient, times(3)).calendar(year);
@@ -232,7 +235,8 @@ class ImportApiTests extends FirestoreEmulatorSupport {
 
         clearInvocations(cfbdClient);
         mockMvc.perform(post("/api/internal/jobs/cfbd-matchups").header(InternalJobFilter.SECRET_HEADER, SECRET)
-                .with(from(OUTSIDE))).andExpect(status().isAccepted()).andExpect(jsonPath("$.job").value("cfbd-matchups"));
+                .with(from(OUTSIDE))).andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.job").value("cfbd-matchups"));
         verify(cfbdClient, never()).calendar(anyInt());
 
         String spec = mockMvc.perform(get("/v3/api-docs")).andExpect(status().isOk()).andReturn().getResponse()
@@ -256,9 +260,11 @@ class ImportApiTests extends FirestoreEmulatorSupport {
 
     private String createSeason(int year) throws Exception {
         MvcResult result = mockMvc
-                .perform(post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                        {"season":"%s","beginDate":"%s-08-01","endDate":"%s-12-31","isCurrent":false}
-                        """.formatted(year, year, year))).andExpect(status().isCreated()).andReturn();
+                .perform(
+                        post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
+                                {"season":"%s","beginDate":"%s-08-01","endDate":"%s-12-31","isCurrent":false}
+                                """.formatted(year, year, year)))
+                .andExpect(status().isCreated()).andReturn();
         String id = jsonMapper.readTree(result.getResponse().getContentAsString()).path("id").asString();
         seasonIds.add(id);
         return id;

@@ -79,15 +79,18 @@ public class AuthService {
         user.setRoles(player);
         try {
             userRepository.save(user, uid);
-        } catch (StaleDocumentVersionException ex) {
+        }
+        catch (StaleDocumentVersionException ex) {
             User winner = userRepository.findById(uid)
                     .orElseThrow(() -> new InvalidCredentialException("Could not provision the user", ex));
             refresh(winner, profile);
             RoleClaimSync.align(identityClient, userRepository, uid, player);
-        } catch (RuntimeException ex) {
+        }
+        catch (RuntimeException ex) {
             try {
                 RoleClaimSync.align(identityClient, userRepository, uid, List.of());
-            } catch (RuntimeException restore) {
+            }
+            catch (RuntimeException restore) {
                 ex.addSuppressed(restore);
             }
             throw ex;

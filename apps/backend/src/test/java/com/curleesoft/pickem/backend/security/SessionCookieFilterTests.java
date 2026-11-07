@@ -62,11 +62,13 @@ class SessionCookieFilterTests {
 
     @Test
     void invalidCookieContinuesUnauthenticated() throws Exception {
-        FirebaseIdentityClient identities = new StubIdentityClient(new InvalidCredentialException("Invalid or revoked session cookie"));
+        FirebaseIdentityClient identities = new StubIdentityClient(
+                new InvalidCredentialException("Invalid or revoked session cookie"));
         SessionCookieFilter filter = filter(identities, mock(UserRepository.class));
         AtomicBoolean continued = new AtomicBoolean();
 
-        filter.doFilter(requestWithCookie(), new MockHttpServletResponse(), (servletRequest, servletResponse) -> continued.set(true));
+        filter.doFilter(requestWithCookie(), new MockHttpServletResponse(),
+                (servletRequest, servletResponse) -> continued.set(true));
 
         assertThat(continued).isTrue();
     }

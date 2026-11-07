@@ -57,8 +57,8 @@ public class SeasonService {
     }
 
     /**
-     * Blank or missing seasonId is the current season. Any other id is loaded
-     * as written, and an unknown id is 404.
+     * Blank or missing seasonId is the current season. Any other id is loaded as
+     * written, and an unknown id is 404.
      */
     public Season resolve(String seasonId) {
         String resolved = SearchText.blankToNull(seasonId);

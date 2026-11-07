@@ -16,9 +16,9 @@ import com.curleesoft.pickem.backend.repository.TeamRepository;
 /**
  * Conference-team schedule. Ports {@code TeamScheduleAction} and
  * {@code MatchupBean.getMatchupsBySeasonTeam}. The opponent label is the other
- * team's name, prefixed with {@code "at "} when the selected team is away.
- * W/L is from that team's perspective. The score string stays home score, then
- * away score. Unplayed games (either score empty, or equal scores) omit both.
+ * team's name, prefixed with {@code "at "} when the selected team is away. W/L
+ * is from that team's perspective. The score string stays home score, then away
+ * score. Unplayed games (either score empty, or equal scores) omit both.
  */
 @Service
 public class TeamScheduleService {

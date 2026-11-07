@@ -1,8 +1,8 @@
 package com.curleesoft.pickem.backend.security;
 
 /**
- * Remote addresses that are this host. Forwarded-for headers are not
- * consulted; a caller can set those.
+ * Remote addresses that are this host. Forwarded-for headers are not consulted;
+ * a caller can set those.
  */
 public final class LoopbackAddresses {
 

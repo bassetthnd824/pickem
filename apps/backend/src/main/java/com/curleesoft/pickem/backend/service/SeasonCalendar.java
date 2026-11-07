@@ -130,7 +130,8 @@ public final class SeasonCalendar {
 
         try {
             return inCurrentWindow(LocalDate.parse(season.getBeginDate()), LocalDate.parse(season.getEndDate()), today);
-        } catch (DateTimeParseException ex) {
+        }
+        catch (DateTimeParseException ex) {
             return false;
         }
     }
@@ -143,7 +144,8 @@ public final class SeasonCalendar {
     private static LocalDate expectedBegin(LocalDate seasonBegin, int weekNumber) {
         try {
             return seasonBegin.plusDays((weekNumber - 1L) * 7L);
-        } catch (DateTimeException ex) {
+        }
+        catch (DateTimeException ex) {
             throw new InvalidRequestException(WEEK_BEGIN_ALIGNMENT_INVALID);
         }
     }
@@ -163,7 +165,8 @@ public final class SeasonCalendar {
 
         try {
             return LocalDate.parse(value);
-        } catch (DateTimeParseException ex) {
+        }
+        catch (DateTimeParseException ex) {
             throw new InvalidRequestException(message);
         }
     }

@@ -181,11 +181,13 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         CfbdCalendarWeek week = new CfbdCalendarWeek(year, 1, "regular", monday + "T00:00:00.000Z",
                 sunday + "T23:59:59.000Z");
         String easternKickoff = sunday.plusDays(1) + "T03:30:00.000Z";
-        CfbdGame atDodd = game(910_001L, year, 1, easternKickoff, "Bobby Dodd " + token, doddId, alabama.getCfbdTeamId(),
+        CfbdGame atDodd = game(910_001L, year, 1, easternKickoff, "Bobby Dodd " + token, doddId,
+                alabama.getCfbdTeamId(),
                 alabama.getTeamName(), jacketsId, jackets);
         CfbdGame jacketsHome = game(910_005L, year, 1, monday + "T18:00:00.000Z", "Bobby Dodd " + token, doddId,
                 jacketsId, jackets, alabama.getCfbdTeamId(), alabama.getTeamName());
-        CfbdGame atFinley = game(910_002L, year, 1, monday + "T18:00:00.000Z", "Finley " + token, finleyId, mocsId, mocs,
+        CfbdGame atFinley = game(910_002L, year, 1, monday + "T18:00:00.000Z", "Finley " + token, finleyId, mocsId,
+                mocs,
                 alabama.getCfbdTeamId(), alabama.getTeamName());
         CfbdGame noVenue = game(910_003L, year, 1, monday + "T20:00:00.000Z", null, null, alabama.getCfbdTeamId(),
                 alabama.getTeamName(), furmanId, furman);
@@ -326,10 +328,12 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
 
         int rejectedYear = uniqueYear();
         String rejectedSeason = createSeason(rejectedYear);
-        when(cfbdClient.calendar(rejectedYear)).thenThrow(new CfbdClientException(401, CfbdClientException.REJECTED_KEY));
+        when(cfbdClient.calendar(rejectedYear))
+                .thenThrow(new CfbdClientException(401, CfbdClientException.REJECTED_KEY));
         ImportJob rejectedJob = cfbdImportService.enqueue(rejectedSeason, null);
         jobIds.add(Objects.requireNonNull(rejectedJob.getId(), "jobId"));
-        assertThatThrownBy(() -> cfbdImportService.execute(rejectedJob.getId())).isInstanceOf(CfbdClientException.class);
+        assertThatThrownBy(() -> cfbdImportService.execute(rejectedJob.getId()))
+                .isInstanceOf(CfbdClientException.class);
         assertThat(cfbdImportService.get(rejectedJob.getId()).getError()).isEqualTo(CfbdClientException.REJECTED_KEY);
         verify(cfbdClient, times(1)).calendar(rejectedYear);
         verify(cfbdPause, times(4)).pause(anyInt());
@@ -375,7 +379,8 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
                 bowl.plusDays(6) + "T23:59:59.000Z");
         CfbdGame opener = game(920_001L, year, 1, monday + "T18:00:00.000Z", null, null, alabama.getCfbdTeamId(),
                 alabama.getTeamName(), guestId, guest);
-        CfbdGame bowlGame = game(920_002L, year, 1, "postseason", bowl + "T18:00:00.000Z", "Bowl " + token, 800_000_777L,
+        CfbdGame bowlGame = game(920_002L, year, 1, "postseason", bowl + "T18:00:00.000Z", "Bowl " + token,
+                800_000_777L,
                 alabama.getCfbdTeamId(), alabama.getTeamName(), guestId, guest);
         when(cfbdClient.calendar(year)).thenReturn(List.of(regular, postseason));
         when(cfbdClient.games(eq(year), isNull(), eq("regular"))).thenReturn(List.of(opener));

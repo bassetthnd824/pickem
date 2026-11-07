@@ -107,7 +107,8 @@ class ManagerSeasonApiTests extends FirestoreEmulatorSupport {
                 .andExpect(status().isUnauthorized());
 
         mockMvc.perform(get("/api/manager/seasons").cookie(player)).andExpect(status().isForbidden());
-        mockMvc.perform(post("/api/manager/seasons").cookie(player).contentType(MediaType.APPLICATION_JSON).content(body))
+        mockMvc.perform(
+                post("/api/manager/seasons").cookie(player).contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isForbidden());
         mockMvc.perform(get("/api/manager/season-weeks").cookie(player)).andExpect(status().isForbidden());
         mockMvc.perform(delete("/api/manager/season-weeks/missing").cookie(player)).andExpect(status().isForbidden());
@@ -122,7 +123,8 @@ class ManagerSeasonApiTests extends FirestoreEmulatorSupport {
         MvcResult created = mockMvc
                 .perform(post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON)
                         .content(seasonBody(year, begin.toString(), end.toString(), false)))
-                .andExpect(status().isCreated()).andExpect(header().string("Location", containsString("/api/manager/seasons/")))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", containsString("/api/manager/seasons/")))
                 .andExpect(jsonPath("$.season").value(year)).andExpect(jsonPath("$.isCurrent").value(false))
                 .andExpect(jsonPath("$.version").value(0)).andExpect(jsonPath("$.createUser").value(managerUid))
                 .andExpect(jsonPath("$.lastUpdateUser").value(managerUid))
@@ -146,8 +148,10 @@ class ManagerSeasonApiTests extends FirestoreEmulatorSupport {
 
         String nextYear = String.valueOf(Integer.parseInt(year) + 1);
         mockMvc.perform(post("/api/manager/seasons").cookie(manager).contentType(MediaType.APPLICATION_JSON).content(
-                seasonBody(year, begin.toString(), LocalDate.of(Integer.parseInt(nextYear) + 1, 1, 1).toString(), false)))
-                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(SeasonCalendar.END_DATE_INVALID));
+                seasonBody(year, begin.toString(), LocalDate.of(Integer.parseInt(nextYear) + 1, 1, 1).toString(),
+                        false)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value(SeasonCalendar.END_DATE_INVALID));
 
         mockMvc.perform(get("/api/manager/seasons/missing-" + year).cookie(manager)).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.detail").value(SeasonService.NOT_FOUND));
@@ -160,11 +164,13 @@ class ManagerSeasonApiTests extends FirestoreEmulatorSupport {
         LocalDate olderBegin = LocalDate.of(Integer.parseInt(olderYear), 8, 15);
         LocalDate newerBegin = LocalDate.of(Integer.parseInt(newerYear), 8, 16);
         String olderId = createSeason(olderYear, olderBegin, LocalDate.of(Integer.parseInt(olderYear), 12, 20), false);
-        String newerId = createSeason(newerYear, newerBegin, LocalDate.of(Integer.parseInt(newerYear) + 1, 1, 10), true);
+        String newerId = createSeason(newerYear, newerBegin, LocalDate.of(Integer.parseInt(newerYear) + 1, 1, 10),
+                true);
 
         MvcResult updated = mockMvc
                 .perform(put("/api/manager/seasons/" + newerId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                        .content(versionedSeason(newerYear, newerBegin, LocalDate.of(Integer.parseInt(newerYear) + 1, 1, 18),
+                        .content(versionedSeason(newerYear, newerBegin,
+                                LocalDate.of(Integer.parseInt(newerYear) + 1, 1, 18),
                                 true, 0)))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.version").value(1))
                 .andExpect(jsonPath("$.createUser").value(managerUid))
@@ -172,9 +178,11 @@ class ManagerSeasonApiTests extends FirestoreEmulatorSupport {
                 .andReturn();
 
         mockMvc.perform(put("/api/manager/seasons/" + newerId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(versionedSeason(newerYear, newerBegin, LocalDate.of(Integer.parseInt(newerYear) + 1, 1, 18), true,
+                .content(versionedSeason(newerYear, newerBegin, LocalDate.of(Integer.parseInt(newerYear) + 1, 1, 18),
+                        true,
                         0)))
-                .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(containsString("Stale version")));
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value(containsString("Stale version")));
 
         mockMvc.perform(get("/api/manager/seasons").cookie(manager).param("season", olderYear))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].id").value(olderId))
@@ -183,7 +191,8 @@ class ManagerSeasonApiTests extends FirestoreEmulatorSupport {
         mockMvc.perform(get("/api/manager/seasons").cookie(manager).param("beginDate", newerBegin.toString()))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].id").value(newerId));
 
-        mockMvc.perform(get("/api/manager/seasons").cookie(manager).param("isCurrent", "true").param("season", newerYear))
+        mockMvc.perform(
+                get("/api/manager/seasons").cookie(manager).param("isCurrent", "true").param("season", newerYear))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].id").value(newerId));
 
         String listed = mockMvc.perform(get("/api/manager/seasons").cookie(manager)).andExpect(status().isOk())
@@ -191,7 +200,8 @@ class ManagerSeasonApiTests extends FirestoreEmulatorSupport {
         JsonNode seasons = jsonMapper.readTree(listed);
         assertThat(indexOf(seasons, olderId)).isNotNegative();
         assertThat(indexOf(seasons, newerId)).isGreaterThan(indexOf(seasons, olderId));
-        assertThat(jsonMapper.readTree(updated.getResponse().getContentAsString()).path("version").asInt()).isEqualTo(1);
+        assertThat(jsonMapper.readTree(updated.getResponse().getContentAsString()).path("version").asInt())
+                .isEqualTo(1);
     }
 
     @Test
@@ -236,7 +246,8 @@ class ManagerSeasonApiTests extends FirestoreEmulatorSupport {
                 .andExpect(jsonPath("$.endDate").value(weekOneEnd.toString()))
                 .andExpect(jsonPath("$.version").value(0)).andExpect(jsonPath("$.createUser").value(managerUid));
 
-        mockMvc.perform(get("/api/manager/season-weeks").cookie(manager).param("seasonId", seasonId).param("weekNumber", "2"))
+        mockMvc.perform(
+                get("/api/manager/season-weeks").cookie(manager).param("seasonId", seasonId).param("weekNumber", "2"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].id").value(weekTwo))
                 .andExpect(jsonPath("$[1]").doesNotExist());
 
@@ -265,8 +276,10 @@ class ManagerSeasonApiTests extends FirestoreEmulatorSupport {
                 .content(weekBody("missing-season", 1, weekOneBegin, weekOneEnd))).andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.detail").value(SeasonWeekService.SEASON_NOT_FOUND));
 
-        mockMvc.perform(put("/api/manager/season-weeks/" + weekTwo).cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                .content(versionedWeek(seasonId, 2, weekTwoBegin, weekTwoEnd, 0))).andExpect(status().isOk())
+        mockMvc.perform(
+                put("/api/manager/season-weeks/" + weekTwo).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(versionedWeek(seasonId, 2, weekTwoBegin, weekTwoEnd, 0)))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.version").value(1));
 
         LocalDate importedBegin = weekOneBegin.plusDays(4);

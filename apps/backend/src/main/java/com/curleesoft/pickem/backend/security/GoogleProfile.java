@@ -4,6 +4,7 @@ package com.curleesoft.pickem.backend.security;
  * Email and name taken from a verified Google sign-in.
  */
 public record GoogleProfile(String email, String firstName, String lastName) {
+
     public static GoogleProfile from(VerifiedIdentity identity) {
         if (identity == null || !"google.com".equals(identity.signInProvider())) {
             throw new InvalidCredentialException("Google sign-in is required");

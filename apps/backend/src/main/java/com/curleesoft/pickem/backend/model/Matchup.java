@@ -11,10 +11,11 @@ import lombok.Setter;
 
 /**
  * {@code matchups} document. Embeds home/away team and venue snapshots, the
- * week number, and an optional rivalry name. Those snapshots, {@code weekNumber},
- * {@code rivalryName}, and {@code winningTeamId} are written by the service and
- * may be omitted on input. {@code winningTeamId} is read-only: a client value is
- * ignored and the service derives it from the scores.
+ * week number, and an optional rivalry name. Those snapshots,
+ * {@code weekNumber}, {@code rivalryName}, and {@code winningTeamId} are
+ * written by the service and may be omitted on input. {@code winningTeamId} is
+ * read-only: a client value is ignored and the service derives it from the
+ * scores.
  */
 @Getter
 @Setter

@@ -59,11 +59,13 @@ public class BaseRepository<D extends AuditableDocument> {
 
             return Optional.ofNullable(toDocument(snapshot));
 
-        } catch (InterruptedException ex) {
+        }
+        catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new FirestoreAccessException("Interrupted reading " + collectionName + "/" + id, ex);
 
-        } catch (ExecutionException ex) {
+        }
+        catch (ExecutionException ex) {
             throw wrap("Failed to read " + collectionName + "/" + id, ex);
         }
     }
@@ -91,11 +93,13 @@ public class BaseRepository<D extends AuditableDocument> {
 
             return results;
 
-        } catch (InterruptedException ex) {
+        }
+        catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new FirestoreAccessException("Interrupted querying " + collectionName, ex);
 
-        } catch (ExecutionException ex) {
+        }
+        catch (ExecutionException ex) {
             throw wrap("Failed to query " + collectionName, ex);
         }
     }
@@ -196,11 +200,13 @@ public class BaseRepository<D extends AuditableDocument> {
 
             return Optional.of(mapped);
 
-        } catch (InterruptedException ex) {
+        }
+        catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new FirestoreAccessException("Interrupted reading " + collectionName + "/" + id, ex);
 
-        } catch (ExecutionException ex) {
+        }
+        catch (ExecutionException ex) {
             throw propagate("Failed to read " + collectionName + "/" + id, ex);
         }
     }
@@ -219,11 +225,13 @@ public class BaseRepository<D extends AuditableDocument> {
         try {
             return firestore.<T>runTransaction(work::apply).get();
 
-        } catch (InterruptedException ex) {
+        }
+        catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new FirestoreAccessException("Interrupted saving " + collectionName, ex);
 
-        } catch (ExecutionException ex) {
+        }
+        catch (ExecutionException ex) {
             throw propagate("Failed to save " + collectionName, ex);
         }
     }
@@ -265,7 +273,8 @@ public class BaseRepository<D extends AuditableDocument> {
             BeanUtils.copyProperties(source, draft);
             return draft;
 
-        } catch (ReflectiveOperationException ex) {
+        }
+        catch (ReflectiveOperationException ex) {
             throw new FirestoreAccessException("Failed to copy " + collectionName, ex);
         }
     }
@@ -278,11 +287,13 @@ public class BaseRepository<D extends AuditableDocument> {
         try {
             collection().document(id).delete().get();
 
-        } catch (InterruptedException ex) {
+        }
+        catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new FirestoreAccessException("Interrupted deleting " + collectionName + "/" + id, ex);
 
-        } catch (ExecutionException ex) {
+        }
+        catch (ExecutionException ex) {
             throw wrap("Failed to delete " + collectionName + "/" + id, ex);
         }
     }
@@ -318,6 +329,7 @@ public class BaseRepository<D extends AuditableDocument> {
      */
     @FunctionalInterface
     public interface SaveConstraint {
+
         void check(Transaction transaction, CollectionReference collection, String documentId);
     }
 }

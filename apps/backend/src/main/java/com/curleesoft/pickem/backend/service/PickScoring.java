@@ -29,7 +29,8 @@ public final class PickScoring {
 
         try {
             begin = LocalDate.parse(weekBeginDate);
-        } catch (DateTimeParseException ex) {
+        }
+        catch (DateTimeParseException ex) {
             return false;
         }
 
@@ -37,7 +38,8 @@ public final class PickScoring {
 
         try {
             today = LocalDate.ofInstant(clock.instant(), LEAGUE_ZONE);
-        } catch (DateTimeException ex) {
+        }
+        catch (DateTimeException ex) {
             return false;
         }
 

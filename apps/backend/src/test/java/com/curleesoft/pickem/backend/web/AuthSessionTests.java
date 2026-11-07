@@ -168,13 +168,16 @@ class AuthSessionTests extends FirestoreEmulatorSupport {
                 post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-1\"}"))
                 .andExpect(status().isNoContent()).andReturn();
 
-        mockMvc.perform(post("/api/auth/logout").cookie(session(sessionCookie(login)))).andExpect(status().isNoContent());
+        mockMvc.perform(post("/api/auth/logout").cookie(session(sessionCookie(login))))
+                .andExpect(status().isNoContent());
 
-        mockMvc.perform(post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-1\"}"))
+        mockMvc.perform(
+                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-1\"}"))
                 .andExpect(status().isUnauthorized());
 
         registerGoogle(uid, "token-2", "kenney@example.com", "Kenney", "Curlee");
-        mockMvc.perform(post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-2\"}"))
+        mockMvc.perform(
+                post("/api/auth/session").contentType(MediaType.APPLICATION_JSON).content("{\"idToken\":\"token-2\"}"))
                 .andExpect(status().isNoContent());
     }
 

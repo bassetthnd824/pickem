@@ -7,8 +7,8 @@ import java.util.Objects;
 
 /**
  * Reference data for {@code tools/seed}. Team names and {@code cfbdTeamId}
- * values are the CFBD school strings and ids so schedule import can resolve
- * the conference. Venue ids are CFBD venue ids. Document ids stay stable so a
+ * values are the CFBD school strings and ids so schedule import can resolve the
+ * conference. Venue ids are CFBD venue ids. Document ids stay stable so a
  * re-run updates the same documents.
  */
 public final class SeedCatalog {

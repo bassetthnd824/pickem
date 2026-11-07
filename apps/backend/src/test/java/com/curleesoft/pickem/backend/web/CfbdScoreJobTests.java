@@ -327,7 +327,8 @@ class CfbdScoreJobTests extends FirestoreEmulatorSupport {
             ScoreSyncResult result = cfbdScoreService.syncToday();
             assertThat(result).isEqualTo(new ScoreSyncResult(0, 0));
             verifyNoInteractions(cfbdClient);
-        } finally {
+        }
+        finally {
             for (Season season : flagged) {
                 season.setCurrent(true);
                 seasonRepository.save(season, "test");

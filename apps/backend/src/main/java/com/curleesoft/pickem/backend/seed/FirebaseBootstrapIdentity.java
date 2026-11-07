@@ -19,9 +19,9 @@ import com.google.firebase.auth.UserRecord;
 import com.google.firebase.internal.FirebaseProcessEnvironment;
 
 /**
- * Firebase Admin lookup used by {@link SeedMain}. Initialized on the first
- * call so a reference-data seed does not need credentials when no bootstrap
- * email is set.
+ * Firebase Admin lookup used by {@link SeedMain}. Initialized on the first call
+ * so a reference-data seed does not need credentials when no bootstrap email is
+ * set.
  */
 public final class FirebaseBootstrapIdentity implements BootstrapIdentity {
 
@@ -41,7 +41,8 @@ public final class FirebaseBootstrapIdentity implements BootstrapIdentity {
             UserRecord user = auth().getUserByEmail(email);
             return Optional.of(toAccount(user));
 
-        } catch (FirebaseAuthException ex) {
+        }
+        catch (FirebaseAuthException ex) {
             if (ex.getAuthErrorCode() == AuthErrorCode.USER_NOT_FOUND) {
                 return Optional.empty();
             }
@@ -55,7 +56,8 @@ public final class FirebaseBootstrapIdentity implements BootstrapIdentity {
         try {
             auth().setCustomUserClaims(uid, RoleClaims.forRoles(List.of(RoleClaims.PLAYER, RoleClaims.MANAGER)));
 
-        } catch (FirebaseAuthException ex) {
+        }
+        catch (FirebaseAuthException ex) {
             throw new SeedFailedException("Could not grant manager and player claims to " + uid, ex);
         }
     }
@@ -92,7 +94,8 @@ public final class FirebaseBootstrapIdentity implements BootstrapIdentity {
 
             return FirebaseAuth.getInstance(firebaseApp(builder.build()));
 
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             throw new SeedFailedException("Firebase Admin credentials are not configured", ex);
         }
     }

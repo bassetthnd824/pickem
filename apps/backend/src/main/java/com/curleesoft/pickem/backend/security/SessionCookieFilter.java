@@ -62,12 +62,14 @@ public class SessionCookieFilter extends OncePerRequestFilter {
         if (cookie.isPresent()) {
             try {
                 authenticate(cookie.get());
-            } catch (AuthUnavailableException ex) {
+            }
+            catch (AuthUnavailableException ex) {
                 // Controller advice does not run for a filter.
                 log.warn("Firebase Admin credentials are not available");
                 writeProblem(response, HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
                 return;
-            } catch (FirestoreAccessException ex) {
+            }
+            catch (FirestoreAccessException ex) {
                 log.warn("Could not resolve roles for a session cookie", ex);
                 writeProblem(response, HttpStatus.SERVICE_UNAVAILABLE, "Authentication is temporarily unavailable");
                 return;
@@ -84,7 +86,8 @@ public class SessionCookieFilter extends OncePerRequestFilter {
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(new SessionAuthentication(principal, RoleClaims.authorities(roles)));
             SecurityContextHolder.setContext(context);
-        } catch (InvalidCredentialException ex) {
+        }
+        catch (InvalidCredentialException ex) {
             SecurityContextHolder.clearContext();
             log.debug("Rejected session cookie");
         }
