@@ -4,7 +4,8 @@ description: >-
   Implement one Kenney's Pickem user story end to end. Read the requested
   story from docs/user-stories.md, read other documents as needed from the
   docs folder, stop and name any predecessor that is not marked done, and
-  otherwise branch from main, implement only that story, run the review
+  otherwise branch from main, implement only that story, check the
+  confirmed acceptance criteria in docs/user-stories.md, run the review
   skill, fix the findings, commit with a conventional message that includes
   the story id, push to GitHub, and open a pull request. Use when the user
   runs /implement-user-story, or says "implement user story", "work on
@@ -49,7 +50,7 @@ Read that story's user story, description, acceptance criteria, and source. Open
 
 Implement only this story's acceptance criteria. Do not pull a successor's behavior out of a shared doc. Obey `AGENTS.md`, including the legacy `src/` freeze until the story being implemented is US-26, and the Java null-analysis rules when the story touches backend Java.
 
-Do not set this story's index **Status** to `Done` in the PR. After the pull request merges to `main`, `.github/workflows/mark-story-done.yml` sets that cell and the section **Status:** line when the pull request names exactly one story. Do not open a follow-up pull request to mark it done.
+Do not set this story's index **Status** to `Done` in the PR. After the pull request merges to `main`, `.github/workflows/mark-story-done.yml` sets that cell and the section **Status:** line when the pull request names exactly one story. Do not open a follow-up pull request to mark it done. Checking the acceptance-criteria boxes after verification is required; see section 5.
 
 ## 4. Branch from main
 
@@ -72,7 +73,16 @@ Satisfy every acceptance criterion. Leave out drive-by refactors and files the s
 
 Run the checks the acceptance criteria name. For workspace build, test, lint, and serve tasks, follow the `nx-run-tasks` skill and run them through `npx nx`. For scaffolding, follow the `nx-generate` skill first. When the story changes a web UI, verify the affected flow in the browser before review.
 
-Do not commit if a required check is still failing.
+Do not commit if a required check is still failing. If any acceptance criterion is not confirmed, name it and stop.
+
+When testing has confirmed every acceptance criterion, check that story's boxes in `docs/user-stories.md` before review. Edit only the list under its `**Acceptance criteria.**` heading:
+
+- Turn each confirmed `- criterion` and `- [ ] criterion` into `- [x] criterion`.
+- Leave an existing `- [x] criterion` checked.
+- Keep the criterion text unchanged.
+- If a later re-check does not confirm a criterion, change that line back to `- [ ]` and stop.
+
+Do not edit any other story, the index, or this story's **Status:** line.
 
 ## 6. Review, then fix
 
@@ -82,11 +92,13 @@ Then fix every finding it reported (bug, suggestion, and nit).
 
 If those fixes change code, run `/review --local` once more and fix whatever that pass reports. After that second fix pass, commit. Do not open a third review.
 
+If a fix changes behavior an acceptance criterion covers, return to the verification step in section 5 before committing.
+
 ## 7. Commit, push, and open the pull request
 
 Invoking this skill authorizes one commit, one push, and one pull request for this story. Do not merge.
 
-Stage only the story's files. Do not commit `.env` or other secrets.
+Stage only the story's files, including the acceptance-criteria checkbox update in `docs/user-stories.md`. Do not commit `.env` or other secrets.
 
 Commit with the conventional message format in `AGENTS.md`: type, optional scope, imperative summary, body, and the story id on its own final line (`US-NN`). The subject must pass `commitlint.config.cjs`. Write the message to a temp file and commit with `git commit -F`. Do not skip hooks.
 

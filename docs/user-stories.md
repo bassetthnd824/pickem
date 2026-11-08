@@ -682,12 +682,12 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- Home shows “Welcome {firstName}, Season {season}”.
-- Each week lists matchups; radio selects home or away; rank displays and is submitted.
-- Up/down reorder within a week and renumber ranks from N down to 1.
-- Save persists picks; Cancel reloads without saving.
-- Check icon when pick matches winner; cross when it does not; neither when unscored.
-- Unauthenticated users never see this page.
+- [x] Home shows “Welcome {firstName}, Season {season}”.
+- [x] Each week lists matchups; radio selects home or away; rank displays and is submitted.
+- [x] Up/down reorder within a week and renumber ranks from N down to 1.
+- [x] Save persists picks; Cancel reloads without saving.
+- [x] Check icon when pick matches winner; cross when it does not; neither when unscored.
+- [x] Unauthenticated users never see this page.
 
 **Predecessors:** US-09, US-12, US-15, US-34.
 
@@ -707,9 +707,9 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- Leaderboard page shows Rank, User (nickname), Score.
-- Order and scores match US-10.
-- Reachable from the navbar for any signed-in user.
+- [x] Leaderboard page shows Rank, User (nickname), Score.
+- [x] Order and scores match US-10.
+- [x] Reachable from the navbar for any signed-in user.
 
 **Predecessors:** US-10, US-15.
 
@@ -729,10 +729,10 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- Dropdown lists conference teams as `{teamName} {squadName}`.
-- Selecting a team loads date, opponent, score, W/L without a full navigation.
-- Away opponent labels use the `"at "` prefix.
-- Empty selection shows no rows.
+- [x] Dropdown lists conference teams as `{teamName} {squadName}`.
+- [x] Selecting a team loads date, opponent, score, W/L without a full navigation.
+- [x] Away opponent labels use the `"at "` prefix.
+- [x] Empty selection shows no rows.
 
 **Predecessors:** US-11, US-15.
 
