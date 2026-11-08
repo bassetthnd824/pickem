@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 
+import { TeamSchedule } from '@/components/team-schedule'
 import { TitledPage } from '@/components/titled-page'
 
 export const metadata: Metadata = {
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 }
 
 export default function TeamSchedulePage() {
-  return <TitledPage title='Team Schedule' />
+  return (
+    <TitledPage title='Team Schedule'>
+      <TeamSchedule />
+    </TitledPage>
+  )
 }
