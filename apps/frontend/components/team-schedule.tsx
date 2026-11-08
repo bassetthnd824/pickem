@@ -112,10 +112,12 @@ function TeamSelect({
         <Select.Portal>
           <Select.Positioner
             className='z-10 outline-none'
+            side='bottom'
             sideOffset={4}
             align='start'
+            alignItemWithTrigger={false}
           >
-            <Select.Popup className='max-h-72 min-w-72 origin-(--transform-origin) overflow-y-auto rounded-md border border-border bg-surface py-1 text-text outline-none'>
+            <Select.Popup className='max-h-72 w-(--anchor-width) origin-[var(--transform-origin)] overflow-y-auto rounded-md border border-border bg-surface py-1 text-text outline-none'>
               <Select.List>
                 <Select.Item value={null} className={itemClass}>
                   <Select.ItemText>{EMPTY_LABEL}</Select.ItemText>

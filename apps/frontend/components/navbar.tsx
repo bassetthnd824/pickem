@@ -111,7 +111,7 @@ export function Navbar() {
                     <Menu.Positioner
                       className='z-10 outline-none data-anchor-hidden:hidden'
                       sideOffset={4}
-                      align='start'
+                      align='end'
                     >
                       <Menu.Popup className='max-h-[var(--available-height)] min-w-44 origin-[var(--transform-origin)] overflow-y-auto rounded-md border border-border bg-surface py-1 text-text outline-none'>
                         {MANAGER_LINKS.map((link) => (
