@@ -16,6 +16,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
@@ -34,6 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import com.curleesoft.pickem.backend.model.Theme;
 import com.curleesoft.pickem.backend.model.User;
 import com.curleesoft.pickem.backend.repository.MatchupRepository;
 import com.curleesoft.pickem.backend.repository.SeasonRepository;
@@ -262,7 +264,7 @@ class GameAccountScheduleApiTests extends FirestoreEmulatorSupport {
     void accountUpdatesNicknameAndThemeOnly() throws Exception {
         String uid = "acct-" + token();
         Cookie player = signIn(uid, "Ada");
-        String themePath = "tide-" + token();
+        String themePath = "georgia";
         createTheme("Tide " + token(), themePath, true);
 
         Cookie asManager = new Cookie(SessionCookies.NAME, firebase.issueCookie(identity(uid, List.of("manager"))));
@@ -334,7 +336,10 @@ class GameAccountScheduleApiTests extends FirestoreEmulatorSupport {
                 """, AccountService.THEME_REQUIRED);
         rejectAccount(player, """
                 {"nickName":"Tide","themeId":"missing-%s","version":1}
-                """.formatted(token()), ThemeService.NOT_FOUND);
+                """.formatted(token()), ThemeService.KEY_NOT_IN_CATALOG);
+        rejectAccount(player, """
+                {"nickName":"Tide","themeId":"vanderbilt","version":1}
+                """, ThemeService.NOT_FOUND);
         rejectAccount(player, """
                 {"nickName":"Tide","themeId":"%s","version":"1"}
                 """.formatted(themePath), AccountService.REQUEST_INVALID);
@@ -365,6 +370,59 @@ class GameAccountScheduleApiTests extends FirestoreEmulatorSupport {
         assertThat(otherProfile.path("nickName").asString()).isEqualTo("Bea");
         assertThat(otherProfile.path("emailAddr").asString()).isNotEqualTo(uid + "@example.com");
         assertThat(account(player).path("nickName").asString()).isEqualTo(maxNick);
+    }
+
+    @Test
+    void accountPickerOmitsInactiveAndUnstyledThemes() throws Exception {
+        mockMvc.perform(get("/api/game/themes")).andExpect(status().isUnauthorized());
+
+        String uid = "picker-" + token();
+        Cookie player = signIn(uid, "Ada");
+        String lightId = createTheme("Light", "light", true);
+        createTheme("Dark", "dark", false);
+        createTheme("Alabama Crimson Tide", "alabama", true);
+
+        Theme custom = new Theme();
+        custom.setThemeName("Custom");
+        custom.setThemePath("custom-school");
+        custom.setActive(Boolean.TRUE);
+        custom.setPrimary("#111111");
+        custom.setSecondary("#222222");
+        Theme savedCustom = themeRepository.save(custom);
+        themeIds.add(Objects.requireNonNull(savedCustom.getId(), "custom theme"));
+
+        assertThat(themePaths(themes(player))).containsExactly("light", "alabama");
+
+        mockMvc.perform(
+                put("/api/manager/themes/" + lightId).cookie(manager).contentType(MediaType.APPLICATION_JSON).content(
+                        """
+                                {"themeName":"Light","themePath":"light","active":false,"primary":"#1F2937","secondary":"#2563EB","version":0}
+                                """
+                )
+        ).andExpect(status().isOk());
+
+        assertThat(themePaths(themes(player))).containsExactly("alabama");
+        assertThat(account(player).path("themeId").asString()).isEqualTo("light");
+
+        JsonNode kept = putAccount(player, """
+                {"nickName":"Ada","themeId":"light","version":0}
+                """);
+        assertThat(kept.path("themeId").asString()).isEqualTo("light");
+        assertThat(kept.path("version").asLong()).isEqualTo(1);
+
+        rejectAccount(player, """
+                {"nickName":"Ada","themeId":"dark","version":1}
+                """, ThemeService.THEME_INACTIVE);
+        rejectAccount(player, """
+                {"nickName":"Ada","themeId":"custom-school","version":1}
+                """, ThemeService.KEY_NOT_IN_CATALOG);
+        assertThat(account(player).path("themeId").asString()).isEqualTo("light");
+
+        JsonNode switched = putAccount(player, """
+                {"nickName":"Ada","themeId":"alabama","version":1}
+                """);
+        assertThat(switched.path("themeId").asString()).isEqualTo("alabama");
+        assertThat(themePaths(themes(player))).doesNotContain("custom-school", "dark", "light");
     }
 
     private void assertSchedule(JsonNode rows, Slate slate) {
@@ -493,6 +551,23 @@ class GameAccountScheduleApiTests extends FirestoreEmulatorSupport {
 
         MvcResult result = mockMvc.perform(request).andExpect(status().isOk()).andReturn();
         return jsonMapper.readTree(result.getResponse().getContentAsString());
+    }
+
+    private JsonNode themes(Cookie cookie) throws Exception {
+        MvcResult result = mockMvc.perform(get("/api/game/themes").cookie(cookie)).andExpect(status().isOk())
+                .andReturn();
+        return jsonMapper.readTree(result.getResponse().getContentAsString());
+    }
+
+    private static List<String> themePaths(JsonNode themes) {
+        List<String> paths = new ArrayList<>();
+
+        for (JsonNode theme : themes) {
+            paths.add(theme.path("themePath").asString());
+
+        }
+
+        return paths;
     }
 
     private JsonNode account(Cookie cookie) throws Exception {

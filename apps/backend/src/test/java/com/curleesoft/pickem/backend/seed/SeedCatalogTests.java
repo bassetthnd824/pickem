@@ -10,6 +10,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import com.curleesoft.pickem.backend.service.ThemeCatalog;
+
 class SeedCatalogTests {
 
     @Test
@@ -210,6 +212,13 @@ class SeedCatalogTests {
     @Test
     void themesCoverLightDarkAndSixteenSchools() {
         assertThat(SeedCatalog.themes()).hasSize(18);
+        assertThat(ThemeCatalog.keys()).hasSize(18);
+
+        for (int index = 0; index < ThemeCatalog.keys().size(); index++) {
+            assertThat(SeedCatalog.themes().get(index).key()).isEqualTo(ThemeCatalog.keys().get(index));
+
+        }
+
         Set<String> keys = new HashSet<>();
 
         for (SeedCatalog.ThemeSeed theme : SeedCatalog.themes()) {

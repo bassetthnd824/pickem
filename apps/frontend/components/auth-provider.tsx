@@ -12,6 +12,7 @@ import {
 import { api } from '@/lib/api-client'
 import { parseAuthProfile, type AuthProfile } from '@/lib/auth-profile'
 import { isThemeKey } from '@/lib/theme'
+import { ACCOUNT_KEY_PREFIX, THEME_CHOICES_KEY } from '@/lib/theme-picker'
 
 export const AUTH_ME_KEY = ['auth', 'me'] as const
 
@@ -31,8 +32,8 @@ export function useAuth(): AuthState {
   return useContext(AuthContext)
 }
 
-async function loadProfile(): Promise<AuthProfile> {
-  const body: unknown = await api.get('/api/auth/me')
+async function loadProfile(signal: AbortSignal): Promise<AuthProfile> {
+  const body: unknown = await api.get('/api/auth/me', { signal })
   const profile = parseAuthProfile(body)
   if (!profile) {
     throw new Error('Profile response was invalid')
@@ -54,7 +55,7 @@ export function AuthProvider({
   const queryClient = useQueryClient()
   const query = useQuery({
     queryKey: AUTH_ME_KEY,
-    queryFn: loadProfile,
+    queryFn: ({ signal }) => loadProfile(signal),
     initialData: initialProfile ?? undefined,
     enabled: sessionPresent,
   })
@@ -62,6 +63,8 @@ export function AuthProvider({
   useEffect(() => {
     if (!sessionPresent) {
       queryClient.removeQueries({ queryKey: AUTH_ME_KEY })
+      queryClient.removeQueries({ queryKey: ACCOUNT_KEY_PREFIX })
+      queryClient.removeQueries({ queryKey: THEME_CHOICES_KEY })
       return
     }
     if (initialProfile) {

@@ -65,15 +65,16 @@ No registration endpoint. No password fields.
 
 All endpoints require a signed-in user (`player` or `manager`).
 
-| Method | Path                      | Auth    | Purpose                                                                               |
-| ------ | ------------------------- | ------- | ------------------------------------------------------------------------------------- |
-| `GET`  | `/api/game/main`          | session | Current season weeks + the user's matchup/pick grid + `numberOfConferenceTeams`       |
-| `POST` | `/api/game/picks`         | session | Bulk-upsert the authenticated user's weekly picks                                     |
-| `GET`  | `/api/game/leaderboard`   | session | Season leaderboard. Query: `seasonId` (default current)                               |
-| `GET`  | `/api/game/team-schedule` | session | Conference team W/L schedule. Query: `teamId`, `seasonId`                             |
-| `GET`  | `/api/game/account`       | session | Profile: email, name, `nickName`, `themeId`                                           |
-| `PUT`  | `/api/game/account`       | session | Update `nickName` (required, ≤ 40) and `themeId` only                                 |
-| `GET`  | `/api/game/teams`         | session | Conference members for the schedule dropdown: `{ id, teamName, squadName }`          |
+| Method | Path                      | Auth    | Purpose                                                                         |
+| ------ | ------------------------- | ------- | ------------------------------------------------------------------------------- |
+| `GET`  | `/api/game/main`          | session | Current season weeks + the user's matchup/pick grid + `numberOfConferenceTeams` |
+| `POST` | `/api/game/picks`         | session | Bulk-upsert the authenticated user's weekly picks                               |
+| `GET`  | `/api/game/leaderboard`   | session | Season leaderboard. Query: `seasonId` (default current)                         |
+| `GET`  | `/api/game/team-schedule` | session | Conference team W/L schedule. Query: `teamId`, `seasonId`                       |
+| `GET`  | `/api/game/account`       | session | Profile: email, name, `nickName`, `themeId`                                     |
+| `PUT`  | `/api/game/account`       | session | Update `nickName` (required, ≤ 40) and `themeId` only                           |
+| `GET`  | `/api/game/themes`        | session | Active catalog themes for the account picker                                    |
+| `GET`  | `/api/game/teams`         | session | Conference members for the schedule dropdown: `{ id, teamName, squadName }`     |
 
 ### Picks
 
@@ -121,11 +122,21 @@ members ordered by team name. There is no `conferenceMember` query.
 Email and name are read-only (Google).
 
 `PUT /api/game/account` accepts `{ nickName, themeId, version }`. `nickName`
-is required, trimmed, and at most 40 characters. `themeId` must be an existing
-theme path. `version` is the user document's optimistic-lock value. The names
+is required, trimmed, and at most 40 characters. `themeId` must be one of the
+18 compiled keys and an existing theme path. An active theme may be selected.
+A player who already has an inactive catalog theme may save that same
+`themeId`; choosing a different inactive theme is 400. A key outside the 18
+is 400. `version` is the user document's optimistic-lock value. The names
 `password`, `oldPass`, `userPass`, and `confirmPass` (any letter case) are 400
 and do not write. Other fields in the body are ignored. A stale or missing
 `version` is 409.
+
+`GET /api/game/themes` returns
+`[{ id, themeName, themePath }]`. Rows are active themes whose key is one of
+the 18 compiled palettes, in catalog order (Light, Dark, then the SEC
+schools). Inactive themes and any other key are omitted. Deactivating a theme
+does not change `users.themeId`. The account picker offers only this list, so
+a player already on a deactivated palette keeps it until they pick another.
 
 ---
 
@@ -164,8 +175,9 @@ week, and `homeTeamScore == awayTeamScore` when both are set (400). Scores may
 be null (unplayed) or both set.
 
 Updating user roles to include `manager` sets the Firebase custom claim;
-removing it clears the claim. Zero roles is 400. POST of a theme key that is
-not one of the compiled 18 is 400.
+removing it clears the claim. Zero roles is 400. POST or PUT of a theme key
+that is not one of the compiled 18 is 400. Activate, deactivate, and rename of
+a catalog row stay allowed.
 
 ### CFBD import and score-sync
 
@@ -214,10 +226,10 @@ Locally it does not. Spring accepts `X-Pickem-Job-Secret` when it matches
 itself running on Cloud Run (`K_SERVICE` unset). Set the flag to false to
 require the secret on any host. Do not trust `X-Forwarded-For` for loopback.
 
-| Method | Path                               | Auth                              | Purpose                                                                          |
-| ------ | ---------------------------------- | --------------------------------- | -------------------------------------------------------------------------------- |
-| `POST` | `/api/internal/jobs/cfbd-scores`   | OIDC or `X-Pickem-Job-Secret`     | Game-day score sync. Runs in the request. Preferred production entry: Next.js forwards this to Spring |
-| `POST` | `/api/internal/jobs/cfbd-matchups` | OIDC or `X-Pickem-Job-Secret`     | Import worker. Not started by the browser                                        |
+| Method | Path                               | Auth                          | Purpose                                                                                               |
+| ------ | ---------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `POST` | `/api/internal/jobs/cfbd-scores`   | OIDC or `X-Pickem-Job-Secret` | Game-day score sync. Runs in the request. Preferred production entry: Next.js forwards this to Spring |
+| `POST` | `/api/internal/jobs/cfbd-matchups` | OIDC or `X-Pickem-Job-Secret` | Import worker. Not started by the browser                                                             |
 
 Score job: current-season matchups whose `matchupDate` is today in
 `America/New_York`, plus yesterday's matchups that still have no scores (a

@@ -8,8 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * {@code themes} document. Managers edit the name, key, colors, and active
- * flag. Rejecting a key outside the closed catalog of 18 is US-36.
+ * {@code themes} document. Managers may rename a catalog row and change its
+ * active flag. The key must be one of the 18 compiled palettes.
  */
 @Getter
 @Setter

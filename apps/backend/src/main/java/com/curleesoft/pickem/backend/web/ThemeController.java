@@ -23,7 +23,8 @@ import jakarta.validation.Valid;
 
 /**
  * Manager CRUD for themes. Replaces {@code ThemeAction}. {@code themePath} is
- * the theme key and must not begin with {@code /}.
+ * the theme key: one of the 18 compiled palettes, and it must not begin with
+ * {@code /}.
  */
 @RestController
 @RequestMapping("/api/manager/themes")

@@ -1137,10 +1137,10 @@ Rules to port:
 
 **Acceptance criteria.**
 
-- Exactly 18 palettes exist in CSS (`light`, `dark`, and the 16 SEC keys from the plan).
-- Manager cannot create a theme whose key is not one of those 18.
-- Deactivating a theme hides it from the account picker; users already on it keep it until they pick another.
-- Picker never offers a theme that would leave `data-theme` unstyled.
+- [x] Exactly 18 palettes exist in CSS (`light`, `dark`, and the 16 SEC keys from the plan).
+- [x] Manager cannot create a theme whose key is not one of those 18.
+- [x] Deactivating a theme hides it from the account picker; users already on it keep it until they pick another.
+- [x] Picker never offers a theme that would leave `data-theme` unstyled.
 
 **Predecessors:** US-08, US-14.
 

@@ -1,15 +1,19 @@
 package com.curleesoft.pickem.backend.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.curleesoft.pickem.backend.model.Theme;
 import com.curleesoft.pickem.backend.model.User;
 import com.curleesoft.pickem.backend.repository.UserRepository;
 
 /**
  * Player profile. Ports {@code AccountAction} without passwords. Email, first
- * name, and last name stay on the Google profile. {@code themeId} is an
- * existing theme path; the closed catalog of 18 keys is US-36.
+ * name, and last name stay on the Google profile. {@code themeId} must be one
+ * of the 18 compiled keys. A player may keep an inactive key they already have;
+ * choosing a different inactive key is rejected.
  */
 @Service
 public class AccountService {
@@ -39,7 +43,12 @@ public class AccountService {
         return toProfile(user(uid));
     }
 
+    public List<ThemeChoice> themeChoices() {
+        return themeService.activeChoices();
+    }
+
     public AccountProfile update(String uid, AccountUpdate request) {
+        User existing = user(uid);
         String nickName = SearchText.trim(request.nickName());
 
         if (!StringUtils.hasText(nickName)) {
@@ -59,12 +68,20 @@ public class AccountService {
 
         }
 
-        if (!themeService.pathExists(themeId)) {
-            throw new InvalidRequestException(ThemeService.NOT_FOUND);
+        if (!ThemeCatalog.contains(themeId)) {
+            throw new InvalidRequestException(ThemeService.KEY_NOT_IN_CATALOG);
 
         }
 
-        User existing = user(uid);
+        Theme theme = themeService.findByPath(themeId)
+                .orElseThrow(() -> new InvalidRequestException(ThemeService.NOT_FOUND));
+        boolean keepingCurrent = themeId.equals(existing.getThemeId());
+
+        if (!Boolean.TRUE.equals(theme.getActive()) && !keepingCurrent) {
+            throw new InvalidRequestException(ThemeService.THEME_INACTIVE);
+
+        }
+
         existing.setNickName(nickName);
         existing.setThemeId(themeId);
         existing.setVersion(request.version());
