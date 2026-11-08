@@ -70,7 +70,7 @@ College Football Data (CFBD) is new product scope (not in the legacy app):
 | US-21 | Administer matchups, users, and themes                   | G Player / manager UI | —      | US-07, US-08, US-20, US-35, US-36            | US-22, US-24, US-30                                    |
 | US-34 | Lock picks at week start and reject tied scores          | D Game APIs           | Done   | US-09                                        | US-16, US-22, US-24                                    |
 | US-35 | Refresh snapshots and block unsafe deletes               | C Manager APIs        | —      | US-06, US-07                                 | US-20, US-21, US-24                                    |
-| US-36 | Keep the theme catalog a closed set of 18                | G Player / manager UI | —      | US-08, US-14                                 | US-19, US-21                                           |
+| US-36 | Keep the theme catalog a closed set of 18                | G Player / manager UI | Done   | US-08, US-14                                 | US-19, US-21                                           |
 | US-37 | Empty season, sign-in failure, and expired session       | G Player / manager UI | —      | US-15                                        | US-24                                                  |
 | US-22 | Enforce validation parity on client and server           | H Quality / deploy    | —      | US-05, US-07, US-08, US-16, US-21            | US-24                                                  |
 | US-23 | Meet WCAG AA contrast in every theme                     | H Quality / deploy    | —      | US-14, US-19                                 | US-24                                                  |
@@ -1130,6 +1130,8 @@ Rules to port:
 ---
 
 ### US-36 — Keep the theme catalog a closed set of 18
+
+**Status:** Done ([PR #49](https://github.com/bassetthnd824/pickem/pull/49)).
 
 **User story.** As a player, I want the theme picker to list only Light, Dark, and the 16 SEC palettes so that every choice actually restyles the app.
 
