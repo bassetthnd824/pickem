@@ -19,7 +19,13 @@ export type ThemeChoice = {
   themePath: string
 }
 
-export type AccountTheme = {
+/** Matches `AccountService.NICK_NAME_MAX`. */
+export const NICK_NAME_MAX = 40
+
+export type AccountProfile = {
+  emailAddr: string
+  firstName: string
+  lastName: string
   nickName: string
   themeId: string
   version: number
@@ -51,25 +57,54 @@ export function themeChoices(value: unknown): ThemeChoice[] {
   return choices
 }
 
-export function parseAccountTheme(value: unknown): AccountTheme | null {
+function textField(value: unknown): string | null {
+  return typeof value === 'string' ? value : null
+}
+
+export function parseAccount(value: unknown): AccountProfile | null {
   if (!value || typeof value !== 'object') {
     return null
   }
   const record = value as Record<string, unknown>
-  if (typeof record.nickName !== 'string' || record.nickName.trim() === '') {
-    return null
-  }
-  if (typeof record.themeId !== 'string' || record.themeId.trim() === '') {
+  const emailAddr = textField(record.emailAddr)
+  const firstName = textField(record.firstName)
+  const lastName = textField(record.lastName)
+  const nickName = textField(record.nickName)
+  const themeId = textField(record.themeId)
+  if (
+    emailAddr === null ||
+    firstName === null ||
+    lastName === null ||
+    nickName === null ||
+    nickName.trim() === '' ||
+    themeId === null ||
+    themeId.trim() === ''
+  ) {
     return null
   }
   if (typeof record.version !== 'number' || !Number.isInteger(record.version)) {
     return null
   }
   return {
-    nickName: record.nickName.trim(),
-    themeId: record.themeId.trim(),
+    emailAddr,
+    firstName,
+    lastName,
+    nickName: nickName.trim(),
+    themeId: themeId.trim(),
     version: record.version,
   }
+}
+
+/** Client check before `PUT /api/game/account`. Messages match the API. */
+export function nickNameError(value: string): string | null {
+  const trimmed = value.trim()
+  if (trimmed === '') {
+    return 'nickName is required'
+  }
+  if (trimmed.length > NICK_NAME_MAX) {
+    return 'nickName must be 40 characters or fewer'
+  }
+  return null
 }
 
 /** True when the saved key is styled but the picker must not offer it. */
