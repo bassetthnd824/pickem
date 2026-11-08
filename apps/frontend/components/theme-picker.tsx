@@ -5,16 +5,16 @@ import { useState } from 'react'
 
 import { AUTH_ME_KEY, useAuth } from '@/components/auth-provider'
 import { Radio, RadioGroup } from '@/components/ui/radio'
-import { api } from '@/lib/api-client'
+import { ApiError, api } from '@/lib/api-client'
 import type { AuthProfile } from '@/lib/auth-profile'
 import { isThemeKey, rememberTheme } from '@/lib/theme'
 import {
   accountQueryKey,
   keepsCurrentTheme,
-  parseAccountTheme,
+  parseAccount,
   THEME_CHOICES_KEY,
   themeChoices,
-  type AccountTheme,
+  type AccountProfile,
   type ThemeChoice,
 } from '@/lib/theme-picker'
 
@@ -22,8 +22,8 @@ async function loadThemes(signal: AbortSignal): Promise<ThemeChoice[]> {
   return themeChoices(await api.get<unknown>('/api/game/themes', { signal }))
 }
 
-async function loadAccount(signal: AbortSignal): Promise<AccountTheme> {
-  const account = parseAccountTheme(
+async function loadAccount(signal: AbortSignal): Promise<AccountProfile> {
+  const account = parseAccount(
     await api.get<unknown>('/api/game/account', { signal }),
   )
   if (!account) {
@@ -32,7 +32,13 @@ async function loadAccount(signal: AbortSignal): Promise<AccountTheme> {
   return account
 }
 
-export function ThemePicker() {
+export function ThemePicker({
+  disabled = false,
+  onSavingChange,
+}: {
+  disabled?: boolean
+  onSavingChange?: (saving: boolean) => void
+}) {
   const queryClient = useQueryClient()
   const { profile } = useAuth()
   const uid = profile?.uid ?? ''
@@ -67,16 +73,22 @@ export function ThemePicker() {
     : null
 
   async function choose(themePath: string) {
-    if (!isThemeKey(themePath) || themePath === account.themeId || saving) {
+    if (
+      disabled ||
+      saving ||
+      !isThemeKey(themePath) ||
+      themePath === account.themeId
+    ) {
       return
     }
     if (!choices.some((choice) => choice.themePath === themePath)) {
       return
     }
     setSaving(true)
+    onSavingChange?.(true)
     setError(null)
     try {
-      const saved = parseAccountTheme(
+      const saved = parseAccount(
         await api.put<unknown>('/api/game/account', {
           nickName: account.nickName,
           themeId: themePath,
@@ -97,15 +109,19 @@ export function ThemePicker() {
             : current,
       )
       rememberTheme(saved.themeId)
-    } catch {
+    } catch (caught) {
+      if (caught instanceof ApiError && caught.status === 409) {
+        await queryClient.refetchQueries({ queryKey: accountKey })
+      }
       setError('Could not save the theme.')
     } finally {
       setSaving(false)
+      onSavingChange?.(false)
     }
   }
 
   return (
-    <fieldset className='flex flex-col gap-3' disabled={saving}>
+    <fieldset className='flex flex-col gap-3' disabled={saving || disabled}>
       <legend className='text-sm font-medium text-text'>Theme</legend>
       {keepsCurrentTheme(account.themeId, choices) ? (
         <p>Your current theme stays until you pick another.</p>
@@ -116,6 +132,7 @@ export function ThemePicker() {
         <RadioGroup
           aria-label='Theme'
           className='flex flex-col gap-2'
+          disabled={saving || disabled}
           value={selected}
           onValueChange={(value) => {
             void choose(String(value))

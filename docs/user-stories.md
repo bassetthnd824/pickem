@@ -750,10 +750,10 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- Account shows read-only email and name from Google, editable nickName, and a theme picker listing active themes.
-- Saving theme restyles the app (navbar/headers/buttons) without a full reload beyond the token update.
-- No old/new/confirm password fields.
-- Cancel discards unsaved changes.
+- [x] Account shows read-only email and name from Google, editable nickName, and a theme picker listing active themes.
+- [x] Saving theme restyles the app (navbar/headers/buttons) without a full reload beyond the token update.
+- [x] No old/new/confirm password fields.
+- [x] Cancel discards unsaved changes.
 
 **Predecessors:** US-11, US-14, US-15, US-36.
 
