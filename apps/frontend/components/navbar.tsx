@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { signOutFromGoogle } from '@/lib/firebase-auth'
 import { GAME_LINKS, MANAGER_LINKS } from '@/lib/nav-links'
 import { endSession } from '@/lib/session-client'
+import { ACCOUNT_KEY_PREFIX, THEME_CHOICES_KEY } from '@/lib/theme-picker'
 
 const linkClass =
   'rounded-md px-3 py-2 text-sm font-medium text-primary-fg focus-visible:outline-2 focus-visible:outline-offset-2'
@@ -49,6 +50,8 @@ export function Navbar() {
       await endSession()
       await signOutFromGoogle()
       queryClient.removeQueries({ queryKey: AUTH_ME_KEY })
+      queryClient.removeQueries({ queryKey: ACCOUNT_KEY_PREFIX })
+      queryClient.removeQueries({ queryKey: THEME_CHOICES_KEY })
       closeNavigation()
       router.replace('/login')
       router.refresh()

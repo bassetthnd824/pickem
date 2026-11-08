@@ -39,6 +39,15 @@ export function isThemeKey(
   return typeof value === 'string' && THEME_KEY_SET.has(value)
 }
 
+/** Paint a compiled theme immediately and keep the SSR cookie in step. */
+export function rememberTheme(themeId: ThemeKey): void {
+  if (typeof document === 'undefined') {
+    return
+  }
+  document.documentElement.setAttribute('data-theme', themeId)
+  document.cookie = `${THEME_COOKIE_NAME}=${encodeURIComponent(themeId)}; Path=/; SameSite=Lax`
+}
+
 /**
  * A known profile theme wins. Otherwise a known cookie theme is used.
  * An absent or unknown value is Light, including the first visit.

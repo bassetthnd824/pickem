@@ -6,6 +6,7 @@ import {
   DEFAULT_THEME,
   THEME_KEYS,
   isThemeKey,
+  rememberTheme,
   resolveThemeId,
 } from '@/lib/theme'
 
@@ -98,6 +99,19 @@ describe('resolveThemeId', () => {
   it('uses the cookie when the profile theme is unknown', () => {
     expect(resolveThemeId(undefined, 'vanderbilt')).toBe('vanderbilt')
     expect(resolveThemeId('nope', 'texas-am')).toBe('texas-am')
+  })
+})
+
+describe('rememberTheme', () => {
+  afterEach(() => {
+    document.documentElement.removeAttribute('data-theme')
+    document.cookie = 'themeId=; Path=/; Max-Age=0'
+  })
+
+  it('sets data-theme and the theme cookie for a catalog key', () => {
+    rememberTheme('texas-am')
+    expect(document.documentElement.getAttribute('data-theme')).toBe('texas-am')
+    expect(document.cookie).toContain('themeId=texas-am')
   })
 })
 

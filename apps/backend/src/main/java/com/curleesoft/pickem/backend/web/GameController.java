@@ -25,6 +25,7 @@ import com.curleesoft.pickem.backend.service.PickService;
 import com.curleesoft.pickem.backend.service.TeamScheduleRow;
 import com.curleesoft.pickem.backend.service.TeamScheduleService;
 import com.curleesoft.pickem.backend.service.TeamService;
+import com.curleesoft.pickem.backend.service.ThemeChoice;
 
 import jakarta.validation.Valid;
 import tools.jackson.databind.JsonNode;
@@ -89,6 +90,12 @@ public class GameController {
         principal(authentication);
         return teamService.conferenceTeams().stream()
                 .map(team -> new ConferenceTeam(team.getId(), team.getTeamName(), team.getSquadName())).toList();
+    }
+
+    @GetMapping("/themes")
+    public List<ThemeChoice> themes(Authentication authentication) {
+        principal(authentication);
+        return accountService.themeChoices();
     }
 
     @GetMapping("/account")

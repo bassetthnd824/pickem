@@ -207,6 +207,11 @@ public class UserService {
     private void apply(User target, User request) {
         String themeId = SearchText.trim(request.getThemeId());
 
+        if (!ThemeCatalog.contains(themeId)) {
+            throw new InvalidRequestException(ThemeService.KEY_NOT_IN_CATALOG);
+
+        }
+
         if (!themeService.pathExists(themeId)) {
             throw new InvalidRequestException(ThemeService.NOT_FOUND);
 

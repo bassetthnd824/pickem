@@ -130,8 +130,8 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
     @Test
     void themesKeepAUniqueNameAndKeyAndTheActiveFlag() throws Exception {
         String token = token();
-        String lightKey = "light-" + token;
-        String darkKey = "dark-" + token;
+        String lightKey = "light";
+        String darkKey = "dark";
 
         MvcResult created = mockMvc
                 .perform(
@@ -156,7 +156,7 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
 
         mockMvc.perform(
                 post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                        .content(themeBody("Light " + token, "other-" + token, true, "#000000", "#FFFFFF", null))
+                        .content(themeBody("Light " + token, darkKey, true, "#000000", "#FFFFFF", null))
         )
                 .andExpect(status().isConflict()).andExpect(jsonPath("$.detail").value(ThemeService.NAME_NOT_UNIQUE));
 
@@ -174,7 +174,7 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
 
         mockMvc.perform(
                 post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                        .content(themeBody("x".repeat(41), "long-" + token, true, "#000000", "#FFFFFF", null))
+                        .content(themeBody("x".repeat(41), "florida", true, "#000000", "#FFFFFF", null))
         )
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(containsString("themeName")));
 
@@ -190,20 +190,27 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         )
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(containsString("themePath")));
 
+        mockMvc.perform(
+                post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(themeBody("Custom " + token, "not-a-school", true, "#000000", "#FFFFFF", null))
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value(ThemeService.KEY_NOT_IN_CATALOG));
+
         mockMvc.perform(post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
-                {"themeName":"No active %s","themePath":"no-active-%s","primary":"#000000","secondary":"#FFFFFF"}
-                """.formatted(token, token))).andExpect(status().isBadRequest())
+                {"themeName":"No active %s","themePath":"arkansas","primary":"#000000","secondary":"#FFFFFF"}
+                """.formatted(token))).andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.detail").value(containsString("active")));
 
         mockMvc.perform(get("/api/manager/themes").cookie(manager).param("themeName", "light " + token))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].id").value(lightId))
                 .andExpect(jsonPath("$[1]").doesNotExist());
 
-        mockMvc.perform(get("/api/manager/themes").cookie(manager).param("themePath", token).param("active", "false"))
+        mockMvc.perform(get("/api/manager/themes").cookie(manager).param("themePath", darkKey).param("active", "false"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].id").value(darkId))
                 .andExpect(jsonPath("$[1]").doesNotExist());
 
-        String listed = mockMvc.perform(get("/api/manager/themes").cookie(manager).param("themePath", token))
+        String listed = mockMvc.perform(get("/api/manager/themes").cookie(manager).param("themeName", token))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         JsonNode themes = jsonMapper.readTree(listed);
         assertThat(indexOf(themes, darkId)).isLessThan(indexOf(themes, lightId));
@@ -214,6 +221,13 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
         )
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.detail").value(containsString("Stale version")));
+
+        mockMvc.perform(
+                put("/api/manager/themes/" + lightId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
+                        .content(themeBody("Day " + token, "not-a-school", false, "#111111", "#EEEEEE", 0L))
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value(ThemeService.KEY_NOT_IN_CATALOG));
 
         mockMvc.perform(
                 put("/api/manager/themes/" + lightId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
@@ -235,7 +249,7 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
     @Test
     void usersSearchByNameAndMirrorManagerClaims() throws Exception {
         String token = token();
-        String themeKey = "user-theme-" + token;
+        String themeKey = "alabama";
         createTheme("Players " + token, themeKey, true);
 
         String adaUid = "ada-" + token;
@@ -385,7 +399,8 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
                                 )
                         )
         )
-                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.detail").value(ThemeService.NOT_FOUND));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value(ThemeService.KEY_NOT_IN_CATALOG));
 
         mockMvc.perform(
                 put("/api/manager/users/" + adaUid).cookie(manager).contentType(MediaType.APPLICATION_JSON)
@@ -501,7 +516,7 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
     @Test
     void deleteClearsClaimsAndRevokesTheExistingSession() throws Exception {
         String token = token();
-        String themeKey = "delete-theme-" + token;
+        String themeKey = "arkansas";
         createTheme("Delete " + token, themeKey, true);
         String uid = "session-" + token;
         String id = createUser(uid, uid + "@example.com", "Session", "User", themeKey, "[\"manager\"]");
@@ -522,7 +537,7 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
     @Test
     void claimAndRevokeFailuresDoNotSplitTheUserFromFirebase() throws Exception {
         String token = token();
-        String themeKey = "claim-theme-" + token;
+        String themeKey = "auburn";
         createTheme("Claims " + token, themeKey, true);
 
         String missingUid = "missing-auth-" + token;
