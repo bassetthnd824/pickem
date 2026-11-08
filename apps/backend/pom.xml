@@ -210,4 +210,37 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- JDK 24+ warns when protobuf calls sun.misc.Unsafe. JDK 21 rejects this flag. -->
+    <profiles>
+        <profile>
+            <id>allow-unsafe-memory-access</id>
+
+            <activation>
+                <jdk>[23,)</jdk>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+
+                        <configuration>
+                            <jvmArguments>--sun-misc-unsafe-memory-access=allow</jvmArguments>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+
+                        <configuration>
+                            <argLine>--sun-misc-unsafe-memory-access=allow</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
