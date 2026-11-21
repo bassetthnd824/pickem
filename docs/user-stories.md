@@ -1117,11 +1117,11 @@ Rules to port:
 
 **Acceptance criteria.**
 
-- After renaming a team, `GET /api/game/main` and matchup list show the new name without re-importing.
-- After changing a venue’s city/state, matchups that embed that venue show the new snapshot.
-- Deleting a venue used as a team home venue or matchup venue is 409.
-- Deleting a season that has weeks or matchups, a week that has matchups, a matchup that has picks, or a team that appears on a matchup/rivalry is 409.
-- Error body names the blocking relation so the manager can fix data first.
+- [x] After renaming a team, `GET /api/game/main` and matchup list show the new name without re-importing.
+- [x] After changing a venue’s city/state, matchups that embed that venue show the new snapshot.
+- [x] Deleting a venue used as a team home venue or matchup venue is 409.
+- [x] Deleting a season that has weeks or matchups, a week that has matchups, a matchup that has picks, or a team that appears on a matchup/rivalry is 409.
+- [x] Error body names the blocking relation so the manager can fix data first.
 
 **Predecessors:** US-06, US-07.
 

@@ -13,8 +13,10 @@ import com.curleesoft.pickem.backend.repository.TeamRepository;
 
 /**
  * Manager CRUD for rivalries. Team snapshots are copied from the team documents
- * on each save of this rivalry. A search {@code team1Id} matches either side,
- * which is how the legacy rivalry search form looks up one team.
+ * on each save of this rivalry, and again when a team is renamed. A search
+ * {@code team1Id} matches either side, which is how the legacy rivalry search
+ * form looks up one team. Matchups store {@code rivalryName}, not this
+ * document's id, so deleting a rivalry does not orphan a matchup.
  */
 @Service
 public class RivalryService {
