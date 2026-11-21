@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -31,9 +32,10 @@ import com.google.cloud.firestore.Transaction;
 /**
  * Manager CRUD for matchups. Ports {@code MatchupAction}. Snapshots, the week
  * number, and the rivalry name are copied onto this document at save time.
- * Refreshing them after a team or venue edit is US-35. The venue is whatever
- * the client submits; {@code GET /api/manager/teams/{id}} already returns
- * {@code homeVenue} so the client can default it when the home team changes.
+ * {@link ReferenceGuard} rewrites the team and venue snapshots after those
+ * records change. The venue is whatever the client submits;
+ * {@code GET /api/manager/teams/{id}} already returns {@code homeVenue} so the
+ * client can default it when the home team changes.
  * <p>
  * {@code winningTeamId} is derived here. Unplayed games (both scores empty)
  * have no winner. A strict home lead selects the home team; otherwise the away
@@ -70,13 +72,16 @@ public class MatchupService {
 
     private final RivalryRepository rivalryRepository;
 
+    private final ReferenceGuard referenceGuard;
+
     public MatchupService(
             MatchupRepository matchupRepository,
             SeasonRepository seasonRepository,
             SeasonWeekRepository seasonWeekRepository,
             TeamRepository teamRepository,
             VenueRepository venueRepository,
-            RivalryRepository rivalryRepository
+            RivalryRepository rivalryRepository,
+            ReferenceGuard referenceGuard
     ) {
         this.matchupRepository = matchupRepository;
         this.seasonRepository = seasonRepository;
@@ -84,6 +89,7 @@ public class MatchupService {
         this.teamRepository = teamRepository;
         this.venueRepository = venueRepository;
         this.rivalryRepository = rivalryRepository;
+        this.referenceGuard = referenceGuard;
     }
 
     /**
@@ -153,7 +159,7 @@ public class MatchupService {
 
     public void delete(String id) {
         get(id);
-        matchupRepository.delete(id);
+        referenceGuard.deleteMatchup(Objects.requireNonNull(id, "id"));
     }
 
     private void apply(Matchup target, Matchup request) {

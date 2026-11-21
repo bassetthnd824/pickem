@@ -22,7 +22,7 @@ class SeasonServiceTests {
     void currentSeasonUsesTheClockAndRepositorySeasons() {
         SeasonRepository repository = mock(SeasonRepository.class);
         Clock clock = Clock.fixed(Instant.parse("2026-09-21T15:00:00Z"), ZoneOffset.UTC);
-        SeasonService service = new SeasonService(repository, clock);
+        SeasonService service = new SeasonService(repository, mock(ReferenceGuard.class), clock);
         when(repository.findAll()).thenReturn(List.of(season("2020", false), season("2026", false)));
 
         assertThat(service.current().getSeason()).isEqualTo("2026");
@@ -32,7 +32,7 @@ class SeasonServiceTests {
     @Test
     void currentSeasonIsNotFoundWhenNothingMatches() {
         SeasonRepository repository = mock(SeasonRepository.class);
-        SeasonService service = new SeasonService(repository, Clock.systemUTC());
+        SeasonService service = new SeasonService(repository, mock(ReferenceGuard.class), Clock.systemUTC());
         when(repository.findAll()).thenReturn(List.of());
 
         assertThatThrownBy(service::current).isInstanceOf(ResourceNotFoundException.class)

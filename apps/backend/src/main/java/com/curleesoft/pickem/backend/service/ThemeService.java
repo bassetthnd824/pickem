@@ -19,8 +19,8 @@ import com.google.cloud.firestore.Transaction;
 /**
  * Manager CRUD for themes. Replaces {@code ThemeAction}. Create and update
  * accept only the compiled catalog of 18 keys. Managers may still activate,
- * deactivate, and rename those rows. Deletes are not reference-checked; that
- * block is US-35.
+ * deactivate, and rename those rows. A theme delete is not blocked when a user
+ * still stores that key.
  */
 @Service
 public class ThemeService {

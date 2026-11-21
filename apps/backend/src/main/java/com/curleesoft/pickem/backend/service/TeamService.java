@@ -2,12 +2,14 @@ package com.curleesoft.pickem.backend.service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
 import com.curleesoft.pickem.backend.model.Team;
 import com.curleesoft.pickem.backend.model.Venue;
 import com.curleesoft.pickem.backend.model.snapshot.VenueSnapshot;
+import com.curleesoft.pickem.backend.repository.StaleDocumentVersionException;
 import com.curleesoft.pickem.backend.repository.TeamRepository;
 import com.curleesoft.pickem.backend.repository.TransactionReads;
 import com.curleesoft.pickem.backend.repository.VenueRepository;
@@ -16,7 +18,8 @@ import com.google.cloud.firestore.Transaction;
 
 /**
  * Manager CRUD for teams. The home-venue snapshot is copied from the venue
- * document on each save of this team. Refreshing other documents is US-35.
+ * document on each save of this team. {@link ReferenceGuard} then rewrites
+ * matchup and rivalry snapshots that embed this team.
  * {@code GET ?conferenceMember=true} replaces
  * {@code TeamBean.getConferenceTeams} and {@code getNumberOfConferenceTeams}
  * (the list length is the count).
@@ -34,9 +37,16 @@ public class TeamService {
 
     private final VenueRepository venueRepository;
 
-    public TeamService(TeamRepository teamRepository, VenueRepository venueRepository) {
+    private final ReferenceGuard referenceGuard;
+
+    public TeamService(
+            TeamRepository teamRepository,
+            VenueRepository venueRepository,
+            ReferenceGuard referenceGuard
+    ) {
         this.teamRepository = teamRepository;
         this.venueRepository = venueRepository;
+        this.referenceGuard = referenceGuard;
     }
 
     public List<Team> search(
@@ -91,20 +101,66 @@ public class TeamService {
         Team existing = get(id);
         apply(existing, request);
         existing.setVersion(request.getVersion());
-        return teamRepository.save(
-                existing,
-                (transaction, collection, documentId) -> rejectDuplicate(
-                        transaction,
-                        collection,
-                        documentId,
-                        existing
-                )
-        );
+        Team saved = saveOrResume(existing);
+        referenceGuard.refreshTeam(saved);
+        return saved;
     }
 
     public void delete(String id) {
         get(id);
-        teamRepository.delete(id);
+        referenceGuard.deleteTeam(Objects.requireNonNull(id, "id"));
+    }
+
+    /**
+     * A previous attempt may have committed this edit and then failed while
+     * rewriting snapshots. A later venue snapshot patch can move the version by
+     * more than one, so any newer stored row with the same fields is refreshed
+     * again. A submitted version newer than the row still conflicts.
+     */
+    private Team saveOrResume(Team desired) {
+
+        try {
+            return teamRepository.save(
+                    desired,
+                    (transaction, collection, documentId) -> rejectDuplicate(
+                            transaction,
+                            collection,
+                            documentId,
+                            desired
+                    )
+            );
+
+        } catch (StaleDocumentVersionException ex) {
+            Team stored = get(Objects.requireNonNull(desired.getId(), "id"));
+
+            if (storedIsNewer(stored.getVersion(), desired.getVersion()) && sameCommitted(stored, desired)) {
+                return stored;
+
+            }
+
+            throw ex;
+
+        }
+
+    }
+
+    private static boolean storedIsNewer(Long storedVersion, Long submittedVersion) {
+
+        if (submittedVersion == null) {
+            return false;
+
+        }
+
+        long stored = storedVersion == null ? 0L : storedVersion;
+        return stored > submittedVersion;
+    }
+
+    private static boolean sameCommitted(Team stored, Team desired) {
+        return Objects.equals(stored.getTeamName(), desired.getTeamName())
+                && Objects.equals(stored.getSquadName(), desired.getSquadName())
+                && Objects.equals(stored.getConferenceMember(), desired.getConferenceMember())
+                && Objects.equals(stored.getHomeVenueId(), desired.getHomeVenueId())
+                && Objects.equals(stored.getCfbdTeamId(), desired.getCfbdTeamId());
     }
 
     private void apply(Team target, Team request) {

@@ -2,6 +2,7 @@ package com.curleesoft.pickem.backend.service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -34,9 +35,16 @@ public class SeasonWeekService {
 
     private final SeasonRepository seasonRepository;
 
-    public SeasonWeekService(SeasonWeekRepository seasonWeekRepository, SeasonRepository seasonRepository) {
+    private final ReferenceGuard referenceGuard;
+
+    public SeasonWeekService(
+            SeasonWeekRepository seasonWeekRepository,
+            SeasonRepository seasonRepository,
+            ReferenceGuard referenceGuard
+    ) {
         this.seasonWeekRepository = seasonWeekRepository;
         this.seasonRepository = seasonRepository;
+        this.referenceGuard = referenceGuard;
     }
 
     public List<SeasonWeek> search(String seasonId, Integer weekNumber, String beginDate, String endDate) {
@@ -94,7 +102,7 @@ public class SeasonWeekService {
 
     public void delete(String id) {
         get(id);
-        seasonWeekRepository.delete(id);
+        referenceGuard.deleteWeek(Objects.requireNonNull(id, "id"));
     }
 
     private void apply(SeasonWeek target, SeasonWeek request) {

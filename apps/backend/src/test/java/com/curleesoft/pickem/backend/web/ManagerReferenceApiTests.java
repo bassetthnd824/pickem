@@ -33,6 +33,7 @@ import com.curleesoft.pickem.backend.security.FakeFirebaseIdentityClient;
 import com.curleesoft.pickem.backend.security.RoleClaims;
 import com.curleesoft.pickem.backend.security.SessionCookies;
 import com.curleesoft.pickem.backend.security.VerifiedIdentity;
+import com.curleesoft.pickem.backend.service.ReferenceGuard;
 import com.curleesoft.pickem.backend.service.RivalryService;
 import com.curleesoft.pickem.backend.service.TeamService;
 import com.curleesoft.pickem.backend.service.VenueService;
@@ -303,13 +304,15 @@ class ManagerReferenceApiTests extends FirestoreEmulatorSupport {
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/manager/teams/" + alabamaId).cookie(manager)).andExpect(status().isOk())
-                .andExpect(jsonPath("$.homeVenue.name").value("Bryant-Denny " + token));
+                .andExpect(jsonPath("$.homeVenue.name").value("Bryant-Denny Stadium " + token))
+                .andExpect(jsonPath("$.homeVenue.cityState").value("Tuscaloosa, AL " + token))
+                .andExpect(jsonPath("$.version").value(1));
 
         mockMvc.perform(
                 put("/api/manager/teams/" + alabamaId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                        .content(versionedTeam("Alabama " + token, "Crimson Tide", true, venueId, externalId, 0))
+                        .content(versionedTeam("Alabama " + token, "Crimson Tide", true, venueId, externalId, 1))
         )
-                .andExpect(status().isOk()).andExpect(jsonPath("$.version").value(1))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.version").value(2))
                 .andExpect(jsonPath("$.homeVenue.name").value("Bryant-Denny Stadium " + token))
                 .andExpect(jsonPath("$.homeVenue.cityState").value("Tuscaloosa, AL " + token))
                 .andExpect(jsonPath("$.createUser").value(managerUid));
@@ -326,7 +329,7 @@ class ManagerReferenceApiTests extends FirestoreEmulatorSupport {
 
         mockMvc.perform(
                 put("/api/manager/teams/" + alabamaId).cookie(manager).contentType(MediaType.APPLICATION_JSON)
-                        .content(versionedTeam("Alabama " + token, "Crimson Tide", true, laterVenueId, null, 1))
+                        .content(versionedTeam("Alabama " + token, "Crimson Tide", true, laterVenueId, null, 2))
         )
                 .andExpect(status().isOk()).andExpect(jsonPath("$.homeVenueId").value(laterVenueId))
                 .andExpect(jsonPath("$.homeVenue.name").value("Sanford " + token));
@@ -339,10 +342,11 @@ class ManagerReferenceApiTests extends FirestoreEmulatorSupport {
                 .andReturn().getResponse().getContentAsString();
         assertThat(jsonMapper.readTree(cleared).path("cfbdTeamId").isNull()).isTrue();
 
-        mockMvc.perform(delete("/api/manager/venues/" + venueId).cookie(manager)).andExpect(status().isNoContent());
-        venueIds.remove(venueId);
+        mockMvc.perform(delete("/api/manager/venues/" + venueId).cookie(manager)).andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value(ReferenceGuard.TEAMS));
         mockMvc.perform(get("/api/manager/teams/" + vanderbiltId).cookie(manager)).andExpect(status().isOk())
-                .andExpect(jsonPath("$.homeVenue.name").value("Bryant-Denny " + token));
+                .andExpect(jsonPath("$.homeVenue.name").value("Bryant-Denny Stadium " + token))
+                .andExpect(jsonPath("$.homeVenue.cityState").value("Tuscaloosa, AL " + token));
 
         mockMvc.perform(get("/api/manager/teams/missing-" + token).cookie(manager)).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.detail").value(TeamService.NOT_FOUND));
@@ -453,14 +457,15 @@ class ManagerReferenceApiTests extends FirestoreEmulatorSupport {
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/manager/rivalries/" + rivalryId).cookie(manager)).andExpect(status().isOk())
-                .andExpect(jsonPath("$.team1.name").value("Alabama " + token));
+                .andExpect(jsonPath("$.team1.name").value("Alabama Crimson " + token))
+                .andExpect(jsonPath("$.version").value(1));
 
         mockMvc.perform(
                 put("/api/manager/rivalries/" + rivalryId).cookie(manager)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(versionedRivalry("Third Saturday " + token, tennesseeId, georgiaId, 0))
+                        .content(versionedRivalry("Third Saturday " + token, tennesseeId, georgiaId, 1))
         )
-                .andExpect(status().isOk()).andExpect(jsonPath("$.version").value(1))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.version").value(2))
                 .andExpect(jsonPath("$.team1.name").value("Tennessee " + token))
                 .andExpect(jsonPath("$.team2.name").value("Georgia " + token))
                 .andExpect(jsonPath("$.createUser").value(managerUid));

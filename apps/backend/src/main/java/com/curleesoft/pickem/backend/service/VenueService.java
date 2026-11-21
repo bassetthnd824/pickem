@@ -2,10 +2,12 @@ package com.curleesoft.pickem.backend.service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
 import com.curleesoft.pickem.backend.model.Venue;
+import com.curleesoft.pickem.backend.repository.StaleDocumentVersionException;
 import com.curleesoft.pickem.backend.repository.TransactionReads;
 import com.curleesoft.pickem.backend.repository.VenueRepository;
 import com.google.cloud.firestore.CollectionReference;
@@ -13,7 +15,8 @@ import com.google.cloud.firestore.Transaction;
 
 /**
  * Manager CRUD for venues. Optional {@code cfbdVenueId} is unique when present.
- * Deletes are not reference-checked here; that block is US-35.
+ * {@link ReferenceGuard} rewrites team and matchup venue snapshots after a
+ * save, and blocks a delete while a team or matchup still uses the venue.
  */
 @Service
 public class VenueService {
@@ -24,8 +27,11 @@ public class VenueService {
 
     private final VenueRepository venueRepository;
 
-    public VenueService(VenueRepository venueRepository) {
+    private final ReferenceGuard referenceGuard;
+
+    public VenueService(VenueRepository venueRepository, ReferenceGuard referenceGuard) {
         this.venueRepository = venueRepository;
+        this.referenceGuard = referenceGuard;
     }
 
     public List<Venue> search(String venueName, String cityState, Long cfbdVenueId) {
@@ -62,20 +68,64 @@ public class VenueService {
         Venue existing = get(id);
         apply(existing, request);
         existing.setVersion(request.getVersion());
-        return venueRepository.save(
-                existing,
-                (transaction, collection, documentId) -> rejectDuplicate(
-                        transaction,
-                        collection,
-                        documentId,
-                        existing
-                )
-        );
+        Venue saved = saveOrResume(existing);
+        referenceGuard.refreshVenue(saved);
+        return saved;
     }
 
     public void delete(String id) {
         get(id);
-        venueRepository.delete(id);
+        referenceGuard.deleteVenue(Objects.requireNonNull(id, "id"));
+    }
+
+    /**
+     * A previous attempt may have committed this edit and then failed while
+     * rewriting snapshots. A later snapshot patch can move the version by more than
+     * one, so any newer stored row with the same fields is refreshed again. A
+     * submitted version newer than the row still conflicts.
+     */
+    private Venue saveOrResume(Venue desired) {
+
+        try {
+            return venueRepository.save(
+                    desired,
+                    (transaction, collection, documentId) -> rejectDuplicate(
+                            transaction,
+                            collection,
+                            documentId,
+                            desired
+                    )
+            );
+
+        } catch (StaleDocumentVersionException ex) {
+            Venue stored = get(Objects.requireNonNull(desired.getId(), "id"));
+
+            if (storedIsNewer(stored.getVersion(), desired.getVersion()) && sameCommitted(stored, desired)) {
+                return stored;
+
+            }
+
+            throw ex;
+
+        }
+
+    }
+
+    private static boolean storedIsNewer(Long storedVersion, Long submittedVersion) {
+
+        if (submittedVersion == null) {
+            return false;
+
+        }
+
+        long stored = storedVersion == null ? 0L : storedVersion;
+        return stored > submittedVersion;
+    }
+
+    private static boolean sameCommitted(Venue stored, Venue desired) {
+        return Objects.equals(stored.getVenueName(), desired.getVenueName())
+                && Objects.equals(stored.getCityState(), desired.getCityState())
+                && Objects.equals(stored.getCfbdVenueId(), desired.getCfbdVenueId());
     }
 
     private void apply(Venue target, Venue request) {

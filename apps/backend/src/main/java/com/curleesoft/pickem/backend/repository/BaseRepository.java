@@ -143,6 +143,18 @@ public class BaseRepository<D extends AuditableDocument> {
     }
 
     /**
+     * Applies {@code mutator} to the row read inside the transaction. A commit
+     * conflict runs the callback again, so the mutator must change only its own
+     * fields on the document it is given. An unchanged row is not written.
+     */
+    public boolean patch(String id, Function<D, Boolean> mutator) {
+        Objects.requireNonNull(mutator, "mutator");
+        String documentId = Objects.requireNonNull(id, "id");
+        String actor = currentActor();
+        return inTransaction(transaction -> patchLatest(transaction, documentId, actor, mutator));
+    }
+
+    /**
      * Version-checks and audit-stamps {@code source} inside an open transaction.
      * The caller writes the returned draft. A retry of the transaction sees the
      * original {@code source} version because this method copies it first.
@@ -254,6 +266,40 @@ public class BaseRepository<D extends AuditableDocument> {
 
         }
 
+    }
+
+    private boolean patchLatest(
+            Transaction transaction,
+            String documentId,
+            String actor,
+            Function<D, Boolean> mutator
+    ) {
+        Optional<D> loaded = readInTransaction(transaction, documentId);
+
+        if (loaded.isEmpty()) {
+            return false;
+
+        }
+
+        D stored = Objects.requireNonNull(loaded.get(), "stored");
+        D draft = draftOf(stored);
+        Boolean changed = mutator.apply(draft);
+
+        if (!Boolean.TRUE.equals(changed)) {
+            return false;
+
+        }
+
+        draft.setCreateDate(stored.getCreateDate());
+        draft.setCreateUser(stored.getCreateUser());
+        draft.setLastUpdateDate(clock.instant());
+        draft.setLastUpdateUser(actor);
+        long current = stored.getVersion() == null ? 0L : stored.getVersion();
+        draft.setVersion(current + 1);
+        String draftId = Objects.requireNonNull(draft.getId(), "id");
+        DocumentReference reference = Objects.requireNonNull(collection().document(draftId), "document");
+        transaction.set(reference, draft);
+        return true;
     }
 
     private D write(Transaction transaction, D source, String actor, SaveConstraint[] checks) {

@@ -4,6 +4,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -25,10 +26,13 @@ public class SeasonService {
 
     private final SeasonRepository seasonRepository;
 
+    private final ReferenceGuard referenceGuard;
+
     private final Clock clock;
 
-    public SeasonService(SeasonRepository seasonRepository, Clock clock) {
+    public SeasonService(SeasonRepository seasonRepository, ReferenceGuard referenceGuard, Clock clock) {
         this.seasonRepository = seasonRepository;
+        this.referenceGuard = referenceGuard;
         this.clock = clock;
     }
 
@@ -106,7 +110,7 @@ public class SeasonService {
 
     public void delete(String id) {
         get(id);
-        seasonRepository.delete(id);
+        referenceGuard.deleteSeason(Objects.requireNonNull(id, "id"));
     }
 
     private void apply(Season target, Season request) {

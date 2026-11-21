@@ -27,7 +27,7 @@ import com.google.cloud.firestore.Transaction;
  * write does not commit, claims are put back in line with the stored document.
  * Delete clears claims and revokes refresh tokens before removing the document,
  * so an existing session cookie stops authorizing. There is no password field.
- * Deletes are not reference-checked; that block is US-35.
+ * A user who still has picks is refused before claims or tokens change.
  */
 @Service
 public class UserService {
@@ -56,14 +56,18 @@ public class UserService {
 
     private final FirebaseIdentityClient identityClient;
 
+    private final ReferenceGuard referenceGuard;
+
     public UserService(
             UserRepository userRepository,
             ThemeService themeService,
-            FirebaseIdentityClient identityClient
+            FirebaseIdentityClient identityClient,
+            ReferenceGuard referenceGuard
     ) {
         this.userRepository = userRepository;
         this.themeService = themeService;
         this.identityClient = identityClient;
+        this.referenceGuard = referenceGuard;
     }
 
     public List<User> search(String emailAddr, String firstName, String lastName) {
@@ -139,7 +143,9 @@ public class UserService {
 
     public void delete(String id) {
         User existing = get(id);
-        String uid = existing.getUid();
+        String uid = Objects.requireNonNull(existing.getUid(), "uid");
+        String userId = Objects.requireNonNull(id, "id");
+        referenceGuard.requireUserDeletable(uid);
 
         try {
             RoleClaimSync.publish(identityClient, uid, List.of());
@@ -151,7 +157,7 @@ public class UserService {
 
             }
 
-            userRepository.delete(id);
+            referenceGuard.deleteUser(userId, uid);
             return;
 
         }
@@ -162,14 +168,41 @@ public class UserService {
         } catch (IdentityAdminException ex) {
 
             if (ex.getKind() != IdentityAdminException.Kind.USER_NOT_FOUND) {
-                RoleClaimSync.align(identityClient, userRepository, uid, existing.getRoles());
-                throw ex;
+                restoreClaims(uid, existing.getRoles(), ex);
 
             }
 
         }
 
-        userRepository.delete(id);
+        try {
+            referenceGuard.deleteUser(userId, uid);
+
+        } catch (RuntimeException ex) {
+            restoreClaims(uid, existing.getRoles(), ex);
+            throw ex;
+
+        }
+
+    }
+
+    private void restoreClaims(String uid, List<String> roles, RuntimeException original) {
+
+        try {
+            RoleClaimSync.align(identityClient, userRepository, uid, roles);
+
+        } catch (RuntimeException restore) {
+            IdentityAdminException failure = new IdentityAdminException(
+                    IdentityAdminException.Kind.UNAVAILABLE,
+                    IdentityAdminException.CLAIMS_NOT_RESTORED,
+                    restore
+            );
+            failure.addSuppressed(original);
+            throw failure;
+
+        }
+
+        throw original;
+
     }
 
     private User commit(
