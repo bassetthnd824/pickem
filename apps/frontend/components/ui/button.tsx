@@ -6,7 +6,7 @@ import type { ComponentProps } from 'react'
 import { buttonVariantClass } from '@/components/ui/button-styles'
 
 type ButtonProps = Omit<ComponentProps<typeof BaseButton>, 'className'> & {
-  variant?: 'primary' | 'secondary' | 'nav'
+  variant?: 'primary' | 'secondary' | 'nav' | 'compact'
   className?: string
 }
 

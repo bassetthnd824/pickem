@@ -19,8 +19,7 @@ import {
   type AccountProfile,
 } from '@/lib/theme-picker'
 
-const inputClass =
-  'rounded border border-border bg-surface px-2 py-1 text-text read-only:bg-surface'
+const inputClass = 'field-control'
 
 async function loadAccount(signal: AbortSignal): Promise<AccountProfile> {
   const account = parseAccount(
@@ -139,7 +138,7 @@ export function AccountForm() {
 
   return (
     <form
-      className='flex max-w-md flex-col gap-4'
+      className='surface-card max-w-md'
       onSubmit={(event) => {
         event.preventDefault()
         void save()
@@ -164,11 +163,9 @@ export function AccountForm() {
         name='nickName'
         disabled={saving}
         invalid={Boolean(error)}
-        className='flex flex-col gap-1'
+        className='field-stack'
       >
-        <Field.Label className='text-sm font-medium text-text'>
-          Screen Name
-        </Field.Label>
+        <Field.Label className='field-label'>Screen Name</Field.Label>
         <Input
           id='nickName'
           value={nickName}
@@ -181,13 +178,13 @@ export function AccountForm() {
           className={inputClass}
         />
         {error ? (
-          <Field.Error className='text-sm text-danger' match role='alert'>
+          <Field.Error className='field-error' match role='alert'>
             {error}
           </Field.Error>
         ) : null}
       </Field.Root>
       <ThemePicker disabled={saving} onSavingChange={setThemeSaving} />
-      <div className='flex justify-end gap-2'>
+      <div className='flex justify-end gap-4'>
         <Button
           type='button'
           variant='secondary'
@@ -214,10 +211,8 @@ function ReadOnlyField({
   value: string
 }) {
   return (
-    <Field.Root name={name} className='flex flex-col gap-1'>
-      <Field.Label className='text-sm font-medium text-text'>
-        {label}
-      </Field.Label>
+    <Field.Root name={name} className='field-stack'>
+      <Field.Label className='field-label'>{label}</Field.Label>
       <Input readOnly value={value} className={inputClass} />
     </Field.Root>
   )

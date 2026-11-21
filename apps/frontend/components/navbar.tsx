@@ -14,11 +14,9 @@ import { GAME_LINKS, MANAGER_LINKS } from '@/lib/nav-links'
 import { endSession } from '@/lib/session-client'
 import { ACCOUNT_KEY_PREFIX, THEME_CHOICES_KEY } from '@/lib/theme-picker'
 
-const linkClass =
-  'rounded-md px-3 py-2 text-sm font-medium text-primary-fg focus-visible:outline-2 focus-visible:outline-offset-2'
+const linkClass = 'nav-link'
 
-const menuItemClass =
-  'block px-3 py-2 text-sm text-text outline-hidden focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-current focus-visible:outline-offset-2 data-highlighted:bg-primary data-highlighted:text-primary-fg'
+const menuItemClass = 'menu-item outline-hidden'
 
 export function Navbar() {
   const router = useRouter()
@@ -62,13 +60,13 @@ export function Navbar() {
   }
 
   return (
-    <nav aria-label='Primary' className='border-b border-border bg-primary'>
-      <div className='mx-auto flex max-w-5xl flex-wrap items-center gap-2 px-4 py-3'>
+    <nav aria-label='Primary' className='nav-bar'>
+      <div className='mx-auto flex max-w-6xl flex-wrap items-center gap-2 px-6 py-3'>
         <NavigationMenu.Root className='flex w-full flex-wrap items-center gap-2 md:w-auto md:flex-1'>
           <NavigationMenu.List className='flex'>
             <NavigationMenu.Item>
               <NavigationMenu.Link
-                className={`${linkClass} text-base font-semibold`}
+                className={`${linkClass} brand-link`}
                 render={<Link href='/main'>Kenney&apos;s Pickem</Link>}
               />
             </NavigationMenu.Item>
@@ -116,7 +114,7 @@ export function Navbar() {
                       sideOffset={4}
                       align='end'
                     >
-                      <Menu.Popup className='max-h-[var(--available-height)] min-w-44 origin-[var(--transform-origin)] overflow-y-auto rounded-md border border-border bg-surface py-1 text-text outline-none'>
+                      <Menu.Popup className='menu-popup max-h-[var(--available-height)] origin-[var(--transform-origin)] overflow-y-auto outline-none'>
                         {MANAGER_LINKS.map((link) => (
                           <Menu.LinkItem
                             key={link.href}
@@ -150,10 +148,7 @@ export function Navbar() {
           </NavigationMenu.List>
         </NavigationMenu.Root>
         {logoutError ? (
-          <p
-            role='alert'
-            className='w-full rounded-md bg-surface px-3 py-2 text-sm text-danger'
-          >
+          <p role='alert' className='alert-banner'>
             {logoutError}
           </p>
         ) : null}

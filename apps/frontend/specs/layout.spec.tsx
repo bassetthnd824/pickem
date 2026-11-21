@@ -9,6 +9,10 @@ import type { SessionClaims } from '@/lib/session-gate'
 
 vi.mock('@/app/global.css', () => ({}))
 
+vi.mock('next/font/google', () => ({
+  Source_Sans_3: () => ({ variable: 'font-source-sans' }),
+}))
+
 vi.mock('next/headers', () => ({
   cookies: vi.fn<() => Promise<{ get: (name: string) => unknown }>>(),
 }))

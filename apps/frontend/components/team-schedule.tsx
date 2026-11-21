@@ -16,8 +16,7 @@ import {
 const TEAMS_KEY = ['game', 'teams'] as const
 const EMPTY_LABEL = 'Please select a Team'
 
-const itemClass =
-  'cursor-pointer px-3 py-2 text-sm outline-hidden data-highlighted:bg-primary data-highlighted:text-primary-fg'
+const itemClass = 'menu-item outline-hidden'
 
 async function loadTeams(signal: AbortSignal) {
   return parseConferenceTeams(
@@ -62,7 +61,7 @@ export function TeamSchedule() {
   const teams = teamsQuery.data
 
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-6'>
       <TeamSelect teams={teams} teamId={teamId} onTeamIdChange={setTeamId} />
       {teamId == null ? null : (
         <SchedulePanel
@@ -92,7 +91,7 @@ function TeamSelect({
   ]
 
   return (
-    <Field.Root name='teamId' className='flex max-w-md flex-col gap-1'>
+    <Field.Root name='teamId' className='field-stack max-w-md'>
       <Select.Root
         items={items}
         value={teamId}
@@ -100,10 +99,8 @@ function TeamSelect({
           onTeamIdChange(value)
         }}
       >
-        <Field.Label className='text-sm font-medium text-text'>
-          Team
-        </Field.Label>
-        <Select.Trigger className='flex w-full cursor-pointer items-center justify-between rounded border border-border bg-surface px-2 py-1 text-left text-text'>
+        <Field.Label className='field-label'>Team</Field.Label>
+        <Select.Trigger className='field-control flex cursor-pointer items-center justify-between text-left'>
           <Select.Value placeholder={EMPTY_LABEL} />
           <Select.Icon className='ml-2 text-muted' aria-hidden>
             ▾
@@ -117,7 +114,7 @@ function TeamSelect({
             align='start'
             alignItemWithTrigger={false}
           >
-            <Select.Popup className='max-h-72 w-(--anchor-width) origin-[var(--transform-origin)] overflow-y-auto rounded-md border border-border bg-surface py-1 text-text outline-none'>
+            <Select.Popup className='menu-popup max-h-72 w-(--anchor-width) origin-[var(--transform-origin)] outline-none'>
               <Select.List>
                 <Select.Item value={null} className={itemClass}>
                   <Select.ItemText>{EMPTY_LABEL}</Select.ItemText>
@@ -156,34 +153,31 @@ function SchedulePanel({
   }
 
   return (
-    <div className='overflow-x-auto'>
-      <table className='w-full border-collapse text-left text-sm text-text'>
+    <div className='table-shell'>
+      <table className='table-grid'>
         <thead>
-          <tr className='border-b border-border'>
-            <th scope='col' className='px-2 py-2 font-medium'>
+          <tr>
+            <th scope='col' className='table-head'>
               Date
             </th>
-            <th scope='col' className='px-2 py-2 font-medium'>
+            <th scope='col' className='table-head'>
               Opponent
             </th>
-            <th scope='col' className='px-2 py-2 font-medium'>
+            <th scope='col' className='table-head'>
               Score
             </th>
-            <th scope='col' className='px-2 py-2 font-medium'>
+            <th scope='col' className='table-head'>
               Result
             </th>
           </tr>
         </thead>
         <tbody>
           {games.map((game, index) => (
-            <tr
-              key={`${game.matchupDate}-${game.opponentName}-${index}`}
-              className='border-b border-border'
-            >
-              <td className='px-2 py-2'>{game.matchupDate}</td>
-              <td className='px-2 py-2'>{game.opponentName}</td>
-              <td className='px-2 py-2 tabular-nums'>{game.scoreResult}</td>
-              <td className='px-2 py-2'>{game.winLoss}</td>
+            <tr key={`${game.matchupDate}-${game.opponentName}-${index}`}>
+              <td className='data-cell'>{game.matchupDate}</td>
+              <td className='data-cell'>{game.opponentName}</td>
+              <td className='data-cell numeric'>{game.scoreResult}</td>
+              <td className='data-cell'>{game.winLoss}</td>
             </tr>
           ))}
         </tbody>
