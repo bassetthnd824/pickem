@@ -121,8 +121,8 @@ export function ThemePicker({
   }
 
   return (
-    <fieldset className='flex flex-col gap-3' disabled={saving || disabled}>
-      <legend className='text-sm font-medium text-text'>Theme</legend>
+    <fieldset className='flex flex-col gap-4' disabled={saving || disabled}>
+      <legend className='field-label'>Theme</legend>
       {keepsCurrentTheme(account.themeId, choices) ? (
         <p>Your current theme stays until you pick another.</p>
       ) : null}
@@ -131,7 +131,7 @@ export function ThemePicker({
       ) : (
         <RadioGroup
           aria-label='Theme'
-          className='flex flex-col gap-2'
+          className='flex flex-col gap-3'
           disabled={saving || disabled}
           value={selected}
           onValueChange={(value) => {
@@ -139,14 +139,18 @@ export function ThemePicker({
           }}
         >
           {choices.map((choice) => (
-            <label key={choice.id} className='inline-flex items-center gap-2'>
+            <label key={choice.id} className='choice-row'>
               <Radio value={choice.themePath} aria-label={choice.themeName} />
               <span>{choice.themeName}</span>
             </label>
           ))}
         </RadioGroup>
       )}
-      {error ? <p role='alert'>{error}</p> : null}
+      {error ? (
+        <p role='alert' className='field-error'>
+          {error}
+        </p>
+      ) : null}
     </fieldset>
   )
 }

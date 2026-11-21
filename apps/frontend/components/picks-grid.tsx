@@ -113,8 +113,8 @@ export function PicksGrid() {
   }
 
   return (
-    <div className='flex flex-col gap-8'>
-      <h2 className='text-xl font-semibold text-text'>
+    <div className='flex flex-col gap-6'>
+      <h2 className='type-title'>
         Welcome {profile?.firstName ?? ''}, Season {main.season}
       </h2>
       {main.weeks.map((week) => {
@@ -139,11 +139,11 @@ export function PicksGrid() {
         )
       })}
       {message ? (
-        <p role='alert' className='text-sm text-danger'>
+        <p role='alert' className='field-error'>
           {message}
         </p>
       ) : null}
-      <div className='flex justify-end gap-2'>
+      <div className='flex justify-end gap-4'>
         <Button
           type='button'
           variant='secondary'
@@ -181,20 +181,15 @@ function WeekPicks({
   const frozen = locked || busy
 
   return (
-    <section
-      aria-label={`Week ${week.weekNumber}`}
-      className='flex flex-col gap-3'
-    >
-      <h3 className='text-lg font-semibold text-text'>
-        Week {week.weekNumber}
-      </h3>
-      <p className='text-sm text-muted'>
+    <section aria-label={`Week ${week.weekNumber}`} className='surface-card'>
+      <h3 className='type-section'>Week {week.weekNumber}</h3>
+      <p className='status-pill'>
         {locked ? 'Picks are locked' : 'Picks are open'}
       </p>
-      <div className='overflow-x-auto'>
-        <table className='w-full border-collapse text-left text-sm text-text'>
+      <div className='table-shell'>
+        <table className='table-grid'>
           <thead>
-            <tr className='border-b border-border'>
+            <tr>
               {locked ? <Column label='Result' /> : null}
               <Column label='Date' className='hidden md:table-cell' />
               <Column label='Rivalry' className='hidden lg:table-cell' />
@@ -222,7 +217,6 @@ function WeekPicks({
                 <RadioGroup
                   key={matchup.matchupId}
                   render={<tr />}
-                  className='border-b border-border'
                   aria-label={matchupLabel}
                   name={`${matchup.matchupId}-week-${week.weekNumber}`}
                   value={pickedTeamId}
@@ -238,14 +232,14 @@ function WeekPicks({
                   }
                 >
                   {locked ? (
-                    <td className='px-2 py-2'>
+                    <td className='data-cell'>
                       <ResultCell matchup={matchup} />
                     </td>
                   ) : null}
-                  <td className='hidden px-2 py-2 md:table-cell'>
+                  <td className='data-cell hidden md:table-cell'>
                     {dateText(matchup.matchupDate)}
                   </td>
-                  <td className='hidden px-2 py-2 lg:table-cell'>
+                  <td className='data-cell hidden lg:table-cell'>
                     {matchup.rivalryName ?? ''}
                   </td>
                   <TeamCell
@@ -253,17 +247,17 @@ function WeekPicks({
                     team={matchup.awayTeam}
                   />
                   {locked ? (
-                    <td className='px-2 py-2'>
+                    <td className='data-cell numeric'>
                       {scoreText(matchup.awayTeamScore)}
                     </td>
                   ) : null}
-                  <td className='px-2 py-2'>
+                  <td className='data-cell numeric'>
                     <output aria-label={`Rank for ${matchupLabel}`}>
                       {rank ?? ''}
                     </output>
                   </td>
                   {locked ? (
-                    <td className='px-2 py-2'>
+                    <td className='data-cell numeric'>
                       {scoreText(matchup.homeTeamScore)}
                     </td>
                   ) : null}
@@ -271,16 +265,16 @@ function WeekPicks({
                     weekNumber={week.weekNumber}
                     team={matchup.homeTeam}
                   />
-                  <td className='hidden px-2 py-2 md:table-cell'>
+                  <td className='data-cell hidden md:table-cell'>
                     {venueLabel(matchup.venue)}
                   </td>
-                  <td className='px-2 py-2'>
+                  <td className='data-cell'>
                     <Toolbar.Root
                       aria-label={`Reorder ${matchupLabel}`}
                       className='flex gap-2'
                     >
                       <Toolbar.Button
-                        render={<Button variant='nav' className='bg-primary' />}
+                        render={<Button variant='compact' />}
                         focusableWhenDisabled={false}
                         disabled={frozen || index === 0}
                         aria-label={`Move ${matchupLabel} up`}
@@ -298,7 +292,7 @@ function WeekPicks({
                         Up
                       </Toolbar.Button>
                       <Toolbar.Button
-                        render={<Button variant='nav' className='bg-primary' />}
+                        render={<Button variant='compact' />}
                         focusableWhenDisabled={false}
                         disabled={frozen || index === draft.order.length - 1}
                         aria-label={`Move ${matchupLabel} down`}
@@ -331,7 +325,7 @@ function Column({ label, className }: { label: string; className?: string }) {
   return (
     <th
       scope='col'
-      className={['px-2 py-2 font-medium', className].filter(Boolean).join(' ')}
+      className={['table-head', className].filter(Boolean).join(' ')}
     >
       {label}
     </th>
@@ -346,8 +340,8 @@ function TeamCell({
   team: GridMatchup['homeTeam']
 }) {
   return (
-    <td className='px-2 py-2'>
-      <label className='inline-flex items-center gap-2'>
+    <td className='data-cell'>
+      <label className='inline-flex items-center gap-3'>
         <Radio
           value={team.id}
           aria-label={`Pick ${team.name} in week ${weekNumber}`}

@@ -31,11 +31,9 @@ export function DateField({
       name={name}
       disabled={disabled}
       invalid={Boolean(error)}
-      className='flex flex-col gap-1'
+      className='field-stack'
     >
-      <Field.Label className='text-sm font-medium text-text'>
-        {label}
-      </Field.Label>
+      <Field.Label className='field-label'>{label}</Field.Label>
       <Input
         id={id}
         type='date'
@@ -46,10 +44,10 @@ export function DateField({
         onValueChange={(nextValue) => {
           onChange(nextValue)
         }}
-        className='rounded border border-border bg-surface px-2 py-1 text-text'
+        className='field-control'
       />
       {error ? (
-        <Field.Error className='text-sm text-danger' match>
+        <Field.Error className='field-error' match>
           {error}
         </Field.Error>
       ) : null}

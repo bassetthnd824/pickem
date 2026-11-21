@@ -9,12 +9,16 @@ export function TitledPage({
   wide?: boolean
   children?: ReactNode
 }) {
+  const narrow = wide ? '' : 'page-wrap-narrow'
+
   return (
-    <main
-      className={`mx-auto flex flex-col gap-4 px-6 py-10 ${wide ? 'max-w-6xl' : 'max-w-3xl'}`}
-    >
-      <h1 className='text-2xl font-semibold text-text'>{title}</h1>
-      {children}
+    <main>
+      <header className='hero-band bg-primary text-primary-fg'>
+        <div className={`page-frame ${narrow}`}>
+          <h1 className='type-display text-primary-fg'>{title}</h1>
+        </div>
+      </header>
+      <div className={`page-wrap ${narrow}`}>{children}</div>
     </main>
   )
 }

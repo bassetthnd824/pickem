@@ -28,31 +28,27 @@ export function LeaderboardTable() {
   const board = query.data
 
   return (
-    <div className='overflow-x-auto'>
-      <table className='w-full border-collapse text-left text-sm text-text'>
+    <div className='table-shell'>
+      <table className='table-grid'>
         <thead>
-          <tr className='border-b border-border'>
-            <th scope='col' className='px-2 py-2 text-right font-medium'>
+          <tr>
+            <th scope='col' className='table-head numeric'>
               Rank
             </th>
-            <th scope='col' className='px-2 py-2 font-medium'>
+            <th scope='col' className='table-head'>
               User
             </th>
-            <th scope='col' className='px-2 py-2 text-right font-medium'>
+            <th scope='col' className='table-head numeric'>
               Score
             </th>
           </tr>
         </thead>
         <tbody>
           {board.standings.map((standing) => (
-            <tr key={standing.uid} className='border-b border-border'>
-              <td className='px-2 py-2 text-right tabular-nums'>
-                {standing.rank}
-              </td>
-              <td className='px-2 py-2'>{standing.nickName}</td>
-              <td className='px-2 py-2 text-right tabular-nums'>
-                {standing.score}
-              </td>
+            <tr key={standing.uid}>
+              <td className='data-cell numeric'>{standing.rank}</td>
+              <td className='data-cell'>{standing.nickName}</td>
+              <td className='data-cell numeric'>{standing.score}</td>
             </tr>
           ))}
         </tbody>

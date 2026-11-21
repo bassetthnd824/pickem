@@ -81,7 +81,7 @@ export function GoogleSignIn() {
         Sign in with Google
       </Button>
       {error ? (
-        <p role='alert' className='text-sm text-danger'>
+        <p role='alert' className='field-error'>
           {error}
         </p>
       ) : null}

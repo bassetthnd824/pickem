@@ -18,26 +18,39 @@ Light. Users already on a deactivated theme keep it until they pick another.
 Every theme supplies these CSS custom properties. Components use semantic
 utilities (`bg-surface`, `text-primary`) and never hard-code a hex.
 
-| Token                | Role                                   |
-| -------------------- | -------------------------------------- |
-| `--color-bg`         | Page background                        |
-| `--color-surface`    | Cards, panels                          |
-| `--color-text`       | Body text                              |
-| `--color-muted`      | Secondary text                         |
-| `--color-border`     | Dividers                               |
-| `--color-primary`    | Headers, nav, buttons (school primary) |
-| `--color-primary-fg` | Text/icons on `--color-primary`        |
-| `--color-secondary`  | Accent (school secondary)              |
-| `--color-accent`     | Highlights                             |
-| `--color-success`    | Correct-pick icon                      |
-| `--color-danger`     | Incorrect-pick icon                    |
+| Token                | Role                                                          |
+| -------------------- | ------------------------------------------------------------- |
+| `--color-bg`         | Page canvas (`#f5f5f5` on light themes)                       |
+| `--color-surface`    | Cards and panels                                              |
+| `--color-text`       | Body text (`#333333` on light themes)                         |
+| `--color-heading`    | Titles on the canvas                                          |
+| `--color-muted`      | Secondary text                                                |
+| `--color-border`     | Card and table lines (`#bcc3cd` on light themes)              |
+| `--color-field`      | Input borders                                                 |
+| `--color-primary`    | Page band and card edge (school primary)                      |
+| `--color-primary-fg` | Text on `--color-primary`                                     |
+| `--color-secondary`  | School secondary                                              |
+| `--color-accent`     | School highlight when the secondary is not white or black     |
+| `--color-highlight`  | Focus and outline buttons. Motion blue `#0C6CD4`; sky on Dark |
+| `--color-action`     | Filled buttons. Motion blue on light themes; sky on Dark      |
+| `--color-action-fg`  | Text on `--color-action`                                      |
+| `--color-wash`       | Tinted table header and status chip, mixed from primary       |
+| `--color-success`    | Correct-pick icon                                             |
+| `--color-danger`     | Incorrect-pick icon                                           |
 
 Selector: `[data-theme="{key}"]` on `<html>`.
+
+Type, spacing, and corners follow Motion's measured scale: Source Sans at
+16px/20px body, 30px/36px page titles, 26px/30px section titles, and 22px/28px
+subsections, all bold. Controls are 10px radius. Filled and outline buttons
+are 48px tall with 24px of side padding. The nav is a white bar. School color is the page-title band and the card's top edge. Filled and
+outline buttons, links, and focus use Motion blue (`#0C6CD4` on light themes,
+sky on Dark).
 
 **WCAG AA:** text on surfaces and `--color-primary-fg` on `--color-primary`
 must meet AA (US-23). Very dark primaries (Vanderbilt / Missouri black, Texas
 A&M / South Carolina deep maroon / garnet) use a **light neutral page
-surface** with the team color on nav / headers / buttons — not as the
+surface** with the team color on the page band — not as the
 full-page background. Where the secondary is effectively **white** (Arkansas,
 Texas A&M), derive a neutral surface and use the primary as the accent.
 

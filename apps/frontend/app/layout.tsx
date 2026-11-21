@@ -1,3 +1,4 @@
+import { Source_Sans_3 } from 'next/font/google'
 import { cookies } from 'next/headers'
 import type { ReactNode } from 'react'
 
@@ -8,6 +9,13 @@ import { verifySessionClaims } from '@/lib/server/firebase-session'
 import { fetchAuthProfile } from '@/lib/server/spring-auth'
 import { SESSION_COOKIE_NAME } from '@/lib/session-gate'
 import { resolveThemeId, THEME_COOKIE_NAME } from '@/lib/theme'
+
+const sourceSans = Source_Sans_3({
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+  variable: '--font-source-sans',
+  display: 'swap',
+})
 
 export const metadata = {
   title: "Kenney's Pickem",
@@ -32,7 +40,9 @@ export default async function RootLayout({
 
   return (
     <html lang='en' data-theme={themeId}>
-      <body className='min-h-dvh bg-bg text-text antialiased'>
+      <body
+        className={`${sourceSans.variable} min-h-dvh bg-bg text-text antialiased`}
+      >
         <QueryProvider>
           <AuthProvider
             initialProfile={profile}
