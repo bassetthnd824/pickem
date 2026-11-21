@@ -1,0 +1,2421 @@
+{
+  ".agents/skills/monitor-ci/scripts/ci-poll-decide.mjs": {
+    "mtime": 1794033317.671917,
+    "seen": 1795231350.4363716,
+    "ast_hash": "cbcef0cc9a472f2d7d519b326e575fc2",
+    "semantic_hash": "cbcef0cc9a472f2d7d519b326e575fc2"
+  },
+  ".agents/skills/monitor-ci/scripts/ci-state-update.mjs": {
+    "mtime": 1790817489.8823328,
+    "seen": 1795231350.4370816,
+    "ast_hash": "942d8fa0ce83b26f61e3412039b3dc4b",
+    "semantic_hash": "942d8fa0ce83b26f61e3412039b3dc4b"
+  },
+  ".github/scripts/mark-story-done.mjs": {
+    "mtime": 1794033317.6808825,
+    "seen": 1795231350.437594,
+    "ast_hash": "a6b90d30adb333a347b46e2bcd28ad73",
+    "semantic_hash": "a6b90d30adb333a347b46e2bcd28ad73"
+  },
+  ".github/scripts/mark-story-done.test.mjs": {
+    "mtime": 1794033317.6839237,
+    "seen": 1795231350.4380121,
+    "ast_hash": "d1d4be15ea7fa3b40281e2ecb807b063",
+    "semantic_hash": "d1d4be15ea7fa3b40281e2ecb807b063"
+  },
+  ".github/workflows/ci.yml": {
+    "mtime": 1794038807.960735,
+    "seen": 1795231350.4383686,
+    "ast_hash": "0b00ad8001fe95f01b51a94ca489d196",
+    "semantic_hash": "0b00ad8001fe95f01b51a94ca489d196"
+  },
+  ".github/workflows/lint-commits.yml": {
+    "mtime": 1789700893.149624,
+    "seen": 1795231350.4388266,
+    "ast_hash": "c03c1379beabedb58f01c435fd0c4895",
+    "semantic_hash": "c03c1379beabedb58f01c435fd0c4895"
+  },
+  ".github/workflows/mark-story-done.yml": {
+    "mtime": 1792204019.911326,
+    "seen": 1795231350.4392693,
+    "ast_hash": "32a336eb0b50a3faa2c04eaf84d10ed3",
+    "semantic_hash": "32a336eb0b50a3faa2c04eaf84d10ed3"
+  },
+  ".oxlintrc.json": {
+    "mtime": 1794038807.961736,
+    "seen": 1795231350.4397204,
+    "ast_hash": "39cf953fde58fcb1748769938a1cf0fe",
+    "semantic_hash": "39cf953fde58fcb1748769938a1cf0fe"
+  },
+  "apps/backend/pom.xml": {
+    "mtime": 1794121033.663709,
+    "seen": 1795231350.4400604,
+    "ast_hash": "f14e1f8f801674bf1ca467ac8433fa86",
+    "semantic_hash": "f14e1f8f801674bf1ca467ac8433fa86"
+  },
+  "apps/backend/project.json": {
+    "mtime": 1793502205.0200367,
+    "seen": 1795231350.4404674,
+    "ast_hash": "09fc644e4aee9493026d2ccb15cefb0e",
+    "semantic_hash": "09fc644e4aee9493026d2ccb15cefb0e"
+  },
+  "apps/backend/scripts/run-tests.cjs": {
+    "mtime": 1794033317.6869068,
+    "seen": 1795231350.4408247,
+    "ast_hash": "c51e9628d43ed47809f89088ef940462",
+    "semantic_hash": "c51e9628d43ed47809f89088ef940462"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/BackendApplication.java": {
+    "mtime": 1794036248.5761232,
+    "seen": 1795231350.4413013,
+    "ast_hash": "57ad69dccebe656c9f80189d24f932a1",
+    "semantic_hash": "57ad69dccebe656c9f80189d24f932a1"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/cfbd/CfbdCalendarWeek.java": {
+    "mtime": 1794036248.57812,
+    "seen": 1795231350.4418654,
+    "ast_hash": "5ac82a4f9adc69037f2d3132f9be4030",
+    "semantic_hash": "5ac82a4f9adc69037f2d3132f9be4030"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/cfbd/CfbdClient.java": {
+    "mtime": 1794038807.9687414,
+    "seen": 1795231350.4424229,
+    "ast_hash": "b41e878b0b91024673cc3a4466ce3cd7",
+    "semantic_hash": "b41e878b0b91024673cc3a4466ce3cd7"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/cfbd/CfbdClientException.java": {
+    "mtime": 1794038807.9697368,
+    "seen": 1795231350.4428558,
+    "ast_hash": "0367116b4c375c441a5408381023e801",
+    "semantic_hash": "0367116b4c375c441a5408381023e801"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/cfbd/CfbdGame.java": {
+    "mtime": 1794038807.970734,
+    "seen": 1795231350.4436307,
+    "ast_hash": "ac3d93626a977892f70d509fe18b679a",
+    "semantic_hash": "ac3d93626a977892f70d509fe18b679a"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/cfbd/CfbdScoreboardGame.java": {
+    "mtime": 1794036248.5841181,
+    "seen": 1795231350.4442165,
+    "ast_hash": "f49791b5ddeea35b426805569c9886bb",
+    "semantic_hash": "f49791b5ddeea35b426805569c9886bb"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/cfbd/CfbdVenue.java": {
+    "mtime": 1794036248.5851204,
+    "seen": 1795231350.444654,
+    "ast_hash": "1b9ec450416317521eca40a393598af0",
+    "semantic_hash": "1b9ec450416317521eca40a393598af0"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/AuditActorResolver.java": {
+    "mtime": 1794038807.9727342,
+    "seen": 1795231350.445138,
+    "ast_hash": "4e19527308e32a1287bbd9fceb2d4780",
+    "semantic_hash": "4e19527308e32a1287bbd9fceb2d4780"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/CfbdConfig.java": {
+    "mtime": 1794038807.9737363,
+    "seen": 1795231350.4457588,
+    "ast_hash": "f44c9d967c5310a0a5cd89a29b9da469",
+    "semantic_hash": "f44c9d967c5310a0a5cd89a29b9da469"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/ClockConfig.java": {
+    "mtime": 1794036248.5891185,
+    "seen": 1795231350.4462395,
+    "ast_hash": "8d76dae588bfbdc79d367f22548b6591",
+    "semantic_hash": "8d76dae588bfbdc79d367f22548b6591"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/DotenvEnvironmentPostProcessor.java": {
+    "mtime": 1794038807.9755886,
+    "seen": 1795231350.446673,
+    "ast_hash": "50ebf4a5de231c08682436e276abad60",
+    "semantic_hash": "50ebf4a5de231c08682436e276abad60"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/DotenvFileLoader.java": {
+    "mtime": 1794038807.9765654,
+    "seen": 1795231350.447123,
+    "ast_hash": "dee2b1ad981522db099f5c77e3d16e42",
+    "semantic_hash": "dee2b1ad981522db099f5c77e3d16e42"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/FirestoreConfig.java": {
+    "mtime": 1794038807.978566,
+    "seen": 1795231350.4476306,
+    "ast_hash": "232ee4739b6fae312d8a7b07f03db49f",
+    "semantic_hash": "232ee4739b6fae312d8a7b07f03db49f"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/ImportJobExecutorConfig.java": {
+    "mtime": 1794036248.5941212,
+    "seen": 1795231350.4481425,
+    "ast_hash": "022c1f1aef6808e3a2eb51f3468e3e7d",
+    "semantic_hash": "022c1f1aef6808e3a2eb51f3468e3e7d"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/OpenApiConfig.java": {
+    "mtime": 1794038807.979572,
+    "seen": 1795231350.4486463,
+    "ast_hash": "1264225a9a3d761f37ff7ea99285fc16",
+    "semantic_hash": "1264225a9a3d761f37ff7ea99285fc16"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/PickemAuthProperties.java": {
+    "mtime": 1794038807.9805658,
+    "seen": 1795231350.4490879,
+    "ast_hash": "35b8fd7700dab422c5b872c2355da570",
+    "semantic_hash": "35b8fd7700dab422c5b872c2355da570"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/PickemCfbdProperties.java": {
+    "mtime": 1794036248.5981283,
+    "seen": 1795231350.4494803,
+    "ast_hash": "6dd9e80a19a8235c3a88ba895147b4fe",
+    "semantic_hash": "6dd9e80a19a8235c3a88ba895147b4fe"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/PickemFirestoreProperties.java": {
+    "mtime": 1794038807.9825711,
+    "seen": 1795231350.4498866,
+    "ast_hash": "bb0e917957aebc7c2f2c9cede55a9d07",
+    "semantic_hash": "bb0e917957aebc7c2f2c9cede55a9d07"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/PickemInternalProperties.java": {
+    "mtime": 1794038807.9835675,
+    "seen": 1795231350.4503384,
+    "ast_hash": "547eae718dfdef739ecdb7e1e01f5ced",
+    "semantic_hash": "547eae718dfdef739ecdb7e1e01f5ced"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/PickemSecretsProperties.java": {
+    "mtime": 1794036248.6021347,
+    "seen": 1795231350.4507866,
+    "ast_hash": "be28a5a578ba2d153233494425f9d344",
+    "semantic_hash": "be28a5a578ba2d153233494425f9d344"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/SecurityConfig.java": {
+    "mtime": 1794038807.9845634,
+    "seen": 1795231350.4511683,
+    "ast_hash": "f371868f0f8fcdc39a2cd8041a57d56f",
+    "semantic_hash": "f371868f0f8fcdc39a2cd8041a57d56f"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/config/SecurityContextAuditActorResolver.java": {
+    "mtime": 1794038807.9865649,
+    "seen": 1795231350.4515667,
+    "ast_hash": "6e7298a1fda3c9ced34cde814d4000b7",
+    "semantic_hash": "6e7298a1fda3c9ced34cde814d4000b7"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/AuditableDocument.java": {
+    "mtime": 1794036248.6071198,
+    "seen": 1795231350.4520154,
+    "ast_hash": "2713977283e4c9abfb62155b44b6f726",
+    "semantic_hash": "2713977283e4c9abfb62155b44b6f726"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/ImportJob.java": {
+    "mtime": 1794036248.6091192,
+    "seen": 1795231350.4525104,
+    "ast_hash": "2dec2ed36c6e3e4235f4f8bd05f1046b",
+    "semantic_hash": "2dec2ed36c6e3e4235f4f8bd05f1046b"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/ImportJobSkip.java": {
+    "mtime": 1794036248.611121,
+    "seen": 1795231350.4529283,
+    "ast_hash": "8fe52d2af41aaad43f5fd91f91639492",
+    "semantic_hash": "8fe52d2af41aaad43f5fd91f91639492"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/Matchup.java": {
+    "mtime": 1794038807.9875648,
+    "seen": 1795231350.4533596,
+    "ast_hash": "540c8542de326aeb4a53ee0947f1ddf0",
+    "semantic_hash": "540c8542de326aeb4a53ee0947f1ddf0"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/Pick.java": {
+    "mtime": 1794036248.6148443,
+    "seen": 1795231350.4537945,
+    "ast_hash": "a2585f8c9b666ac013376597b6899e9a",
+    "semantic_hash": "a2585f8c9b666ac013376597b6899e9a"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/Rivalry.java": {
+    "mtime": 1794038807.9885628,
+    "seen": 1795231350.4542134,
+    "ast_hash": "9bb1ce69a225c21d928bf84cd4464109",
+    "semantic_hash": "9bb1ce69a225c21d928bf84cd4464109"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/Season.java": {
+    "mtime": 1794038807.9907756,
+    "seen": 1795231350.4546041,
+    "ast_hash": "8e115b8894080e1389e5e55b2592a81a",
+    "semantic_hash": "8e115b8894080e1389e5e55b2592a81a"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/SeasonWeek.java": {
+    "mtime": 1794036248.619841,
+    "seen": 1795231350.4549677,
+    "ast_hash": "e68a3ade941efd88b9896b73d9b3e81d",
+    "semantic_hash": "e68a3ade941efd88b9896b73d9b3e81d"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/Team.java": {
+    "mtime": 1794038807.9912994,
+    "seen": 1795231350.455335,
+    "ast_hash": "a4d8f711350194bc18a1928978ae89c9",
+    "semantic_hash": "a4d8f711350194bc18a1928978ae89c9"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/Theme.java": {
+    "mtime": 1794123704.3243108,
+    "seen": 1795231350.455644,
+    "ast_hash": "d0ed2733741fad62b5d9d1b07a69532d",
+    "semantic_hash": "d0ed2733741fad62b5d9d1b07a69532d"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/User.java": {
+    "mtime": 1794038807.9933014,
+    "seen": 1795231350.4560812,
+    "ast_hash": "9f7c9be517f31d1e2c8d4b7e9f013e6f",
+    "semantic_hash": "9f7c9be517f31d1e2c8d4b7e9f013e6f"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/Venue.java": {
+    "mtime": 1794036248.6328492,
+    "seen": 1795231350.456474,
+    "ast_hash": "e700db0883902aa953a30eb01754b648",
+    "semantic_hash": "e700db0883902aa953a30eb01754b648"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/snapshot/TeamNameSnapshot.java": {
+    "mtime": 1794036248.6348422,
+    "seen": 1795231350.4568748,
+    "ast_hash": "ddab3b89f1b08978bbd7b528567508ee",
+    "semantic_hash": "ddab3b89f1b08978bbd7b528567508ee"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/snapshot/TeamSquadSnapshot.java": {
+    "mtime": 1794036248.6358533,
+    "seen": 1795231350.4573364,
+    "ast_hash": "204596ffa20e79247270ce45acef703f",
+    "semantic_hash": "204596ffa20e79247270ce45acef703f"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/model/snapshot/VenueSnapshot.java": {
+    "mtime": 1794036248.63785,
+    "seen": 1795231350.4577384,
+    "ast_hash": "86822ea4f0953c666148832d65f52896",
+    "semantic_hash": "86822ea4f0953c666148832d65f52896"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/BaseRepository.java": {
+    "mtime": 1795226751.8523242,
+    "seen": 1795231350.458075,
+    "ast_hash": "6d1ce7b28344427904f4315439b577f9",
+    "semantic_hash": "6d1ce7b28344427904f4315439b577f9"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/FirestoreAccessException.java": {
+    "mtime": 1794036248.6428468,
+    "seen": 1795231350.4583423,
+    "ast_hash": "b18a59ef4e0664ab8d6119e90c85a5d0",
+    "semantic_hash": "b18a59ef4e0664ab8d6119e90c85a5d0"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/ImportJobRepository.java": {
+    "mtime": 1794036248.6448407,
+    "seen": 1795231350.4587574,
+    "ast_hash": "fa1fb33e8d0ad8cce117abe0e19ab7ac",
+    "semantic_hash": "fa1fb33e8d0ad8cce117abe0e19ab7ac"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/MatchupRepository.java": {
+    "mtime": 1794036248.6458488,
+    "seen": 1795231350.45921,
+    "ast_hash": "ec6c172370a797f93b387a89ddef1832",
+    "semantic_hash": "ec6c172370a797f93b387a89ddef1832"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/PickRepository.java": {
+    "mtime": 1794038807.9963036,
+    "seen": 1795231350.459607,
+    "ast_hash": "3bded3b9cb17ea4b7e5e74a4dc6034ad",
+    "semantic_hash": "3bded3b9cb17ea4b7e5e74a4dc6034ad"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/RivalryRepository.java": {
+    "mtime": 1794036248.6488452,
+    "seen": 1795231350.459968,
+    "ast_hash": "3eca6376d7fda7e9e0e8087aece48aea",
+    "semantic_hash": "3eca6376d7fda7e9e0e8087aece48aea"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/SeasonRepository.java": {
+    "mtime": 1794036248.6508415,
+    "seen": 1795231350.4603417,
+    "ast_hash": "ea6a4cb9e95321f6f8063c2e38cb7174",
+    "semantic_hash": "ea6a4cb9e95321f6f8063c2e38cb7174"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/SeasonWeekRepository.java": {
+    "mtime": 1794036248.651843,
+    "seen": 1795231350.4607136,
+    "ast_hash": "92885bda5bfe4d3505ca4393c7107246",
+    "semantic_hash": "92885bda5bfe4d3505ca4393c7107246"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/StaleDocumentVersionException.java": {
+    "mtime": 1794038807.997308,
+    "seen": 1795231350.461102,
+    "ast_hash": "1b1a0f6450d390f83fcef278f0e4ec49",
+    "semantic_hash": "1b1a0f6450d390f83fcef278f0e4ec49"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/TeamRepository.java": {
+    "mtime": 1794036248.6548412,
+    "seen": 1795231350.4615414,
+    "ast_hash": "badf9251eb32c9c672d0e2d1b610b80a",
+    "semantic_hash": "badf9251eb32c9c672d0e2d1b610b80a"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/ThemeRepository.java": {
+    "mtime": 1794036248.6558616,
+    "seen": 1795231350.4619734,
+    "ast_hash": "24b097b6cfb1cbc4c4bca49dc11de936",
+    "semantic_hash": "24b097b6cfb1cbc4c4bca49dc11de936"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/TransactionReads.java": {
+    "mtime": 1794038807.999297,
+    "seen": 1795231350.462416,
+    "ast_hash": "a69a1a4590aa060536e9bb8818bac2ee",
+    "semantic_hash": "a69a1a4590aa060536e9bb8818bac2ee"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/UserRepository.java": {
+    "mtime": 1794036248.6588416,
+    "seen": 1795231350.462824,
+    "ast_hash": "d39361d2fcb72266df6426bbc95f6b49",
+    "semantic_hash": "d39361d2fcb72266df6426bbc95f6b49"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/repository/VenueRepository.java": {
+    "mtime": 1794036248.6598418,
+    "seen": 1795231350.4631364,
+    "ast_hash": "314450a6aa151d36e190f280515b92ca",
+    "semantic_hash": "314450a6aa151d36e190f280515b92ca"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/AuthUnavailableException.java": {
+    "mtime": 1794036248.660844,
+    "seen": 1795231350.463464,
+    "ast_hash": "832e65eece0c51953b1649afe54b58cd",
+    "semantic_hash": "832e65eece0c51953b1649afe54b58cd"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/FirebaseAdminIdentityClient.java": {
+    "mtime": 1794038808.0003037,
+    "seen": 1795231350.4638007,
+    "ast_hash": "3df19aec833a30377df411acdafd170d",
+    "semantic_hash": "3df19aec833a30377df411acdafd170d"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/FirebaseEmulatorEnvironment.java": {
+    "mtime": 1794038808.0012987,
+    "seen": 1795231350.4641843,
+    "ast_hash": "afc876c8a2c09d7aace225234a2729cd",
+    "semantic_hash": "afc876c8a2c09d7aace225234a2729cd"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/FirebaseIdentityClient.java": {
+    "mtime": 1794036248.6658466,
+    "seen": 1795231350.4646158,
+    "ast_hash": "af19299535b7a8e2ccafd84d3941fc53",
+    "semantic_hash": "af19299535b7a8e2ccafd84d3941fc53"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/GoogleProfile.java": {
+    "mtime": 1794038808.0022967,
+    "seen": 1795231350.4650712,
+    "ast_hash": "3b96890fd801e1e9952414db3d9d5722",
+    "semantic_hash": "3b96890fd801e1e9952414db3d9d5722"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/IdentityAdminException.java": {
+    "mtime": 1794038808.003295,
+    "seen": 1795231350.4654772,
+    "ast_hash": "2eba44ea8bff584058bde560181c563f",
+    "semantic_hash": "2eba44ea8bff584058bde560181c563f"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/ImportActorAuthentication.java": {
+    "mtime": 1794038808.004297,
+    "seen": 1795231350.4657886,
+    "ast_hash": "c6184c1c8830cf270ec902322eb145da",
+    "semantic_hash": "c6184c1c8830cf270ec902322eb145da"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/InternalJobAuthentication.java": {
+    "mtime": 1794036248.6718419,
+    "seen": 1795231350.466203,
+    "ast_hash": "d3615913fd21879fc3024fc0fb173ded",
+    "semantic_hash": "d3615913fd21879fc3024fc0fb173ded"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/InternalJobFilter.java": {
+    "mtime": 1794038808.0052984,
+    "seen": 1795231350.4666915,
+    "ast_hash": "c93fdce84935dbe3020c466d455ef7c8",
+    "semantic_hash": "c93fdce84935dbe3020c466d455ef7c8"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/InvalidCredentialException.java": {
+    "mtime": 1794036248.6748414,
+    "seen": 1795231350.4671166,
+    "ast_hash": "496c192f35936d744eb3f4d4e937f460",
+    "semantic_hash": "496c192f35936d744eb3f4d4e937f460"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/JobSecrets.java": {
+    "mtime": 1794038808.0071242,
+    "seen": 1795231350.4675262,
+    "ast_hash": "78967c917a17ae850fc036955beb347e",
+    "semantic_hash": "78967c917a17ae850fc036955beb347e"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/LoopbackAddresses.java": {
+    "mtime": 1794038808.0081136,
+    "seen": 1795231350.4679167,
+    "ast_hash": "6d286bbe5ee00aba8707d585c35a4570",
+    "semantic_hash": "6d286bbe5ee00aba8707d585c35a4570"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/PickemPrincipal.java": {
+    "mtime": 1794038808.0091174,
+    "seen": 1795231350.4682992,
+    "ast_hash": "014cede5f9adf9e01535e9a58f5e2acf",
+    "semantic_hash": "014cede5f9adf9e01535e9a58f5e2acf"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/RoleClaims.java": {
+    "mtime": 1794038808.0111148,
+    "seen": 1795231350.468683,
+    "ast_hash": "e81038e27abd912f03d6127afba6139b",
+    "semantic_hash": "e81038e27abd912f03d6127afba6139b"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/SessionAuthentication.java": {
+    "mtime": 1794036248.6798434,
+    "seen": 1795231350.4690764,
+    "ast_hash": "f0883b0187eee0f049d53d4d5f4ffd7b",
+    "semantic_hash": "f0883b0187eee0f049d53d4d5f4ffd7b"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/SessionCookieFilter.java": {
+    "mtime": 1794038808.0121117,
+    "seen": 1795231350.4694881,
+    "ast_hash": "114a983e31dc366aaf62d9e7d8d43eaa",
+    "semantic_hash": "114a983e31dc366aaf62d9e7d8d43eaa"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/SessionCookies.java": {
+    "mtime": 1794038808.0141127,
+    "seen": 1795231350.469853,
+    "ast_hash": "ebaef61b020b286a8ee442831390f17f",
+    "semantic_hash": "ebaef61b020b286a8ee442831390f17f"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/security/VerifiedIdentity.java": {
+    "mtime": 1794038808.0151143,
+    "seen": 1795231350.4701934,
+    "ast_hash": "4be8c8062bd6f433d48d801ab6c9b819",
+    "semantic_hash": "4be8c8062bd6f433d48d801ab6c9b819"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/seed/BootstrapAccount.java": {
+    "mtime": 1794036248.6858435,
+    "seen": 1795231350.470527,
+    "ast_hash": "8ef18f95fb3c19e70aa2d48e30882493",
+    "semantic_hash": "8ef18f95fb3c19e70aa2d48e30882493"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/seed/BootstrapIdentity.java": {
+    "mtime": 1794036248.6868477,
+    "seen": 1795231350.4709172,
+    "ast_hash": "d5e63c05445a8fd77284f8435ff0b235",
+    "semantic_hash": "d5e63c05445a8fd77284f8435ff0b235"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/seed/FirebaseBootstrapIdentity.java": {
+    "mtime": 1794038808.017112,
+    "seen": 1795231350.4712389,
+    "ast_hash": "63f5f84ed9fa8f71eca5a9376f653b93",
+    "semantic_hash": "63f5f84ed9fa8f71eca5a9376f653b93"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/seed/FirestoreSeeder.java": {
+    "mtime": 1794038808.0181131,
+    "seen": 1795231350.4714756,
+    "ast_hash": "d8b64ab82af8cbbed50ea72efdd1ca4d",
+    "semantic_hash": "d8b64ab82af8cbbed50ea72efdd1ca4d"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/seed/SeedCatalog.java": {
+    "mtime": 1794038808.0191188,
+    "seen": 1795231350.4717455,
+    "ast_hash": "dedb3b459dd784078fc8248c81961a51",
+    "semantic_hash": "dedb3b459dd784078fc8248c81961a51"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/seed/SeedEnvironment.java": {
+    "mtime": 1794038808.0211132,
+    "seen": 1795231350.4719903,
+    "ast_hash": "cd18bfd98f2f5c66d75ba09b93152099",
+    "semantic_hash": "cd18bfd98f2f5c66d75ba09b93152099"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/seed/SeedFailedException.java": {
+    "mtime": 1794036248.6938436,
+    "seen": 1795231350.4722228,
+    "ast_hash": "ab7cbe33e6fcc531d266a2aa2f1dad91",
+    "semantic_hash": "ab7cbe33e6fcc531d266a2aa2f1dad91"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/seed/SeedMain.java": {
+    "mtime": 1794038808.0223596,
+    "seen": 1795231350.4724426,
+    "ast_hash": "9795b5623025c574f88562ce759b0e9a",
+    "semantic_hash": "9795b5623025c574f88562ce759b0e9a"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/seed/SeedNames.java": {
+    "mtime": 1794038808.0228891,
+    "seen": 1795231350.4727128,
+    "ast_hash": "2abae7204bb6023142968f63a3c038da",
+    "semantic_hash": "2abae7204bb6023142968f63a3c038da"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/AccountProfile.java": {
+    "mtime": 1794038808.0238836,
+    "seen": 1795231350.4729395,
+    "ast_hash": "eb895df8d6debe9ef1a11273d1e34de0",
+    "semantic_hash": "eb895df8d6debe9ef1a11273d1e34de0"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/AccountService.java": {
+    "mtime": 1794123704.3263037,
+    "seen": 1795231350.4732392,
+    "ast_hash": "9bdf7efb5559c467643f365303b49f55",
+    "semantic_hash": "9bdf7efb5559c467643f365303b49f55"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/AccountUpdate.java": {
+    "mtime": 1794038808.026886,
+    "seen": 1795231350.4736211,
+    "ast_hash": "0802735806e7d877ac4bbb0654b8fe69",
+    "semantic_hash": "0802735806e7d877ac4bbb0654b8fe69"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/AuthService.java": {
+    "mtime": 1794038808.0278866,
+    "seen": 1795231350.4739761,
+    "ast_hash": "67cbc457f27e8d581e1b49cc0deb74d7",
+    "semantic_hash": "67cbc457f27e8d581e1b49cc0deb74d7"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/CfbdDates.java": {
+    "mtime": 1794038808.028885,
+    "seen": 1795231350.4744294,
+    "ast_hash": "60d6c02613cb228b7a837be3a27709da",
+    "semantic_hash": "60d6c02613cb228b7a837be3a27709da"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/CfbdImportService.java": {
+    "mtime": 1794038808.0298846,
+    "seen": 1795231350.47479,
+    "ast_hash": "204a3d8a800ff9593f6142a978e2043b",
+    "semantic_hash": "204a3d8a800ff9593f6142a978e2043b"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/CfbdPause.java": {
+    "mtime": 1794036248.7154193,
+    "seen": 1795231350.4752085,
+    "ast_hash": "c5812f90ceecf535a7e070cca6823035",
+    "semantic_hash": "c5812f90ceecf535a7e070cca6823035"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/CfbdScoreService.java": {
+    "mtime": 1794038808.0318863,
+    "seen": 1795231350.4755824,
+    "ast_hash": "671d1de55fda1d8d3dc2fe5ebc132bff",
+    "semantic_hash": "671d1de55fda1d8d3dc2fe5ebc132bff"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/ConferenceTeam.java": {
+    "mtime": 1794036248.7184262,
+    "seen": 1795231350.4759028,
+    "ast_hash": "551ee10e4a5a2badf7369893111bc4ae",
+    "semantic_hash": "551ee10e4a5a2badf7369893111bc4ae"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/ConflictException.java": {
+    "mtime": 1794036248.7214274,
+    "seen": 1795231350.4761977,
+    "ast_hash": "239abc40f1793fbbed32c4d6dccb6cf8",
+    "semantic_hash": "239abc40f1793fbbed32c4d6dccb6cf8"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/GameMain.java": {
+    "mtime": 1794038808.032889,
+    "seen": 1795231350.476613,
+    "ast_hash": "9e3435f79bdf5d0823f51fd59db28959",
+    "semantic_hash": "9e3435f79bdf5d0823f51fd59db28959"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/ImportJobDispatcher.java": {
+    "mtime": 1794038808.033884,
+    "seen": 1795231350.477002,
+    "ast_hash": "91f2fff54e409bd2e0febc88a3e3675d",
+    "semantic_hash": "91f2fff54e409bd2e0febc88a3e3675d"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/InvalidRequestException.java": {
+    "mtime": 1794038808.0358844,
+    "seen": 1795231350.4773822,
+    "ast_hash": "e7e89865b725663b8f8c6e8882ce1f18",
+    "semantic_hash": "e7e89865b725663b8f8c6e8882ce1f18"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/Leaderboard.java": {
+    "mtime": 1794036248.7284184,
+    "seen": 1795231350.477727,
+    "ast_hash": "f12ff21a571871e0a81049af16a09279",
+    "semantic_hash": "f12ff21a571871e0a81049af16a09279"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/LeaderboardService.java": {
+    "mtime": 1794038808.0368848,
+    "seen": 1795231350.478104,
+    "ast_hash": "0e7ae9c93c66bc899f1456e49e130c12",
+    "semantic_hash": "0e7ae9c93c66bc899f1456e49e130c12"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/MatchupService.java": {
+    "mtime": 1795226721.694746,
+    "seen": 1795231350.478512,
+    "ast_hash": "8d10044e3e088b377eb433407fa93a12",
+    "semantic_hash": "8d10044e3e088b377eb433407fa93a12"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/PickScoring.java": {
+    "mtime": 1794038808.0398016,
+    "seen": 1795231350.4789581,
+    "ast_hash": "76542eda4e952f6a179aeee3ae164e32",
+    "semantic_hash": "76542eda4e952f6a179aeee3ae164e32"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/PickSelection.java": {
+    "mtime": 1794038808.0418015,
+    "seen": 1795231350.4794052,
+    "ast_hash": "b755b6fd3bf2f89aaa031d946463efd0",
+    "semantic_hash": "b755b6fd3bf2f89aaa031d946463efd0"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/PickService.java": {
+    "mtime": 1794038808.0438056,
+    "seen": 1795231350.4798107,
+    "ast_hash": "24be091cc2b578662e8e0eb9c9cac759",
+    "semantic_hash": "24be091cc2b578662e8e0eb9c9cac759"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/ReferenceGuard.java": {
+    "mtime": 1795229554.2962286,
+    "seen": 1795231350.4802358,
+    "ast_hash": "abfe6f20d72f5235c5a73c93e179b69e",
+    "semantic_hash": "abfe6f20d72f5235c5a73c93e179b69e"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/ResourceNotFoundException.java": {
+    "mtime": 1794036248.736422,
+    "seen": 1795231350.4806118,
+    "ast_hash": "c1114922eb5a32a51f917421cd6f04cc",
+    "semantic_hash": "c1114922eb5a32a51f917421cd6f04cc"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/RivalryService.java": {
+    "mtime": 1795225623.4410517,
+    "seen": 1795231350.4810236,
+    "ast_hash": "fc37ca8643388e98b92434f2e80c564d",
+    "semantic_hash": "fc37ca8643388e98b92434f2e80c564d"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/RoleClaimSync.java": {
+    "mtime": 1794036248.7404191,
+    "seen": 1795231350.4814126,
+    "ast_hash": "177b4f437910927950b1b970c4c68b8b",
+    "semantic_hash": "177b4f437910927950b1b970c4c68b8b"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/SearchText.java": {
+    "mtime": 1794036248.7414184,
+    "seen": 1795231350.4818013,
+    "ast_hash": "26c3643a486a8106d7ae1aec2841c0ca",
+    "semantic_hash": "26c3643a486a8106d7ae1aec2841c0ca"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/SeasonCalendar.java": {
+    "mtime": 1794038808.0488029,
+    "seen": 1795231350.482174,
+    "ast_hash": "223388e630b65bb6238275d28e8413e7",
+    "semantic_hash": "223388e630b65bb6238275d28e8413e7"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/SeasonService.java": {
+    "mtime": 1795226721.6887455,
+    "seen": 1795231350.482523,
+    "ast_hash": "2bb33d6a70707fe84fdc5da7045eed40",
+    "semantic_hash": "2bb33d6a70707fe84fdc5da7045eed40"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/SeasonWeekService.java": {
+    "mtime": 1795226721.6877463,
+    "seen": 1795231350.482837,
+    "ast_hash": "dd28b21136ef9a43788cb99f2c0431a1",
+    "semantic_hash": "dd28b21136ef9a43788cb99f2c0431a1"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/SleepingCfbdPause.java": {
+    "mtime": 1794038808.054456,
+    "seen": 1795231350.4831188,
+    "ast_hash": "134a9dc3cb24e5d89f25cc634f27a3e0",
+    "semantic_hash": "134a9dc3cb24e5d89f25cc634f27a3e0"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/TeamScheduleRow.java": {
+    "mtime": 1794036248.7514186,
+    "seen": 1795231350.4833815,
+    "ast_hash": "7488d3d2d9176590a2aa0c35aad16843",
+    "semantic_hash": "7488d3d2d9176590a2aa0c35aad16843"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/TeamScheduleService.java": {
+    "mtime": 1794038808.0554543,
+    "seen": 1795231350.4836562,
+    "ast_hash": "21218c6f80b2cfd85ff803a9048f3b9b",
+    "semantic_hash": "21218c6f80b2cfd85ff803a9048f3b9b"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/TeamService.java": {
+    "mtime": 1795229554.3437471,
+    "seen": 1795231350.4838912,
+    "ast_hash": "396d975d6a4982431cfe9e4de32e99c3",
+    "semantic_hash": "396d975d6a4982431cfe9e4de32e99c3"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/ThemeCatalog.java": {
+    "mtime": 1794123704.3273609,
+    "seen": 1795231350.4841669,
+    "ast_hash": "126ccf7613921fea665e2454aefaac39",
+    "semantic_hash": "126ccf7613921fea665e2454aefaac39"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/ThemeChoice.java": {
+    "mtime": 1794123704.3283212,
+    "seen": 1795231350.4844518,
+    "ast_hash": "83213164396f4ee6b27ea0e0333597c4",
+    "semantic_hash": "83213164396f4ee6b27ea0e0333597c4"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/ThemeService.java": {
+    "mtime": 1795225623.809055,
+    "seen": 1795231350.4847417,
+    "ast_hash": "75050253719531ea830ac449a464da4f",
+    "semantic_hash": "75050253719531ea830ac449a464da4f"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/UserService.java": {
+    "mtime": 1795229554.2191484,
+    "seen": 1795231350.4857306,
+    "ast_hash": "5db00581c7e613d24a25610a220bb0ff",
+    "semantic_hash": "5db00581c7e613d24a25610a220bb0ff"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/VenueService.java": {
+    "mtime": 1795229593.9028876,
+    "seen": 1795231350.4861996,
+    "ast_hash": "36e6d710aaa551df8b4ff4d7096b145e",
+    "semantic_hash": "36e6d710aaa551df8b4ff4d7096b145e"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/service/package-info.java": {
+    "mtime": 1794038808.0644522,
+    "seen": 1795231350.486588,
+    "ast_hash": "cca1191d20ebfdf04b8ab2988b520d87",
+    "semantic_hash": "cca1191d20ebfdf04b8ab2988b520d87"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/AccountUpdateBinder.java": {
+    "mtime": 1794038808.0664582,
+    "seen": 1795231350.487089,
+    "ast_hash": "f32fbb0cb086a3bf1292ce5ee14a23b7",
+    "semantic_hash": "f32fbb0cb086a3bf1292ce5ee14a23b7"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/ApiExceptionHandler.java": {
+    "mtime": 1794038808.0684564,
+    "seen": 1795231350.4874995,
+    "ast_hash": "211bee4a23459c8305b22ba3fd9328bc",
+    "semantic_hash": "211bee4a23459c8305b22ba3fd9328bc"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/AuthController.java": {
+    "mtime": 1794038808.0694544,
+    "seen": 1795231350.4879558,
+    "ast_hash": "429fcc0dc52257f449f2d63b1aa0ac76",
+    "semantic_hash": "429fcc0dc52257f449f2d63b1aa0ac76"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/AuthExceptionHandler.java": {
+    "mtime": 1794038808.0714588,
+    "seen": 1795231350.4883497,
+    "ast_hash": "d7191ebebc636be7b59cd93581e12fd9",
+    "semantic_hash": "d7191ebebc636be7b59cd93581e12fd9"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/AuthProfileResponse.java": {
+    "mtime": 1794038808.0734534,
+    "seen": 1795231350.4887285,
+    "ast_hash": "fd0b3b21a7a52aa6b059097c093297f4",
+    "semantic_hash": "fd0b3b21a7a52aa6b059097c093297f4"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/GameController.java": {
+    "mtime": 1794123704.334309,
+    "seen": 1795231350.489198,
+    "ast_hash": "e0731639e56a1a84ccef044c59a41fc4",
+    "semantic_hash": "e0731639e56a1a84ccef044c59a41fc4"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/HelloController.java": {
+    "mtime": 1794036248.7694273,
+    "seen": 1795231350.4896274,
+    "ast_hash": "422e8dc637528fb5095e05ed2a9b8c5c",
+    "semantic_hash": "422e8dc637528fb5095e05ed2a9b8c5c"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/ImportAccepted.java": {
+    "mtime": 1794036248.7704172,
+    "seen": 1795231350.4900675,
+    "ast_hash": "a868bd9c714aee5d5593d515bab42409",
+    "semantic_hash": "a868bd9c714aee5d5593d515bab42409"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/ImportController.java": {
+    "mtime": 1794036248.7714171,
+    "seen": 1795231350.4904735,
+    "ast_hash": "6d124513d5970d42d83532d2fa195fa9",
+    "semantic_hash": "6d124513d5970d42d83532d2fa195fa9"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/ImportMatchupsRequest.java": {
+    "mtime": 1794036248.773417,
+    "seen": 1795231350.4909065,
+    "ast_hash": "918d43c3304de7c6fc24b6476b1378bb",
+    "semantic_hash": "918d43c3304de7c6fc24b6476b1378bb"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/ImportWorkerRequest.java": {
+    "mtime": 1794038808.0764647,
+    "seen": 1795231350.4913425,
+    "ast_hash": "4e2e883257fd2bc633e79c3419cba718",
+    "semantic_hash": "4e2e883257fd2bc633e79c3419cba718"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/InternalJobAccepted.java": {
+    "mtime": 1794036248.7754261,
+    "seen": 1795231350.491717,
+    "ast_hash": "62b999489b32cbc40b85bbb2b7c733bc",
+    "semantic_hash": "62b999489b32cbc40b85bbb2b7c733bc"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/InternalJobController.java": {
+    "mtime": 1794038808.0784626,
+    "seen": 1795231350.4921534,
+    "ast_hash": "a5941bfaf646dc165b18fe081393f35a",
+    "semantic_hash": "a5941bfaf646dc165b18fe081393f35a"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/MatchupController.java": {
+    "mtime": 1794038808.0804596,
+    "seen": 1795231350.492537,
+    "ast_hash": "91d2887ef64ff717d7b2d15f4572f177",
+    "semantic_hash": "91d2887ef64ff717d7b2d15f4572f177"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/RivalryController.java": {
+    "mtime": 1794038808.081453,
+    "seen": 1795231350.4929776,
+    "ast_hash": "11ec74926dc0dc242e5fa871c4c9944d",
+    "semantic_hash": "11ec74926dc0dc242e5fa871c4c9944d"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/SavePicksRequest.java": {
+    "mtime": 1794038808.0834508,
+    "seen": 1795231350.493394,
+    "ast_hash": "db6b3f3ee82425362c4df4e849012137",
+    "semantic_hash": "db6b3f3ee82425362c4df4e849012137"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/ScoreJobResponse.java": {
+    "mtime": 1794036248.7814293,
+    "seen": 1795231350.4937441,
+    "ast_hash": "df358a2662794db83f7bcf580260745b",
+    "semantic_hash": "df358a2662794db83f7bcf580260745b"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/SeasonController.java": {
+    "mtime": 1794038808.0844502,
+    "seen": 1795231350.4941354,
+    "ast_hash": "08d596e1173c7349659efc4bc3ec9896",
+    "semantic_hash": "08d596e1173c7349659efc4bc3ec9896"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/SeasonWeekController.java": {
+    "mtime": 1794038808.0851939,
+    "seen": 1795231350.494481,
+    "ast_hash": "483647fc3b6f82bbc9c58688c63ea780",
+    "semantic_hash": "483647fc3b6f82bbc9c58688c63ea780"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/SessionRequest.java": {
+    "mtime": 1794036248.7844174,
+    "seen": 1795231350.4947734,
+    "ast_hash": "27a550d066d58dd4a39a261ada82dc1d",
+    "semantic_hash": "27a550d066d58dd4a39a261ada82dc1d"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/TeamController.java": {
+    "mtime": 1794038808.087189,
+    "seen": 1795231350.4951591,
+    "ast_hash": "1942d55c944caebee94f2415ebeea230",
+    "semantic_hash": "1942d55c944caebee94f2415ebeea230"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/ThemeController.java": {
+    "mtime": 1794123704.3359761,
+    "seen": 1795231350.4955108,
+    "ast_hash": "fbc46d42e42725290bac9ad4a494d625",
+    "semantic_hash": "fbc46d42e42725290bac9ad4a494d625"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/UserController.java": {
+    "mtime": 1794038808.0901892,
+    "seen": 1795231350.4959095,
+    "ast_hash": "43362b50a469e508f19fe67c74f965b1",
+    "semantic_hash": "43362b50a469e508f19fe67c74f965b1"
+  },
+  "apps/backend/src/main/java/com/curleesoft/pickem/backend/web/VenueController.java": {
+    "mtime": 1794038808.0911887,
+    "seen": 1795231350.496284,
+    "ast_hash": "3c514a91a166ef946462b2a14889e59c",
+    "semantic_hash": "3c514a91a166ef946462b2a14889e59c"
+  },
+  "apps/backend/src/main/resources/application.yml": {
+    "mtime": 1794026425.8477848,
+    "seen": 1795231350.4966218,
+    "ast_hash": "11489d1768df64976406edca047b59f3",
+    "semantic_hash": "11489d1768df64976406edca047b59f3"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/BackendApplicationTests.java": {
+    "mtime": 1794036248.7894175,
+    "seen": 1795231350.4969547,
+    "ast_hash": "bbd3f053e4991df99020fb4e5acb9536",
+    "semantic_hash": "bbd3f053e4991df99020fb4e5acb9536"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/HelloControllerTests.java": {
+    "mtime": 1794036248.7904215,
+    "seen": 1795231350.4972456,
+    "ast_hash": "685e8c4b63d5c9f25626c65143bcdd98",
+    "semantic_hash": "685e8c4b63d5c9f25626c65143bcdd98"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/cfbd/CfbdClientTests.java": {
+    "mtime": 1794038808.0941904,
+    "seen": 1795231350.4975598,
+    "ast_hash": "5750d4068fb2d0f658066ff8cc02c71f",
+    "semantic_hash": "5750d4068fb2d0f658066ff8cc02c71f"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/config/DotenvEnvironmentPostProcessorTests.java": {
+    "mtime": 1794036248.7934153,
+    "seen": 1795231350.4978747,
+    "ast_hash": "8cc87695add5e48d6333ddd6938193c1",
+    "semantic_hash": "8cc87695add5e48d6333ddd6938193c1"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/config/DotenvFileLoaderTests.java": {
+    "mtime": 1794036248.7944176,
+    "seen": 1795231350.498307,
+    "ast_hash": "bd52ba5ff0a64e402e27d598f095d998",
+    "semantic_hash": "bd52ba5ff0a64e402e27d598f095d998"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/config/FirestoreConfigTests.java": {
+    "mtime": 1794038808.0951874,
+    "seen": 1795231350.498707,
+    "ast_hash": "40eea9367ac1af2cf231dc191ad1bc00",
+    "semantic_hash": "40eea9367ac1af2cf231dc191ad1bc00"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/config/PickemAuthPropertiesTests.java": {
+    "mtime": 1794036248.7964168,
+    "seen": 1795231350.4991245,
+    "ast_hash": "e00b3af97d272981e9b5881d208f2997",
+    "semantic_hash": "e00b3af97d272981e9b5881d208f2997"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/config/PickemInternalPropertiesTests.java": {
+    "mtime": 1794036248.79742,
+    "seen": 1795231350.4995387,
+    "ast_hash": "f642c55dbd0e78bc598c1486d84b0f07",
+    "semantic_hash": "f642c55dbd0e78bc598c1486d84b0f07"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/config/PickemSecretsPropertiesTests.java": {
+    "mtime": 1794036248.7984388,
+    "seen": 1795231350.4999666,
+    "ast_hash": "095ea7cd715eb6e51a9aaee0f4df0345",
+    "semantic_hash": "095ea7cd715eb6e51a9aaee0f4df0345"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/config/SecurityConfigTests.java": {
+    "mtime": 1794036248.7994199,
+    "seen": 1795231350.50032,
+    "ast_hash": "063260a9369d15233446733febe48a37",
+    "semantic_hash": "063260a9369d15233446733febe48a37"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/model/DomainDtoJsonTests.java": {
+    "mtime": 1794036248.8014216,
+    "seen": 1795231350.5006878,
+    "ast_hash": "a82d84975dd16440bf2fbb343d122d87",
+    "semantic_hash": "a82d84975dd16440bf2fbb343d122d87"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/repository/BaseRepositoryTests.java": {
+    "mtime": 1794038808.097189,
+    "seen": 1795231350.5010643,
+    "ast_hash": "d1060a042ecf8b708ebfb9bf680cc618",
+    "semantic_hash": "d1060a042ecf8b708ebfb9bf680cc618"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/repository/PickRepositoryTests.java": {
+    "mtime": 1794038808.099257,
+    "seen": 1795231350.5014231,
+    "ast_hash": "c1630362ae6ce1fdd85de50ef43e7486",
+    "semantic_hash": "c1630362ae6ce1fdd85de50ef43e7486"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/security/FakeFirebaseIdentityClient.java": {
+    "mtime": 1794038808.1011784,
+    "seen": 1795231350.5018091,
+    "ast_hash": "0202baddfdb125edf09b5af12e61829c",
+    "semantic_hash": "0202baddfdb125edf09b5af12e61829c"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/security/FirebaseAdminIdentityClientTests.java": {
+    "mtime": 1794036248.806419,
+    "seen": 1795231350.502239,
+    "ast_hash": "2fddeb46505507b6b3f08ae0759a7cb4",
+    "semantic_hash": "2fddeb46505507b6b3f08ae0759a7cb4"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/security/FirebaseEmulatorEnvironmentTests.java": {
+    "mtime": 1794038808.1021671,
+    "seen": 1795231350.502565,
+    "ast_hash": "559c0c7bcf570b63ba554ae88a2bd2a3",
+    "semantic_hash": "559c0c7bcf570b63ba554ae88a2bd2a3"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/security/GoogleProfileTests.java": {
+    "mtime": 1794038808.1041667,
+    "seen": 1795231350.5028372,
+    "ast_hash": "b9957ddaa822affa26eff2205785ca0c",
+    "semantic_hash": "b9957ddaa822affa26eff2205785ca0c"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/security/JobSecretsTests.java": {
+    "mtime": 1794036248.8094192,
+    "seen": 1795231350.5031254,
+    "ast_hash": "ee12ec88b14dcbb6c060226eefd5ef36",
+    "semantic_hash": "ee12ec88b14dcbb6c060226eefd5ef36"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/security/LoopbackAddressesTests.java": {
+    "mtime": 1794036248.8264253,
+    "seen": 1795231350.503413,
+    "ast_hash": "810c7ad78c608e48c86dbc55756821b3",
+    "semantic_hash": "810c7ad78c608e48c86dbc55756821b3"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/security/RoleClaimsTests.java": {
+    "mtime": 1794036248.8274212,
+    "seen": 1795231350.5036564,
+    "ast_hash": "98467862d210c6b38f9cb865ea19b0ed",
+    "semantic_hash": "98467862d210c6b38f9cb865ea19b0ed"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/security/SessionCookieFilterTests.java": {
+    "mtime": 1794038808.1062188,
+    "seen": 1795231350.504111,
+    "ast_hash": "4ac2f09a46efb87677c94a2e78bcbc20",
+    "semantic_hash": "4ac2f09a46efb87677c94a2e78bcbc20"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/seed/FirestoreSeederTests.java": {
+    "mtime": 1794038808.1081686,
+    "seen": 1795231350.5045717,
+    "ast_hash": "889e40fd0f7b27f229a795c5c2416caf",
+    "semantic_hash": "889e40fd0f7b27f229a795c5c2416caf"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/seed/SeedCatalogTests.java": {
+    "mtime": 1794123704.3379753,
+    "seen": 1795231350.5049686,
+    "ast_hash": "b41ee7f2cd8fbec7e5013f6f688f1e42",
+    "semantic_hash": "b41ee7f2cd8fbec7e5013f6f688f1e42"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/seed/SeedEnvironmentTests.java": {
+    "mtime": 1794038808.1101704,
+    "seen": 1795231350.5054338,
+    "ast_hash": "c9c95c898a28aa96a116394bb0f37962",
+    "semantic_hash": "c9c95c898a28aa96a116394bb0f37962"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/seed/SeedNamesTests.java": {
+    "mtime": 1794036248.8354206,
+    "seen": 1795231350.5059297,
+    "ast_hash": "685f70800dcf05bacb7ec5e3eaee6d3b",
+    "semantic_hash": "685f70800dcf05bacb7ec5e3eaee6d3b"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/service/AuthServiceTests.java": {
+    "mtime": 1794036248.8364172,
+    "seen": 1795231350.5063848,
+    "ast_hash": "3e74c3bfd6a107db2521d5b9506fd2a9",
+    "semantic_hash": "3e74c3bfd6a107db2521d5b9506fd2a9"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/service/CfbdDatesTests.java": {
+    "mtime": 1794036248.8374162,
+    "seen": 1795231350.5067856,
+    "ast_hash": "4bf0ff2add53d6132236fe8eb0eb20fd",
+    "semantic_hash": "4bf0ff2add53d6132236fe8eb0eb20fd"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/service/CfbdImportServiceTests.java": {
+    "mtime": 1794038808.112167,
+    "seen": 1795231350.507195,
+    "ast_hash": "37af53c9ecfe8192e8443f034b62d74a",
+    "semantic_hash": "37af53c9ecfe8192e8443f034b62d74a"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/service/PickScoringTests.java": {
+    "mtime": 1794038808.1131847,
+    "seen": 1795231350.5076764,
+    "ast_hash": "2c6f05b29642080aad5c30ad2f07c130",
+    "semantic_hash": "2c6f05b29642080aad5c30ad2f07c130"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/service/SeasonCalendarTests.java": {
+    "mtime": 1794036248.8414233,
+    "seen": 1795231350.5082057,
+    "ast_hash": "e700ef65413f86e4269c3d7f4a930fe5",
+    "semantic_hash": "e700ef65413f86e4269c3d7f4a930fe5"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/service/SeasonServiceTests.java": {
+    "mtime": 1795225459.916584,
+    "seen": 1795231350.5086575,
+    "ast_hash": "200bdcbb087f06466561455d2a29e1fd",
+    "semantic_hash": "200bdcbb087f06466561455d2a29e1fd"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/support/FirestoreEmulatorSupport.java": {
+    "mtime": 1794038808.1141648,
+    "seen": 1795231350.5090444,
+    "ast_hash": "77bba47e198d830570a0d20611d61e0c",
+    "semantic_hash": "77bba47e198d830570a0d20611d61e0c"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/AuthSessionTests.java": {
+    "mtime": 1794038808.1162665,
+    "seen": 1795231350.5094447,
+    "ast_hash": "827bd52789909686525302656bc01af1",
+    "semantic_hash": "827bd52789909686525302656bc01af1"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/CfbdClientExceptionHandlerTests.java": {
+    "mtime": 1794038808.1167908,
+    "seen": 1795231350.5098267,
+    "ast_hash": "e30f1d02dbf10c8538b06e8b2de5565a",
+    "semantic_hash": "e30f1d02dbf10c8538b06e8b2de5565a"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/CfbdScoreJobTests.java": {
+    "mtime": 1794038808.1188016,
+    "seen": 1795231350.5101957,
+    "ast_hash": "92e29f266549f0bbd8bf6deddc658966",
+    "semantic_hash": "92e29f266549f0bbd8bf6deddc658966"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/GameAccountScheduleApiTests.java": {
+    "mtime": 1794123704.3399806,
+    "seen": 1795231350.5106106,
+    "ast_hash": "06233795e3d9b4e0f900fcaa6b1ba1f2",
+    "semantic_hash": "06233795e3d9b4e0f900fcaa6b1ba1f2"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/GamePicksApiTests.java": {
+    "mtime": 1794038808.122785,
+    "seen": 1795231350.510997,
+    "ast_hash": "047b9469306a6e3eb018fbe2c7a88e03",
+    "semantic_hash": "047b9469306a6e3eb018fbe2c7a88e03"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/ImportApiTests.java": {
+    "mtime": 1794038808.1237855,
+    "seen": 1795231350.5113943,
+    "ast_hash": "ffeb3b47b3bf72a6aeb0c6d23dee570e",
+    "semantic_hash": "ffeb3b47b3bf72a6aeb0c6d23dee570e"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/InternalJobApiTests.java": {
+    "mtime": 1794038808.1248028,
+    "seen": 1795231350.5117733,
+    "ast_hash": "121c38e0523ca2412aaf5312617226f0",
+    "semantic_hash": "121c38e0523ca2412aaf5312617226f0"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/InternalJobLoopbackDisabledTests.java": {
+    "mtime": 1794038808.1267848,
+    "seen": 1795231350.5121543,
+    "ast_hash": "3f6fecaaa6f94dd581ee41d5c2cf5c61",
+    "semantic_hash": "3f6fecaaa6f94dd581ee41d5c2cf5c61"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/ManagerMatchupApiTests.java": {
+    "mtime": 1794038808.1277852,
+    "seen": 1795231350.5125961,
+    "ast_hash": "cbfbeb742c303c84b220d8e29cd79754",
+    "semantic_hash": "cbfbeb742c303c84b220d8e29cd79754"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/ManagerReferenceApiTests.java": {
+    "mtime": 1795225460.0055864,
+    "seen": 1795231350.513015,
+    "ast_hash": "84c27bf099eb8bbeb21c4d76b1057f1b",
+    "semantic_hash": "84c27bf099eb8bbeb21c4d76b1057f1b"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/ManagerSeasonApiTests.java": {
+    "mtime": 1794038808.1319108,
+    "seen": 1795231350.5134244,
+    "ast_hash": "8e13f3e6eeaa7ade9ac1ea653c5d11ef",
+    "semantic_hash": "8e13f3e6eeaa7ade9ac1ea653c5d11ef"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/ManagerUserThemeApiTests.java": {
+    "mtime": 1794123704.341992,
+    "seen": 1795231350.5138311,
+    "ast_hash": "321d952fbc5b573c88af0385b5afce84",
+    "semantic_hash": "321d952fbc5b573c88af0385b5afce84"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/OpenApiTests.java": {
+    "mtime": 1794036248.8634176,
+    "seen": 1795231350.5142398,
+    "ast_hash": "30f24b0da8c8b53f10de6ad3f8c36f58",
+    "semantic_hash": "30f24b0da8c8b53f10de6ad3f8c36f58"
+  },
+  "apps/backend/src/test/java/com/curleesoft/pickem/backend/web/SnapshotReferenceApiTests.java": {
+    "mtime": 1795229594.1431923,
+    "seen": 1795231350.5146625,
+    "ast_hash": "5182a831947ed5dc22fa042962b1c060",
+    "semantic_hash": "5182a831947ed5dc22fa042962b1c060"
+  },
+  "apps/backend/src/test/resources/application.yml": {
+    "mtime": 1792190370.361967,
+    "seen": 1795231350.515109,
+    "ast_hash": "edb2db7f6df8406aeb5d1b4543552606",
+    "semantic_hash": "edb2db7f6df8406aeb5d1b4543552606"
+  },
+  "apps/frontend/.oxfmtrc.json": {
+    "mtime": 1794038808.1344364,
+    "seen": 1795231350.5155048,
+    "ast_hash": "9051e1951a82b13d0dd006a2a0d6343f",
+    "semantic_hash": "9051e1951a82b13d0dd006a2a0d6343f"
+  },
+  "apps/frontend/app/(auth)/login/page.tsx": {
+    "mtime": 1794038808.1364322,
+    "seen": 1795231350.515862,
+    "ast_hash": "0144986fda781f4a6e811b775702d58f",
+    "semantic_hash": "0144986fda781f4a6e811b775702d58f"
+  },
+  "apps/frontend/app/(game)/account/page.tsx": {
+    "mtime": 1794124161.029244,
+    "seen": 1795231350.5162733,
+    "ast_hash": "5abb221129a05481deeaf8f0eca8cb57",
+    "semantic_hash": "5abb221129a05481deeaf8f0eca8cb57"
+  },
+  "apps/frontend/app/(game)/layout.tsx": {
+    "mtime": 1794038808.138437,
+    "seen": 1795231350.5167096,
+    "ast_hash": "a5220d5ed1a67eb04ca22c987b772f20",
+    "semantic_hash": "a5220d5ed1a67eb04ca22c987b772f20"
+  },
+  "apps/frontend/app/(game)/leaderboard/page.tsx": {
+    "mtime": 1794038808.139436,
+    "seen": 1795231350.5171666,
+    "ast_hash": "d41b857c8c88a51022d34d633393150b",
+    "semantic_hash": "d41b857c8c88a51022d34d633393150b"
+  },
+  "apps/frontend/app/(game)/main/page.tsx": {
+    "mtime": 1794038808.1414368,
+    "seen": 1795231350.5176013,
+    "ast_hash": "59fad400f39cbfa0732980fdf4041530",
+    "semantic_hash": "59fad400f39cbfa0732980fdf4041530"
+  },
+  "apps/frontend/app/(game)/restricted/page.tsx": {
+    "mtime": 1794038808.1424322,
+    "seen": 1795231350.5179515,
+    "ast_hash": "8d5bcde859e79145679e3fdc44ebf45c",
+    "semantic_hash": "8d5bcde859e79145679e3fdc44ebf45c"
+  },
+  "apps/frontend/app/(game)/team-schedule/page.tsx": {
+    "mtime": 1794113036.5943985,
+    "seen": 1795231350.5182931,
+    "ast_hash": "afe4a9fc35a0caf8a866734516d2b2fe",
+    "semantic_hash": "afe4a9fc35a0caf8a866734516d2b2fe"
+  },
+  "apps/frontend/app/(manager)/layout.tsx": {
+    "mtime": 1794038808.1454325,
+    "seen": 1795231350.5186508,
+    "ast_hash": "24e2e50f456d7eea90443920430c169a",
+    "semantic_hash": "24e2e50f456d7eea90443920430c169a"
+  },
+  "apps/frontend/app/(manager)/matchups/page.tsx": {
+    "mtime": 1794038808.1474333,
+    "seen": 1795231350.5190203,
+    "ast_hash": "66fc40d5e1a83ceaab701a4f7cc91bbd",
+    "semantic_hash": "66fc40d5e1a83ceaab701a4f7cc91bbd"
+  },
+  "apps/frontend/app/(manager)/rivalries/page.tsx": {
+    "mtime": 1794038808.1484346,
+    "seen": 1795231350.5198514,
+    "ast_hash": "dfb6f76011a2ae977ba3fefe610a3fb3",
+    "semantic_hash": "dfb6f76011a2ae977ba3fefe610a3fb3"
+  },
+  "apps/frontend/app/(manager)/season-weeks/page.tsx": {
+    "mtime": 1794038808.149438,
+    "seen": 1795231350.5203006,
+    "ast_hash": "4eed5366c03256607434591d47e888e9",
+    "semantic_hash": "4eed5366c03256607434591d47e888e9"
+  },
+  "apps/frontend/app/(manager)/seasons/page.tsx": {
+    "mtime": 1794038808.1511207,
+    "seen": 1795231350.5208619,
+    "ast_hash": "f7e10d28d066c284a5ba5f025023ecda",
+    "semantic_hash": "f7e10d28d066c284a5ba5f025023ecda"
+  },
+  "apps/frontend/app/(manager)/teams/page.tsx": {
+    "mtime": 1794038808.1531177,
+    "seen": 1795231350.5213015,
+    "ast_hash": "0e5cd339cc4bea63f51e31d614d7bfbc",
+    "semantic_hash": "0e5cd339cc4bea63f51e31d614d7bfbc"
+  },
+  "apps/frontend/app/(manager)/themes/page.tsx": {
+    "mtime": 1794038808.154117,
+    "seen": 1795231350.5216722,
+    "ast_hash": "7e7effb7383bbdf6ad30d2274391b2b4",
+    "semantic_hash": "7e7effb7383bbdf6ad30d2274391b2b4"
+  },
+  "apps/frontend/app/(manager)/users/page.tsx": {
+    "mtime": 1794038808.1551158,
+    "seen": 1795231350.5220783,
+    "ast_hash": "78924e2ebc24639fdfcc2b6d85a7cfa4",
+    "semantic_hash": "78924e2ebc24639fdfcc2b6d85a7cfa4"
+  },
+  "apps/frontend/app/(manager)/venues/page.tsx": {
+    "mtime": 1794038808.1571157,
+    "seen": 1795231350.5224478,
+    "ast_hash": "03d36afbd62c366a0db43e99ccba2383",
+    "semantic_hash": "03d36afbd62c366a0db43e99ccba2383"
+  },
+  "apps/frontend/app/api/[...path]/route.ts": {
+    "mtime": 1794038808.1581175,
+    "seen": 1795231350.522779,
+    "ast_hash": "a15dd242b97eceea705b8f905af0d5aa",
+    "semantic_hash": "a15dd242b97eceea705b8f905af0d5aa"
+  },
+  "apps/frontend/app/api/auth/logout/route.ts": {
+    "mtime": 1794038808.1601162,
+    "seen": 1795231350.5230932,
+    "ast_hash": "93b6a0bf866eaf0b4050e00b8f5a5b6d",
+    "semantic_hash": "93b6a0bf866eaf0b4050e00b8f5a5b6d"
+  },
+  "apps/frontend/app/api/auth/me/route.ts": {
+    "mtime": 1794038808.161116,
+    "seen": 1795231350.523467,
+    "ast_hash": "8ab53609106e2aaa8410cd3c91b51525",
+    "semantic_hash": "8ab53609106e2aaa8410cd3c91b51525"
+  },
+  "apps/frontend/app/api/auth/session/route.ts": {
+    "mtime": 1794038808.1667082,
+    "seen": 1795231350.5238101,
+    "ast_hash": "dc1dca95cfbef9e7c172c53aeb5f9924",
+    "semantic_hash": "dc1dca95cfbef9e7c172c53aeb5f9924"
+  },
+  "apps/frontend/app/api/internal/jobs/[job]/route.ts": {
+    "mtime": 1794038808.167705,
+    "seen": 1795231350.5241382,
+    "ast_hash": "414b2d5c5f93eee0932a041f31f2d76e",
+    "semantic_hash": "414b2d5c5f93eee0932a041f31f2d76e"
+  },
+  "apps/frontend/app/layout.tsx": {
+    "mtime": 1794038808.1707065,
+    "seen": 1795231350.5243835,
+    "ast_hash": "46d3d57dd16de0b30b24c63a352dc1b8",
+    "semantic_hash": "46d3d57dd16de0b30b24c63a352dc1b8"
+  },
+  "apps/frontend/app/page.tsx": {
+    "mtime": 1794038808.1717074,
+    "seen": 1795231350.524682,
+    "ast_hash": "f761209e82d7fd7b9add5a3494ccff3b",
+    "semantic_hash": "f761209e82d7fd7b9add5a3494ccff3b"
+  },
+  "apps/frontend/components/account-form.tsx": {
+    "mtime": 1794126516.2939293,
+    "seen": 1795231350.524934,
+    "ast_hash": "fecac959968a01cef57796ef40be1269",
+    "semantic_hash": "fecac959968a01cef57796ef40be1269"
+  },
+  "apps/frontend/components/app-shell.tsx": {
+    "mtime": 1794038808.1727102,
+    "seen": 1795231350.5251555,
+    "ast_hash": "f393706e29d4876ddb15cf0ae13b17bd",
+    "semantic_hash": "f393706e29d4876ddb15cf0ae13b17bd"
+  },
+  "apps/frontend/components/auth-provider.tsx": {
+    "mtime": 1794123704.3459933,
+    "seen": 1795231350.5254228,
+    "ast_hash": "85573f845fddc91f361dbc6cd35be3cf",
+    "semantic_hash": "85573f845fddc91f361dbc6cd35be3cf"
+  },
+  "apps/frontend/components/date-field.tsx": {
+    "mtime": 1794038808.1757066,
+    "seen": 1795231350.52575,
+    "ast_hash": "6ac24ffe8b8942cfd3dc02da101c9364",
+    "semantic_hash": "6ac24ffe8b8942cfd3dc02da101c9364"
+  },
+  "apps/frontend/components/google-sign-in.tsx": {
+    "mtime": 1794038808.1767054,
+    "seen": 1795231350.526107,
+    "ast_hash": "42531d28c37566284e7b97f4736b2955",
+    "semantic_hash": "42531d28c37566284e7b97f4736b2955"
+  },
+  "apps/frontend/components/leaderboard-table.tsx": {
+    "mtime": 1794038808.177707,
+    "seen": 1795231350.5265045,
+    "ast_hash": "2118c4fcdf5d8abd0168da4f28941d07",
+    "semantic_hash": "2118c4fcdf5d8abd0168da4f28941d07"
+  },
+  "apps/frontend/components/navbar.tsx": {
+    "mtime": 1794123704.3479943,
+    "seen": 1795231350.5268486,
+    "ast_hash": "3f9d819f09ca3f95b60faf8703091dd8",
+    "semantic_hash": "3f9d819f09ca3f95b60faf8703091dd8"
+  },
+  "apps/frontend/components/pick-result-icon.tsx": {
+    "mtime": 1794038808.180707,
+    "seen": 1795231350.5272005,
+    "ast_hash": "6d04d823db3edf85ab33d17cf313f4cd",
+    "semantic_hash": "6d04d823db3edf85ab33d17cf313f4cd"
+  },
+  "apps/frontend/components/picks-grid.tsx": {
+    "mtime": 1794038808.1817052,
+    "seen": 1795231350.5275457,
+    "ast_hash": "e21829b16486f6a5e30162c4053f620a",
+    "semantic_hash": "e21829b16486f6a5e30162c4053f620a"
+  },
+  "apps/frontend/components/query-provider.tsx": {
+    "mtime": 1794038808.1827068,
+    "seen": 1795231350.5279243,
+    "ast_hash": "6fe09cc86c3d7561fc3905bc55305da6",
+    "semantic_hash": "6fe09cc86c3d7561fc3905bc55305da6"
+  },
+  "apps/frontend/components/team-schedule.tsx": {
+    "mtime": 1794114757.230893,
+    "seen": 1795231350.5282516,
+    "ast_hash": "8fb27cbac283de4f4fbfdc9381caf26e",
+    "semantic_hash": "8fb27cbac283de4f4fbfdc9381caf26e"
+  },
+  "apps/frontend/components/theme-picker.tsx": {
+    "mtime": 1794126516.3029275,
+    "seen": 1795231350.5285583,
+    "ast_hash": "752da68c5c30ff2d320ecc7cc9e0c096",
+    "semantic_hash": "752da68c5c30ff2d320ecc7cc9e0c096"
+  },
+  "apps/frontend/components/titled-page.tsx": {
+    "mtime": 1794038808.1837072,
+    "seen": 1795231350.5288925,
+    "ast_hash": "25c3f2b6b0444e2568df8244537d513e",
+    "semantic_hash": "25c3f2b6b0444e2568df8244537d513e"
+  },
+  "apps/frontend/components/ui/button-styles.ts": {
+    "mtime": 1794038808.1847084,
+    "seen": 1795231350.5292137,
+    "ast_hash": "a137f4d8d47dd7052e3c25082c3017e0",
+    "semantic_hash": "a137f4d8d47dd7052e3c25082c3017e0"
+  },
+  "apps/frontend/components/ui/button.tsx": {
+    "mtime": 1794038808.1867108,
+    "seen": 1795231350.529581,
+    "ast_hash": "42b61b2201021fbe146e815e277c7e3a",
+    "semantic_hash": "42b61b2201021fbe146e815e277c7e3a"
+  },
+  "apps/frontend/components/ui/radio.tsx": {
+    "mtime": 1794038808.1877067,
+    "seen": 1795231350.5299585,
+    "ast_hash": "e78953d5b45c31ea6a899fc9df351c48",
+    "semantic_hash": "e78953d5b45c31ea6a899fc9df351c48"
+  },
+  "apps/frontend/index.d.ts": {
+    "mtime": 1794038808.1887062,
+    "seen": 1795231350.5303593,
+    "ast_hash": "f38d21b2471ffd70f2068ba0918421e7",
+    "semantic_hash": "f38d21b2471ffd70f2068ba0918421e7"
+  },
+  "apps/frontend/lib/api-client.ts": {
+    "mtime": 1794038808.189706,
+    "seen": 1795231350.5306933,
+    "ast_hash": "6e3c2b00c5a2a5d57e863daca6073056",
+    "semantic_hash": "6e3c2b00c5a2a5d57e863daca6073056"
+  },
+  "apps/frontend/lib/auth-profile.ts": {
+    "mtime": 1794038808.1907053,
+    "seen": 1795231350.5310242,
+    "ast_hash": "4d3622f991eb444a42fc4c4b5feb3cd3",
+    "semantic_hash": "4d3622f991eb444a42fc4c4b5feb3cd3"
+  },
+  "apps/frontend/lib/field-error.ts": {
+    "mtime": 1794038808.1917052,
+    "seen": 1795231350.5313416,
+    "ast_hash": "f511d05c90ab4649c908d9454d35b3dc",
+    "semantic_hash": "f511d05c90ab4649c908d9454d35b3dc"
+  },
+  "apps/frontend/lib/firebase-auth.ts": {
+    "mtime": 1794038808.1927068,
+    "seen": 1795231350.5315611,
+    "ast_hash": "042601c8082823b4d1b97fd74ff067f3",
+    "semantic_hash": "042601c8082823b4d1b97fd74ff067f3"
+  },
+  "apps/frontend/lib/firebase-config.ts": {
+    "mtime": 1794038808.1947074,
+    "seen": 1795231350.5318391,
+    "ast_hash": "154ec1a2b65e5a0ca2b37b41de9ab6c2",
+    "semantic_hash": "154ec1a2b65e5a0ca2b37b41de9ab6c2"
+  },
+  "apps/frontend/lib/google-auth-error.ts": {
+    "mtime": 1794038808.1958601,
+    "seen": 1795231350.532096,
+    "ast_hash": "a017adeed109d55e32fdfde1fc4c18b7",
+    "semantic_hash": "a017adeed109d55e32fdfde1fc4c18b7"
+  },
+  "apps/frontend/lib/iso-date.ts": {
+    "mtime": 1794038808.197853,
+    "seen": 1795231350.532353,
+    "ast_hash": "ae16aabd7925c0f6252fbde478bbf421",
+    "semantic_hash": "ae16aabd7925c0f6252fbde478bbf421"
+  },
+  "apps/frontend/lib/leaderboard.ts": {
+    "mtime": 1794038808.198858,
+    "seen": 1795231350.5326266,
+    "ast_hash": "fd3b185210a325395df4a04c3b1ffa02",
+    "semantic_hash": "fd3b185210a325395df4a04c3b1ffa02"
+  },
+  "apps/frontend/lib/nav-links.ts": {
+    "mtime": 1794038808.1998532,
+    "seen": 1795231350.5329385,
+    "ast_hash": "1fd03eb0ab4486ffee155e609018cafd",
+    "semantic_hash": "1fd03eb0ab4486ffee155e609018cafd"
+  },
+  "apps/frontend/lib/picks-grid.ts": {
+    "mtime": 1794038808.200853,
+    "seen": 1795231350.5332541,
+    "ast_hash": "5ae5a10756693c2f272af3ddc8e3a1af",
+    "semantic_hash": "5ae5a10756693c2f272af3ddc8e3a1af"
+  },
+  "apps/frontend/lib/server/firebase-admin-env.ts": {
+    "mtime": 1794038808.202857,
+    "seen": 1795231350.5335915,
+    "ast_hash": "59c579eb88b5277aad527e0aaf595184",
+    "semantic_hash": "59c579eb88b5277aad527e0aaf595184"
+  },
+  "apps/frontend/lib/server/firebase-session.ts": {
+    "mtime": 1794038808.2068584,
+    "seen": 1795231350.5339577,
+    "ast_hash": "ee346e89e98816a76c008aea33b063b5",
+    "semantic_hash": "ee346e89e98816a76c008aea33b063b5"
+  },
+  "apps/frontend/lib/server/internal-job.ts": {
+    "mtime": 1794038808.2078557,
+    "seen": 1795231350.534347,
+    "ast_hash": "c6e42c373a4147c3fbff7660bbbb4577",
+    "semantic_hash": "c6e42c373a4147c3fbff7660bbbb4577"
+  },
+  "apps/frontend/lib/server/job-oidc.ts": {
+    "mtime": 1794038808.2098522,
+    "seen": 1795231350.5347846,
+    "ast_hash": "4822c39a2e594ee7c55afccee04a24b9",
+    "semantic_hash": "4822c39a2e594ee7c55afccee04a24b9"
+  },
+  "apps/frontend/lib/server/spring-auth.ts": {
+    "mtime": 1794038808.2108533,
+    "seen": 1795231350.5351853,
+    "ast_hash": "7ea1df6eeed1a10e9b3676fbc0ab4a73",
+    "semantic_hash": "7ea1df6eeed1a10e9b3676fbc0ab4a73"
+  },
+  "apps/frontend/lib/server/spring-proxy.ts": {
+    "mtime": 1794038808.2130435,
+    "seen": 1795231350.5355206,
+    "ast_hash": "7f4658fd9373bdc514ed9cd8059fd707",
+    "semantic_hash": "7f4658fd9373bdc514ed9cd8059fd707"
+  },
+  "apps/frontend/lib/session-client.ts": {
+    "mtime": 1794038808.2140403,
+    "seen": 1795231350.535846,
+    "ast_hash": "bc5a6eb7a33a4a9c60870b972deb8af1",
+    "semantic_hash": "bc5a6eb7a33a4a9c60870b972deb8af1"
+  },
+  "apps/frontend/lib/session-gate.ts": {
+    "mtime": 1794038808.2160394,
+    "seen": 1795231350.5362217,
+    "ast_hash": "9ed58cf4711cd38bba73270b1340ac48",
+    "semantic_hash": "9ed58cf4711cd38bba73270b1340ac48"
+  },
+  "apps/frontend/lib/team-schedule.ts": {
+    "mtime": 1794113053.1755083,
+    "seen": 1795231350.5365663,
+    "ast_hash": "c182ff529b244aef42eaf5efbadd9253",
+    "semantic_hash": "c182ff529b244aef42eaf5efbadd9253"
+  },
+  "apps/frontend/lib/theme-picker.ts": {
+    "mtime": 1794124100.0886807,
+    "seen": 1795231350.5368898,
+    "ast_hash": "8352efb55906204ed90d7af925f470c7",
+    "semantic_hash": "8352efb55906204ed90d7af925f470c7"
+  },
+  "apps/frontend/lib/theme.ts": {
+    "mtime": 1794123704.3526113,
+    "seen": 1795231350.5372176,
+    "ast_hash": "e596580cfcf5d9eef43e6629702ba2b8",
+    "semantic_hash": "e596580cfcf5d9eef43e6629702ba2b8"
+  },
+  "apps/frontend/next.config.js": {
+    "mtime": 1794038808.2180378,
+    "seen": 1795231350.5375402,
+    "ast_hash": "3c724c35c868b0a43acb8162958f91c1",
+    "semantic_hash": "3c724c35c868b0a43acb8162958f91c1"
+  },
+  "apps/frontend/postcss.config.mjs": {
+    "mtime": 1794038808.2190435,
+    "seen": 1795231350.5378509,
+    "ast_hash": "b94982db987a06959d1836a6d7f9735a",
+    "semantic_hash": "b94982db987a06959d1836a6d7f9735a"
+  },
+  "apps/frontend/project.json": {
+    "mtime": 1794038808.2200382,
+    "seen": 1795231350.5381749,
+    "ast_hash": "403e783868d724b4796e5324e43ca5af",
+    "semantic_hash": "403e783868d724b4796e5324e43ca5af"
+  },
+  "apps/frontend/proxy.ts": {
+    "mtime": 1794038808.2220476,
+    "seen": 1795231350.5384886,
+    "ast_hash": "ee3b92fe849f36472ac7783342af22c7",
+    "semantic_hash": "ee3b92fe849f36472ac7783342af22c7"
+  },
+  "apps/frontend/specs/account-form.spec.tsx": {
+    "mtime": 1794126524.474558,
+    "seen": 1795231350.538787,
+    "ast_hash": "98b1b77607543f5189371d456fdb4142",
+    "semantic_hash": "98b1b77607543f5189371d456fdb4142"
+  },
+  "apps/frontend/specs/api-client.spec.ts": {
+    "mtime": 1794038808.2240427,
+    "seen": 1795231350.5391045,
+    "ast_hash": "856cf1aa5da25fd0969aa846fbc6ddc7",
+    "semantic_hash": "856cf1aa5da25fd0969aa846fbc6ddc7"
+  },
+  "apps/frontend/specs/auth-profile.spec.ts": {
+    "mtime": 1794038808.2250464,
+    "seen": 1795231350.5394478,
+    "ast_hash": "046bb8f0cf8901989c3d6f82bb59d25a",
+    "semantic_hash": "046bb8f0cf8901989c3d6f82bb59d25a"
+  },
+  "apps/frontend/specs/date-field.spec.tsx": {
+    "mtime": 1794038808.228046,
+    "seen": 1795231350.539812,
+    "ast_hash": "dc7185c235fd80343756b3e51e3d6e37",
+    "semantic_hash": "dc7185c235fd80343756b3e51e3d6e37"
+  },
+  "apps/frontend/specs/firebase-admin-env.spec.ts": {
+    "mtime": 1794038808.2300453,
+    "seen": 1795231350.5402083,
+    "ast_hash": "4c9e9160d893114d5077bbfbf838863b",
+    "semantic_hash": "4c9e9160d893114d5077bbfbf838863b"
+  },
+  "apps/frontend/specs/firebase-auth.spec.ts": {
+    "mtime": 1794038808.2310438,
+    "seen": 1795231350.5405588,
+    "ast_hash": "51014ed77352b1486c627c6941c54f05",
+    "semantic_hash": "51014ed77352b1486c627c6941c54f05"
+  },
+  "apps/frontend/specs/firebase-config.spec.ts": {
+    "mtime": 1794038808.232042,
+    "seen": 1795231350.5408502,
+    "ast_hash": "b13b17c117c7e0d48d93a0210bd79141",
+    "semantic_hash": "b13b17c117c7e0d48d93a0210bd79141"
+  },
+  "apps/frontend/specs/firebase-session.spec.ts": {
+    "mtime": 1794038808.2340424,
+    "seen": 1795231350.5411835,
+    "ast_hash": "b4e4e3c04f6ba4e56c5657ff0dda01b2",
+    "semantic_hash": "b4e4e3c04f6ba4e56c5657ff0dda01b2"
+  },
+  "apps/frontend/specs/google-auth-error.spec.ts": {
+    "mtime": 1794038808.2400482,
+    "seen": 1795231350.5415316,
+    "ast_hash": "fca0943754dd7487b149e17c7d99351f",
+    "semantic_hash": "fca0943754dd7487b149e17c7d99351f"
+  },
+  "apps/frontend/specs/index.spec.tsx": {
+    "mtime": 1794038808.242044,
+    "seen": 1795231350.54193,
+    "ast_hash": "d62e77c2413d9f22aa0b884f4d3daf41",
+    "semantic_hash": "d62e77c2413d9f22aa0b884f4d3daf41"
+  },
+  "apps/frontend/specs/internal-job.spec.ts": {
+    "mtime": 1794038808.2440379,
+    "seen": 1795231350.5422974,
+    "ast_hash": "bf60f77765f9d0b42e80a52650d0054c",
+    "semantic_hash": "bf60f77765f9d0b42e80a52650d0054c"
+  },
+  "apps/frontend/specs/job-oidc.spec.ts": {
+    "mtime": 1794038808.2450395,
+    "seen": 1795231350.5425377,
+    "ast_hash": "ed0947a6e7bf2c0aeeab8d42a96bccf8",
+    "semantic_hash": "ed0947a6e7bf2c0aeeab8d42a96bccf8"
+  },
+  "apps/frontend/specs/layout.spec.tsx": {
+    "mtime": 1794038808.2460408,
+    "seen": 1795231350.5428915,
+    "ast_hash": "29dc762643e85d607711e486d7c23642",
+    "semantic_hash": "29dc762643e85d607711e486d7c23642"
+  },
+  "apps/frontend/specs/leaderboard.spec.tsx": {
+    "mtime": 1794038808.2470396,
+    "seen": 1795231350.5432067,
+    "ast_hash": "6ac2e3b0c4c02c90ee6d67b49d17e25d",
+    "semantic_hash": "6ac2e3b0c4c02c90ee6d67b49d17e25d"
+  },
+  "apps/frontend/specs/login-page.spec.tsx": {
+    "mtime": 1794038808.2480404,
+    "seen": 1795231350.5435188,
+    "ast_hash": "c48faadc7107582952e799f6266efa22",
+    "semantic_hash": "c48faadc7107582952e799f6266efa22"
+  },
+  "apps/frontend/specs/navbar.spec.tsx": {
+    "mtime": 1794038808.2490387,
+    "seen": 1795231350.5438762,
+    "ast_hash": "ebfebe6f3e01fcfaf55ee074ebcc96da",
+    "semantic_hash": "ebfebe6f3e01fcfaf55ee074ebcc96da"
+  },
+  "apps/frontend/specs/pick-result-icon.spec.tsx": {
+    "mtime": 1794038808.2500381,
+    "seen": 1795231350.5442007,
+    "ast_hash": "6f7847a9bd72953b802a2b48b26d36d2",
+    "semantic_hash": "6f7847a9bd72953b802a2b48b26d36d2"
+  },
+  "apps/frontend/specs/picks-grid.spec.tsx": {
+    "mtime": 1794038808.2510378,
+    "seen": 1795231350.5444748,
+    "ast_hash": "ddf1cc7a9ac20562e6b75c2b2e9b9b0a",
+    "semantic_hash": "ddf1cc7a9ac20562e6b75c2b2e9b9b0a"
+  },
+  "apps/frontend/specs/proxy.spec.ts": {
+    "mtime": 1794038808.2520397,
+    "seen": 1795231350.5447352,
+    "ast_hash": "0b5e73e57cc3109494fb93f3e8ead297",
+    "semantic_hash": "0b5e73e57cc3109494fb93f3e8ead297"
+  },
+  "apps/frontend/specs/routes.spec.ts": {
+    "mtime": 1794038808.253039,
+    "seen": 1795231350.5450077,
+    "ast_hash": "34354546774618f88748a100d2b7435e",
+    "semantic_hash": "34354546774618f88748a100d2b7435e"
+  },
+  "apps/frontend/specs/server-only-stub.ts": {
+    "mtime": 1794038808.25404,
+    "seen": 1795231350.5452797,
+    "ast_hash": "97b214023a92a133a4df15bdfa51ee47",
+    "semantic_hash": "97b214023a92a133a4df15bdfa51ee47"
+  },
+  "apps/frontend/specs/session-gate.spec.ts": {
+    "mtime": 1794038808.2550392,
+    "seen": 1795231350.5455074,
+    "ast_hash": "a21ccf061cbe4d1d3dc78abe8d8e961d",
+    "semantic_hash": "a21ccf061cbe4d1d3dc78abe8d8e961d"
+  },
+  "apps/frontend/specs/setup.ts": {
+    "mtime": 1794038808.2570417,
+    "seen": 1795231350.5458293,
+    "ast_hash": "bc1e5b83d1f2826ddcc379f46fb72e4e",
+    "semantic_hash": "bc1e5b83d1f2826ddcc379f46fb72e4e"
+  },
+  "apps/frontend/specs/spring-auth.spec.ts": {
+    "mtime": 1794038808.2580385,
+    "seen": 1795231350.5461366,
+    "ast_hash": "c50dcbc4a8f83e8f55dc45ebd276f61f",
+    "semantic_hash": "c50dcbc4a8f83e8f55dc45ebd276f61f"
+  },
+  "apps/frontend/specs/spring-proxy.spec.ts": {
+    "mtime": 1794038808.2600417,
+    "seen": 1795231350.546461,
+    "ast_hash": "da909807b10fce5075ec0f91cd02bbc8",
+    "semantic_hash": "da909807b10fce5075ec0f91cd02bbc8"
+  },
+  "apps/frontend/specs/stack.spec.ts": {
+    "mtime": 1794038808.261038,
+    "seen": 1795231350.5467944,
+    "ast_hash": "5f3bdaf384fa78be6b5c647b509c095c",
+    "semantic_hash": "5f3bdaf384fa78be6b5c647b509c095c"
+  },
+  "apps/frontend/specs/team-schedule.spec.tsx": {
+    "mtime": 1794113164.3137698,
+    "seen": 1795231350.5470884,
+    "ast_hash": "4bde303dd67fc2b37620c6960b61cbec",
+    "semantic_hash": "4bde303dd67fc2b37620c6960b61cbec"
+  },
+  "apps/frontend/specs/theme-picker.spec.tsx": {
+    "mtime": 1794123704.3546128,
+    "seen": 1795231350.5474553,
+    "ast_hash": "490d07d85436bacec26677fe62d7ed96",
+    "semantic_hash": "490d07d85436bacec26677fe62d7ed96"
+  },
+  "apps/frontend/specs/theme.spec.ts": {
+    "mtime": 1794123704.3566113,
+    "seen": 1795231350.5477078,
+    "ast_hash": "b6d696a645546a6604a1858404b872d4",
+    "semantic_hash": "b6d696a645546a6604a1858404b872d4"
+  },
+  "apps/frontend/tsconfig.json": {
+    "mtime": 1794038808.2630382,
+    "seen": 1795231350.5480301,
+    "ast_hash": "b0b0ee75bda4190cc813a08986fa5777",
+    "semantic_hash": "b0b0ee75bda4190cc813a08986fa5777"
+  },
+  "apps/frontend/tsconfig.spec.json": {
+    "mtime": 1791852287.8927639,
+    "seen": 1795231350.548344,
+    "ast_hash": "bcf283ce2780c5d6be38a9f90dd3d6a3",
+    "semantic_hash": "bcf283ce2780c5d6be38a9f90dd3d6a3"
+  },
+  "apps/frontend/vitest.config.mts": {
+    "mtime": 1794038808.265042,
+    "seen": 1795231350.5486495,
+    "ast_hash": "d906cb5533a956488587a4765daa2302",
+    "semantic_hash": "d906cb5533a956488587a4765daa2302"
+  },
+  "commitlint.config.cjs": {
+    "mtime": 1790033786.1738942,
+    "seen": 1795231350.5489898,
+    "ast_hash": "555c79a37690645f335bf5cd5c3cf98a",
+    "semantic_hash": "555c79a37690645f335bf5cd5c3cf98a"
+  },
+  "firebase.json": {
+    "mtime": 1790033791.1739235,
+    "seen": 1795231350.5494993,
+    "ast_hash": "61a75d8904ac2cd4a47dc74183898250",
+    "semantic_hash": "61a75d8904ac2cd4a47dc74183898250",
+    "ast_empty": true
+  },
+  "mvnw": {
+    "mtime": 1794112761.969607,
+    "seen": 1795231350.5495067,
+    "ast_hash": "ab50dd89da7da2346b28003352eeeeeb",
+    "semantic_hash": "ab50dd89da7da2346b28003352eeeeeb"
+  },
+  "nx.json": {
+    "mtime": 1790645698.7411108,
+    "seen": 1795231350.5498774,
+    "ast_hash": "8606c0d013e9597d66efe0628c460ddf",
+    "semantic_hash": "8606c0d013e9597d66efe0628c460ddf"
+  },
+  "package.json": {
+    "mtime": 1794038808.268036,
+    "seen": 1795231350.5502045,
+    "ast_hash": "fa70fb0a73d70f23fdaf5499b3101a90",
+    "semantic_hash": "fa70fb0a73d70f23fdaf5499b3101a90"
+  },
+  "pom.xml": {
+    "mtime": 1794030016.478947,
+    "seen": 1795231350.5505269,
+    "ast_hash": "4802294c132d53381c5c9d2e99ad2161",
+    "semantic_hash": "4802294c132d53381c5c9d2e99ad2161"
+  },
+  "src/main/java/com/curleesoft/pickem/action/AccountAction.java": {
+    "mtime": 1789700901.2669227,
+    "seen": 1795231350.5508199,
+    "ast_hash": "2f0b8572a250e617ab1797f8030e283a",
+    "semantic_hash": "2f0b8572a250e617ab1797f8030e283a"
+  },
+  "src/main/java/com/curleesoft/pickem/action/BaseAction.java": {
+    "mtime": 1789700901.2909403,
+    "seen": 1795231350.5511487,
+    "ast_hash": "65bb0300dda0614c88669a453f618fa0",
+    "semantic_hash": "65bb0300dda0614c88669a453f618fa0"
+  },
+  "src/main/java/com/curleesoft/pickem/action/LeaderBoardAction.java": {
+    "mtime": 1789700901.298927,
+    "seen": 1795231350.5514631,
+    "ast_hash": "0d82d19bd546980dae2bfd8e3ad490bb",
+    "semantic_hash": "0d82d19bd546980dae2bfd8e3ad490bb"
+  },
+  "src/main/java/com/curleesoft/pickem/action/LogoutAction.java": {
+    "mtime": 1789700901.3049278,
+    "seen": 1795231350.551839,
+    "ast_hash": "adc9596d172e01f45a4d6bc492212a66",
+    "semantic_hash": "adc9596d172e01f45a4d6bc492212a66"
+  },
+  "src/main/java/com/curleesoft/pickem/action/MainAction.java": {
+    "mtime": 1789700901.3459272,
+    "seen": 1795231350.552237,
+    "ast_hash": "652b329f5312817cba3431059c8a8ef1",
+    "semantic_hash": "652b329f5312817cba3431059c8a8ef1"
+  },
+  "src/main/java/com/curleesoft/pickem/action/MatchupAction.java": {
+    "mtime": 1789700901.371925,
+    "seen": 1795231350.5526547,
+    "ast_hash": "01a72888a25539a76e03d4331eb77bec",
+    "semantic_hash": "01a72888a25539a76e03d4331eb77bec"
+  },
+  "src/main/java/com/curleesoft/pickem/action/RegisterAction.java": {
+    "mtime": 1789700901.3859248,
+    "seen": 1795231350.553069,
+    "ast_hash": "e0bd65bfd03d28b3133f6d3d7a9d7fa9",
+    "semantic_hash": "e0bd65bfd03d28b3133f6d3d7a9d7fa9"
+  },
+  "src/main/java/com/curleesoft/pickem/action/RivalryAction.java": {
+    "mtime": 1789700901.4049284,
+    "seen": 1795231350.553441,
+    "ast_hash": "dfa3fe361848b08448fcf9605a8ac75b",
+    "semantic_hash": "dfa3fe361848b08448fcf9605a8ac75b"
+  },
+  "src/main/java/com/curleesoft/pickem/action/SeasonAction.java": {
+    "mtime": 1789700901.4209318,
+    "seen": 1795231350.5538065,
+    "ast_hash": "ccaf562340d382a740e0eb81f50bdef5",
+    "semantic_hash": "ccaf562340d382a740e0eb81f50bdef5"
+  },
+  "src/main/java/com/curleesoft/pickem/action/SeasonWeekAction.java": {
+    "mtime": 1789700901.44294,
+    "seen": 1795231350.5541682,
+    "ast_hash": "070ca6f37fae9b1e14a8752ef21ef1b1",
+    "semantic_hash": "070ca6f37fae9b1e14a8752ef21ef1b1"
+  },
+  "src/main/java/com/curleesoft/pickem/action/TeamAction.java": {
+    "mtime": 1789700901.46096,
+    "seen": 1795231350.5545137,
+    "ast_hash": "06e42f5d0d3cfc071f63c41f91995d57",
+    "semantic_hash": "06e42f5d0d3cfc071f63c41f91995d57"
+  },
+  "src/main/java/com/curleesoft/pickem/action/TeamScheduleAction.java": {
+    "mtime": 1789700901.4759405,
+    "seen": 1795231350.5548592,
+    "ast_hash": "218f9779a8e03750ff4b32e0de9b220f",
+    "semantic_hash": "218f9779a8e03750ff4b32e0de9b220f"
+  },
+  "src/main/java/com/curleesoft/pickem/action/ThemeAction.java": {
+    "mtime": 1789700901.492951,
+    "seen": 1795231350.555222,
+    "ast_hash": "45dc0db3906657e916dbf991d7c6726b",
+    "semantic_hash": "45dc0db3906657e916dbf991d7c6726b"
+  },
+  "src/main/java/com/curleesoft/pickem/action/UserAction.java": {
+    "mtime": 1789700901.52294,
+    "seen": 1795231350.5555665,
+    "ast_hash": "e156330d78825cdc27158f0d94500702",
+    "semantic_hash": "e156330d78825cdc27158f0d94500702"
+  },
+  "src/main/java/com/curleesoft/pickem/action/VenueAction.java": {
+    "mtime": 1789700901.5519302,
+    "seen": 1795231350.5559745,
+    "ast_hash": "971013f892002725b3036969a7816aba",
+    "semantic_hash": "971013f892002725b3036969a7816aba"
+  },
+  "src/main/java/com/curleesoft/pickem/bean/GenericHibernateBean.java": {
+    "mtime": 1789700901.686929,
+    "seen": 1795231350.5563302,
+    "ast_hash": "3905c8aa4a1d7aeb25fdca1cf5b0d6de",
+    "semantic_hash": "3905c8aa4a1d7aeb25fdca1cf5b0d6de"
+  },
+  "src/main/java/com/curleesoft/pickem/bean/GroupBean.java": {
+    "mtime": 1789700901.7789476,
+    "seen": 1795231350.5566843,
+    "ast_hash": "654fea7d67c1d4725bcbc48fd8cfc5e7",
+    "semantic_hash": "654fea7d67c1d4725bcbc48fd8cfc5e7"
+  },
+  "src/main/java/com/curleesoft/pickem/bean/MatchupBean.java": {
+    "mtime": 1789700901.9019594,
+    "seen": 1795231350.556996,
+    "ast_hash": "22bac8570942913bb5ba6c7fc1e17f28",
+    "semantic_hash": "22bac8570942913bb5ba6c7fc1e17f28"
+  },
+  "src/main/java/com/curleesoft/pickem/bean/RivalryBean.java": {
+    "mtime": 1789700901.9899423,
+    "seen": 1795231350.5572581,
+    "ast_hash": "96b21ce8c28ab4c5bfbe1c06d8495907",
+    "semantic_hash": "96b21ce8c28ab4c5bfbe1c06d8495907"
+  },
+  "src/main/java/com/curleesoft/pickem/bean/SeasonBean.java": {
+    "mtime": 1789700902.0099247,
+    "seen": 1795231350.557514,
+    "ast_hash": "85e0a5a771bc51210e288190d95f8670",
+    "semantic_hash": "85e0a5a771bc51210e288190d95f8670"
+  },
+  "src/main/java/com/curleesoft/pickem/bean/SeasonWeekBean.java": {
+    "mtime": 1789700902.0489256,
+    "seen": 1795231350.5577555,
+    "ast_hash": "12c18c1e64bb26cc55dd69b7241ffea2",
+    "semantic_hash": "12c18c1e64bb26cc55dd69b7241ffea2"
+  },
+  "src/main/java/com/curleesoft/pickem/bean/TeamBean.java": {
+    "mtime": 1789700902.0879257,
+    "seen": 1795231350.5579734,
+    "ast_hash": "3ed6ee328e7d6376b85efb984a3c2961",
+    "semantic_hash": "3ed6ee328e7d6376b85efb984a3c2961"
+  },
+  "src/main/java/com/curleesoft/pickem/bean/ThemeBean.java": {
+    "mtime": 1789700902.1039262,
+    "seen": 1795231350.5582817,
+    "ast_hash": "4b87c7b424e1d3af49f19193443bc816",
+    "semantic_hash": "4b87c7b424e1d3af49f19193443bc816"
+  },
+  "src/main/java/com/curleesoft/pickem/bean/UserBean.java": {
+    "mtime": 1789700902.1769357,
+    "seen": 1795231350.5585525,
+    "ast_hash": "dc723e9c73dc59ee549a762d90590199",
+    "semantic_hash": "dc723e9c73dc59ee549a762d90590199"
+  },
+  "src/main/java/com/curleesoft/pickem/bean/UserPickBean.java": {
+    "mtime": 1789700902.3499298,
+    "seen": 1795231350.5587847,
+    "ast_hash": "d7acf976a4c1d6a8bc156c7eb65a3d55",
+    "semantic_hash": "d7acf976a4c1d6a8bc156c7eb65a3d55"
+  },
+  "src/main/java/com/curleesoft/pickem/bean/VenueBean.java": {
+    "mtime": 1789700902.410933,
+    "seen": 1795231350.5590363,
+    "ast_hash": "7f3c5de76935fbb1c9b5c4ce23bf3b43",
+    "semantic_hash": "7f3c5de76935fbb1c9b5c4ce23bf3b43"
+  },
+  "src/main/java/com/curleesoft/pickem/converter/DateConverter.java": {
+    "mtime": 1789700902.4619286,
+    "seen": 1795231350.5594008,
+    "ast_hash": "1d1d6b0f55aa7db024c95ad07d34a4b1",
+    "semantic_hash": "1d1d6b0f55aa7db024c95ad07d34a4b1"
+  },
+  "src/main/java/com/curleesoft/pickem/converter/DateSerializerDeserializer.java": {
+    "mtime": 1789700902.4759295,
+    "seen": 1795231350.5597527,
+    "ast_hash": "f57ec99fa6b7a3a702f662638b5389dd",
+    "semantic_hash": "f57ec99fa6b7a3a702f662638b5389dd"
+  },
+  "src/main/java/com/curleesoft/pickem/filter/LoginFilter.java": {
+    "mtime": 1789700902.5609312,
+    "seen": 1795231350.5601046,
+    "ast_hash": "e3874dea5790d09a207fdd968e3b0420",
+    "semantic_hash": "e3874dea5790d09a207fdd968e3b0420"
+  },
+  "src/main/java/com/curleesoft/pickem/form/Account.java": {
+    "mtime": 1789700902.5949323,
+    "seen": 1795231350.5604362,
+    "ast_hash": "7ec9773b1d36f0d2514f9f53abdf2ca7",
+    "semantic_hash": "7ec9773b1d36f0d2514f9f53abdf2ca7"
+  },
+  "src/main/java/com/curleesoft/pickem/form/PasswordConfirmationForm.java": {
+    "mtime": 1789700902.6149716,
+    "seen": 1795231350.560762,
+    "ast_hash": "07fa1616b0d007e60907ba5230ada1b0",
+    "semantic_hash": "07fa1616b0d007e60907ba5230ada1b0"
+  },
+  "src/main/java/com/curleesoft/pickem/form/Registration.java": {
+    "mtime": 1789700902.6799264,
+    "seen": 1795231350.561166,
+    "ast_hash": "6f3b045847726487e5b2b572ea540a00",
+    "semantic_hash": "6f3b045847726487e5b2b572ea540a00"
+  },
+  "src/main/java/com/curleesoft/pickem/form/TeamSchedule.java": {
+    "mtime": 1789700902.689947,
+    "seen": 1795231350.561521,
+    "ast_hash": "a935df6417cfac5cd60b7b41c48e416f",
+    "semantic_hash": "a935df6417cfac5cd60b7b41c48e416f"
+  },
+  "src/main/java/com/curleesoft/pickem/form/UserScore.java": {
+    "mtime": 1789700902.701931,
+    "seen": 1795231350.561833,
+    "ast_hash": "ed0cbf55617f2db7c3672d6c7dac7265",
+    "semantic_hash": "ed0cbf55617f2db7c3672d6c7dac7265"
+  },
+  "src/main/java/com/curleesoft/pickem/model/AbstractBaseEntity.java": {
+    "mtime": 1789700902.7939255,
+    "seen": 1795231350.5620935,
+    "ast_hash": "2ea2ba672e50355e42f4fa5968263e43",
+    "semantic_hash": "2ea2ba672e50355e42f4fa5968263e43"
+  },
+  "src/main/java/com/curleesoft/pickem/model/AbstractBaseEntity_.java": {
+    "mtime": 1789700902.8089595,
+    "seen": 1795231350.5624146,
+    "ast_hash": "95c2c487d698b02978cd905dd952ade6",
+    "semantic_hash": "95c2c487d698b02978cd905dd952ade6"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Group.java": {
+    "mtime": 1789700902.8689275,
+    "seen": 1795231350.5627728,
+    "ast_hash": "ec59f29113098948fac9f6b6eea355ab",
+    "semantic_hash": "ec59f29113098948fac9f6b6eea355ab"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Group_.java": {
+    "mtime": 1789700902.8769255,
+    "seen": 1795231350.5630765,
+    "ast_hash": "e0477e94c9eede2afec63784cec48da7",
+    "semantic_hash": "e0477e94c9eede2afec63784cec48da7"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Matchup.java": {
+    "mtime": 1439485761.0,
+    "seen": 1795231350.563364,
+    "ast_hash": "4353664ffb865662e1144e9581543b89",
+    "semantic_hash": "4353664ffb865662e1144e9581543b89"
+  },
+  "src/main/java/com/curleesoft/pickem/model/MatchupUserPick.java": {
+    "mtime": 1789700903.0209343,
+    "seen": 1795231350.5636792,
+    "ast_hash": "e76a3dfe2ffe19a4dea969dfff79b255",
+    "semantic_hash": "e76a3dfe2ffe19a4dea969dfff79b255"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Matchup_.java": {
+    "mtime": 1789700903.0409288,
+    "seen": 1795231350.5640647,
+    "ast_hash": "fe9357ca6d7adb184df91e18afb9b8ef",
+    "semantic_hash": "fe9357ca6d7adb184df91e18afb9b8ef"
+  },
+  "src/main/java/com/curleesoft/pickem/model/PickemEntity.java": {
+    "mtime": 1789700903.04993,
+    "seen": 1795231350.5644164,
+    "ast_hash": "32b5d827d436b8750cfb287cf1e37e38",
+    "semantic_hash": "32b5d827d436b8750cfb287cf1e37e38"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Rivalry.java": {
+    "mtime": 1439499162.0,
+    "seen": 1795231350.564761,
+    "ast_hash": "1c4d12c5b580310cfe2f9f119d7321de",
+    "semantic_hash": "1c4d12c5b580310cfe2f9f119d7321de"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Rivalry_.java": {
+    "mtime": 1789700903.140926,
+    "seen": 1795231350.5651507,
+    "ast_hash": "9bb00ec45a80ee4627d1030d76d57be5",
+    "semantic_hash": "9bb00ec45a80ee4627d1030d76d57be5"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Season.java": {
+    "mtime": 1439404232.0,
+    "seen": 1795231350.5664427,
+    "ast_hash": "a8155c4fd7d08b2bd5ee53eeff90c5fe",
+    "semantic_hash": "a8155c4fd7d08b2bd5ee53eeff90c5fe"
+  },
+  "src/main/java/com/curleesoft/pickem/model/SeasonWeek.java": {
+    "mtime": 1439404241.0,
+    "seen": 1795231350.5667713,
+    "ast_hash": "553ff9c043b085fa37d6fd8998726aa5",
+    "semantic_hash": "553ff9c043b085fa37d6fd8998726aa5"
+  },
+  "src/main/java/com/curleesoft/pickem/model/SeasonWeek_.java": {
+    "mtime": 1789700903.308926,
+    "seen": 1795231350.5670693,
+    "ast_hash": "390340aac67917e9e7e459ec7c1b6bf6",
+    "semantic_hash": "390340aac67917e9e7e459ec7c1b6bf6"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Season_.java": {
+    "mtime": 1789700903.3249536,
+    "seen": 1795231350.5675406,
+    "ast_hash": "3d26ebe7732dcf79c1f87745367562ef",
+    "semantic_hash": "3d26ebe7732dcf79c1f87745367562ef"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Team.java": {
+    "mtime": 1439499243.0,
+    "seen": 1795231350.5680413,
+    "ast_hash": "87fd345532e49378e96737bdf653da75",
+    "semantic_hash": "87fd345532e49378e96737bdf653da75"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Team_.java": {
+    "mtime": 1789700903.3669438,
+    "seen": 1795231350.568419,
+    "ast_hash": "2e5001b7d75373d4ee6383b71889f6f5",
+    "semantic_hash": "2e5001b7d75373d4ee6383b71889f6f5"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Theme.java": {
+    "mtime": 1439499295.0,
+    "seen": 1795231350.5687718,
+    "ast_hash": "18feb29af8cd11533ba60f802269d355",
+    "semantic_hash": "18feb29af8cd11533ba60f802269d355"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Theme_.java": {
+    "mtime": 1789700903.4331555,
+    "seen": 1795231350.5691247,
+    "ast_hash": "d2563667cdba1ffdf5c07ee86e51ac50",
+    "semantic_hash": "d2563667cdba1ffdf5c07ee86e51ac50"
+  },
+  "src/main/java/com/curleesoft/pickem/model/User.java": {
+    "mtime": 1439410946.0,
+    "seen": 1795231350.5694556,
+    "ast_hash": "03892baab8cc77677f864509e470a77e",
+    "semantic_hash": "03892baab8cc77677f864509e470a77e"
+  },
+  "src/main/java/com/curleesoft/pickem/model/UserPick.java": {
+    "mtime": 1439404280.0,
+    "seen": 1795231350.5697203,
+    "ast_hash": "46c23f9bf12b1dd1039b908393c8464b",
+    "semantic_hash": "46c23f9bf12b1dd1039b908393c8464b"
+  },
+  "src/main/java/com/curleesoft/pickem/model/UserPick_.java": {
+    "mtime": 1789700903.5229013,
+    "seen": 1795231350.5700579,
+    "ast_hash": "4bb06af9dae036b414c7c43c8352daa7",
+    "semantic_hash": "4bb06af9dae036b414c7c43c8352daa7"
+  },
+  "src/main/java/com/curleesoft/pickem/model/User_.java": {
+    "mtime": 1789700903.569294,
+    "seen": 1795231350.5704255,
+    "ast_hash": "36a8bf1d3e1f5cdf343e810b4a96f265",
+    "semantic_hash": "36a8bf1d3e1f5cdf343e810b4a96f265"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Venue.java": {
+    "mtime": 1789700903.6092572,
+    "seen": 1795231350.570884,
+    "ast_hash": "20900aa48a20c2d9e4f0225b9e032fb2",
+    "semantic_hash": "20900aa48a20c2d9e4f0225b9e032fb2"
+  },
+  "src/main/java/com/curleesoft/pickem/model/Venue_.java": {
+    "mtime": 1789700903.6421514,
+    "seen": 1795231350.5712585,
+    "ast_hash": "f2e971aeb6ee0a96c3b4d12595f40990",
+    "semantic_hash": "f2e971aeb6ee0a96c3b4d12595f40990"
+  },
+  "src/main/java/com/curleesoft/pickem/model/constraints/AssertMatchupTeamsNotEqual.java": {
+    "mtime": 1789700903.662734,
+    "seen": 1795231350.571584,
+    "ast_hash": "35a9b74f615c0b767e5ec9a35a1fa5e3",
+    "semantic_hash": "35a9b74f615c0b767e5ec9a35a1fa5e3"
+  },
+  "src/main/java/com/curleesoft/pickem/model/constraints/AssertPasswordsMatch.java": {
+    "mtime": 1789700903.6752498,
+    "seen": 1795231350.5719588,
+    "ast_hash": "47f7af5ed33edd6d9651b04d29f225f1",
+    "semantic_hash": "47f7af5ed33edd6d9651b04d29f225f1"
+  },
+  "src/main/java/com/curleesoft/pickem/model/constraints/AssertRivalryTeamsNotEqual.java": {
+    "mtime": 1789700903.703981,
+    "seen": 1795231350.572314,
+    "ast_hash": "e039f50d77b5438979e9ca028609d511",
+    "semantic_hash": "e039f50d77b5438979e9ca028609d511"
+  },
+  "src/main/java/com/curleesoft/pickem/model/constraints/AssertThemePathDoesNotBeginWithSlash.java": {
+    "mtime": 1789700903.7169666,
+    "seen": 1795231350.572683,
+    "ast_hash": "4511a5f822eae61a263db076abad8f9b",
+    "semantic_hash": "4511a5f822eae61a263db076abad8f9b"
+  },
+  "src/main/java/com/curleesoft/pickem/model/constraints/AssertUserHasAtLeastOneGroup.java": {
+    "mtime": 1789700903.7323887,
+    "seen": 1795231350.5730305,
+    "ast_hash": "67b45448ec5a2d66cb0052b471ef73c7",
+    "semantic_hash": "67b45448ec5a2d66cb0052b471ef73c7"
+  },
+  "src/main/java/com/curleesoft/pickem/model/constraints/AssertUserPassProperlyFormed.java": {
+    "mtime": 1789700903.7789216,
+    "seen": 1795231350.573424,
+    "ast_hash": "38f092bab4e540c0142f4665fc689dfc",
+    "semantic_hash": "38f092bab4e540c0142f4665fc689dfc"
+  },
+  "src/main/java/com/curleesoft/pickem/model/constraints/ValidMatchupDate.java": {
+    "mtime": 1789700903.79392,
+    "seen": 1795231350.5737586,
+    "ast_hash": "11f95a49f3ba18a15b186c91ede60389",
+    "semantic_hash": "11f95a49f3ba18a15b186c91ede60389"
+  },
+  "src/main/java/com/curleesoft/pickem/model/constraints/ValidSeasonBeginDate.java": {
+    "mtime": 1789700903.8059227,
+    "seen": 1795231350.5740664,
+    "ast_hash": "d8e5a0371d025ff9ec9b08a3999412b5",
+    "semantic_hash": "d8e5a0371d025ff9ec9b08a3999412b5"
+  },
+  "src/main/java/com/curleesoft/pickem/model/constraints/ValidSeasonEndDate.java": {
+    "mtime": 1789700903.8158474,
+    "seen": 1795231350.5743883,
+    "ast_hash": "234bc3d33e412230e672ea175615462d",
+    "semantic_hash": "234bc3d33e412230e672ea175615462d"
+  },
+  "src/main/java/com/curleesoft/pickem/model/constraints/ValidSeasonWeekBeginDate.java": {
+    "mtime": 1789700903.8639615,
+    "seen": 1795231350.5747333,
+    "ast_hash": "a07a92e23ab97037ca86e77afe9cee02",
+    "semantic_hash": "a07a92e23ab97037ca86e77afe9cee02"
+  },
+  "src/main/java/com/curleesoft/pickem/model/constraints/ValidSeasonWeekEndDate.java": {
+    "mtime": 1789700903.8909464,
+    "seen": 1795231350.5750732,
+    "ast_hash": "6ddbb099272eb89bccf48d7b84475db5",
+    "semantic_hash": "6ddbb099272eb89bccf48d7b84475db5"
+  },
+  "src/main/java/com/curleesoft/pickem/model/validators/MatchupDateValidator.java": {
+    "mtime": 1789700903.9044394,
+    "seen": 1795231350.5754488,
+    "ast_hash": "84fffdd8876c369cb40e7ea2a6ef18c0",
+    "semantic_hash": "84fffdd8876c369cb40e7ea2a6ef18c0"
+  },
+  "src/main/java/com/curleesoft/pickem/model/validators/MatchupTeamsNotEqualValidator.java": {
+    "mtime": 1789700903.9184418,
+    "seen": 1795231350.5757868,
+    "ast_hash": "0138b9e14ea664dfa7026352709f6cb9",
+    "semantic_hash": "0138b9e14ea664dfa7026352709f6cb9"
+  },
+  "src/main/java/com/curleesoft/pickem/model/validators/PasswordsMatchValidator.java": {
+    "mtime": 1789700903.9763384,
+    "seen": 1795231350.5761666,
+    "ast_hash": "772527b5073b1d2230ab7beb20eb70f3",
+    "semantic_hash": "772527b5073b1d2230ab7beb20eb70f3"
+  },
+  "src/main/java/com/curleesoft/pickem/model/validators/RivalryTeamsNotEqualValidator.java": {
+    "mtime": 1789700903.9932835,
+    "seen": 1795231350.5765336,
+    "ast_hash": "5589cf4347b9fe9e684207532b46bceb",
+    "semantic_hash": "5589cf4347b9fe9e684207532b46bceb"
+  },
+  "src/main/java/com/curleesoft/pickem/model/validators/SeasonBeginDateValidator.java": {
+    "mtime": 1789700904.0158794,
+    "seen": 1795231350.5768864,
+    "ast_hash": "3b287248ed21d8cdddb9f824d14113a5",
+    "semantic_hash": "3b287248ed21d8cdddb9f824d14113a5"
+  },
+  "src/main/java/com/curleesoft/pickem/model/validators/SeasonEndDateValidator.java": {
+    "mtime": 1789700904.0326865,
+    "seen": 1795231350.5771549,
+    "ast_hash": "d3ad2b64e87c92bbdce6843a347b4043",
+    "semantic_hash": "d3ad2b64e87c92bbdce6843a347b4043"
+  },
+  "src/main/java/com/curleesoft/pickem/model/validators/SeasonWeekBeginDateValidator.java": {
+    "mtime": 1789700904.0479443,
+    "seen": 1795231350.5773807,
+    "ast_hash": "6b0bfdd3f6e011bc3550f47df6a9ea7a",
+    "semantic_hash": "6b0bfdd3f6e011bc3550f47df6a9ea7a"
+  },
+  "src/main/java/com/curleesoft/pickem/model/validators/SeasonWeekEndDateValidator.java": {
+    "mtime": 1789700904.0839403,
+    "seen": 1795231350.5777931,
+    "ast_hash": "0ff847fbf5b02e529966fd64eb664987",
+    "semantic_hash": "0ff847fbf5b02e529966fd64eb664987"
+  },
+  "src/main/java/com/curleesoft/pickem/model/validators/ThemePathDoesNotBeginWithSlashValidator.java": {
+    "mtime": 1789700904.1258328,
+    "seen": 1795231350.578203,
+    "ast_hash": "001fc878d1727a5562771c91ca71bc6c",
+    "semantic_hash": "001fc878d1727a5562771c91ca71bc6c"
+  },
+  "src/main/java/com/curleesoft/pickem/model/validators/UserHasAtLeastOneGroupValidator.java": {
+    "mtime": 1789700904.134832,
+    "seen": 1795231350.578607,
+    "ast_hash": "cc893b6be3c5b6d8d51925ab7b0d8f9a",
+    "semantic_hash": "cc893b6be3c5b6d8d51925ab7b0d8f9a"
+  },
+  "src/main/java/com/curleesoft/pickem/model/validators/UserPassProperlyFormedValidator.java": {
+    "mtime": 1789700904.1688335,
+    "seen": 1795231350.5790243,
+    "ast_hash": "a011d5e0f43f78931cabc8f50bfdd30e",
+    "semantic_hash": "a011d5e0f43f78931cabc8f50bfdd30e"
+  },
+  "src/main/java/com/curleesoft/pickem/result/JSONResult.java": {
+    "mtime": 1789700904.191831,
+    "seen": 1795231350.5793102,
+    "ast_hash": "9c0122e1ec2b41e142c449f88300eafe",
+    "semantic_hash": "9c0122e1ec2b41e142c449f88300eafe"
+  },
+  "src/main/java/com/curleesoft/pickem/util/Globals.java": {
+    "mtime": 1789700904.1998398,
+    "seen": 1795231350.5795584,
+    "ast_hash": "df06bf60cfc79728c303e5787b1b6436",
+    "semantic_hash": "df06bf60cfc79728c303e5787b1b6436"
+  },
+  "src/main/java/com/curleesoft/pickem/util/NativeQueryResultColumn.java": {
+    "mtime": 1789700904.2058313,
+    "seen": 1795231350.5798354,
+    "ast_hash": "3e755f2bd43038c577d469d823901ca4",
+    "semantic_hash": "3e755f2bd43038c577d469d823901ca4"
+  },
+  "src/main/java/com/curleesoft/pickem/util/NativeQueryResultEntity.java": {
+    "mtime": 1789700904.2658308,
+    "seen": 1795231350.5800877,
+    "ast_hash": "79f89971adf1dfb439cc6361d9eb801c",
+    "semantic_hash": "79f89971adf1dfb439cc6361d9eb801c"
+  },
+  "src/main/java/com/curleesoft/pickem/util/NativeQueryResultsMapper.java": {
+    "mtime": 1789700904.2998326,
+    "seen": 1795231350.580408,
+    "ast_hash": "543fbc729dcfbe9069e60afb6a510971",
+    "semantic_hash": "543fbc729dcfbe9069e60afb6a510971"
+  },
+  "src/main/java/com/curleesoft/pickem/util/Resources.java": {
+    "mtime": 1435586656.0,
+    "seen": 1795231350.5808072,
+    "ast_hash": "bc870634258c3a56466e23619e8bd74d",
+    "semantic_hash": "bc870634258c3a56466e23619e8bd74d"
+  },
+  "src/main/webapp/resources/js/app/adminscreen.js": {
+    "mtime": 1789700912.3150585,
+    "seen": 1795231350.5812597,
+    "ast_hash": "1dca8ba9a47df0ebe5b23d60c7d40459",
+    "semantic_hash": "1dca8ba9a47df0ebe5b23d60c7d40459"
+  },
+  "src/main/webapp/resources/js/app/login.js": {
+    "mtime": 1789700912.322096,
+    "seen": 1795231350.5815816,
+    "ast_hash": "edb75f4212d7a607dcd5c2fa7e678611",
+    "semantic_hash": "edb75f4212d7a607dcd5c2fa7e678611"
+  },
+  "src/main/webapp/resources/js/app/main.js": {
+    "mtime": 1789700912.3370502,
+    "seen": 1795231350.581822,
+    "ast_hash": "55d651576d239385a0dde336481867aa",
+    "semantic_hash": "55d651576d239385a0dde336481867aa"
+  },
+  "src/main/webapp/resources/js/app/teamSchedule.js": {
+    "mtime": 1789700912.3510592,
+    "seen": 1795231350.5820813,
+    "ast_hash": "f2800e864b48fdf92b4ca224070aad07",
+    "semantic_hash": "f2800e864b48fdf92b4ca224070aad07"
+  },
+  "src/main/webapp/resources/js/app/underscore-setup.js": {
+    "mtime": 1789700912.3580778,
+    "seen": 1795231350.5824356,
+    "ast_hash": "c15d90ea9b3c334d4690d38c5e0d08b6",
+    "semantic_hash": "c15d90ea9b3c334d4690d38c5e0d08b6"
+  },
+  "src/main/webapp/resources/js/libs/bootstrap-datetimepicker-min-4.0.0.js": {
+    "mtime": 1432227977.0,
+    "seen": 1795231350.5828059,
+    "ast_hash": "899e5ab362bfeeaadaaf97de4ba40ad4",
+    "semantic_hash": "899e5ab362bfeeaadaaf97de4ba40ad4"
+  },
+  "src/main/webapp/resources/js/libs/bootstrap-min-3.3.4.js": {
+    "mtime": 1427923852.0,
+    "seen": 1795231350.5831451,
+    "ast_hash": "8c237312864d2e4c4f03544cd4f9b195",
+    "semantic_hash": "8c237312864d2e4c4f03544cd4f9b195"
+  },
+  "src/main/webapp/resources/js/libs/jquery-min-2.1.3.js": {
+    "mtime": 1789700913.6465273,
+    "seen": 1795231350.5833762,
+    "ast_hash": "32015dd42e9582a80a84736f5d9a44d7",
+    "semantic_hash": "32015dd42e9582a80a84736f5d9a44d7"
+  },
+  "src/main/webapp/resources/js/libs/jquery-mobile-min-1.4.5.js": {
+    "mtime": 1427924504.0,
+    "seen": 1795231350.5836406,
+    "ast_hash": "39ee6f20751f4fb0653862ae56f9cbba",
+    "semantic_hash": "39ee6f20751f4fb0653862ae56f9cbba"
+  },
+  "src/main/webapp/resources/js/libs/modernizr-min-2.8.3.js": {
+    "mtime": 1428006879.0,
+    "seen": 1795231350.5839567,
+    "ast_hash": "a1db66cada6cf5ebf16f8b85c44aabca",
+    "semantic_hash": "a1db66cada6cf5ebf16f8b85c44aabca"
+  },
+  "src/main/webapp/resources/js/libs/moment-min-2.10.3.js": {
+    "mtime": 1432310334.0,
+    "seen": 1795231350.5843112,
+    "ast_hash": "f7fcec73946e3aa0ba9a5e0b837a7c0a",
+    "semantic_hash": "f7fcec73946e3aa0ba9a5e0b837a7c0a"
+  },
+  "src/main/webapp/resources/js/libs/underscore-min-1.8.3.js": {
+    "mtime": 1789700915.7191,
+    "seen": 1795231350.584677,
+    "ast_hash": "543feb1ecaf06ea516f8cec5f9f3f279",
+    "semantic_hash": "543feb1ecaf06ea516f8cec5f9f3f279"
+  },
+  "tools/seed/seed": {
+    "mtime": 1790815734.2080994,
+    "seen": 1795231350.5850017,
+    "ast_hash": "605e475c9e3aa9ba6348fa61f594208b",
+    "semantic_hash": "605e475c9e3aa9ba6348fa61f594208b"
+  },
+  "tsconfig.base.json": {
+    "mtime": 1790042730.5373213,
+    "seen": 1795231350.585231,
+    "ast_hash": "ec9db3634068bad015bda417f887f29a",
+    "semantic_hash": "ec9db3634068bad015bda417f887f29a"
+  },
+  "vitest.workspace.mts": {
+    "mtime": 1794033317.6979105,
+    "seen": 1795231350.5855744,
+    "ast_hash": "128560878e3f05789ab43e1c8261495b",
+    "semantic_hash": "128560878e3f05789ab43e1c8261495b"
+  }
+}
