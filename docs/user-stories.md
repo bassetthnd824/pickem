@@ -69,7 +69,7 @@ College Football Data (CFBD) is new product scope (not in the legacy app):
 | US-20 | Administer seasons, weeks, venues, teams, and rivalries  | G Player / manager UI | —      | US-05, US-06, US-15, US-35                   | US-21, US-22                                           |
 | US-21 | Administer matchups, users, and themes                   | G Player / manager UI | —      | US-07, US-08, US-20, US-35, US-36            | US-22, US-24, US-30                                    |
 | US-34 | Lock picks at week start and reject tied scores          | D Game APIs           | Done   | US-09                                        | US-16, US-22, US-24                                    |
-| US-35 | Refresh snapshots and block unsafe deletes               | C Manager APIs        | —      | US-06, US-07                                 | US-20, US-21, US-24                                    |
+| US-35 | Refresh snapshots and block unsafe deletes               | C Manager APIs        | Done   | US-06, US-07                                 | US-20, US-21, US-24                                    |
 | US-36 | Keep the theme catalog a closed set of 18                | G Player / manager UI | Done   | US-08, US-14                                 | US-19, US-21                                           |
 | US-37 | Empty season, sign-in failure, and expired session       | G Player / manager UI | —      | US-15                                        | US-24                                                  |
 | US-22 | Enforce validation parity on client and server           | H Quality / deploy    | —      | US-05, US-07, US-08, US-16, US-21            | US-24                                                  |
@@ -1110,6 +1110,8 @@ Rules to port:
 ---
 
 ### US-35 — Refresh snapshots and block unsafe deletes
+
+**Status:** Done ([PR #52](https://github.com/bassetthnd824/pickem/pull/52)).
 
 **User story.** As a manager, I want team and venue edits to show up on existing matchups, and I want deletes refused while data still points at that record, so that I cannot orphan the season.
 
