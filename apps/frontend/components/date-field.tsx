@@ -13,6 +13,8 @@ type DateFieldProps = {
   error?: string
   disabled?: boolean
   required?: boolean
+  min?: string
+  max?: string
 }
 
 export function DateField({
@@ -25,6 +27,8 @@ export function DateField({
   error,
   disabled = false,
   required = false,
+  min,
+  max,
 }: DateFieldProps) {
   return (
     <Field.Root
@@ -38,6 +42,8 @@ export function DateField({
         id={id}
         type='date'
         value={value}
+        min={min}
+        max={max}
         required={required}
         aria-invalid={error ? true : undefined}
         onBlur={onBlur}

@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import com.curleesoft.pickem.backend.model.Theme;
 import com.curleesoft.pickem.backend.repository.ThemeRepository;
 import com.curleesoft.pickem.backend.repository.TransactionReads;
+import com.curleesoft.pickem.backend.seed.SeedCatalog;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.Transaction;
@@ -197,8 +198,33 @@ public class ThemeService {
         target.setThemeName(SearchText.trim(request.getThemeName()));
         target.setThemePath(path);
         target.setActive(request.getActive());
-        target.setPrimary(SearchText.trim(request.getPrimary()));
-        target.setSecondary(SearchText.trim(request.getSecondary()));
+        target.setPrimary(colorOrCatalog(path, request.getPrimary(), true));
+        target.setSecondary(colorOrCatalog(path, request.getSecondary(), false));
+    }
+
+    private static String colorOrCatalog(String path, String submitted, boolean primary) {
+        String color = SearchText.trim(submitted);
+
+        if (StringUtils.hasText(color)) {
+            return Objects.requireNonNull(color, "color");
+
+        }
+
+        String key = Objects.requireNonNull(path, "themePath");
+
+        for (SeedCatalog.ThemeSeed theme : SeedCatalog.themes()) {
+
+            if (theme == null || !key.equals(theme.key())) {
+                continue;
+
+            }
+
+            String catalog = primary ? theme.primary() : theme.secondary();
+            return Objects.requireNonNull(catalog, "catalog color");
+
+        }
+
+        throw new InvalidRequestException(KEY_NOT_IN_CATALOG);
     }
 
     private static void rejectDuplicate(

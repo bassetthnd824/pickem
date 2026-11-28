@@ -12,7 +12,11 @@ import {
   resumeHref,
   searchStorageKey,
 } from '@/lib/admin/search-memory'
-import { defaultWeekDates, parseWeekNumber } from '@/lib/admin/week-dates'
+import {
+  constrainMatchupDate,
+  defaultWeekDates,
+  parseWeekNumber,
+} from '@/lib/admin/week-dates'
 import { ApiError } from '@/lib/api-client'
 
 describe('defaultWeekDates', () => {
@@ -33,6 +37,18 @@ describe('defaultWeekDates', () => {
     expect(parseWeekNumber('2.5')).toBeNull()
     expect(defaultWeekDates('2026-08-27', 0)).toBeNull()
     expect(defaultWeekDates('August 27', 1)).toBeNull()
+  })
+
+  it('keeps a matchup date inside the selected week', () => {
+    expect(constrainMatchupDate('2026-08-29', '2026-08-27', '2026-09-02')).toBe(
+      '2026-08-29',
+    )
+    expect(constrainMatchupDate('', '2026-08-27', '2026-09-02')).toBe(
+      '2026-08-29',
+    )
+    expect(constrainMatchupDate('2026-09-10', '2026-08-27', '2026-09-02')).toBe(
+      '2026-08-29',
+    )
   })
 })
 
@@ -70,6 +86,43 @@ describe('assignFieldErrors', () => {
       assignFieldErrors('teams cannot be equal', ['team1Id', 'team2Id'])
         .fieldErrors.team2Id,
     ).toBe('teams cannot be equal')
+    expect(
+      assignFieldErrors('teams cannot be equal', ['homeTeamId', 'awayTeamId'])
+        .fieldErrors.awayTeamId,
+    ).toBe('teams cannot be equal')
+    expect(
+      assignFieldErrors('matchup date is invalid', [
+        'matchupDate',
+        'seasonWeekId',
+      ]).fieldErrors.matchupDate,
+    ).toBe('matchup date is invalid')
+    expect(
+      assignFieldErrors('Venue not found', ['venueId']).fieldErrors.venueId,
+    ).toBe('Venue not found')
+    expect(
+      assignFieldErrors('Team not found', ['homeTeamId', 'awayTeamId'])
+        .fieldErrors.homeTeamId,
+    ).toBe('Team not found')
+    expect(
+      assignFieldErrors('Team not found', ['awayTeamId']).fieldErrors
+        .awayTeamId,
+    ).toBe('Team not found')
+    expect(
+      assignFieldErrors('theme key is not one of the 18 compiled palettes', [
+        'themeId',
+        'roles',
+      ]).fieldErrors.themeId,
+    ).toBe('theme key is not one of the 18 compiled palettes')
+    expect(
+      assignFieldErrors('User must belong to at least one group.', [
+        'roles',
+        'emailAddr',
+      ]).fieldErrors.roles,
+    ).toBe('User must belong to at least one group.')
+    expect(
+      assignFieldErrors('theme path must not begin with a slash', ['themePath'])
+        .fieldErrors.themePath,
+    ).toBe('theme path must not begin with a slash')
   })
 })
 

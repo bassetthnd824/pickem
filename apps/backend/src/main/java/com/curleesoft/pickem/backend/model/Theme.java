@@ -26,9 +26,7 @@ public class Theme extends AuditableDocument {
     @NotNull
     private Boolean active;
 
-    @NotBlank
     private String primary;
 
-    @NotBlank
     private String secondary;
 }
