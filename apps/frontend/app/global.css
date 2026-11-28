@@ -728,6 +728,35 @@ body {
   }
 }
 
+@utility choice-box {
+  display: flex;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  border: 2px solid var(--color-field);
+  background: var(--color-surface);
+  padding: 0;
+  color: var(--color-highlight);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-highlight);
+    outline-offset: 2px;
+  }
+
+  &[data-checked] {
+    border-color: var(--color-highlight);
+  }
+
+  &:disabled,
+  &[data-disabled] {
+    opacity: 0.6;
+  }
+}
+
 @utility choice-dot {
   width: 0.625rem;
   height: 0.625rem;

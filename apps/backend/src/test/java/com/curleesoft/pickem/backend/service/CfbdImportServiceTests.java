@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -1485,7 +1485,9 @@ class CfbdImportServiceTests extends FirestoreEmulatorSupport {
         return cursor;
     }
 
+    private static final AtomicInteger NEXT_YEAR = new AtomicInteger(7_000);
+
     private static int uniqueYear() {
-        return 7000 + ThreadLocalRandom.current().nextInt(1500);
+        return NEXT_YEAR.incrementAndGet();
     }
 }
