@@ -30,6 +30,22 @@ export function defaultWeekDates(
   return { beginDate, endDate }
 }
 
+/** Empty or out-of-range dates become begin + 2 when that day is still inside the week. */
+export function constrainMatchupDate(
+  date: string,
+  beginDate: string,
+  endDate: string,
+): string {
+  if (ISO_DATE.test(date) && date >= beginDate && date <= endDate) {
+    return date
+  }
+  const saturday = addDays(beginDate, 2)
+  if (saturday && saturday <= endDate) {
+    return saturday
+  }
+  return beginDate
+}
+
 function addDays(iso: string, days: number): string | null {
   const match = ISO_DATE.exec(iso)
   if (!match) {

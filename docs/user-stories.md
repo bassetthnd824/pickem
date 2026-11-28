@@ -797,12 +797,12 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- Matchup form: season select loads weeks; choosing a week constrains matchup date to that week; choosing home team sets venue to the team’s home venue (still editable).
-- Matchup form captures home/away, scores, venue, date.
-- Users form edits name/email/nickname/theme and role checkboxes (`player` / `manager`); at least one role required.
-- Promoting a user to manager is visible on their next session.
-- Themes form edits name, key/path (no leading slash), active.
-- Cascading selects use TanStack Query against the helper GET endpoints.
+- [x] Matchup form: season select loads weeks; choosing a week constrains matchup date to that week; choosing home team sets venue to the team’s home venue (still editable).
+- [x] Matchup form captures home/away, scores, venue, date.
+- [x] Users form edits name/email/nickname/theme and role checkboxes (`player` / `manager`); at least one role required.
+- [x] Promoting a user to manager is visible on their next session.
+- [x] Themes form edits name, key/path (no leading slash), active.
+- [x] Cascading selects use TanStack Query against the helper GET endpoints.
 
 **Predecessors:** US-07, US-08, US-20, US-35, US-36.
 

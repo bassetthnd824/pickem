@@ -197,6 +197,16 @@ class ManagerUserThemeApiTests extends FirestoreEmulatorSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.detail").value(ThemeService.KEY_NOT_IN_CATALOG));
 
+        MvcResult catalogColors = mockMvc
+                .perform(
+                        post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
+                                {"themeName":"Auburn %s","themePath":"auburn","active":true}
+                                """.formatted(token))
+                )
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.primary").value("#0C2340"))
+                .andExpect(jsonPath("$.secondary").value("#E87722")).andReturn();
+        themeIds.add(idOf(catalogColors));
+
         mockMvc.perform(post("/api/manager/themes").cookie(manager).contentType(MediaType.APPLICATION_JSON).content("""
                 {"themeName":"No active %s","themePath":"arkansas","primary":"#000000","secondary":"#FFFFFF"}
                 """.formatted(token))).andExpect(status().isBadRequest())

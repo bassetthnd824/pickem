@@ -12,7 +12,7 @@ export type AdminRow = {
 }
 
 type AdminListProps = {
-  addHref: string
+  addHref?: string
   onSearch: () => void
   searchFields: ReactNode
   pending: boolean
@@ -92,12 +92,14 @@ export function AdminList({
           </table>
         </div>
       ) : null}
-      <Link
-        href={addHref}
-        className={`${buttonVariantClass.compact} w-fit cursor-pointer`}
-      >
-        Add
-      </Link>
+      {addHref ? (
+        <Link
+          href={addHref}
+          className={`${buttonVariantClass.compact} w-fit cursor-pointer`}
+        >
+          Add
+        </Link>
+      ) : null}
     </div>
   )
 }
