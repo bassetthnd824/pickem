@@ -66,7 +66,7 @@ College Football Data (CFBD) is new product scope (not in the legacy app):
 | US-17 | View the season leaderboard                              | G Player / manager UI | Done   | US-10, US-15                                 | US-24                                                  |
 | US-18 | Browse a conference team’s schedule                      | G Player / manager UI | Done   | US-11, US-15                                 | US-24                                                  |
 | US-19 | Update nickname and pick a theme                         | G Player / manager UI | Done   | US-11, US-14, US-15, US-36                   | US-23, US-24                                           |
-| US-20 | Administer seasons, weeks, venues, teams, and rivalries  | G Player / manager UI | —      | US-05, US-06, US-15, US-35                   | US-21, US-22                                           |
+| US-20 | Administer seasons, weeks, venues, teams, and rivalries  | G Player / manager UI | Done   | US-05, US-06, US-15, US-35                   | US-21, US-22                                           |
 | US-21 | Administer matchups, users, and themes                   | G Player / manager UI | —      | US-07, US-08, US-20, US-35, US-36            | US-22, US-24, US-30                                    |
 | US-34 | Lock picks at week start and reject tied scores          | D Game APIs           | Done   | US-09                                        | US-16, US-22, US-24                                    |
 | US-35 | Refresh snapshots and block unsafe deletes               | C Manager APIs        | Done   | US-06, US-07                                 | US-20, US-21, US-24                                    |
@@ -766,6 +766,8 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 ---
 
 ### US-20 — Administer seasons, weeks, venues, teams, and rivalries
+
+**Status:** Done ([PR #57](https://github.com/bassetthnd824/pickem/pull/57)).
 
 **User story.** As a manager, I want list/search/detail screens for seasons, weeks, venues, teams, and rivalries so that I can maintain reference data from the browser.
 
