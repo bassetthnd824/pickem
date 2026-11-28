@@ -70,11 +70,20 @@ describe('gateDecision', () => {
     expect(gateDecision('/teams', player)).toBe('restricted')
     expect(gateDecision('/seasons', player)).toBe('restricted')
     expect(gateDecision('/season-weeks', player)).toBe('restricted')
+    expect(gateDecision('/seasons/new', player)).toBe('restricted')
+    expect(gateDecision('/venues/sanford', player)).toBe('restricted')
+    expect(gateDecision('/teams/new', player)).toBe('restricted')
+    expect(gateDecision('/rivalries/iron-bowl', player)).toBe('restricted')
   })
 
   it('allows a manager on manager routes', () => {
     expect(gateDecision('/users', manager)).toBe('allow')
     expect(gateDecision('/matchups/new', manager)).toBe('allow')
+    expect(gateDecision('/seasons/new', manager)).toBe('allow')
+    expect(gateDecision('/season-weeks/week-1', manager)).toBe('allow')
+    expect(gateDecision('/venues/sanford', manager)).toBe('allow')
+    expect(gateDecision('/teams/georgia', manager)).toBe('allow')
+    expect(gateDecision('/rivalries/new', manager)).toBe('allow')
   })
 
   it('sends a signed-in visitor from login or the public home to main', () => {

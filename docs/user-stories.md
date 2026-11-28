@@ -773,11 +773,11 @@ US-01 and US-13 can start in parallel after the repo is the Nx workspace. Fronte
 
 **Acceptance criteria.**
 
-- Each resource has list (search + results) and detail (add/edit) routes under `(manager)/`.
-- Search, add, edit, delete, cancel behave like `BaseAction` (return to last search).
-- Season week form cascading: choose season, then week dates default from season begin + `(weekNumber - 1) * 7`, end = begin + 6.
-- Only users with the manager claim can open these routes.
-- Validation errors from the API render on the form.
+- [x] Each resource has list (search + results) and detail (add/edit) routes under `(manager)/`.
+- [x] Search, add, edit, delete, cancel behave like `BaseAction` (return to last search).
+- [x] Season week form cascading: choose season, then week dates default from season begin + `(weekNumber - 1) * 7`, end = begin + 6.
+- [x] Only users with the manager claim can open these routes.
+- [x] Validation errors from the API render on the form.
 
 **Predecessors:** US-05, US-06, US-15, US-35.
 
